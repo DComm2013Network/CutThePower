@@ -99,29 +99,19 @@ int read_size_of_data(int fd)
  * A function for reading the size of the following data struct in the pipe.
  *
  *----------------------------------------------------------------------------------------*/
-int read_packet(int fd, int size)
+void* read_packet(int fd, int size)
 {
-    void* temp;
+    void* temp = (void*) malloc(size);
 
     if( (read_bytes = read_pipe(fd, &temp, size)) < 0)
     {
-        return -1; //error .. check error
+        return NULL; //error .. check error
     }
 
     if(read_bytes == 0)
     {
-        return 0; //end of file .. nothing in pipe
+        return NULL; //end of file .. nothing in pipe
     }
 
-    switch(temp->packet_id)
-    {
-    case 1:
-        return ((pkt01) temp);
-        break;
-    case 2:
-        return ((pkt02) temp);
-        break;
-    }
-
-    return -2; //packet id not found .. can also return the scanned data instead
+    return temp; //packet id not found .. can also return the scanned data instead
 }
