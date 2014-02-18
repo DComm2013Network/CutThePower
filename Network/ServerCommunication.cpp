@@ -34,8 +34,10 @@
  *
  * INTERFACE:   void recv_thread_func(const int router_pipe_writefd, const sockaddr_in
  *									*server_info)
- *                  int router_pipe_writefd - 	Identifies the write end of a pipe to the
- *												network router thread.
+ *                  int router_pipe_writefd - 		Identifies the write end of a pipe to the
+ *													network router thread.
+ *					const char *host_ip_string -	A host name or IP address string to be
+ *													resolved.
  *
  * RETURNS:     void
  *
@@ -43,11 +45,15 @@
  *
  * This thread will continuously monitor a TCP and UDP socket which will receive data from
  * the server. Upon receiving data, the thread writes to the pipe connected to the network
- * router and then continues to monitor.
+ * router thread.
  *
  *----------------------------------------------------------------------------------------*/
- void recv_thread_func(int router_pipe_writefd, const char *ip)
+ void recv_thread_func(int router_pipe_writefd, const char *host_ip_string)
  {
  	
+ 	while(1)
+ 	{
+ 		
+ 	}
  }
  
