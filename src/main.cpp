@@ -13,7 +13,9 @@ int main(void)
 	SDL_Renderer* gRenderer 	= NULL;	//The window renderer
 
 	init(gWindow, gRenderer);
-	
+	while(1){
+		
+	}
 }
 
 bool init(SDL_Window* gWindow, SDL_Renderer* gRenderer){
