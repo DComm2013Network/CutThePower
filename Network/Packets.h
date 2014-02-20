@@ -41,6 +41,8 @@
 // Connect code Definitions
 #define CONNECT_CODE_ACCEPTED   0x001
 #define CONNECT_CODE_DENIED     0x000
+#define TCP                     0
+#define UDP                     1
 
 // Game Status Definitions
 #define GAME_STATE_WAITING      0x001
@@ -52,7 +54,13 @@
 // Special floor Definitions
 #define FLOOR_LOBBY             0x000
 
+
 // Packet Definitions
+typedef struct _packet {
+    int protocol;     
+    char *data;   
+} packet;
+
 typedef struct pkt01 {
     int         packet_id;
     char        client_player_name[MAX_NAME_SIZE];
