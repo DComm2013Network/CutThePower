@@ -112,7 +112,7 @@ int main()
 	
 	
 	//This is the creation of the player entity. We should put this into a separate function
-	player = create_player(world, 400, 300, input);
+	player = create_player(world, 400, 300, input, true);
 	
 	/*pos.x = WIDTH / 2;
 	pos.y = HEIGHT / 2;*/
