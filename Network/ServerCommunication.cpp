@@ -21,21 +21,21 @@
  *----------------------------------------------------------------------------------------*/
 #include "ServerCommunication.h"
 /////////////////////FOR TESTING PURPOSES////////////////////////////////////////////////////
-// int main(){
+int main(){
 	
-// 	packet * pkt = (packet*) malloc(sizeof(packet));
-// 	pkt->protocol = TCP;
-// 	pkt->data = "testing";
+	packet * pkt = (packet*) malloc(sizeof(packet));
+	pkt->protocol = TCP;
+	pkt->data = "testing";
 
-// 	if(SDL_Init(0)==-1) {
-//     	fprintf(stderr, "SDL_Init: %s\n", SDL_GetError());
-//     	exit(1);
-// 	}
+	if(SDL_Init(0)==-1) {
+    	fprintf(stderr, "SDL_Init: %s\n", SDL_GetError());
+    	exit(1);
+	}
 
-// 	init_send_data(pkt);
+	init_send_data(pkt);
 
-// 	SDLNet_Quit();
-// }
+	SDLNet_Quit();
+}
 //////////////////////FOR TESTING PURPOSES//////////////////////////////////////////////////
 /*------------------------------------------------------------------------------------------
  * FUNCTION:    recv_thread_func
@@ -72,6 +72,49 @@
  		
  	}
  }
+/*------------------------------------------------------------------------------------------------------------------
+--      FUNCTION: frame_data
+--
+--      DATE: Febuary 15, 2014
+--      REVISIONS: none
+--
+--      DESIGNER: Ramzi Chennafi
+--      PROGRAMMER: Ramzi Chennafi
+--
+--      INTERFACE: packet * frame_data(int type, void* data)
+--
+--      RETURNS: packet * - pointer to a packet structure
+--
+--      NOTES:
+--     	Frames packets recieved from gameplay for sending to the server.
+----------------------------------------------------------------------------------------------------------------------*/
+packet * frame_data(int type, void* data){
+
+	packet * framing_pkt = (packet*) malloc(sizeof(packet));
+
+	switch(type){
+		case 1:
+			framing_pkt->protocol = TCP;
+			framing_pkt->data = (char*)data;
+		break;
+		case 2:
+			framing_pkt->protocol = TCP;
+			framing_pkt->data = (char*)data;
+		break;
+		case 3:
+			framing_pkt->protocol = TCP;
+			framing_pkt->data = (char*)data;
+		break;
+		case 4:
+			framing_pkt->protocol = UDP;
+			framing_pkt->data = (char*)data;
+		break;
+	}
+
+	return framing_pkt;
+}	
+
+
  /*------------------------------------------------------------------------------------------------------------------
 --      FUNCTION: init_send_data
 --
@@ -89,7 +132,7 @@
 --      Program entry point. Disables terminal processing, creates 3 pipes and 2 children processes. These processes
 --		are directed into their respective function paths.
 ----------------------------------------------------------------------------------------------------------------------*/
-void init_send_data(packet pkt){
+void init_send_data(packet * pkt){
 
 	switch(pkt->protocol){
 		case TCP:
@@ -102,7 +145,7 @@ void init_send_data(packet pkt){
 			fprintf(stderr, "Invalid protocol in init_send_data().");
 	}
 }
-/*------------------------------------------------------------------------------------------------------------------
+/*-----------------`-------------------------------------------------------------------------------------------------
 --      FUNCTION: send_tcp
 --
 --      DATE: January 20, 2014
@@ -119,10 +162,10 @@ void init_send_data(packet pkt){
 --      Sends the packet data over the established tcp connection.
 ----------------------------------------------------------------------------------------------------------------------*/
 int send_tcp(char * data){
-	TCPsocket sock = intiate_tcp();
+	TCPsocket sock = initiate_tcp();
 
-	len=strlen(data)+1;
-	result=SDLNet_TCP_Send(sock, data, len);
+    int	len=strlen(data)+1;
+	int result=SDLNet_TCP_Send(sock, data, len);
 	if(result < len) {
     	fprintf(stderr, "SDLNet_TCP_Send: %s\n", SDLNet_GetError());
     	return -1;
@@ -151,10 +194,10 @@ int send_tcp(char * data){
 int send_udp(char * data){
 
 	int numsent;
-	UDPpacket pktdata = alloc_packet(data);
+	UDPpacket * pktdata = alloc_packet(data);
 	UDPsocket sock = initiate_udp();
 
-	numsent=SDLNet_UDP_Send(udpsock, packet.channel, packet);
+	numsent=SDLNet_UDP_Send(sock, pktdata->channel, pktdata);
 	if(!numsent) {
     	fprintf(stderr,"SDLNet_UDP_Send: %s\n", SDLNet_GetError());
     	return -1;
@@ -179,11 +222,12 @@ int send_udp(char * data){
 --      NOTES:
 --      Intiates a tcp connection to the specified host.
 ----------------------------------------------------------------------------------------------------------------------*/
-TCPsocket intiate_tcp(){
+TCPsocket initiate_tcp(){
 	IPaddress ipaddress;
-	SDLNet_ResolveHost(ipaddress, "127.0.0.1", 5151);
+	SDLNet_ResolveHost(&ipaddress, "127.0.0.1", 5151);
+	TCPsocket tcpsock;
 
-	if(!(tcpsock=SDLNet_TCP_Open(&ip))){
+	if(!(tcpsock=SDLNet_TCP_Open(&ipaddress))){
     	fprintf(stderr, "SDLNet_TCP_Open: %s\n", SDLNet_GetError());
     	return NULL;
 	}
@@ -206,7 +250,7 @@ TCPsocket intiate_tcp(){
 --      NOTES:
 --      Intiates a udp connection on a random socket.
 ----------------------------------------------------------------------------------------------------------------------*/
-UDPsocket intiate_udp(){
+UDPsocket initiate_udp(){
 	UDPsocket udpsock;
 
 	udpsock=SDLNet_UDP_Open(0);
@@ -233,8 +277,8 @@ UDPsocket intiate_udp(){
 --      NOTES:
 --      Creates a UDPpacket with the data passed to it.
 ----------------------------------------------------------------------------------------------------------------------*/
-UDPpacket alloc_packet(char * data){
-	UDPpacket *packet;
+UDPpacket * alloc_packet(char * data){
+	UDPpacket * packet = (UDPpacket*) malloc(sizeof(UDPpacket));
 
 	packet=SDLNet_AllocPacket(sizeof(data));
 	if(!packet) {
