@@ -20,8 +20,11 @@
  *
  *----------------------------------------------------------------------------------------*/
 
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <sys/types.h>
 #include "NetworkRouter.h"
-#include "Packets.h"
 
 /*------------------------------------------------------------------------------------------
  * FUNCTION:    void networkRouter()
@@ -49,12 +52,26 @@
  * sort of IPC mechanism].
  *
  *----------------------------------------------------------------------------------------*/
-void networkRouter(int pipe[2])
+void *networkRouter(void *args)
 {
+    int pipe = *((int *) args);
+    //printf("%s\n", "Entering network router");
+    char message[128] = "hello";
     /* while loop that will run forever .. until the thread is alive */
+    /*while(1)
+    {
+        
+    }
+    if( (read(pipe, message, 128)) >= 0 )
+    {
+        printf("%s\n", message);
+    }*/
+
+    write(pipe, message, 128);
+
     while(1)
     {
-
+        
     }
 }
 
