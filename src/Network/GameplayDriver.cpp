@@ -4,23 +4,26 @@
 #include <stdlib.h>
 #include <sys/types.h>
 
-//#include "GameplayCommunication.h"
+#include "GameplayCommunication.h"
 #include "NetworkRouter.h"
+#include "Functions.h"
 
 int main()
 {
     pthread_t thread;
+    PDATA data = (PDATA) malloc(sizeof(PDATA));
     int fd[2];
 
-    pipe(fd);
+    create_pipe(fd);
 
-    printf("%s", "Creating thread..");
-    pthread_create(&thread, NULL, networkRouter, (void *)&fd[1]);
+    data->read_pipe = fd[0];
+    data->write_pipe = fd[1];
+
+    pthread_create(&thread, NULL, networkRouter, (void *)&data);
     pthread_detach(thread);
-    printf("%s\n", "done!");
 
     char message[128];
-    int result = read(fd[0], message, 128);
+    int result = read_pipe(fd[0], message, 128);
 
     if(result < 0)
     {

@@ -22,7 +22,7 @@
 
 #include "GameplayCommunication.h"
 #include "Functions.h"
-#include "Packet.h"
+#include "Packets.h"
 
 /*------------------------------------------------------------------------------------------
  * FUNCTION:    read_size_of_data
@@ -105,13 +105,13 @@ void* read_packet(int fd, int size)
 
     if( (read_bytes = read_pipe(fd, &temp, size)) < 0)
     {
-        return NULL; //error .. check error
+        return NULL; /* error .. check error */
     }
 
     if(read_bytes == 0)
     {
-        return NULL; //end of file .. nothing in pipe
+        return NULL; /* end of file .. nothing in pipe */
     }
 
-    return temp; //packet id not found .. can also return the scanned data instead
+    return temp; /* data */
 }

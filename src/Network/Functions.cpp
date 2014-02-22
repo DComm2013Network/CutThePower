@@ -21,6 +21,7 @@
  *
  *----------------------------------------------------------------------------------------*/
 
+#include <unistd.h>
 #include "Functions.h"
 
 /*------------------------------------------------------------------------------------------
@@ -34,10 +35,10 @@
  *
  * PROGRAMMER:  Abhishek Bhardwaj
  *
- * INTERFACE:   int create_pipe(int pipe[2])
- *                  int pipe - an identifier for the pipe
- *                      pipe[0] - for reading
- *                      pipe[1] - for writing
+ * INTERFACE:   int create_pipe(int fd[2])
+ *                  int fd - an identifier for the pipe
+ *                      fd[0] - for reading
+ *                      fd[1] - for writing
  *
  * RETURNS:     int
  *                  0   -   On successful completion
@@ -48,9 +49,9 @@
  * A wrapper function for creating a pipe.
  *
  *----------------------------------------------------------------------------------------*/
-int create_pipe(int pipe[2])
+int create_pipe(int fd[2])
 {
-    return (pipe(pipe));
+    return (pipe(fd));
 }
 
 /*------------------------------------------------------------------------------------------
