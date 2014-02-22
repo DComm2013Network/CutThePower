@@ -23,7 +23,7 @@
 #include "GameplayCommunication.h"
 #include "Functions.h"
 #include "Packets.h"
-
+/*
  int main(){
 	
  	//packet * pkt = (packet*) malloc(sizeof(packet));
@@ -236,7 +236,7 @@ void *recv_tcp_packet(TCPsocket sock, int *game_packet_type, size_t *packet_size
 {
 	void *game_packet;
 	
-	if(recv_tcp(sock, game_packet_type, sizeof(size_t)) == -1)
+	if(recv_tcp(sock, game_packet_type, sizeof(int)) == -1)
 		return NULL;
 
 	switch(*game_packet_type)
@@ -290,7 +290,7 @@ void *recv_tcp_packet(TCPsocket sock, int *game_packet_type, size_t *packet_size
 ----------------------------------------------------------------------------------------------------------------------*/
 void *recv_udp_packet(UDPsocket sock, int *game_packet_type, size_t *packet_size)
 {
-	UDPpacket *pktdata = SDLNet_AllocPacket(MAX_UDP_RECV);
+	UDPpacket *pktdata = SDLNet_AllocPacket(MAX_UDP_RECV + sizeof(int)); /* Allocate space for the max + the packet type */
 	void *game_packet;
 
 	if(recv_udp(sock, pktdata) == -1)
@@ -333,7 +333,8 @@ int recv_tcp(TCPsocket sock, void *buf, size_t bufsize)
 {
 	int numread = SDLNet_TCP_Recv(sock, buf, bufsize);
 	
-	if(numread < bufsize) {
+	if(numread == -1)
+	{
     	fprintf(stderr, "SDLNet_TCP_Recv: %s\n", SDLNet_GetError());
     	return -1;
 	}

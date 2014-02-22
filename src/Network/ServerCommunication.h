@@ -13,7 +13,7 @@
 #define MAX_UDP_RECV		(MAX_PLAYERS * sizeof(int) * 5) + sizeof(int)				/* The maximum size of a game packet sent over UDP from server to client */	
 
 /* Thread functions */
-void recv_thread_func(int router_pipe_writefd);
+void recv_thread_func(int router_pipe_writefd, TCPsocket tcp_recvsock, UDPsocket udp_recvsock);
 void send_thread_func(int router_pipe_readfd);
 //void init_send_data(packet pkt);
 

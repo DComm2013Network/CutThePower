@@ -56,7 +56,7 @@
  *----------------------------------------------------------------------------------------*/
 void *networkRouter(void *args)
 {
-    PDATA data = *((PDATA *) args);
+    PDATA data = (PDATA)args;
     
     while(1)
     {
