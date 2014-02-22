@@ -1,5 +1,5 @@
-#ifndef FUNCTIONS_H
-#define FUNCTIONS_H
+#ifndef NETWORK_UTILS_H
+#define NETWORK_UTILS_H
 
 #include <cstdio>
 #include <unistd.h>

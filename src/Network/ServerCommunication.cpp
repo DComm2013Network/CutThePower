@@ -21,7 +21,7 @@
  *----------------------------------------------------------------------------------------*/
 #include "ServerCommunication.h"
 #include "GameplayCommunication.h"
-#include "Functions.h"
+#include "NetworkUtils.h"
 #include "Packets.h"
 /*
  int main(){
