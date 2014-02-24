@@ -21,7 +21,8 @@
  *
  *----------------------------------------------------------------------------------------*/
 
-#include "Functions.h"
+#include <unistd.h>
+#include "NetworkUtils.h"
 
 /*------------------------------------------------------------------------------------------
  * FUNCTION:    create_pipe
@@ -35,9 +36,9 @@
  * PROGRAMMER:  Abhishek Bhardwaj
  *
  * INTERFACE:   int create_pipe(int pipe[2])
- *                  int pipe - an identifier for the pipe
- *                      pipe[0] - for reading
- *                      pipe[1] - for writing
+ *                  int pipe_ends - an identifier for the pipe
+ *                      pipe_ends[0] - for reading
+ *                      pipe_ends[1] - for writing
  *
  * RETURNS:     int
  *                  0   -   On successful completion
@@ -48,9 +49,9 @@
  * A wrapper function for creating a pipe.
  *
  *----------------------------------------------------------------------------------------*/
-int create_pipe(int pipe[2])
+int create_pipe(int pipe_ends[2])
 {
-    return (pipe(pipe));
+    return (pipe(pipe_ends));
 }
 
 /*------------------------------------------------------------------------------------------

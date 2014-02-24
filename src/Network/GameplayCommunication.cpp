@@ -22,7 +22,7 @@
 
 #include "GameplayCommunication.h"
 #include "Functions.h"
-#include "Packet.h"
+#include "Packets.h"
 
 /*------------------------------------------------------------------------------------------
  * FUNCTION:    read_size_of_data
@@ -80,7 +80,7 @@ int read_size_of_data(int fd)
  *
  * PROGRAMMER:  Abhishek Bhardwaj
  *
- * INTERFACE:   int read_packet(int fd, int size)
+ * INTERFACE:   void *read_packet(int fd, int size)
  *                  int fd              - file descriptor to read from
  *                  int size            - size of data to be scanned from the fd
  *
@@ -102,16 +102,64 @@ int read_size_of_data(int fd)
 void* read_packet(int fd, int size)
 {
     void* temp = (void*) malloc(size);
+	int read_bytes;
 
     if( (read_bytes = read_pipe(fd, &temp, size)) < 0)
     {
-        return NULL; //error .. check error
+        return NULL; /* error .. check error */
     }
 
     if(read_bytes == 0)
     {
-        return NULL; //end of file .. nothing in pipe
+        return NULL; /* end of file .. nothing in pipe */
     }
 
     return temp; //packet id not found .. can also return the scanned data instead
 }
+
+/*------------------------------------------------------------------------------------------
+ * FUNCTION:    write_packet
+ *
+ * DATE:        February 21, 2014
+ *
+ * REVISIONS:   (Date and Description)
+ *
+ * DESIGNER:    Shane Spoor
+ *
+ * PROGRAMMER:  Shane Spoor
+ *
+ * INTERFACE:   int write_packet(int fd, int packet_type, size_t packet_size, void *packet)
+ *                  int write_fd        - The write end of a pipe (to gameplay or network module).
+ *                  int packet_type     - The type of packet written, as defined in Packets.h
+ *					size_t packet_size	- The size of the packet in bytes.
+ *					void *packet		- A pointer to the packet structure.
+ *
+ * RETURNS:     0 on successful write, or -1 if the write failed.
+ *
+ * NOTES:
+ * Writes the packet type, packet size, and the packet itself to the pipe specified by fd.
+ * This function should be used in conjunction with read_data_size and read_packet to transfer
+ * gameplay information between the gameplay and network client modules.
+ *
+ *----------------------------------------------------------------------------------------*/
+int write_packet(int write_fd, int packet_type, size_t packet_size, void *packet)
+{
+	if (write_pipe(write_fd, &packet_size, sizeof(packet_size)) == -1)
+	{
+		perror("write_packet: write");
+		return -1;
+	}
+	else if (write_pipe(write_fd, &packet_type, sizeof(packet_type)) == -1)
+	{
+		perror("write_packet: write");
+		return -1;
+	}
+	else if (write_pipe(write_fd, packet, packet_size) == -1)
+	{
+		perror("write_packet: write");
+		return -1;
+	}
+
+	return 0; 
+}
+

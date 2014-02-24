@@ -20,8 +20,13 @@
  *
  *----------------------------------------------------------------------------------------*/
 
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <sys/types.h>
+
 #include "NetworkRouter.h"
-#include "Packets.h"
+#include "GameplayCommunication.h"
 
 /*------------------------------------------------------------------------------------------
  * FUNCTION:    void networkRouter()
@@ -49,13 +54,15 @@
  * sort of IPC mechanism].
  *
  *----------------------------------------------------------------------------------------*/
-void networkRouter(int pipe[2])
+void *networkRouter(void *args)
 {
-    /* while loop that will run forever .. until the thread is alive */
+    PDATA data = (PDATA)args;
+    
     while(1)
     {
-
+        
     }
+
 }
 
 /*
