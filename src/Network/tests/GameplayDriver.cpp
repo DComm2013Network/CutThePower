@@ -11,7 +11,7 @@
 int main()
 {
     pthread_t thread;
-    PDATA data = (PDATA) malloc(sizeof(WTHREAD_DATA));
+    PDATA data = (PDATA) malloc(sizeof(PDATA));
     int fd[2];
 
     create_pipe(fd);
