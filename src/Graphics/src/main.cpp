@@ -60,8 +60,8 @@ int main(int argc, char* argv[])
 				}
 			}
 		}
-		map_render(gSurface);
 		render_player_system(world, gSurface);
+		map_render(gSurface);
 		SDL_UpdateWindowSurface(gWindow);
 	}
 	

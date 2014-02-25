@@ -17,7 +17,12 @@ void render_player_system(World& world, SDL_Surface* surface){
 		if ((world.mask[entity] & SYSTEM_MASK) == SYSTEM_MASK){
 			renderPlayer = &(world.renderPlayer[entity]);			
 			
-			//SDL_FillRect(surface, &playerRect, renderPlayer->colour);
+			playerRect.x = 100;
+			playerRect.y = 100;
+			playerRect.w = 100;
+			playerRect.h = 100;
+			
+			SDL_FillRect(surface, &playerRect, 0xFF0000);
 		}
 	}
 }
