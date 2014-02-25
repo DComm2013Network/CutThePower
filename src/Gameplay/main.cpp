@@ -88,6 +88,7 @@ int main() {
 
 	World world;
 	bool running = true;
+	InputComponent input;
 	
 	//initialize video drawing
 	SDL_Init(SDL_INIT_VIDEO);
@@ -103,15 +104,33 @@ int main() {
 	
 	init_world(world);
 	
-	
+	int map[MAX_WIDTH][MAX_HEIGHT];
+		
+	for (int i = 0; i < 40; i++) {
+		for (int n = 0; n < 30; n++) {
+			map[i][n] = 0;
+		}
+	}
+	for (int i = 0; i < 40; i++) {
+		map[i][0] = 1;
+		map[i][29] = 1;
+	}
+	for (int i = 0; i < 30; i++) {
+		map[0][i] = 1;
+		map[39][i] = 1;
+	}
 	//This is the creation of the player entity. We should put this into a separate function
-	create_player(world, 55, 55, true);
+	//create_player(world, 55, 55, true);
 	
 	/*LEVEL(5, 5) = L_WALL;*/
-	int level = create_level(world, NULL, 20, 10, 20);
+	int level = create_level(world, map, 40, 30, 20);
 	
 	
 	world.level[level].map[3][6] = L_WALL;
+	
+	//This is the creation of the player entity. We should put this into a separate function
+	create_player(world, 400, 300, input, true);
+	create_player(world, 600, 400, input, false);
 	
 	//In the game loop we update each system in a logical order.
 	while(running) {

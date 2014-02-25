@@ -3,12 +3,12 @@
 #include "world.h"
 #include "collision.h"
 #include "stdio.h"
-
 #include <math.h>
 
 //This is the mask the system uses to see if it will work on the entity.
 #define STANDARD_MASK (COMPONENT_POSITION | COMPONENT_MOVEMENT)
-#define CONTROLLABLE_MASK (COMPONENT_POSITION | COMPONENT_MOVEMENT | COMPONENT_INPUT)
+#define CONTROLLABLE_MASK (COMPONENT_POSITION | COMPONENT_MOVEMENT)
+#define INPUT_MASK (COMPONENT_INPUT)
 #define COLLISION_MASK (COMPONENT_COLLISION)
 #define SPEED 1
 #define PI 3.14159265
@@ -65,53 +65,267 @@ void movement_system(World& world) {
 				temp.s = position->s;
 				temp.level = position->level;
 				
-				movement->lastDirection = 0;
-				if (input->up) {
-					apply_force(world, entity, world.movement[entity].acceleration, -90);
-				}
-				if (input->down) {
-					apply_force(world, entity, world.movement[entity].acceleration, 90);
-				}
-				if (input->left) {
-					apply_force(world, entity, world.movement[entity].acceleration, 180);
-				}
-				if (input->right) {
-					apply_force(world, entity, world.movement[entity].acceleration, 0);
+				if (input->up && !input->down) {
+					temp.y -= movement->velocity;
+					if ((world.mask[entity] & COLLISION_MASK) != 0) {
+						if (collision_system(world, temp, entity) == 0) {
+							position->x = temp.x;
+							position->y = temp.y;
+						} else {
+							temp.y += movement->velocity;
+						}
+					} else {
+						position->x = temp.x;
+						position->y = temp.y;
+					}
+					
 				}
 				
-				temp.x = world.position[entity].x + cos(world.movement[entity].movementRot * PI / 180) * world.movement[entity].velocity;
-				temp.y = world.position[entity].y + sin(world.movement[entity].movementRot * PI / 180) * world.movement[entity].velocity;
-				if ((world.mask[entity] & COLLISION_MASK) != 0) {
-					if (collision_system(world, temp) == false) {
-						/*if ((movement->lastDirection & (0x01 | 0x04)) == (0x01 & 0x04)) {
-							apply_force(world, entity, world.movement[entity].acceleration, -135);
+				if (input->down && !input->up) {
+					temp.y += movement->velocity;
+					if ((world.mask[entity] & COLLISION_MASK) != 0) {
+						if (collision_system(world, temp, entity) == 0) {
+							position->x = temp.x;
+							position->y = temp.y;
+						} else {
+							temp.y -= movement->velocity;
 						}
-						if ((movement->lastDirection & (0x01 | 0x08)) == (0x01 & 0x08)) {
-							apply_force(world, entity, world.movement[entity].acceleration, -45);
-						}
-						if ((movement->lastDirection & (0x02 | 0x04)) == (0x02 & 0x04)) {
-							apply_force(world, entity, world.movement[entity].acceleration, 135);
-						}
-						if ((movement->lastDirection & (0x02 | 0x08)) == (0x02 & 0x08)) {
-							apply_force(world, entity, world.movement[entity].acceleration, 45);
-						}*/
-						//printf("sped: %f, rot: %f\n", world.movement[entity].velocity, world.movement[entity].movementRot);
-						world.position[entity].x = temp.x;
-						world.position[entity].y = temp.y;
-						world.movement[entity].velocity *= 0.99;
-						/*if (world.movement[entity].velocity < 0.01) {
-							world.movement[entity].velocity = 0;
-						}*/
+					} else {
+						position->x = temp.x;
+						position->y = temp.y;
 					}
-					else {
-						world.movement[entity].velocity = 0;
+					
+				}
+				
+				if (input->left && !input->right) {
+					temp.x -= movement->velocity;
+					if ((world.mask[entity] & COLLISION_MASK) != 0) {
+						if (collision_system(world, temp, entity) == 0) {
+							position->x = temp.x;
+							position->y = temp.y;
+						} else {
+							temp.x += movement->velocity;
+						}
+					} else {
+						position->x = temp.x;
+						position->y = temp.y;
 					}
-				} else {
-					position->x = temp.x;
-					position->y = temp.y;
+					
+				}
+
+				if (input->right &&!input->left) {
+					temp.x += movement->velocity;
+					if ((world.mask[entity] & COLLISION_MASK) != 0) {
+						if (collision_system(world, temp, entity) == 0) {
+							position->x = temp.x;
+							position->y = temp.y;
+						} else {
+							temp.x -= movement->velocity;
+						}
+					} else {
+						position->x = temp.x;
+						position->y = temp.y;
+					}
 				}
 			}
 			
 		} 
 	}
 }
+
+/*void movement_system(World& world) {
+	unsigned int entity;
+	PositionComponent		*position;
+	InputComponent			*input;
+	ControllableComponent 	*controllable;
+	MovementComponent		*movement;
+	//CollisionComponent		*collision;
+	
+	//loop through each entity and see if the system can do work on it.
+	for(entity = 0; entity < MAX_ENTITIES; entity++) {
+		//For controllable entities
+		if (IN_THIS_COMPONENT(CONTROLLABLE_MASK)) {
+			input = &(world.input[entity]);
+			position = &(world.position[entity]);
+			movement = &(world.movement[entity]);
+			controllable = &(world.controllable[entity]);
+			//collision = &(world.collision[entity]);
+			
+			//very simple movement. This needs to be synchronized with the
+			//game loop so there is no jittering on very slow systems.
+			if (controllable->active == true) {
+				PositionComponent temp;
+				temp.x = position->x;
+				temp.y = position->y;
+				temp.width = position->width;
+				temp.height = position->height;
+				temp.s = position->s;
+				temp.level = position->level;
+				
+<<<<<<< HEAD
+				movement->lastDirection = 0;
+				if (input->up) {
+					apply_force(world, entity, world.movement[entity].acceleration, -90);
+					temp.x = world.position[entity].x + cos(world.movement[entity].movementRot * PI / 180) * world.movement[entity].velocity;
+					temp.y = world.position[entity].y + sin(world.movement[entity].movementRot * PI / 180) * world.movement[entity].velocity;
+					
+					if ((world.mask[entity] & COLLISION_MASK) != 0) {
+						if (collision_system(world, temp, entity) == 0) {
+							position->x = temp.x;
+							position->y = temp.y;
+							world.movement[entity].velocity *= 0.99;
+						} else {
+							temp.y += movement->velocity;
+							world.movement[entity].velocity = 0;
+						}
+					} else {
+						position->x = temp.x;
+						position->y = temp.y;
+					}
+				}
+				if (input->down) {
+					apply_force(world, entity, world.movement[entity].acceleration, 90);
+					temp.x = world.position[entity].x + cos(world.movement[entity].movementRot * PI / 180) * world.movement[entity].velocity;
+					temp.y = world.position[entity].y + sin(world.movement[entity].movementRot * PI / 180) * world.movement[entity].velocity;
+					
+					if ((world.mask[entity] & COLLISION_MASK) != 0) {
+						if (collision_system(world, temp, entity) == 0) {
+							position->x = temp.x;
+							position->y = temp.y;
+							world.movement[entity].velocity *= 0.99;
+						} else {
+							temp.y += movement->velocity;
+							world.movement[entity].velocity = 0;
+						}
+					} else {
+						position->x = temp.x;
+						position->y = temp.y;
+					}
+				}
+				if (input->left) {
+					apply_force(world, entity, world.movement[entity].acceleration, 180);
+					temp.x = world.position[entity].x + cos(world.movement[entity].movementRot * PI / 180) * world.movement[entity].velocity;
+					temp.y = world.position[entity].y + sin(world.movement[entity].movementRot * PI / 180) * world.movement[entity].velocity;
+					
+					if ((world.mask[entity] & COLLISION_MASK) != 0) {
+						if (collision_system(world, temp, entity) == 0) {
+							position->x = temp.x;
+							position->y = temp.y;
+							world.movement[entity].velocity *= 0.99;
+						} else {
+							temp.x = position->x;
+							world.movement[entity].velocity = 0;
+						}
+					} else {
+						position->x = temp.x;
+						position->y = temp.y;
+					}
+				}
+				if (input->right) {
+					apply_force(world, entity, world.movement[entity].acceleration, 0);
+					temp.x = world.position[entity].x + cos(world.movement[entity].movementRot * PI / 180) * world.movement[entity].velocity;
+					temp.y = world.position[entity].y + sin(world.movement[entity].movementRot * PI / 180) * world.movement[entity].velocity;
+					
+					if ((world.mask[entity] & COLLISION_MASK) != 0) {
+						if (collision_system(world, temp, entity) == 0) {
+							position->x = temp.x;
+							position->y = temp.y;
+							world.movement[entity].velocity *= 0.99;
+						} else {
+							temp.y += movement->velocity;
+							world.movement[entity].velocity = 0;
+						}
+					} else {
+						position->x = temp.x;
+						position->y = temp.y;
+					}
+				}
+				
+				//temp.x = world.position[entity].x + cos(world.movement[entity].movementRot * PI / 180) * world.movement[entity].velocity;
+				//temp.y = world.position[entity].y + sin(world.movement[entity].movementRot * PI / 180) * world.movement[entity].velocity;
+				if ((world.mask[entity] & COLLISION_MASK) != 0) {
+					if (collision_system(world, temp) == false) {
+						//printf("sped: %f, rot: %f\n", world.movement[entity].velocity, world.movement[entity].movementRot);
+						world.position[entity].x = temp.x;
+						world.position[entity].y = temp.y;
+						world.movement[entity].velocity *= 0.99;
+					}
+					else {
+						world.movement[entity].velocity = 0;
+=======
+				
+				
+				if (input->up && !input->down) {
+					temp.y -= movement->velocity;
+					if ((world.mask[entity] & COLLISION_MASK) != 0) {
+						if (collision_system(world, temp, entity) == 0) {
+							position->x = temp.x;
+							position->y = temp.y;
+						} else {
+							temp.y += movement->velocity;
+						}
+					} else {
+						position->x = temp.x;
+						position->y = temp.y;
+					}
+					
+				}
+				
+				
+				
+				if (input->down && !input->up) {
+					temp.y += movement->velocity;
+					if ((world.mask[entity] & COLLISION_MASK) != 0) {
+						if (collision_system(world, temp, entity) == 0) {
+							position->x = temp.x;
+							position->y = temp.y;
+						} else {
+							temp.y -= movement->velocity;
+						}
+					} else {
+						position->x = temp.x;
+						position->y = temp.y;
+					}
+					
+				}
+				
+				
+				
+				
+				if (input->left && !input->right) {
+					temp.x -= movement->velocity;
+					if ((world.mask[entity] & COLLISION_MASK) != 0) {
+						if (collision_system(world, temp, entity) == 0) {
+							position->x = temp.x;
+							position->y = temp.y;
+						} else {
+							temp.x += movement->velocity;
+						}
+					} else {
+						position->x = temp.x;
+						position->y = temp.y;
+					}
+					
+				}
+				
+				
+				
+				if (input->right &&!input->left) {
+					temp.x += movement->velocity;
+					if ((world.mask[entity] & COLLISION_MASK) != 0) {
+						if (collision_system(world, temp, entity) == 0) {
+							position->x = temp.x;
+							position->y = temp.y;
+						} else {
+							temp.x -= movement->velocity;
+						}
+					} else {
+						position->x = temp.x;
+						position->y = temp.y;
+					}
+				}
+			}
+			
+		} 
+	}
+}*/

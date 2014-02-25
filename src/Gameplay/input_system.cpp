@@ -39,16 +39,16 @@ void input_system(World& world, bool& running) {
 			SDL_Keycode pressed = e.key.keysym.sym;
 			
 			switch(pressed) {
-				case SDLK_COMMA:
+				case SDLK_w:
 					up = true;
 					break;
 				case SDLK_a:
 					left = true;
 					break;
-				case SDLK_e:
+				case SDLK_d:
 					right = true;
 					break;
-				case SDLK_o:
+				case SDLK_s:
 					down = true;
 					break;
 			}
@@ -57,16 +57,16 @@ void input_system(World& world, bool& running) {
 			SDL_Keycode pressed = e.key.keysym.sym;
 			
 			switch(pressed) {
-				case SDLK_COMMA:
+				case SDLK_w:
 					up = false;
 					break;
 				case SDLK_a:
 					left = false;
 					break;
-				case SDLK_e:
+				case SDLK_d:
 					right = false;
 					break;
-				case SDLK_o:
+				case SDLK_s:
 					down = false;
 					break;
 			}
