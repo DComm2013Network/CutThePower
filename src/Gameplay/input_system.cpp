@@ -23,80 +23,59 @@ bool down = false;
  * 1 event in the queue and we want to get all of them.
  * 
  */
-void input_system(World& world, bool& running) 
-{
-	
+void input_system(World& world, bool& running) {
 	unsigned int entity;
-	InputComponent	*input;
+	InputComponent *input;
 	
 	SDL_Event e;
 	
 	//set keys that are pressed and unset them if they are released.
-	while(SDL_PollEvent(&e))
-	{
-		if (e.type == SDL_QUIT)
-		{
+	while(SDL_PollEvent(&e)) {
+		if (e.type == SDL_QUIT)	{
 			running = false;
 		}
-		else if (e.type == SDL_KEYDOWN) 
-		{
+		else if (e.type == SDL_KEYDOWN) {
 			
 			SDL_Keycode pressed = e.key.keysym.sym;
 			
-			switch(pressed) 
-			{
-				case SDLK_w:
+			switch(pressed) {
+				case SDLK_COMMA:
 					up = true;
 					break;
-				
 				case SDLK_a:
 					left = true;
 					break;
-				
-				case SDLK_d:
+				case SDLK_e:
 					right = true;
 					break;
-				
-				case SDLK_s:
+				case SDLK_o:
 					down = true;
 					break;
-				
 			}
 		}
-		else if (e.type == SDL_KEYUP) 
-		{
-			
+		else if (e.type == SDL_KEYUP) {
 			SDL_Keycode pressed = e.key.keysym.sym;
 			
-			switch(pressed) 
-			{
-				case SDLK_w:
+			switch(pressed) {
+				case SDLK_COMMA:
 					up = false;
 					break;
-				
 				case SDLK_a:
 					left = false;
 					break;
-				
-				case SDLK_d:
+				case SDLK_e:
 					right = false;
 					break;
-				
-				case SDLK_s:
+				case SDLK_o:
 					down = false;
 					break;
-				
 			}
 		}
 	}
 	
 	//loop through each entity and see if the system can do work on it.
-	for(entity = 0; entity < MAX_ENTITIES; ++entity) 
-	{
-		
-		if ((world.mask[entity] & SYSTEM_MASK) == SYSTEM_MASK) 
-		{
-			
+	for(entity = 0; entity < MAX_ENTITIES; ++entity) {
+		if (IN_THIS_COMPONENT(SYSTEM_MASK)) {
 			input = &(world.input[entity]);
 			
 			input->up = up;

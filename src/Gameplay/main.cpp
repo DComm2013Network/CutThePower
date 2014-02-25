@@ -3,6 +3,7 @@
 
 #include "systems.h"
 #include "world.h"
+#include "level.h"
 
 #define HEIGHT 600
 #define WIDTH 800
@@ -81,28 +82,20 @@
  * 
  * 
  */
-int main() 
-{
+int main() {
 	SDL_Window *window;
 	SDL_Surface *surface;
 
 	World world;
 	bool running = true;
-	unsigned int player;
-	
-	PositionComponent pos;
-	RenderComponent render;
-	InputComponent input;
-	
 	
 	//initialize video drawing
 	SDL_Init(SDL_INIT_VIDEO);
 	
-	window = SDL_CreateWindow("SDL Demo", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_OPENGL);
+	window = SDL_CreateWindow("Gameplay", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_OPENGL);
 	surface = SDL_GetWindowSurface(window);
 	
-	if (window == NULL)
-	{
+	if (window == NULL)	{
 		printf("Error initializing the window.\n");
 		return 1;
 	}
@@ -112,62 +105,21 @@ int main()
 	
 	
 	//This is the creation of the player entity. We should put this into a separate function
-	player = create_player(world, 400, 300, input, true);
+	create_player(world, 55, 55, true);
 	
-	/*pos.x = WIDTH / 2;
-	pos.y = HEIGHT / 2;*/
-	
-	//red 		= 0xFF0000
-	//green		= 0x00FF00
-	//blue 		= 0x0000FF
-	//				   R G B
-	/*render.colour = 0xFF0000;
-	render.width = 20;
-	render.height = 20;
-	
-	world.position[player] = pos;
-	world.render[player] = render;
-	world.input[player] = input;
-	world.mask[player] = COMPONENT_POSITION | COMPONENT_RENDER | COMPONENT_INPUT;*/
-	
-	/* This is another character that is unmovable.
+	/*LEVEL(5, 5) = L_WALL;*/
+	int level = create_level(world, NULL, 20, 10, 20);
 	
 	
-	player = create_entity(world);
-	
-	world.position[player].x = 100;
-	world.position[player].y = 100;
-	
-	world.render[player].colour = 0x0000FF;
-	world.render[player].width = 50;
-	world.render[player].height = 50;
-	
-	world.mask[player] = COMPONENT_POSITION | COMPONENT_RENDER;*/
-	
-	
-	/* This is another character that is unmovable.
-	
-	player = create_entity(world);
-	
-	world.position[player].x = 400;
-	world.position[player].y = 300;
-	
-	world.render[player].colour = 0xFFFF00;
-	world.render[player].width = 50;
-	world.render[player].height = 50;
-	
-	world.mask[player] = COMPONENT_POSITION | COMPONENT_RENDER;*/
+	world.level[level].map[3][6] = L_WALL;
 	
 	//In the game loop we update each system in a logical order.
-	while(running)
-	{
-		
+	while(running) {
 		input_system(world, running);
 		movement_system(world);
 		render_system(world, surface);
 		
 		SDL_UpdateWindowSurface(window);
-		
 	}
 	
 	SDL_DestroyWindow(window);
