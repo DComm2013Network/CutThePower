@@ -1,11 +1,17 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include "map.h"
+#include "world.h"
+#include "systems.h"
+
 int main(int argc, char* argv[]) 
 {
 	SDL_Window *gWindow		= NULL;
 	SDL_Surface *gSurface	= NULL;
 	SDL_Event e;
+	
+	World world;
+	unsigned int player;
 	
 	int running = 1;
 	
@@ -35,6 +41,8 @@ int main(int argc, char* argv[])
 			}
 		}
 	}
+	player = create_entity(world);
+	world.mask[player] = COMPONENT_RENDER_PLAYER;
 	
 	while (running)
 	{
@@ -53,6 +61,7 @@ int main(int argc, char* argv[])
 			}
 		}
 		map_render(gSurface);
+		render_player_system(world, gSurface);
 		SDL_UpdateWindowSurface(gWindow);
 	}
 	

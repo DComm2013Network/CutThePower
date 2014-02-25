@@ -3,6 +3,6 @@
 
 #include "world.h"
 
-void render_system(World *world, SDL_Surface *surface);
+void render_player_system(World& world, SDL_Surface* surface);
 
 #endif
