@@ -120,7 +120,57 @@
     	}
  	}
 }
+/*------------------------------------------------------------------------------------------
+ * FUNCTION:    send_thread_func
+ *
+ * DATE:        Febuary 13 2014
+ *
+ * REVISIONS:   None
+ *
+ * DESIGNER:    Ramzi Chennafi
+ *
+ * PROGRAMMER:  Ramzi Chennafi
+ *
+ * INTERFACE:   void* send_thread_func(void* ndata){
+ *					void * ndata : NETWORK_DATA pointer containing
+ *								   a tcp socket, udp socket and a file
+ *								   descriptor to the network router
+ *								   send pipe.
+ *
+ * RETURNS:     Nothing
+ *
+ * NOTES:
+ *
+ *  Sends data received from the network router pipe to the server. Data sent on 
+ *  pipe is recieved as a snd_pkt struct containing the protocol and raw data.
+ *
+ *----------------------------------------------------------------------------------------*/
+void* send_thread_func(void* ndata){
 
+	NETWORK_DATA * snd_data = (NETWORK_DATA*) ndata;
+
+	UDPpacket * udp_pkt;
+	int protocol;
+	char * data = (char*) 
+
+	while(1){	
+	
+		if((protocol = grab_send_packet(data)) < 0){
+			continue;
+		}
+
+		if(protocol == TCP){
+			send_tcp(data, snd_data->tcpsock)
+		}
+		else if(protocol == UDP){
+			udp_pkt = allocpacket(data;
+			send_udp(snd_pkt, udp_pkt);
+		}
+		else{
+			perror("Invalid protocol.");
+		}
+	}
+}
  /*------------------------------------------------------------------------------------------------------------------
 --      FUNCTION: init_send_data
 --
@@ -167,8 +217,7 @@
 --      NOTES:
 --      Sends the packet data over the established tcp connection.
 ----------------------------------------------------------------------------------------------------------------------*/
-int send_tcp(char * data){
-	TCPsocket sock = initiate_tcp();
+int send_tcp(char * data, TCPsocket sock){
 
 	int len=strlen(data)+1;
 	int result=SDLNet_TCP_Send(sock, data, len);
@@ -453,7 +502,47 @@ UDPpacket *alloc_packet(char *data){
 
 	return packet;
 }
+/*------------------------------------------------------------------------------------------------------------------
+--      FUNCTION: frame_data
+--
+--      DATE: Febuary 15, 2014
+--      REVISIONS: none
+--
+--      DESIGNER: Ramzi Chennafi
+--      PROGRAMMER: Ramzi Chennafi
+--
+--      INTERFACE: packet * frame_data(int type, void* data)
+--
+--      RETURNS: packet * - pointer to a packet structure
+--
+--      NOTES:
+--     	Frames packets recieved from gameplay for sending to the server.
+----------------------------------------------------------------------------------------------------------------------*/
+packet * frame_data(int type, void* data){
 
+	packet * framing_pkt = (packet*) malloc(sizeof(packet));
+
+	switch(type){
+		case 1:
+			framing_pkt->protocol = TCP;
+			framing_pkt->data = (char*)data;
+		break;
+		case 2:
+			framing_pkt->protocol = TCP;
+			framing_pkt->data = (char*)data;
+		break;
+		case 3:
+			framing_pkt->protocol = TCP;
+			framing_pkt->data = (char*)data;
+		break;
+		case 4:
+			framing_pkt->protocol = UDP;
+			framing_pkt->data = (char*)data;
+		break;
+	}
+
+	return framing_pkt;
+}	
 /*------------------------------------------------------------------------------------------------------------------
 --      FUNCTION: resolve_host_ip
 --

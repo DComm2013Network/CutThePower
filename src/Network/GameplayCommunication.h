@@ -14,10 +14,13 @@ typedef struct THREAD_DATA
 } WTHREAD_DATA, *PDATA;
 
 /* Packet reading wrappers */
-int read_size_of_data(int fd);
+int read_type(int fd);
 void *read_packet(int fd, int size);
 
 /* Packet writing wrapper */
-int write_packet(int write_fd, int packet_type, size_t packet_size, void *packet);
+int write_packet(int write_fd, int packet_type, void *packet);
+
+/* Gameplay wrapper */
+int update_data(void* packet, int fd);
 
 #endif
