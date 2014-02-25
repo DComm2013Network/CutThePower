@@ -39,7 +39,7 @@ unsigned int create_entity(World& world)
 	return MAX_ENTITIES;
 }
 
-unsigned int create_level(World& world, int **map, int width, int height, int tileSize) {
+unsigned int create_level(World& world, int map[MAX_WIDTH][MAX_HEIGHT], int width, int height, int tileSize) {
 	unsigned int entity = 0;
 	LevelComponent level;
 	
@@ -76,15 +76,18 @@ unsigned int create_level(World& world, int **map, int width, int height, int ti
 	return MAX_ENTITIES;
 }
 
-unsigned int create_player(World& world, int x, int y, InputComponent input) 
+unsigned int create_player(World& world, int x, int y, InputComponent input, bool controllable) 
 {
 	
 	unsigned int entity;
 	PositionComponent pos;
 	RenderComponent render;
 	MovementComponent movement;
+	ControllableComponent control;
+	CollisionComponent collision;
 	int lastID = -1;
 	unsigned int tempMask = 0;
+	int levelID = 0;
 	//MovementComponent movement;
 	//CollisionComponent collision;
 	
@@ -94,11 +97,19 @@ unsigned int create_player(World& world, int x, int y, InputComponent input)
 	
 	pos.x = x;
 	pos.y = y;
+	pos.width = 20;
+	pos.height = 20;
+	pos.s = 0;
+	pos.level = 0;
 	
 	movement.id = 0;
 	movement.lastDirection = 0;
-	movement.velocity = 2;
+	movement.velocity = 1;
 	movement.accelleration = 0;
+	
+	control.active = true;
+	
+	collision.type = 0;
 	
 	for(entity = 0; entity < MAX_ENTITIES; ++entity) 
 	{
@@ -111,11 +122,24 @@ unsigned int create_player(World& world, int x, int y, InputComponent input)
 		{
 			lastID += 1;
 			movement.id = lastID;
-			world.mask[entity] =  COMPONENT_POSITION | COMPONENT_RENDER | COMPONENT_INPUT | COMPONENT_MOVEMENT; //| COMPONENT_MOVEMENT | COMPONENT_COLLISION;
+			if (controllable) {
+				world.mask[entity] =  COMPONENT_POSITION | 
+									  COMPONENT_RENDER | 
+									  COMPONENT_INPUT | 
+									  COMPONENT_MOVEMENT | 
+									  COMPONENT_COLLISION |
+									  COMPONENT_CONTROLLABLE; //| COMPONENT_MOVEMENT | COMPONENT_COLLISION;
+			} else {
+				world.mask[entity] =  COMPONENT_POSITION | COMPONENT_RENDER | COMPONENT_INPUT | COMPONENT_COLLISION | COMPONENT_MOVEMENT;
+			}
 			world.position[entity] = pos;
 			world.render[entity] = render;
 			world.input[entity] = input;
 			world.movement[entity] = movement;
+			//world.collision[entity] = collision;
+			if (controllable) {
+				world.controllable[entity] = control;
+			}
 			//world.collision[entity] = collision;
 			return entity;
 		}

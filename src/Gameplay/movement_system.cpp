@@ -1,11 +1,14 @@
 #include "components.h"
 #include "systems.h"
 #include "world.h"
+#include "collision.h"
+#include "stdio.h"
 
 //This is the mask the system uses to see if it will work on the entity.
 #define STANDARD_MASK (COMPONENT_POSITION | COMPONENT_MOVEMENT)
-#define CONTROLLABLE_MASK (COMPONENT_POSITION | COMPONENT_COLLISION | COMPONENT_MOVEMENT)
+#define CONTROLLABLE_MASK (COMPONENT_POSITION | COMPONENT_MOVEMENT)
 #define INPUT_MASK (COMPONENT_INPUT)
+#define COLLISION_MASK (COMPONENT_COLLISION)
 #define SPEED 1
 
 void movement_system(World& world) 
@@ -31,7 +34,6 @@ void movement_system(World& world)
 		//For controllable entities
 		if ((world.mask[entity] & CONTROLLABLE_MASK) == CONTROLLABLE_MASK) 
 		{
-			
 			position = &(world.position[entity]);
 			movement = &(world.movement[entity]);
 			controllable = &(world.controllable[entity]);
@@ -48,25 +50,87 @@ void movement_system(World& world)
 				temp.s = position->s;
 				temp.level = position->level;
 				
-				if (input->up) {
-					temp->y -= movement->velocity;
-				}
-				if (input->down) {
-					temp->y += movement->velocity;
-				}
-				if (input->left) {
-					temp->x -= movement->velocity;
-				}
-				if (input->right) {
-					temp->x += movement->velocity;
+				
+				
+				if (input->up && !input->down) {
+					temp.y -= movement->velocity;
+					if ((world.mask[entity] & COLLISION_MASK) != 0) {
+						if (collision_system(world, temp, entity) == 0) {
+							position->x = temp.x;
+							position->y = temp.y;
+						} else {
+							temp.y += movement->velocity;
+						}
+					} else {
+						position->x = temp.x;
+						position->y = temp.y;
+					}
+					
 				}
 				
-				if ((world.mask[entity] & COLLISION_MASK) != 0) {
-					/*COLLISION SYSTEM PLACEHOLDER*/
+				
+				
+				if (input->down && !input->up) {
+					temp.y += movement->velocity;
+					if ((world.mask[entity] & COLLISION_MASK) != 0) {
+						if (collision_system(world, temp, entity) == 0) {
+							position->x = temp.x;
+							position->y = temp.y;
+						} else {
+							temp.y -= movement->velocity;
+						}
+					} else {
+						position->x = temp.x;
+						position->y = temp.y;
+					}
+					
+				}
+				
+				
+				
+				
+				if (input->left && !input->right) {
+					temp.x -= movement->velocity;
+					if ((world.mask[entity] & COLLISION_MASK) != 0) {
+						if (collision_system(world, temp, entity) == 0) {
+							position->x = temp.x;
+							position->y = temp.y;
+						} else {
+							temp.x += movement->velocity;
+						}
+					} else {
+						position->x = temp.x;
+						position->y = temp.y;
+					}
+					
+				}
+				
+				
+				
+				if (input->right &&!input->left) {
+					temp.x += movement->velocity;
+					if ((world.mask[entity] & COLLISION_MASK) != 0) {
+						if (collision_system(world, temp, entity) == 0) {
+							position->x = temp.x;
+							position->y = temp.y;
+						} else {
+							temp.x -= movement->velocity;
+						}
+					} else {
+						position->x = temp.x;
+						position->y = temp.y;
+					}
+				}
+				
+				/*if ((world.mask[entity] & COLLISION_MASK) != 0) {
+					if (collision_system(world, temp, entity) == 0) {
+						position->x = temp.x;
+						position->y = temp.y;
+					}
 				} else {
 					position->x = temp.x;
 					position->y = temp.y;
-				}
+				}*/
 			}
 			
 		} 

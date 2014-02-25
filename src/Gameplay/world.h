@@ -25,7 +25,8 @@ typedef struct
 
 void init_world(World& world);
 unsigned int create_entity(World& world);
-unsigned int create_player(World& world, int x, int y, InputComponent input);
+unsigned int create_player(World& world, int x, int y, InputComponent input, bool controllable);
+unsigned int create_level(World& world, int map[MAX_WIDTH][MAX_HEIGHT], int width, int height, int tileSize);
 void destory_entity(World& world, const unsigned int entity);
 
 #endif

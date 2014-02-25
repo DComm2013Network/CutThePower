@@ -109,54 +109,28 @@ int main()
 	
 	
 	init_world(world);
+	int map[MAX_WIDTH][MAX_HEIGHT];
 	
+		
+	for (int i = 0; i < 40; i++) {
+		for (int n = 0; n < 30; n++) {
+			map[i][n] = 0;
+		}
+	}
+	for (int i = 0; i < 40; i++) {
+		map[i][0] = 1;
+		map[i][29] = 1;
+	}
+	for (int i = 0; i < 30; i++) {
+		map[0][i] = 1;
+		map[39][i] = 1;
+	}
+	
+	create_level(world, map, 40, 30, 20);
 	
 	//This is the creation of the player entity. We should put this into a separate function
-	player = create_player(world, 400, 300, input);
-	
-	/*pos.x = WIDTH / 2;
-	pos.y = HEIGHT / 2;*/
-	
-	//red 		= 0xFF0000
-	//green		= 0x00FF00
-	//blue 		= 0x0000FF
-	//				   R G B
-	/*render.colour = 0xFF0000;
-	render.width = 20;
-	render.height = 20;
-	
-	world.position[player] = pos;
-	world.render[player] = render;
-	world.input[player] = input;
-	world.mask[player] = COMPONENT_POSITION | COMPONENT_RENDER | COMPONENT_INPUT;*/
-	
-	/* This is another character that is unmovable.
-	
-	
-	player = create_entity(world);
-	
-	world.position[player].x = 100;
-	world.position[player].y = 100;
-	
-	world.render[player].colour = 0x0000FF;
-	world.render[player].width = 50;
-	world.render[player].height = 50;
-	
-	world.mask[player] = COMPONENT_POSITION | COMPONENT_RENDER;*/
-	
-	
-	/* This is another character that is unmovable.
-	
-	player = create_entity(world);
-	
-	world.position[player].x = 400;
-	world.position[player].y = 300;
-	
-	world.render[player].colour = 0xFFFF00;
-	world.render[player].width = 50;
-	world.render[player].height = 50;
-	
-	world.mask[player] = COMPONENT_POSITION | COMPONENT_RENDER;*/
+	player = create_player(world, 400, 300, input, true);
+	create_player(world, 600, 400, input, false);
 	
 	//In the game loop we update each system in a logical order.
 	while(running)
