@@ -1,13 +1,13 @@
 #ifndef COMPONENTS_H
 #define COMPONENTS_H
 
-#define MAX_WIDTH 50
-#define MAX_HEIGHT 50
+
+#define MAX_WIDTH 100
+#define MAX_HEIGHT 100
 
 //This is an enumeration of all the components. This is so that each system can check an entities
 //mask to see if it has the desired components for the system to work on them.
-typedef enum 
-{
+typedef enum {
 	COMPONENT_EMPTY = 0,
 	COMPONENT_POSITION = 1 << 0,
 	COMPONENT_RENDER = 1 << 1,
@@ -20,35 +20,26 @@ typedef enum
 
 //Example components. These should be in their simplest form so no duplicate data.
 
-typedef struct
-{
-	
+typedef struct {
 	float x;
 	float y;
 	int width;
 	int height;
 	int s;
 	int level;
-	
 } PositionComponent;
 
-typedef struct
-{
-	
+typedef struct {
 	int colour;
 	int width;
 	int height;
-	
 } RenderComponent;
 
-typedef struct
-{
-	
+typedef struct {
 	bool up;
 	bool left;
 	bool right;
 	bool down;
-	
 } InputComponent;
 
 typedef struct {
@@ -61,7 +52,7 @@ typedef struct {
 
 typedef struct {
 	int levelID;
-	int map[MAX_WIDTH][MAX_HEIGHT];
+	unsigned char map[MAX_WIDTH][MAX_HEIGHT];
 	int width;
 	int height;
 	int tileSize;
@@ -69,9 +60,11 @@ typedef struct {
 
 typedef struct {
 	int id;
-	int lastDirection;
+	int lastDirection;//0001=up 0010=right 0100=down 1000=left
 	float velocity;
-	float accelleration;
+	float maxVelocity;
+	float acceleration;
+	float movementRot;
 } MovementComponent;
 
 #endif

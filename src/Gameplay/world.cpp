@@ -5,16 +5,11 @@
  * This function initializes every mask to be 0, so that there are no components.
  * 
  */
-void init_world(World& world)
-{
-	
+void init_world(World& world) {
 	int i;
-	
-	for(i = 0; i < MAX_ENTITIES; ++i)
-	{
+	for(i = 0; i < MAX_ENTITIES; ++i) {
 		world.mask[i] = COMPONENT_EMPTY;
 	}
-	
 }
 
 /*
@@ -23,31 +18,23 @@ void init_world(World& world)
  * that is not used.
  * 
  */
-unsigned int create_entity(World& world) 
-{
-	
+unsigned int create_entity(World& world, unsigned int attributes) {
 	unsigned int entity;
-	
-	for(entity = 0; entity < MAX_ENTITIES; ++entity) 
-	{
-		if (world.mask[entity] == COMPONENT_EMPTY) 
-		{
+	for(entity = 0; entity < MAX_ENTITIES; entity++) {
+		if (world.mask[entity] == COMPONENT_EMPTY) {
+			world.mask[entity] = attributes;
 			return entity;
 		}
 	}
-	
 	return MAX_ENTITIES;
 }
 
 unsigned int create_level(World& world, int **map, int width, int height, int tileSize) {
 	unsigned int entity = 0;
-	LevelComponent level;
-	
 	int lastID = -1;
 	unsigned int tempMask = 0;
 	int i = 0;
 	int n = 0;
-	
 	if (width <= MAX_WIDTH && height <= MAX_HEIGHT) {
 		for (entity = 0; entity < MAX_ENTITIES; ++entity) {
 			tempMask = world.mask[entity] & COMPONENT_LEVEL;
@@ -60,7 +47,7 @@ unsigned int create_level(World& world, int **map, int width, int height, int ti
 				world.mask[entity] = COMPONENT_LEVEL;
 				for (i = 0; i < width; i++) {
 					for (n = 0; n < height; n++) {
-						world.level[entity].map[i][n] = map[i][n];
+						world.level[entity].map[i][n] = L_EMPTY;
 					}
 				}
 				world.level[entity].levelID = lastID;
@@ -76,13 +63,13 @@ unsigned int create_level(World& world, int **map, int width, int height, int ti
 	return MAX_ENTITIES;
 }
 
-unsigned int create_player(World& world, int x, int y, InputComponent input) 
-{
-	
+unsigned int create_player(World& world, int x, int y, bool controllable) {
 	unsigned int entity;
 	PositionComponent pos;
 	RenderComponent render;
 	MovementComponent movement;
+	ControllableComponent control;
+	InputComponent input;
 	int lastID = -1;
 	unsigned int tempMask = 0;
 	//MovementComponent movement;
@@ -94,33 +81,51 @@ unsigned int create_player(World& world, int x, int y, InputComponent input)
 	
 	pos.x = x;
 	pos.y = y;
+	pos.width = 2;
+	pos.height = 2;
+	pos.level = 0;
 	
 	movement.id = 0;
 	movement.lastDirection = 0;
-	movement.velocity = 2;
-	movement.accelleration = 0;
+	movement.velocity = 0.0;
+	movement.acceleration = 0.001;
+	movement.maxVelocity = 0.15;
+	movement.movementRot = 0;
 	
-	for(entity = 0; entity < MAX_ENTITIES; ++entity) 
-	{
+	input.up = false;
+	input.down = false;
+	input.left = false;
+	input.right = false;
+	
+	control.active = true;
+	
+	for(entity = 0; entity < MAX_ENTITIES; ++entity) {
 		tempMask = world.mask[entity] & COMPONENT_POSITION;
 		if (tempMask == COMPONENT_MOVEMENT) {
 			lastID = world.movement[entity].id;
 		}
 		
-		if (world.mask[entity] == COMPONENT_EMPTY) 
-		{
+		if (world.mask[entity] == COMPONENT_EMPTY) {
 			lastID += 1;
 			movement.id = lastID;
-			world.mask[entity] =  COMPONENT_POSITION | COMPONENT_RENDER | COMPONENT_INPUT | COMPONENT_MOVEMENT; //| COMPONENT_MOVEMENT | COMPONENT_COLLISION;
+			if (controllable) {
+				world.mask[entity] = COMPONENT_POSITION | COMPONENT_RENDER | 
+									 COMPONENT_INPUT | COMPONENT_MOVEMENT | 
+									 COMPONENT_CONTROLLABLE | COMPONENT_COLLISION;
+			} else {
+				world.mask[entity] =  COMPONENT_POSITION | COMPONENT_RENDER | COMPONENT_INPUT | COMPONENT_MOVEMENT;
+			}
 			world.position[entity] = pos;
 			world.render[entity] = render;
 			world.input[entity] = input;
 			world.movement[entity] = movement;
+			if (controllable) {
+				world.controllable[entity] = control;
+			}
 			//world.collision[entity] = collision;
 			return entity;
 		}
 	}
-	
 	return MAX_ENTITIES;
 }
 
