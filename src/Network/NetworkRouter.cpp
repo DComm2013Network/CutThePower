@@ -59,10 +59,12 @@
 void *networkRouter(void *args)
 {
     int fd[2];
+    fd_set listen_fds;
+    int max_fd;
     pthread_t thread_send;
     pthread_t thread_receive;
     PDATA gameplay = (PDATA)args;
-
+    
     NDATA send = (NDATA) malloc(sizeof(NDATA));
     NDATA receive = (NDATA) malloc(sizeof(NDATA));
 
@@ -70,6 +72,7 @@ void *networkRouter(void *args)
     TCPsocket tcp_sock;
     UDPsocket udp_sock;
 
+    max_fd = fd[0] > gameplay->read_pipe ? fd[0] : gameplay->read_pipe;
     resolve_host(&ipaddr, 42337, ip_address_string);
 
     tcp_sock = SDLNet_TCP_Open(&ipaddr);
@@ -97,6 +100,23 @@ void *networkRouter(void *args)
 
     while(1)
     {
+    	int ret;
+        FD_ZERO(&listen_fds);
+        FD_SET(fd[READ_RECV_THREAD], &listen_fds);
+        FD_SET(gameplay->read_pipe, &listen_fds);
+        
+        ret = select(max_fd, &listen_fds, NULL, NULL, NULL);
+        /*if(ret < 0) 	Log an error */
+
+        if(FD_ISSET(fd[0])
+        {
+        	
+        	/* write to gameplay */
+        }
+        if(FD_ISSET(gameplay->read_pipe))
+        {
+        	/* write to send thread */
+        }
         
     }
 

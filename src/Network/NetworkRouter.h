@@ -1,6 +1,10 @@
 #ifndef NETWORK_ROUTER_H
 #define NETWORK_ROUTER_H
 
+
+#define READ_RECV_THREAD	0
+#define WRITE_SEND_THREAD 	1
+
 /* Thread structure */
 typedef struct NETWORK_DATA
 {
