@@ -39,6 +39,17 @@
 #define CONNECT_CODE_ACCEPTED 0x001
 #define CONNECT_CODE_DENIED 0x000
 
+// Type Size Codes
+#define P_NAME 			sizeof(PKT_PLAYER_NAME)
+#define P_CONNECT       sizeof(PKT_PLAYER_CONNECT)
+#define G_STATUS        sizeof(PKT_GAME_STATUS) 
+#define P_OBJSTATUS     sizeof(PKT_OBJECTIVE_STATUS)
+#define P_POSUPDATE     sizeof(PKT_POS_UPDATE)
+#define G_POSUPDATE		sizeof(PKT_ALL_POS_UPDATE)
+#define P_FLOORREQ      sizeof(PKT_FLOOR_MOVE_REQUEST)
+#define P_FLOORMOVE     sizeof(PKT_FLOOR_MOVE)
+
+
 // Game Status Definitions
 #define GAME_STATE_WAITING 0x001
 #define GAME_STATE_ACTIVE 0x002
@@ -53,20 +64,20 @@
 
 typedef struct pkt01{
 	char client_player_name[MAX_NAME];
-} pkt01;
+} PKT_PLAYER_NAME;
 
 typedef struct pkt02{
 	unsigned	connect_code;
 	playerNo_t 	clients_player_number;
 	teamNo_t 	clients_team_number;
-} pkt02;
+} PKT_PLAYER_CONNECT;
 
 typedef struct pkt03{
 	bool 		player_valid[MAX_PLAYERS];
 	char 		otherPlayers_name[MAX_PLAYERS][MAX_NAME];
 	teamNo_t 	otherPlayers_teams[MAX_PLAYERS];
 	status_t	readystatus[MAX_PLAYERS];
-} pkt03;
+} PKT_GAME_STATUS;
 
 typedef struct pkt04{
 	playerNo_t sendingPlayer_number;
@@ -91,7 +102,7 @@ typedef struct pkt08
 {
 	bool		objectives_captured[MAX_OBJECTIVES];
 	status_t	game_status;
-} pkt08;
+} PKT_OBJECTIVE_STATUS;
 
 //Packet 9: 0x0009
 // << UNPURPOSED >>

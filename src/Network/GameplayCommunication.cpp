@@ -52,9 +52,9 @@
  * A function for reading the size of the following data struct in the pipe.
  *
  *----------------------------------------------------------------------------------------*/
-int read_size_of_data(int fd)
+int read_type(int fd)
 {
-    int size, read_bytes;
+    int type, read_bytes;
 
     if( (read_bytes = read_pipe(fd, &size, sizeof(int))) < 0)
     {
@@ -66,7 +66,7 @@ int read_size_of_data(int fd)
         return 0; //end of file .. nothing in pipe
     }
 
-    return size;
+    return type;
 }
 
 /*------------------------------------------------------------------------------------------
@@ -142,14 +142,9 @@ void* read_packet(int fd, int size)
  * gameplay information between the gameplay and network client modules.
  *
  *----------------------------------------------------------------------------------------*/
-int write_packet(int write_fd, int packet_type, size_t packet_size, void *packet)
+int write_packet(int write_fd, int packet_type, void *packet)
 {
-	if (write_pipe(write_fd, &packet_size, sizeof(packet_size)) == -1)
-	{
-		perror("write_packet: write");
-		return -1;
-	}
-	else if (write_pipe(write_fd, &packet_type, sizeof(packet_type)) == -1)
+	if (write_pipe(write_fd, &packet_type, sizeof(packet_type)) == -1)
 	{
 		perror("write_packet: write");
 		return -1;
@@ -162,4 +157,48 @@ int write_packet(int write_fd, int packet_type, size_t packet_size, void *packet
 
 	return 0; 
 }
+/*------------------------------------------------------------------------------------------
+ * FUNCTION:    update_data
+ *
+ * DATE:        Febuary 14 2014
+ *
+ * REVISIONS:   None
+ *
+ * DESIGNER:    Ramzi Chennafi
+ *
+ * PROGRAMMER:  Ramzi Chennafi
+ *
+ * INTERFACE:   int update_data(void* packet, int fd)
+ *
+ * RETURNS:     int : -1 on pipe read error
+ *                    -2 on packet read error
+ *                    0 on empty read pipe
+ *                    type of packet on success
+ *                  
+ *
+ * NOTES:
+ *
+ *  Function called by gameplay to update the game to the latest recieved packet.
+ *  Takes a pointer to a malloced packet structure of MAX_PACKET_SIZE and a file 
+ *  descriptor to the pipe to read. Returns the type on success.
+ *
+ *----------------------------------------------------------------------------------------*/
+int update_data(void* packet, int fd){
+ 
+    int type;
+    
+    if((type = read_type(fd)) == 0){
+        return type;
+    }
 
+    if(type == -1){
+        perror("Error in read_pipe.");
+        return type;
+    }
+    
+    if((packet = read_packet(fd, type)) == NULL){
+        return -2;
+    }
+
+    return type;
+}

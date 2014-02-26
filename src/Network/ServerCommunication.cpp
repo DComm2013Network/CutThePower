@@ -120,37 +120,55 @@
     	}
  	}
 }
+/*------------------------------------------------------------------------------------------
+ * FUNCTION:    send_thread_func
+ *
+ * DATE:        Febuary 13 2014
+ *
+ * REVISIONS:   None
+ *
+ * DESIGNER:    Ramzi Chennafi
+ *
+ * PROGRAMMER:  Ramzi Chennafi
+ *
+ * INTERFACE:   void* send_thread_func(void* ndata){
+ *					void * ndata : NETWORK_DATA pointer containing
+ *								   a tcp socket, udp socket and a file
+ *								   descriptor to the network router
+ *								   send pipe.
+ *
+ * RETURNS:     Nothing
+ *
+ * NOTES:
+ *
+ *  Sends data received from the network router pipe to the server. Data sent on 
+ *  pipe is recieved as a snd_pkt struct containing the protocol and raw data.
+ *
+ *----------------------------------------------------------------------------------------*/
+void* send_thread_func(void* ndata){
 
- /*------------------------------------------------------------------------------------------------------------------
---      FUNCTION: init_send_data
---
---      DATE: Febuary 15, 2014
---      REVISIONS: none
---
---      DESIGNER: Ramzi Chennafi
---      PROGRAMMER: Ramzi Chennafi
---
---      INTERFACE: void init_send_data(packet pkt)
---
---      RETURNS: void
---
---      NOTES:
---      Program entry point. Disables terminal processing, creates 3 pipes and 2 children processes. These processes
---		are directed into their respective function paths.
-----------------------------------------------------------------------------------------------------------------------*/
-/*void init_send_data(packet pkt){
+	NETWORK_DATA * snd_data = (NETWORK_DATA*) ndata;
 
-	switch(pkt->protocol){
-		case TCP:
-			send_tcp(pkt->data);
-			break;
-		case UDP:
-			send_udp(pkt->data);
-			break;
-		default:
-			fprintf(stderr, "Invalid protocol in init_send_data().");
+	int protocol, type;
+	char * data;
+
+	while(1){	
+	
+		if((data = grab_send_packet(&protocol, &type, ndata->read_pipe)) < 0){
+			continue;
+		}
+
+		if(protocol == TCP){
+			send_tcp(data, snd_data->tcpsock)
+		}
+		else if(protocol == UDP){
+			send_udp(data, snd_data->udpsock);
+		}
+		else{
+			perror("Invalid protocol.");
+		}
 	}
-}*/
+}
 /*------------------------------------------------------------------------------------------------------------------
 --      FUNCTION: send_tcp
 --
@@ -167,8 +185,7 @@
 --      NOTES:
 --      Sends the packet data over the established tcp connection.
 ----------------------------------------------------------------------------------------------------------------------*/
-int send_tcp(char * data){
-	TCPsocket sock = initiate_tcp();
+int send_tcp(char * data, TCPsocket sock){
 
 	int len=strlen(data)+1;
 	int result=SDLNet_TCP_Send(sock, data, len);
@@ -197,11 +214,10 @@ int send_tcp(char * data){
 --      Sends the specified data across UDP. Allocates the UDP packet, establishes the random socket for tranfer and then
 --		sends the data on the established socket. Frees the packet after completion.
 ----------------------------------------------------------------------------------------------------------------------*/
-int send_udp(char * data){
+int send_udp(char * data, UDPsocket sock){
 
 	int numsent;
 	UDPpacket *pktdata = alloc_packet(data);
-	UDPsocket sock = initiate_udp(10);
 
 	numsent=SDLNet_UDP_Send(sock, pktdata->channel, pktdata);
 	if(!numsent) {
@@ -398,6 +414,38 @@ TCPsocket initiate_tcp()
 
 	return tcpsock;
 }
+/*------------------------------------------------------------------------------------------
+ * FUNCTION:    grab_send_packet
+ *
+ * DATE:        Febuary 20 2014
+ *
+ * REVISIONS:   None.
+ *
+ * DESIGNER:    Ramzi Chennafi
+ *
+ * PROGRAMMER:  Ramzi Chennafi
+ *
+ * INTERFACE:   char* grab_send_packet(int &protocol, int &type, int fd)
+ *                  int &protocol : pointer to  a empty protocol int that is used to determine packet sending
+ *					int &type     : pointer to an empty type int that is used to determine packet size (type)
+ *					int fd        : file descriptor to the network router read pipe
+ *					
+ *
+ * RETURNS:     char* : pointer to an array of chars containing packet data
+ *
+ * NOTES:
+ *
+ *  Grabs the first packet on the pipe to be sent by send thread.
+ *
+ *----------------------------------------------------------------------------------------*/
+char* grab_send_packet(int &protocol, int &type, int fd){
+	
+	int protocol = read_protocol();
+	int type = read_type(fd);
+	char * data = read_packet(fd, type);
+
+	return data;
+}
 /*------------------------------------------------------------------------------------------------------------------
 --      FUNCTION: intiate_udp 
 --
@@ -453,7 +501,49 @@ UDPpacket *alloc_packet(char *data){
 
 	return packet;
 }
+/*------------------------------------------------------------------------------------------------------------------
+--      FUNCTION: frame_data
+--
+--      DATE: Febuary 15, 2014
+--      REVISIONS: none
+--
+--      DESIGNER: Ramzi Chennafi
+--      PROGRAMMER: Ramzi Chennafi
+--
+--      INTERFACE: packet * frame_data(int type, void* data)
+--
+--      RETURNS: packet * - pointer to a packet structure
+--
+--      NOTES:
+--     	Frames packets recieved from gameplay for sending to the server.
+----------------------------------------------------------------------------------------------------------------------*/
+packet * frame_data(int type, void* data){
 
+	packet * framing_pkt = (packet*) malloc(sizeof(packet));
+
+	switch(type){
+		case 1:
+			framing_pkt->protocol = TCP;
+			framing_pkt->type = sizeof(data)
+			framing_pkt->data = (char*)data;
+		break;
+		case 2:
+			framing_pkt->protocol = TCP;
+			framing_pkt->type = type;
+			framing_pkt->data = (char*)data;
+		break;
+		case 3:
+			framing_pkt->protocol = TCP;
+			framing_pkt->data = (char*)data;
+		break;
+		case 4:
+			framing_pkt->protocol = UDP;
+			framing_pkt->data = (char*)data;
+		break;
+	}
+
+	return framing_pkt;
+}	
 /*------------------------------------------------------------------------------------------------------------------
 --      FUNCTION: resolve_host_ip
 --
