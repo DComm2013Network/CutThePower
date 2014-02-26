@@ -1,6 +1,5 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
-#include <SDL2/SDL.h>
 #include "graphicscomponents.h"
 
 typedef enum{
