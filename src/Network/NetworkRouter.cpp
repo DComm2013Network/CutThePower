@@ -34,6 +34,7 @@
 #include "NetworkRouter.h"
 #include "GameplayCommunication.h"
 #include "ServerCommunication.h"
+#include "PipeUtils.h"
 
 /*------------------------------------------------------------------------------------------
  * FUNCTION:    void networkRouter()
@@ -72,15 +73,15 @@ void *networkRouter(void *args)
     pthread_t thread_receive;
     PDATA gameplay = (PDATA)args;
     
-    NDATA send = (NDATA) malloc(sizeof(NDATA));
-    NDATA receive = (NDATA) malloc(sizeof(NDATA));
+    NDATA send = (NDATA) malloc(sizeof(WNETWORK_DATA));
+    NDATA receive = (NDATA) malloc(sizeof(WNETWORK_DATA));
 
     IPaddress ipaddr;
     TCPsocket tcp_sock;
     UDPsocket udp_sock;
 
     max_fd = fd[0] > gameplay->read_pipe ? fd[0] : gameplay->read_pipe;
-    resolve_host(&ipaddr, 42337, ip_address_string);
+    resolve_host(&ipaddr, 42337, gameplay->ip_address_string);
 
     tcp_sock = SDLNet_TCP_Open(&ipaddr);
     udp_sock = SDLNet_UDP_Open(42338);
@@ -115,12 +116,12 @@ void *networkRouter(void *args)
         ret = select(max_fd, &listen_fds, NULL, NULL, NULL);
         /*if(ret < 0) 	Log an error */
 
-        if(FD_ISSET(fd[0])
+        if(FD_ISSET(fd[0], &listen_fds))
         {
         	packet = read_data(fd[0], &type);
 			write_packet(gameplay->write_pipe, type, packet);
         }
-        if(FD_ISSET(gameplay->read_pipe))
+        if(FD_ISSET(gameplay->read_pipe, &listen_fds))
         {
         	packet = read_data(gameplay->read_pipe, &type);
 			write_packet(fd[1], type, packet);

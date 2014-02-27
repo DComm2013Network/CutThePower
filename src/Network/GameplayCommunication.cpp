@@ -24,19 +24,21 @@
 #include "GameplayCommunication.h"
 #include "Packets.h" /* extern packet_sizes[] */
 
-packet_sizes[0]		= sizeof(struct pkt01);
-packet_sizes[1] 	= sizeof(struct pkt02);
-packet_sizes[2] 	= sizeof(struct pkt03);
-packet_sizes[3] 	= sizeof(struct pkt04);
-packet_sizes[4] 	= sizeof(struct pkt05);
-packet_sizes[5] 	= sizeof(struct pkt06);
-packet_sizes[6] 	= 0;
-packet_sizes[7] 	= sizeof(struct pkt08);
-packet_sizes[8] 	= 0;
-packet_sizes[9] 	= sizeof(struct pkt10);
-packet_sizes[10]	= sizeof(struct pkt11);
-packet_sizes[11] 	= sizeof(struct pkt12);
-packet_sizes[12] 	= sizeof(struct pkt13);
+uint32_t packet_sizes[13] = {
+	sizeof(struct pkt01),
+	sizeof(struct pkt02),
+	sizeof(struct pkt03),
+	sizeof(struct pkt04),
+	sizeof(struct pkt05),
+	sizeof(struct pkt06),
+	0,
+	sizeof(struct pkt08),
+	0,
+	sizeof(struct pkt10),
+	sizeof(struct pkt11),
+	sizeof(struct pkt12),
+	sizeof(struct pkt13)
+};
 
 /*------------------------------------------------------------------------------------------
  * FUNCTION:    read_size_of_data
@@ -198,7 +200,7 @@ int write_packet(int write_fd, uint32_t packet_type, void *packet)
  *  descriptor to the pipe to read. Returns the type on success.
  *
  *----------------------------------------------------------------------------------------*/
-void *read_data(uint32_t *type, int fd){
+void *read_data(int fd, uint32_t *type){
 
 	void *packet;
     

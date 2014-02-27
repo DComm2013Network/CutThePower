@@ -56,7 +56,7 @@
 
 typedef struct{
 	int protocol;
-	int type;
+	uint32_t type;
 	char * data;
 }internal_packet;
 
@@ -150,5 +150,4 @@ typedef struct pkt13{
 	pos_t	yPos;
 } PKT_FLOOR_MOVE;
 
-extern uint32_t packet_sizes[13];
 #endif
