@@ -7,7 +7,7 @@
 #include "level.h"
 
 //Maximum entities that will be used.
-#define MAX_ENTITIES 10
+#define MAX_ENTITIES 256
 
 #define IN_THIS_COMPONENT(x) ((world.mask[entity] & x) == x)
 

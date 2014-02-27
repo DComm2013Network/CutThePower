@@ -1,5 +1,7 @@
 #include "world.h"
 
+#include <stdlib.h>
+
 /*
  * 
  * This function initializes every mask to be 0, so that there are no components.
@@ -71,14 +73,13 @@ unsigned int create_player(World& world, int x, int y, InputComponent input, boo
 	MovementComponent movement;
 	ControllableComponent control;
 	//InputComponent input;
-	CollisionComponent collision;
 	int lastID = -1;
 	unsigned int tempMask = 0;
-	int levelID = 0;
+	
 	//MovementComponent movement;
 	//CollisionComponent collision;
 	
-	render.colour = 0xFF0000;
+	render.colour = 0x000000 + (rand() % 0x1000000);
 	render.width = 20;
 	render.height = 20;
 	
@@ -92,10 +93,10 @@ unsigned int create_player(World& world, int x, int y, InputComponent input, boo
 	
 	movement.id = 0;
 	movement.lastDirection = 0;
-	movement.velocity = 1;
 	movement.acceleration = 0.001;
-	movement.maxVelocity = 0.15;
-	movement.movementRot = 0;
+	movement.maxSpeed = 0.15;
+	movement.movX = 0;
+	movement.movY = 0;
 	
 	input.up = false;
 	input.down = false;
@@ -103,8 +104,6 @@ unsigned int create_player(World& world, int x, int y, InputComponent input, boo
 	input.right = false;
 	
 	control.active = true;
-	
-	collision.type = 0;
 	
 	for(entity = 0; entity < MAX_ENTITIES; ++entity) {
 		tempMask = world.mask[entity] & COMPONENT_POSITION;

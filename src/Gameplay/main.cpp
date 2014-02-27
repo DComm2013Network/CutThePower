@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <SDL2/SDL.h>
+#include <time.h>
 
 #include "systems.h"
 #include "world.h"
@@ -101,6 +102,7 @@ int main() {
 		return 1;
 	}
 	
+	srand(time(NULL));
 	
 	init_world(world);
 	
@@ -126,11 +128,13 @@ int main() {
 	int level = create_level(world, map, 40, 30, 20);
 	
 	
-	world.level[level].map[3][6] = L_WALL;
+	//world.level[level].map[3][6] = L_WALL;
 	
 	//This is the creation of the player entity. We should put this into a separate function
-	create_player(world, 400, 300, input, true);
-	create_player(world, 600, 400, input, false);
+	create_player(world, rand() % 740 + 20, rand() % 540 + 20, input, true);
+	/*for (int i = 0; i < 199; i++) {
+		create_player(world, rand() % 740 + 20, rand() % 540 + 20, input, false);
+	}*/
 	
 	//In the game loop we update each system in a logical order.
 	while(running) {

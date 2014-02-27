@@ -61,10 +61,10 @@ typedef struct {
 typedef struct {
 	int id;
 	int lastDirection;//0001=up 0010=right 0100=down 1000=left
-	float velocity;
-	float maxVelocity;
+	float maxSpeed;
+	float movX;
+	float movY;
 	float acceleration;
-	float movementRot;
 } MovementComponent;
 
 #endif
