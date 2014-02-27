@@ -1,5 +1,7 @@
 #include "world.h"
 
+#include <stdlib.h>
+
 /*
  * 
  * This function initializes every mask to be 0, so that there are no components.
@@ -29,7 +31,7 @@ unsigned int create_entity(World& world, unsigned int attributes) {
 	return MAX_ENTITIES;
 }
 
-unsigned int create_level(World& world, int **map, int width, int height, int tileSize) {
+unsigned int create_level(World& world, int map[MAX_WIDTH][MAX_HEIGHT], int width, int height, int tileSize) {
 	unsigned int entity = 0;
 	int lastID = -1;
 	unsigned int tempMask = 0;
@@ -47,7 +49,7 @@ unsigned int create_level(World& world, int **map, int width, int height, int ti
 				world.mask[entity] = COMPONENT_LEVEL;
 				for (i = 0; i < width; i++) {
 					for (n = 0; n < height; n++) {
-						world.level[entity].map[i][n] = L_EMPTY;
+						world.level[entity].map[i][n] = map[i][n];
 					}
 				}
 				world.level[entity].levelID = lastID;
@@ -63,34 +65,38 @@ unsigned int create_level(World& world, int **map, int width, int height, int ti
 	return MAX_ENTITIES;
 }
 
-unsigned int create_player(World& world, int x, int y, bool controllable) {
+unsigned int create_player(World& world, int x, int y, InputComponent input, bool controllable) 
+{
 	unsigned int entity;
 	PositionComponent pos;
 	RenderComponent render;
 	MovementComponent movement;
 	ControllableComponent control;
-	InputComponent input;
+	//InputComponent input;
 	int lastID = -1;
 	unsigned int tempMask = 0;
+	
 	//MovementComponent movement;
 	//CollisionComponent collision;
 	
-	render.colour = 0xFF0000;
+	render.colour = 0x000000 + (rand() % 0x1000000);
 	render.width = 20;
 	render.height = 20;
 	
 	pos.x = x;
 	pos.y = y;
-	pos.width = 2;
-	pos.height = 2;
+
+	pos.width = 20;
+	pos.height = 20;
+	pos.s = 0;
 	pos.level = 0;
 	
 	movement.id = 0;
 	movement.lastDirection = 0;
-	movement.velocity = 0.0;
 	movement.acceleration = 0.001;
-	movement.maxVelocity = 0.15;
-	movement.movementRot = 0;
+	movement.maxSpeed = 0.15;
+	movement.movX = 0;
+	movement.movY = 0;
 	
 	input.up = false;
 	input.down = false;
@@ -109,16 +115,23 @@ unsigned int create_player(World& world, int x, int y, bool controllable) {
 			lastID += 1;
 			movement.id = lastID;
 			if (controllable) {
-				world.mask[entity] = COMPONENT_POSITION | COMPONENT_RENDER | 
-									 COMPONENT_INPUT | COMPONENT_MOVEMENT | 
-									 COMPONENT_CONTROLLABLE | COMPONENT_COLLISION;
+				world.mask[entity] =  COMPONENT_POSITION | 
+									  COMPONENT_RENDER | 
+									  COMPONENT_INPUT | 
+									  COMPONENT_MOVEMENT | 
+									  COMPONENT_COLLISION |
+									  COMPONENT_CONTROLLABLE; //| COMPONENT_MOVEMENT | COMPONENT_COLLISION;
 			} else {
-				world.mask[entity] =  COMPONENT_POSITION | COMPONENT_RENDER | COMPONENT_INPUT | COMPONENT_MOVEMENT;
+				world.mask[entity] =  COMPONENT_POSITION | COMPONENT_RENDER | COMPONENT_INPUT | COMPONENT_COLLISION | COMPONENT_MOVEMENT;
 			}
 			world.position[entity] = pos;
 			world.render[entity] = render;
 			world.input[entity] = input;
 			world.movement[entity] = movement;
+			if (controllable) {
+				world.controllable[entity] = control;
+			}
+			//world.collision[entity] = collision;
 			if (controllable) {
 				world.controllable[entity] = control;
 			}
