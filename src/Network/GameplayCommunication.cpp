@@ -20,9 +20,23 @@
  *
  *----------------------------------------------------------------------------------------*/
 
+#include "PipeUtils.h"
 #include "GameplayCommunication.h"
-#include "Packets.h"
-extern size_t packet_sizes[];
+#include "Packets.h" /* extern packet_sizes[] */
+
+packet_sizes[0]		= sizeof(struct pkt01);
+packet_sizes[1] 	= sizeof(struct pkt02);
+packet_sizes[2] 	= sizeof(struct pkt03);
+packet_sizes[3] 	= sizeof(struct pkt04);
+packet_sizes[4] 	= sizeof(struct pkt05);
+packet_sizes[5] 	= sizeof(struct pkt06);
+packet_sizes[6] 	= 0;
+packet_sizes[7] 	= sizeof(struct pkt08);
+packet_sizes[8] 	= 0;
+packet_sizes[9] 	= sizeof(struct pkt10);
+packet_sizes[10]	= sizeof(struct pkt11);
+packet_sizes[11] 	= sizeof(struct pkt12);
+packet_sizes[12] 	= sizeof(struct pkt13);
 
 /*------------------------------------------------------------------------------------------
  * FUNCTION:    read_size_of_data
@@ -52,10 +66,10 @@ extern size_t packet_sizes[];
  * A function for reading the size of the following data struct in the pipe.
  *
  *----------------------------------------------------------------------------------------*/
-int read_type(int fd)
+uint32_t read_type(int fd)
 {
 
-    int type, read_bytes;
+    uint32_t type, read_bytes;
 
     if( (read_bytes = read_pipe(fd, &type, sizeof(int))) < 0)
     {
@@ -100,7 +114,7 @@ int read_type(int fd)
  * A function for reading the size of the following data struct in the pipe.
  *
  *----------------------------------------------------------------------------------------*/
-void* read_packet(int fd, int size)
+void* read_packet(int fd, uint32_t size)
 {
     void* temp = (void*) malloc(size);
 	int read_bytes;
@@ -132,7 +146,6 @@ void* read_packet(int fd, int size)
  * INTERFACE:   int write_packet(int fd, int packet_type, size_t packet_size, void *packet)
  *                  int write_fd        - The write end of a pipe (to gameplay or network module).
  *                  int packet_type     - The type of packet written, as defined in Packets.h
- *					size_t packet_size	- The size of the packet in bytes.
  *					void *packet		- A pointer to the packet structure.
  *
  * RETURNS:     0 on successful write, or -1 if the write failed.
@@ -143,7 +156,7 @@ void* read_packet(int fd, int size)
  * gameplay information between the gameplay and network client modules.
  *
  *----------------------------------------------------------------------------------------*/
-int write_packet(int write_fd, int packet_type void *packet)
+int write_packet(int write_fd, uint32_t packet_type, void *packet)
 {
     if (write_pipe(write_fd, &packet_type, sizeof(packet_type)) == -1)
     {
@@ -158,6 +171,7 @@ int write_packet(int write_fd, int packet_type void *packet)
 
 	return 0; 
 }
+
 /*------------------------------------------------------------------------------------------
  * FUNCTION:    update_data
  *
@@ -179,22 +193,22 @@ int write_packet(int write_fd, int packet_type void *packet)
  *
  * NOTES:
  *
- *  Function called by gameplay to update the game to the latest recieved packet.
+ *  Function called by gameplay to update the game to the latest received packet.
  *  Takes a pointer to a malloced packet structure of MAX_PACKET_SIZE and a file 
  *  descriptor to the pipe to read. Returns the type on success.
  *
  *----------------------------------------------------------------------------------------*/
-int read_data(void* packet, int fd){
- 
-    int type;
+void *read_data(uint32_t *type, int fd){
+
+	void *packet;
     
-    if((type = read_size(fd)) <= 0){
-        return type;
+    if((*type = read_type(fd)) <= 0){
+        return NULL;
     }
     
-    if((packet = read_packet(fd, packet_sizes[type])) == NULL){
-        return -2;
+    if((packet = read_packet(fd, packet_sizes[*type])) == NULL){
+        return (void *)-2;
     }
 
-    return type;
+    return packet;
 }

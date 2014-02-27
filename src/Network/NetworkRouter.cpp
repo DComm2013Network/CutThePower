@@ -1,3 +1,8 @@
+/**
+ * Description
+ * @file NetworkRouter.cpp
+ */
+
 /*------------------------------------------------------------------------------------------
  * SOURCE FILE: NetworkRouter.cpp
  *
@@ -61,6 +66,8 @@ void *networkRouter(void *args)
     int fd[2];
     fd_set listen_fds;
     int max_fd;
+    uint32_t type;
+    void *packet;
     pthread_t thread_send;
     pthread_t thread_receive;
     PDATA gameplay = (PDATA)args;
@@ -110,16 +117,15 @@ void *networkRouter(void *args)
 
         if(FD_ISSET(fd[0])
         {
-        	
-        	/* write to gameplay */
+        	packet = read_data(fd[0], &type);
+			write_packet(gameplay->write_pipe, type, packet);
         }
         if(FD_ISSET(gameplay->read_pipe))
         {
-        	/* write to send thread */
+        	packet = read_data(gameplay->read_pipe, &type);
+			write_packet(fd[1], type, packet);
         }
-        
     }
-
 }
 
 /*

@@ -21,26 +21,9 @@
  *----------------------------------------------------------------------------------------*/
 #include "ServerCommunication.h"
 #include "GameplayCommunication.h"
-#include "NetworkUtils.h"
-#include "Packets.h"
- extern size_t packet_sizes[];
-/*
- int main(){
-	
- 	//packet * pkt = (packet*) malloc(sizeof(packet));
-	//pkt->protocol = TCP;
- 	//pkt->data = "testing";
+#include "PipeUtils.h"
+#include "Packets.h" /* extern packet_sizes[] */
 
- 	if(SDL_Init(0)==-1) {
-     	fprintf(stderr, "SDL_Init: %s\n", SDL_GetError());
-     	exit(1);
- 	}
-
- 	//init_send_data(pkt);
-
- 	SDLNet_Quit();
- }
-//////////////////////FOR TESTING PURPOSES//////////////////////////////////////////////////
 /*------------------------------------------------------------------------------------------
  * FUNCTION:    recv_thread_func
  *
@@ -52,16 +35,12 @@
  *
  * PROGRAMMER:  Shane Spoor
  *
- * INTERFACE:   void recv_thread_func(const int router_pipe_writefd, const char *host_ip_string)
- *                  int router_pipe_writefd:  	Identifies the write end of a pipe to the
- *												network router thread.
- *					uint16_t port:				The port on which to listen (for UDP).	
- *					TCPsocket tcp_recvsock:		TCP socket on which to listen for data from the
- *												server. This must be opened and passed as an
- *												argument since both the send and receive threads
- *												will use the same socket.
- *					UDPsocket upd_recvsock:		UDP socket on which to listen for data from the
- *												server. This will also be used in both threads.
+ * INTERFACE:   void recv_thread_func(void *ndata)
+ *
+ *										void *ndata: 	Pointer to a NETWORK_DATA struct
+ *														containing socket descriptors and
+ *														the pipe end to the Network Router
+ *														thread.
  * RETURNS:     void
  *
  * NOTES:
@@ -72,48 +51,49 @@
  * are responsible for error message logging).
  *
  *----------------------------------------------------------------------------------------*/
- void recv_thread_func(int router_pipe_writefd, TCPsocket tcp_recvsock, UDPsocket udp_recvsock)
+ void *recv_thread_func(void *ndata)
  {
+ 	NETWORK_DATA		*recv_data = (NETWORK_DATA *)ndata;
  	int 				numready;
 	int 				packet_type;
 	void 				*game_packet;
- 	SDLNet_SocketSet 	set = make_socket_set(2, tcp_recvsock, udp_recvsock);
+ 	SDLNet_SocketSet 	set = make_socket_set(2, recv_data->tcpsock, recv_data->udpsock);
  	
  	if(!set)
- 		return;
+ 		return NULL;
  	 		
  	while(1)
  	{
  		if((numready = check_sockets(set)) == -1)
  		{
  			SDLNet_FreeSocketSet(set);
- 			return;
+ 			return NULL;
  		}
  
 		else if(numready)
 		{
-			if(SDLNet_SocketReady(tcp_recvsock))
+			if(SDLNet_SocketReady(recv_data->tcpsock))
 			{
-				if((game_packet = recv_tcp_packet(tcp_recvsock, &packet_type)) == NULL)
-					return;
+				if((game_packet = recv_tcp_packet(recv_data->tcpsock, &packet_type)) == NULL)
+					return NULL;
 
-				if(write_packet(router_pipe_writefd, packet_type, game_packet) == -1)
+				if(write_packet(recv_data->pipe_end, packet_type, game_packet) == -1)
 				{
 					free(game_packet);
-					return;
+					return NULL;
 				}
 				free(game_packet);
 			}
 
-    		if(SDLNet_SocketReady(udp_recvsock))
+    		if(SDLNet_SocketReady(recv_data->udpsock))
     		{
-				if((game_packet = recv_udp_packet(udp_recvsock, &packet_type)) == NULL)
-					return;
+				if((game_packet = recv_udp_packet(recv_data->udpsock, &packet_type)) == NULL)
+					return NULL;
 
-				if(write_packet(router_pipe_writefd, packet_type, game_packet) == -1)
+				if(write_packet(recv_data->pipe_end, packet_type, game_packet) == -1)
 				{
 					free(game_packet);
-					return;
+					return NULL;
 				}
 				free(game_packet);
 			}
@@ -154,7 +134,7 @@ void* send_thread_func(void* ndata){
 
 	while(1){	
 	
-		if((data = grab_send_packet(&protocol, &type, snd_data->read_pipe)) < 0){
+		if((data = grab_send_packet(&protocol, &type, snd_data->pipe_end)) < 0){
 			continue;
 		}
 
@@ -250,14 +230,14 @@ int send_udp(char * data, UDPsocket sock){
 --      NOTES:
 --      Reads the packet type first, then allocates and reads the packet into a data buffer.
 ----------------------------------------------------------------------------------------------------------------------*/
-void *recv_tcp_packet(TCPsocket sock, int *game_packet_type)
+void *recv_tcp_packet(TCPsocket sock, uint32_t *game_packet_type)
 {
 	void *game_packet;
 	
 	if(recv_tcp(sock, game_packet_type, sizeof(int)) == -1)
 		return NULL;
 
-	int game_packet_size = packet_sizes[*game_packet_type];
+	uint32_t game_packet_size = packet_sizes[(*game_packet_type) - 1];
 
 	if((game_packet = malloc(game_packet_size)) == NULL)
 	{
@@ -286,17 +266,17 @@ void *recv_tcp_packet(TCPsocket sock, int *game_packet_type)
 --      NOTES:
 --      Reads the packet type into packet_type, then reads the 
 ----------------------------------------------------------------------------------------------------------------------*/
-void *recv_udp_packet(UDPsocket sock, int *game_packet_type)
+void *recv_udp_packet(UDPsocket sock, uint32_t *game_packet_type)
 {
-	UDPpacket *pktdata = SDLNet_AllocPacket(MAX_UDP_RECV + sizeof(int)); /* Allocate space for the max + the packet type */
+	UDPpacket *pktdata = SDLNet_AllocPacket(MAX_UDP_RECV + sizeof(uint32_t)); /* Allocate space for the max + the packet type */
 	void *game_packet;
 	int packet_size;
 
 	if(recv_udp(sock, pktdata) == -1)
 		return NULL;
 
-	*game_packet_type 	= ((int *)pktdata->data)[0];
-	packet_size 		= packet_sizes[*game_packet_type];
+	*game_packet_type 	= ((uint32_t *)pktdata->data)[0];
+	packet_size 		= packet_sizes[(*game_packet_type) - 1];
 	game_packet			= malloc(packet_size);
 
 	if(!game_packet)

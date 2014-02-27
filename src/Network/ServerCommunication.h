@@ -8,21 +8,20 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#define INFINITE_TIMEOUT	-1 															/* Tells SDL to wait for an "infinite" (49 day) timeout */
-#define MAX_TCP_RECV		(MAX_PLAYERS * sizeof(int) * 3) + (MAX_PLAYERS * MAX_NAME)	/* The maximum size of a game packet sent over TCP from server to client */
-#define MAX_UDP_RECV		(MAX_PLAYERS * sizeof(int) * 5) + sizeof(int)				/* The maximum size of a game packet sent over UDP from server to client */	
+#define INFINITE_TIMEOUT	-1 															/**< Tells SDL to wait for an "infinite" (49 day) timeout */
+#define MAX_TCP_RECV		(MAX_PLAYERS * sizeof(int) * 3) + (MAX_PLAYERS * MAX_NAME)	/**< The maximum size of a game packet sent over TCP from server to client */
+#define MAX_UDP_RECV		(MAX_PLAYERS * sizeof(int) * 5) + sizeof(int)				/**< The maximum size of a game packet sent over UDP from server to client */	
 #define MAX_SIZE 			
 
 typedef struct{
 	TCPsocket tcpsock;
 	UDPsocket udpsock;
-	int 	  read_pipe;
+	int 	  pipe_end;
 }NETWORK_DATA;
 
 /* Thread functions */
-void recv_thread_func(int router_pipe_writefd, TCPsocket tcp_recvsock, UDPsocket udp_recvsock);
-void send_thread_func(int router_pipe_readfd);
-//void init_send_data(packet pkt);
+void *recv_thread_func(void *ndata);
+void *send_thread_func(void *ndata);
 
 /* Socket send functions */
 int send_tcp(char * data, TCPsocket sock);

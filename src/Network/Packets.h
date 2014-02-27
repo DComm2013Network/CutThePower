@@ -1,3 +1,8 @@
+#ifndef PACKETS_H
+#define PACKETS_H
+
+#include <cstdint>
+
 /*---------------------------------------------------------------------*
 -- HEADER FILE: NetComm.h The definitions and declarations to be
 -- to be used to communicate between the
@@ -144,3 +149,6 @@ typedef struct pkt13{
 	pos_t	xPos;
 	pos_t	yPos;
 } PKT_FLOOR_MOVE;
+
+extern uint32_t packet_sizes[13];
+#endif
