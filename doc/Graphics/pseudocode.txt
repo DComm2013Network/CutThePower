@@ -1,0 +1,64 @@
+int main(){
+	initialize(){}
+	create thread for loading images()
+	
+	bool quit = false;
+	
+	SDL_Event e;//Event handler
+
+	while( !quit )	//While application is running
+	{
+		
+		while( SDL_PollEvent( &e ) != 0 )//Handle events on queue
+		{
+			if( e.type == SDL_QUIT ) //User requests quit
+			{
+				quit = true;
+			}
+		}
+		render_system(&world, surface);		
+		/*SDL_RenderClear( gRenderer ); //Clear screen
+
+		SDL_RenderCopy( gRenderer, gTexture, NULL, NULL ); //Render texture to screen
+	
+		SDL_RenderPresent( gRenderer );//Update screen*/
+		
+		SDL_UpdateWindowSurface(window);
+	}
+	close();
+}
+
+bool initialize(){
+
+	initialize SDL{
+	
+	}
+	create window(){
+	
+	}
+	create renderer(){
+	
+	}
+	initialize img_loading{
+	
+	}
+	
+	return true;
+}
+
+bool load_media(){
+
+}
+
+void close(){
+	SDL_DestoryTexture();
+	SDL_DestroyRenderer();
+	SDL_DestroyWindow();
+	
+	//free memory 
+	free();
+
+	IMG_QUIT();
+	SDL_QUIT();
+}
+
