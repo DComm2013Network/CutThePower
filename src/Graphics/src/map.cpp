@@ -7,6 +7,29 @@
 SDL_Surface *map_surface;
 SDL_Rect map_rect;
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: map_init
+--
+-- DATE: February 26, 2014
+--
+-- REVISIONS: 
+--
+-- DESIGNER: Jordan Marling/Mat Siwoski
+--
+-- PROGRAMMER: Mat Siwoski
+--
+-- INTERFACE: int map_init(char *file_map, char *file_tiles)
+--              char *file_map: the pathway for the map
+--				char *file_tiles: pathway for the tiles
+--
+-- RETURNS: 	returns 0 upon success
+--			
+--
+-- NOTES:
+-- Initiates the map by loading the tiles and putting it into one large texture.
+-- Tiles are being loaded from the array. 
+--
+------------------------------------------------------------------------------------------------------------------*/
 int map_init(char *file_map, char *file_tiles) {
 	
 	FILE *fp_map;
@@ -106,6 +129,27 @@ int map_init(char *file_map, char *file_tiles) {
 	return 0;
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: map_render
+--
+-- DATE: February 26, 2014
+--
+-- REVISIONS: 
+--
+-- DESIGNER: Mat Siwoski
+--
+-- PROGRAMMER: Mat Siwoski
+--
+-- INTERFACE: void map_render(SDL_Surface *surface
+--              SDL_Surface *surface: the surface for window.
+--
+-- RETURNS: 
+--
+-- NOTES:
+-- Add the surface to the main surface of the window. Fills the remaining space with a pink color to ensure that
+-- there are no errors in tiles. If so, pink background will show.
+--
+------------------------------------------------------------------------------------------------------------------*/
 void map_render(SDL_Surface *surface) {
 
 	SDL_FillRect(surface, NULL, 0xFF33FF);
