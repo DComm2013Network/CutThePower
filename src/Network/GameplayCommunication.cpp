@@ -21,8 +21,8 @@
  *----------------------------------------------------------------------------------------*/
 
 #include "GameplayCommunication.h"
-#include "Functions.h"
 #include "Packets.h"
+extern size_t packet_sizes[];
 
 /*------------------------------------------------------------------------------------------
  * FUNCTION:    read_size_of_data
@@ -54,16 +54,17 @@
  *----------------------------------------------------------------------------------------*/
 int read_type(int fd)
 {
+
     int type, read_bytes;
 
-    if( (read_bytes = read_pipe(fd, &size, sizeof(int))) < 0)
+    if( (read_bytes = read_pipe(fd, &type, sizeof(int))) < 0)
     {
-        return -1; //error .. check error
-    }
+        if(read_bytes == 0)
+        {
+            return 0; //end of file .. nothing in pipe
+        }
 
-    if(read_bytes == 0)
-    {
-        return 0; //end of file .. nothing in pipe
+        return -1; //error .. check error
     }
 
     return type;
@@ -142,14 +143,14 @@ void* read_packet(int fd, int size)
  * gameplay information between the gameplay and network client modules.
  *
  *----------------------------------------------------------------------------------------*/
-int write_packet(int write_fd, int packet_type, void *packet)
+int write_packet(int write_fd, int packet_type void *packet)
 {
-	if (write_pipe(write_fd, &packet_type, sizeof(packet_type)) == -1)
-	{
-		perror("write_packet: write");
-		return -1;
-	}
-	else if (write_pipe(write_fd, packet, packet_size) == -1)
+    if (write_pipe(write_fd, &packet_type, sizeof(packet_type)) == -1)
+    {
+        perror("write_packet: write");
+        return -1;
+    }
+	if (write_pipe(write_fd, packet, packet_sizes[packet_type]) == -1)
 	{
 		perror("write_packet: write");
 		return -1;
@@ -168,7 +169,7 @@ int write_packet(int write_fd, int packet_type, void *packet)
  *
  * PROGRAMMER:  Ramzi Chennafi
  *
- * INTERFACE:   int update_data(void* packet, int fd)
+ * INTERFACE:   int read_data(void* packet, int fd)
  *
  * RETURNS:     int : -1 on pipe read error
  *                    -2 on packet read error
@@ -183,20 +184,15 @@ int write_packet(int write_fd, int packet_type, void *packet)
  *  descriptor to the pipe to read. Returns the type on success.
  *
  *----------------------------------------------------------------------------------------*/
-int update_data(void* packet, int fd){
+int read_data(void* packet, int fd){
  
     int type;
     
-    if((type = read_type(fd)) == 0){
-        return type;
-    }
-
-    if(type == -1){
-        perror("Error in read_pipe.");
+    if((type = read_size(fd)) <= 0){
         return type;
     }
     
-    if((packet = read_packet(fd, type)) == NULL){
+    if((packet = read_packet(fd, packet_sizes[type])) == NULL){
         return -2;
     }
 

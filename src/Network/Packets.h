@@ -40,15 +40,23 @@
 #define CONNECT_CODE_DENIED 0x000
 
 // Type Size Codes
-#define P_NAME 			sizeof(PKT_PLAYER_NAME)
-#define P_CONNECT       sizeof(PKT_PLAYER_CONNECT)
-#define G_STATUS        sizeof(PKT_GAME_STATUS) 
-#define P_OBJSTATUS     sizeof(PKT_OBJECTIVE_STATUS)
-#define P_POSUPDATE     sizeof(PKT_POS_UPDATE)
-#define G_POSUPDATE		sizeof(PKT_ALL_POS_UPDATE)
-#define P_FLOORREQ      sizeof(PKT_FLOOR_MOVE_REQUEST)
-#define P_FLOORMOVE     sizeof(PKT_FLOOR_MOVE)
+#define P_NAME 			0
+#define P_CONNECT       1
+#define G_STATUS        2
+#define P_OBJSTATUS     3
+#define P_POSUPDATE     4
+#define G_POSUPDATE		5
+#define P_FLOORREQ      6
+#define P_FLOORMOVE     7
 
+typedef struct{
+	int protocol;
+	int type;
+	char * data;
+}internal_packet;
+
+#define TCP 0
+#define UDP 1
 
 // Game Status Definitions
 #define GAME_STATE_WAITING 0x001
