@@ -30,7 +30,7 @@
 #include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_scancode.h>
 
-#include "world.h"
+#include "../world.h"
 #include "components.h"
 
 #define SYSTEM_MASK (COMPONENT_COMMAND)

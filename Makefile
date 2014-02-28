@@ -1,43 +1,83 @@
 CC=g++
 FLAGS=-Wall
-LIBS=-lSDL2 -lSDL2_image
+LIBS=-lSDL2 -lSDL2_image -lSDL2_net
 
 BINDIR=bin
 OBJDIR=obj
 SRCDIR=src
 
-BIN_DEFAULT=$(BINDIR)/game
-OBJ_DEFAULT=$(OBJDIR)/main.o $(OBJDIR)/map.o $(OBJDIR)/render_system.o $(OBJDIR)/world.o
+BIN_DEFAULT=$(BINDIR)/CutThePower
+OBJ_DEFAULT=$(OBJDIR)/Gameplay/collision_system.o $(OBJDIR)/Gameplay/movement_system.o $(OBJDIR)/Gameplay/input_system.o $(OBJDIR)/Gameplay/render_system.o $(OBJDIR)/Graphics/render_system.o $(OBJDIR)/Graphics/map.o $(OBJDIR)/Input/keyinputsystem.o $(OBJDIR)/Input/mouseinputsystem.o $(OBJDIR)/main.o $(OBJDIR)/Network/GameplayCommunication.o $(OBJDIR)/Network/ServerCommunication.o $(OBJDIR)/Network/PipeUtils.o $(OBJDIR)/Network/NetworkRouter.o $(OBJDIR)/world.o
 
-game: $(OBJ_DEFAULT)
+CutThePower: $(OBJ_DEFAULT)
 	test -d $(BINDIR) || mkdir -p $(BINDIR)
-	$(CC) $(FLAGS) -o $(BINDIR)/game $(OBJ_DEFAULT) $(LIBS)
+	$(CC) $(FLAGS) -o $(BINDIR)/CutThePower $(OBJ_DEFAULT) $(LIBS)
 
-run: game
-	$(BINDIR)/game
+run: CutThePower
+	$(BINDIR)/CutThePower
 
 clean:
 	rm -f $(OBJ_DEFAULT) $(BIN_DEFAULT)
 
 debug: $(OBJ_DEFAULT)
 	test -d $(BINDIR) || mkdir -p $(BINDIR)
-	$(CC) $(FLAGS) -g -o $(BINDIR)/game $(OBJ_DEFAULT) $(LIBS)
-	gdb -tui $(BINDIR)/game
+	$(CC) $(FLAGS) -g -o $(BINDIR)/CutThePower $(OBJ_DEFAULT) $(LIBS)
+	gdb -tui $(BINDIR)/CutThePower
 
+
+$(OBJDIR)/Gameplay/collision_system.o: $(SRCDIR)/Gameplay/collision_system.cpp
+	test -d $(OBJDIR)/Gameplay || mkdir -p $(OBJDIR)/Gameplay
+	$(CC) $(FLAGS) -c -o $(OBJDIR)/Gameplay/collision_system.o $(SRCDIR)/Gameplay/collision_system.cpp
+
+$(OBJDIR)/Gameplay/movement_system.o: $(SRCDIR)/Gameplay/movement_system.cpp
+	test -d $(OBJDIR)/Gameplay || mkdir -p $(OBJDIR)/Gameplay
+	$(CC) $(FLAGS) -c -o $(OBJDIR)/Gameplay/movement_system.o $(SRCDIR)/Gameplay/movement_system.cpp
+
+$(OBJDIR)/Gameplay/input_system.o: $(SRCDIR)/Gameplay/input_system.cpp
+	test -d $(OBJDIR)/Gameplay || mkdir -p $(OBJDIR)/Gameplay
+	$(CC) $(FLAGS) -c -o $(OBJDIR)/Gameplay/input_system.o $(SRCDIR)/Gameplay/input_system.cpp
+
+$(OBJDIR)/Gameplay/render_system.o: $(SRCDIR)/Gameplay/render_system.cpp
+	test -d $(OBJDIR)/Gameplay || mkdir -p $(OBJDIR)/Gameplay
+	$(CC) $(FLAGS) -c -o $(OBJDIR)/Gameplay/render_system.o $(SRCDIR)/Gameplay/render_system.cpp
+
+$(OBJDIR)/Graphics/render_system.o: $(SRCDIR)/Graphics/render_system.cpp
+	test -d $(OBJDIR)/Graphics || mkdir -p $(OBJDIR)/Graphics
+	$(CC) $(FLAGS) -c -o $(OBJDIR)/Graphics/render_system.o $(SRCDIR)/Graphics/render_system.cpp
+
+$(OBJDIR)/Graphics/map.o: $(SRCDIR)/Graphics/map.cpp
+	test -d $(OBJDIR)/Graphics || mkdir -p $(OBJDIR)/Graphics
+	$(CC) $(FLAGS) -c -o $(OBJDIR)/Graphics/map.o $(SRCDIR)/Graphics/map.cpp
+
+$(OBJDIR)/Input/keyinputsystem.o: $(SRCDIR)/Input/keyinputsystem.cpp
+	test -d $(OBJDIR)/Input || mkdir -p $(OBJDIR)/Input
+	$(CC) $(FLAGS) -c -o $(OBJDIR)/Input/keyinputsystem.o $(SRCDIR)/Input/keyinputsystem.cpp
+
+$(OBJDIR)/Input/mouseinputsystem.o: $(SRCDIR)/Input/mouseinputsystem.cpp
+	test -d $(OBJDIR)/Input || mkdir -p $(OBJDIR)/Input
+	$(CC) $(FLAGS) -c -o $(OBJDIR)/Input/mouseinputsystem.o $(SRCDIR)/Input/mouseinputsystem.cpp
 
 $(OBJDIR)/main.o: $(SRCDIR)/main.cpp
-	test -d $(OBJDIR)/ || mkdir -p $(OBJDIR)/
+	test -d $(OBJDIR)/main.o || mkdir -p $(OBJDIR)/main.o
 	$(CC) $(FLAGS) -c -o $(OBJDIR)/main.o $(SRCDIR)/main.cpp
 
-$(OBJDIR)/map.o: $(SRCDIR)/map.cpp
-	test -d $(OBJDIR)/ || mkdir -p $(OBJDIR)/
-	$(CC) $(FLAGS) -c -o $(OBJDIR)/map.o $(SRCDIR)/map.cpp
+$(OBJDIR)/Network/GameplayCommunication.o: $(SRCDIR)/Network/GameplayCommunication.cpp
+	test -d $(OBJDIR)/Network || mkdir -p $(OBJDIR)/Network
+	$(CC) $(FLAGS) -c -o $(OBJDIR)/Network/GameplayCommunication.o $(SRCDIR)/Network/GameplayCommunication.cpp
 
-$(OBJDIR)/render_system.o: $(SRCDIR)/render_system.cpp
-	test -d $(OBJDIR)/ || mkdir -p $(OBJDIR)/
-	$(CC) $(FLAGS) -c -o $(OBJDIR)/render_system.o $(SRCDIR)/render_system.cpp
+$(OBJDIR)/Network/ServerCommunication.o: $(SRCDIR)/Network/ServerCommunication.cpp
+	test -d $(OBJDIR)/Network || mkdir -p $(OBJDIR)/Network
+	$(CC) $(FLAGS) -c -o $(OBJDIR)/Network/ServerCommunication.o $(SRCDIR)/Network/ServerCommunication.cpp
+
+$(OBJDIR)/Network/PipeUtils.o: $(SRCDIR)/Network/PipeUtils.cpp
+	test -d $(OBJDIR)/Network || mkdir -p $(OBJDIR)/Network
+	$(CC) $(FLAGS) -c -o $(OBJDIR)/Network/PipeUtils.o $(SRCDIR)/Network/PipeUtils.cpp
+
+$(OBJDIR)/Network/NetworkRouter.o: $(SRCDIR)/Network/NetworkRouter.cpp
+	test -d $(OBJDIR)/Network || mkdir -p $(OBJDIR)/Network
+	$(CC) $(FLAGS) -c -o $(OBJDIR)/Network/NetworkRouter.o $(SRCDIR)/Network/NetworkRouter.cpp
 
 $(OBJDIR)/world.o: $(SRCDIR)/world.cpp
-	test -d $(OBJDIR)/ || mkdir -p $(OBJDIR)/
+	test -d $(OBJDIR)/world.o || mkdir -p $(OBJDIR)/world.o
 	$(CC) $(FLAGS) -c -o $(OBJDIR)/world.o $(SRCDIR)/world.cpp
 
