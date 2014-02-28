@@ -3,16 +3,9 @@
 
 #include "../components.h"
 
-typedef struct {
-	
-	float xPos, yPos;
-	float width, height;
-	
-} PositionComponent;
-
 typedef struct  {
-	int xPos;
-	int yPos;
+	int x;
+	int y;
 	bool rightClick;
 	bool leftClick;
 	

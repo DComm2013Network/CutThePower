@@ -1,7 +1,7 @@
 #ifndef NETWORK_ROUTER_H
 #define NETWORK_ROUTER_H
 
-#include <SDL_net.h>
+#include <SDL2/SDL_net.h>
 #define READ_RECV_THREAD	0
 #define WRITE_SEND_THREAD 	1
 

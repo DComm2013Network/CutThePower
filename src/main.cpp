@@ -22,14 +22,19 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 	
-	init_world(&world);
+	init_world(world);
+	
+	create_player(world, 50, 50, true);
 	
 	while (running)
 	{
 		
-		
-		
-		
+		//INPUT
+		KeyInputSystem(&world, &running);
+		MouseInputSystem(&world);
+		movement_system(world);
+		render_system(world, surface);
+		//map_render(surface);
 		
 		SDL_UpdateWindowSurface(window);
 	}

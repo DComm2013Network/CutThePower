@@ -29,7 +29,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/types.h>
-#include <SDL_net.h>
+#include <SDL2/SDL_net.h>
 
 #include "NetworkRouter.h"
 #include "GameplayCommunication.h"
@@ -127,6 +127,7 @@ void *networkRouter(void *args)
 			write_packet(fd[1], type, packet);
         }
     }
+    return NULL;
 }
 
 /*

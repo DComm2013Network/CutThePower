@@ -2,7 +2,7 @@
 #define SERVER_COMMUNICATION_H
 
 #include <thread>
-#include <SDL_net.h>
+#include <SDL2/SDL_net.h>
 #include <SDL2/SDL.h>
 #include <unistd.h>
 #include <stdio.h>

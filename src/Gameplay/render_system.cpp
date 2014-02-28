@@ -6,7 +6,7 @@
 
 #include "components.h"
 #include "systems.h"
-#include "world.h"
+#include "../world.h"
 
 //This is the mask the system uses to see if it will work on the entity.
 #define SYSTEM_MASK (COMPONENT_RENDER | COMPONENT_POSITION)

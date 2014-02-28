@@ -30,7 +30,7 @@
 #include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_scancode.h>
 
-#include "world.h"
+#include "../world.h"
 #include "components.h"
 
 #define SYSTEM_MASK (COMPONENT_COMMAND)
@@ -111,7 +111,7 @@ void KeyInputSystem(World *world, bool *running)
     }
 
     //loop?
-    for(entity = 0; entity < ENTITY_COUNT; entity++)
+    for(entity = 0; entity < MAX_ENTITIES; entity++)
     {
 
         if ((world->mask[entity] & SYSTEM_MASK) == SYSTEM_MASK)
