@@ -1,6 +1,6 @@
 #include "components.h"
 #include "systems.h"
-#include "world.h"
+#include "../world.h"
 #include "level.h"
 #include "collision.h"
 #include <stdio.h>

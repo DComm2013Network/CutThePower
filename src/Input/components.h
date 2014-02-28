@@ -1,14 +1,7 @@
-#ifndef COMPONENT_H
-#define COMPONENT_H
+#ifndef INPUT_COMPONENT_H
+#define INPUT_COMPONENT_H
 
-typedef enum {
-	COMPONENT_NONE = 0,
-	COMPONENT_MOUSE = 1 << 0,
-	COMPONENT_TEXTFIELD = 1 << 1,
-	COMPONENT_BUTTON = 1 << 2,
-	COMPONENT_COMMAND = 1 << 3,
-	COMPONENT_POSITION = 1 << 4
-} Components;
+#include "../components.h"
 
 typedef struct {
 	
