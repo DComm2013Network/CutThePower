@@ -1,7 +1,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-#include "world.h"
+#include "../world.h"
 #include "components.h"
 
 #define SYSTEM_MASK (COMPONENT_RENDER_PLAYER)
@@ -42,7 +42,7 @@ int render_player_system(World& world, SDL_Surface* surface, SDL_Rect* playerRec
 	
 
 	
-	for(entity = 0; entity < ENTITY_COUNT; entity++){
+	for(entity = 0; entity < MAX_ENTITIES; entity++){
 		
 		if ((world.mask[entity] & SYSTEM_MASK) == SYSTEM_MASK){
 			

@@ -80,14 +80,14 @@ unsigned int create_player(World& world, int x, int y, bool controllable)
 	//CollisionComponent collision;
 	
 	render.colour = 0x000000 + (rand() % 0x1000000);
-	render.width = 20;
-	render.height = 20;
+	render.width = rand() % 20 + 5;
+	render.height = rand() % 20 + 5;
 	
 	pos.x = x;
 	pos.y = y;
 
-	pos.width = 20;
-	pos.height = 20;
+	pos.width = render.width;
+	pos.height = render.height;
 	pos.s = 0;
 	pos.level = 0;
 	

@@ -27,6 +27,8 @@ typedef struct {
 	MouseComponent			mouse[MAX_ENTITIES];
 	TextFieldComponent		text[MAX_ENTITIES];
 	ButtonComponent			button[MAX_ENTITIES];
+	RenderPlayerComponent	renderPlayer[MAX_ENTITIES];
+	PlayerComponent			player[MAX_ENTITIES];
 } World;
 
 void init_world(World& world);
