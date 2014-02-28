@@ -1,0 +1,12 @@
+Creating a Makefile:
+
+Open the terminal to the project directory.
+Type "./make.sh cutthepower"
+
+The Makefile will be generated containing all of the correct files automatically.
+
+Makefile commands:
+make			= compiles the updated source files
+make run		= compiles the updated source files and runs the game
+make debug		= compiles the updated source files with GDB nd runs the game with GDB
+make clean		= removes all of the object files and binary files.

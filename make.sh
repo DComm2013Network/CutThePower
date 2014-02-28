@@ -23,8 +23,8 @@ fi
 
 FILE="Makefile"
 
-FLAGS=""
-LIBS=""
+FLAGS="-Wall"
+LIBS="-lSDL2 -lSDL2_net"
 CC="g++"
 
 SRC_FILES=""
@@ -70,16 +70,10 @@ do
 	obj=${obj/.c/.o}
 	cpp=$f
 	SRC_FILES="$SRC_FILES \$(OBJDIR)/${obj}"
-	OBJ_DIR="\$(OBJDIR)/"
-	if test "${obj#*/}" != "$obj"
-	then
-		OBJ_DIR="${OBJ_DIR}${obj%/*}"
-	fi
-	
 	
 	COMPILE="$COMPILE
 \$(OBJDIR)/${obj}: \$(SRCDIR)/${cpp}
-	test -d ${OBJ_DIR} || mkdir -p ${OBJ_DIR}
+	test -d \$(OBJDIR)/${obj%/*} || mkdir -p \$(OBJDIR)/${obj%/*}
 	\$(CC) \$(FLAGS) -c -o \$(OBJDIR)/${obj} \$(SRCDIR)/${cpp}
 "
 	
