@@ -1,7 +1,7 @@
 #ifndef COLLISION_H
 #define COLLISION_H
 
-#include "world.h"
+#include "../world.h"
 #include "components.h"
 
 #define COLLISION_WALL		10001

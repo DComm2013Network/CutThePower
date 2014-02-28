@@ -65,14 +65,14 @@ unsigned int create_level(World& world, int map[MAX_WIDTH][MAX_HEIGHT], int widt
 	return MAX_ENTITIES;
 }
 
-unsigned int create_player(World& world, int x, int y, InputComponent input, bool controllable) 
+unsigned int create_player(World& world, int x, int y, bool controllable) 
 {
 	unsigned int entity;
 	PositionComponent pos;
 	RenderComponent render;
 	MovementComponent movement;
 	ControllableComponent control;
-	//InputComponent input;
+	CommandComponent command;
 	int lastID = -1;
 	unsigned int tempMask = 0;
 	
@@ -98,10 +98,10 @@ unsigned int create_player(World& world, int x, int y, InputComponent input, boo
 	movement.movX = 0;
 	movement.movY = 0;
 	
-	input.up = false;
-	input.down = false;
-	input.left = false;
-	input.right = false;
+	command.commands[C_UP] = false;
+	command.commands[C_DOWN] = false;
+	command.commands[C_LEFT] = false;
+	command.commands[C_RIGHT] = false;
 	
 	control.active = true;
 	
@@ -117,16 +117,16 @@ unsigned int create_player(World& world, int x, int y, InputComponent input, boo
 			if (controllable) {
 				world.mask[entity] =  COMPONENT_POSITION | 
 									  COMPONENT_RENDER | 
-									  COMPONENT_INPUT | 
+									  COMPONENT_COMMAND | 
 									  COMPONENT_MOVEMENT | 
 									  COMPONENT_COLLISION |
 									  COMPONENT_CONTROLLABLE; //| COMPONENT_MOVEMENT | COMPONENT_COLLISION;
 			} else {
-				world.mask[entity] =  COMPONENT_POSITION | COMPONENT_RENDER | COMPONENT_INPUT | COMPONENT_COLLISION | COMPONENT_MOVEMENT;
+				world.mask[entity] =  COMPONENT_POSITION | COMPONENT_RENDER | COMPONENT_COMMAND | COMPONENT_COLLISION | COMPONENT_MOVEMENT;
 			}
 			world.position[entity] = pos;
 			world.render[entity] = render;
-			world.input[entity] = input;
+			world.command[entity] = command;
 			world.movement[entity] = movement;
 			if (controllable) {
 				world.controllable[entity] = control;

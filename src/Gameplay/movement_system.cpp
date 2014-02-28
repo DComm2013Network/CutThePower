@@ -1,6 +1,6 @@
 #include "components.h"
 #include "systems.h"
-#include "world.h"
+#include "../world.h"
 #include "collision.h"
 #include "stdio.h"
 #include <math.h>
@@ -33,17 +33,15 @@ void apply_force(World& world, unsigned int entity) {
 void movement_system(World& world) {
 	unsigned int entity;
 	PositionComponent		*position;
-	InputComponent			*input;
+	CommandComponent		*command;
 	ControllableComponent 	*controllable;
-	MovementComponent		*movement;
 	
 	//loop through each entity and see if the system can do work on it.
 	for(entity = 0; entity < MAX_ENTITIES; entity++) {
 		//For controllable entities
 		if (IN_THIS_COMPONENT(CONTROLLABLE_MASK)) {
-			input = &(world.input[entity]);
+			command = &(world.command[entity]);
 			position = &(world.position[entity]);
-			movement = &(world.movement[entity]);
 			controllable = &(world.controllable[entity]);
 			
 			//very simple movement. This needs to be synchronized with the
@@ -58,16 +56,16 @@ void movement_system(World& world) {
 				temp.level = position->level;
 				
 				
-				if (input->up) {
+				if (command->commands[C_UP]) {
 					add_force(world, entity, world.movement[entity].acceleration, -90);
 				}
-				if (input->down) {
+				if (command->commands[C_DOWN]) {
 					add_force(world, entity, world.movement[entity].acceleration, 90);
 				}
-				if (input->left) {
+				if (command->commands[C_LEFT]) {
 					add_force(world, entity, world.movement[entity].acceleration, 180);
 				}
-				if (input->right) {
+				if (command->commands[C_RIGHT]) {
 					add_force(world, entity, world.movement[entity].acceleration, 0);
 				}
 				

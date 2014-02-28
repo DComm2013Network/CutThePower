@@ -4,7 +4,9 @@
 #include <SDL2/SDL.h>
 
 #include "components.h"
-#include "level.h"
+
+#define WIDTH 800
+#define HEIGHT 600
 
 //Maximum entities that will be used.
 #define MAX_ENTITIES 256
@@ -17,16 +19,19 @@ typedef struct {
 
 	PositionComponent		position[MAX_ENTITIES];
 	RenderComponent			render[MAX_ENTITIES];
-	InputComponent			input[MAX_ENTITIES];
+	CommandComponent		command[MAX_ENTITIES];
 	MovementComponent		movement[MAX_ENTITIES];
 	CollisionComponent		collision[MAX_ENTITIES];
 	ControllableComponent	controllable[MAX_ENTITIES];
 	LevelComponent			level[MAX_ENTITIES];
+	MouseComponent			mouse[MAX_ENTITIES];
+	TextFieldComponent		text[MAX_ENTITIES];
+	ButtonComponent			button[MAX_ENTITIES];
 } World;
 
 void init_world(World& world);
 unsigned int create_entity(World& world);
-unsigned int create_player(World& world, int x, int y, InputComponent input, bool controllable);
+unsigned int create_player(World& world, int x, int y, bool controllable);
 unsigned int create_level(World& world, int map[MAX_WIDTH][MAX_HEIGHT], int width, int height, int tileSize);
 void destory_entity(World& world, const unsigned int entity);
 
