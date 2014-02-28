@@ -27,7 +27,9 @@ int main(int argc, char* argv[]) {
 	while (running)
 	{
 		
-		
+		//INPUT
+		KeyInputSystem(&world, &running);
+		MouseInputSystem(&world);
 		
 		
 		

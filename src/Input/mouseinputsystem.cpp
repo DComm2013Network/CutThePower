@@ -25,7 +25,7 @@
 --
 -----------------------------------------------------------------------------*/
 #include <SDL2/SDL.h>
-#include "world.h"
+#include "../world.h"
 #include "components.h"
 
 #define SYSTEM_MASK (COMPONENT_MOUSE)
@@ -88,8 +88,8 @@ void MouseInputSystem(World *world)
             mouse = &(world->mouse[entity]);
             //size = &(world->size[entity]);
 
-            mouse->xPos = x;
-            mouse->yPos = y;
+            mouse->x = x;
+            mouse->y = y;
             mouse->leftClick = lclick;
             mouse->rightClick = rclick;
 
@@ -100,8 +100,8 @@ void MouseInputSystem(World *world)
                     text = &(world->text[entity]);
                     position = &(world->position[entity]);
 
-                    if (position->xPos < x &&
-                        position->yPos < y &&
+                    if (position->x < x &&
+                        position->y < y &&
                         position->width > x &&
                         position->height > y) {
 
@@ -119,8 +119,8 @@ void MouseInputSystem(World *world)
 
                     button->prevState = button->currentState;
 
-                    button->currentState =  position->xPos < x &&
-                                            position->yPos < y &&
+                    button->currentState =  position->x < x &&
+                                            position->y < y &&
                                             position->width > x &&
                                             position->height > y;
 
