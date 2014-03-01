@@ -2,9 +2,10 @@
 #define GAMEPLAY_COMPONENTS_H
 
 #include "../components.h"
+#include "../Network/Packets.h"
 
-#define MAX_WIDTH 100
-#define MAX_HEIGHT 100
+#define MAX_WIDTH 1
+#define MAX_HEIGHT 1
 
 //Example components. These should be in their simplest form so no duplicate data.
 

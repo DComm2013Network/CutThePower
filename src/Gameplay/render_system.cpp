@@ -23,7 +23,7 @@ void render_system(World& world, SDL_Surface *surface) {
 	
 	//loop through each entity and see if the system can do work on it.
 	for(entity = 0; entity < MAX_ENTITIES; ++entity) {
-		if (IN_THIS_COMPONENT(SYSTEM_MASK)) {
+		if (IN_THIS_COMPONENT(world.mask[entity], SYSTEM_MASK)) {
 			//get the position and render components as pointers for easy code.
 			position = &(world.position[entity]);
 			render = &(world.render[entity]);

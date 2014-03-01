@@ -3,13 +3,18 @@
 #include "systems.h"
 #include "world.h"
 
+void this_had_better_fucking_work(World *world)
+{
+	world->controllable[0].active = 2;
+	printf("lol but it didn't\n");
+}
+
 int main(int argc, char* argv[]) {
 	SDL_Window *window;
 	SDL_Surface *surface;
-	
+
 	World world;
 	bool running = true;
-	
 	
 	SDL_Init(SDL_INIT_VIDEO);
 	
@@ -38,7 +43,6 @@ int main(int argc, char* argv[]) {
 		
 		SDL_UpdateWindowSurface(window);
 	}
-	
 	return 0;
 }
 
