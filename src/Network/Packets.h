@@ -37,22 +37,12 @@ typedef uint32_t floorNo_t;
 typedef uint32_t playerNo_t;
 typedef uint32_t teamNo_t;
 typedef uint32_t status_t;
-typedef uint32_t pos_t;
+typedef float 	 pos_t;
 typedef float	 vel_t;
 
 // Connect code Definitions
 #define CONNECT_CODE_ACCEPTED 0x001
 #define CONNECT_CODE_DENIED 0x000
-
-// Type Size Codes
-#define P_NAME 			0
-#define P_CONNECT       1
-#define G_STATUS        2
-#define P_OBJSTATUS     3
-#define P_POSUPDATE     4
-#define G_POSUPDATE		5
-#define P_FLOORREQ      6
-#define P_FLOORMOVE     7
 
 typedef struct{
 	int protocol;
@@ -80,13 +70,13 @@ typedef struct pkt01{
 } PKT_PLAYER_NAME;
 
 typedef struct pkt02{
-	unsigned	connect_code;
+	uint32_t	connect_code;
 	playerNo_t 	clients_player_number;
 	teamNo_t 	clients_team_number;
 } PKT_PLAYER_CONNECT;
 
 typedef struct pkt03{
-	bool 		player_valid[MAX_PLAYERS];
+	uint32_t	player_valid[MAX_PLAYERS];
 	char 		otherPlayers_name[MAX_PLAYERS][MAX_NAME];
 	teamNo_t 	otherPlayers_teams[MAX_PLAYERS];
 	status_t	readystatus[MAX_PLAYERS];
@@ -106,14 +96,14 @@ typedef struct pkt05{
 
 typedef struct pkt06{
 	floorNo_t	map_data[MAX_FLOORS];
-	int			objective_locations[MAX_OBJECTIVES];
+	uint32_t	objective_locations[MAX_OBJECTIVES];
 } pkt06;
 //Packet 7: 0x0007
 // << UNPURPOSED >>
 
 typedef struct pkt08
 {
-	bool		objectives_captured[MAX_OBJECTIVES];
+	uint32_t	objectives_captured[MAX_OBJECTIVES];
 	status_t	game_status;
 } PKT_OBJECTIVE_STATUS;
 
@@ -130,12 +120,12 @@ typedef struct pkt10{
 } PKT_POS_UPDATE;
 
 typedef struct pkt11{
-	floorNo_t floor;
-	bool 	players_on_floor[MAX_PLAYERS];
-	pos_t	xPos[MAX_PLAYERS];
-	pos_t	yPos[MAX_PLAYERS];
-	pos_t	xVel[MAX_PLAYERS];
-	pos_t	yVel[MAX_PLAYERS];
+	floorNo_t 	floor;
+	uint32_t	players_on_floor[MAX_PLAYERS];
+	pos_t		xPos[MAX_PLAYERS];
+	pos_t		yPos[MAX_PLAYERS];
+	pos_t		xVel[MAX_PLAYERS];
+	pos_t		yVel[MAX_PLAYERS];
 } PKT_ALL_POS_UPDATE;
 
 typedef struct pkt12{
