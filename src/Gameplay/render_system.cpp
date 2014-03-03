@@ -11,7 +11,7 @@
 //This is the mask the system uses to see if it will work on the entity.
 #define SYSTEM_MASK (COMPONENT_RENDER | COMPONENT_POSITION)
 
-void render_system(World& world, SDL_Surface *surface) {
+void render_system(World* world, SDL_Surface *surface) {
 	unsigned int entity;
 	PositionComponent	*position;
 	RenderComponent		*render;
@@ -23,10 +23,10 @@ void render_system(World& world, SDL_Surface *surface) {
 	
 	//loop through each entity and see if the system can do work on it.
 	for(entity = 0; entity < MAX_ENTITIES; ++entity) {
-		if (IN_THIS_COMPONENT(world.mask[entity], SYSTEM_MASK)) {
+		if (IN_THIS_COMPONENT(world->mask[entity], SYSTEM_MASK)) {
 			//get the position and render components as pointers for easy code.
-			position = &(world.position[entity]);
-			render = &(world.render[entity]);
+			position = &(world->position[entity]);
+			render = &(world->render[entity]);
 			
 			//create the player rectangle from the position and render components.
 			player_rect.x = position->x - (render->width / 2);

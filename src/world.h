@@ -23,7 +23,7 @@ typedef struct {
 	MovementComponent		movement[MAX_ENTITIES];
 	CollisionComponent		collision[MAX_ENTITIES];
 	ControllableComponent	controllable[MAX_ENTITIES];
-	LevelComponent			level[1];
+	LevelComponent			level[MAX_ENTITIES];
 	MouseComponent			mouse[MAX_ENTITIES];
 	TextFieldComponent		text[MAX_ENTITIES];
 	ButtonComponent			button[MAX_ENTITIES];
@@ -31,10 +31,10 @@ typedef struct {
 	PlayerComponent			player[MAX_ENTITIES];
 } World;
 
-void init_world(World& world);
-unsigned int create_entity(World& world);
-unsigned int create_player(World& world, int x, int y, bool controllable);
-unsigned int create_level(World& world, int map[MAX_WIDTH][MAX_HEIGHT], int width, int height, int tileSize);
-void destory_entity(World& world, const unsigned int entity);
+void init_world(World* world);
+unsigned int create_entity(World* world);
+unsigned int create_player(World* world, int x, int y, bool controllable);
+unsigned int create_level(World* world, int** map, int width, int height, int tileSize);
+void destory_entity(World* world, const unsigned int entity);
 
 #endif

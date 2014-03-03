@@ -3,17 +3,12 @@
 #include "systems.h"
 #include "world.h"
 
-void this_had_better_fucking_work(World *world)
-{
-	world->controllable[0].active = 2;
-	printf("lol but it didn't\n");
-}
-
 int main(int argc, char* argv[]) {
 	SDL_Window *window;
 	SDL_Surface *surface;
 
-	World world;
+	World *world = (World*)malloc(sizeof(World));
+	printf("Current World size: %i\n", sizeof(World));
 	bool running = true;
 	
 	SDL_Init(SDL_INIT_VIDEO);
@@ -35,8 +30,8 @@ int main(int argc, char* argv[]) {
 	{
 		
 		//INPUT
-		KeyInputSystem(&world, &running);
-		MouseInputSystem(&world);
+		KeyInputSystem(world, &running);
+		MouseInputSystem(world);
 		movement_system(world);
 		render_system(world, surface);
 		//map_render(surface);

@@ -33,7 +33,7 @@
 --NOTES:
 --This is the main wrapper function for all other collision checking functions.
 --------------------------------------------------------------------------------------------------------*/
-int collision_system(World &world, PositionComponent entity, int entityID) {
+int collision_system(World* world, PositionComponent entity, int entityID) {
 	if (wall_collision(world, entity)) {
 		return COLLISION_WALL;
 	}
@@ -63,12 +63,12 @@ int collision_system(World &world, PositionComponent entity, int entityID) {
 --NOTES:
 --Checks for collisions with walls on the map.
 --------------------------------------------------------------------------------------------------------*/
-bool wall_collision(World &world, PositionComponent entity) {
+bool wall_collision(World* world, PositionComponent entity) {
 	int i = 0;
 	int curlevel = -1;
 	int eposx = 0, eposy = 0;
 	for (i = 0; i < MAX_ENTITIES; i++) {
-		if (((world.mask[i] & LEVEL_MASK) != 0) && world.level[i].levelID == entity.level) {
+		if (((world->mask[i] & LEVEL_MASK) != 0) && world->level[i].levelID == entity.level) {
 			curlevel = i;
 			break;
 		}
@@ -79,9 +79,9 @@ bool wall_collision(World &world, PositionComponent entity) {
 		return false;
 	}
 	
-	eposx = entity.x / world.level[curlevel].tileSize;
-	eposy = entity.y / world.level[curlevel].tileSize;
-	if (world.level[curlevel].map[eposx][eposy] == L_WALL) {
+	eposx = entity.x / world->level[curlevel].tileSize;
+	eposy = entity.y / world->level[curlevel].tileSize;
+	if (world->level[curlevel].map[eposx][eposy] == L_WALL) {
 		return true;
 	}
 	return false;
@@ -110,7 +110,7 @@ bool wall_collision(World &world, PositionComponent entity) {
 --NOTES:
 --Checks for collisions with stairs on the map.
 --------------------------------------------------------------------------------------------------------*/
-bool stair_collision(World &world, PositionComponent entity) {
+bool stair_collision(World* world, PositionComponent entity) {
 	return false;
 }
 
@@ -135,15 +135,15 @@ bool stair_collision(World &world, PositionComponent entity) {
 --NOTES:
 --This checks if there is a collision between two entities on the map.
 --------------------------------------------------------------------------------------------------------*/
-bool entity_collision(World &world, PositionComponent entity, int entityID) {
+bool entity_collision(World* world, PositionComponent entity, int entityID) {
 	int i = 0;
 	
 	for (i = 0; i < MAX_ENTITIES; i++) {
-		if (i != entityID && (world.mask[i] & COLLISION_MASK) != 0) {
-			if (entity.x + entity.width > world.position[i].x &&
-				entity.x < world.position[i].x + world.position[i].width &&
-				entity.y + entity.height > world.position[i].y &&
-				entity.y < world.position[i].y + world.position[i].height) {
+		if (i != entityID && (world->mask[i] & COLLISION_MASK) != 0) {
+			if (entity.x + entity.width > world->position[i].x &&
+				entity.x < world->position[i].x + world->position[i].width &&
+				entity.y + entity.height > world->position[i].y &&
+				entity.y < world->position[i].y + world->position[i].height) {
 				return true;
 			}
 		}
