@@ -15,6 +15,7 @@ typedef enum{
 
 typedef struct{
 	SDL_Texture *playerTexture;
+	SDL_Surface* playerSurface;
 	int width;
 	int height;
 } RenderPlayerComponent;
