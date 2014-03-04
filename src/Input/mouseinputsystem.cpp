@@ -80,7 +80,7 @@ void MouseInputSystem(World *world)
         textField = -1;
     }
 
-    for(entity = 0; entity < ENTITY_COUNT; entity++)
+    for(entity = 0; entity < MAX_ENTITIES; entity++)
     {
 
         if ((world->mask[entity] & SYSTEM_MASK) == SYSTEM_MASK)

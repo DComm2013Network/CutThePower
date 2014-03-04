@@ -36,14 +36,14 @@ SDL_Rect map_rect;
 -- Tiles are being loaded from the array. 
 --
 ------------------------------------------------------------------------------------------------------------------*/
-int map_init(char *file_map, char *file_tiles) {
+int map_init(World* world, char *file_map, char *file_tiles) {
 	
 	FILE *fp_map;
 	FILE *fp_tiles;
 	
-	int *map;
 	int width, height;
 	int x, y, i;
+	uint8_t** map;
 	
 	SDL_Surface **tiles;
 	int num_tiles;
@@ -51,6 +51,7 @@ int map_init(char *file_map, char *file_tiles) {
 	char tile_filename[64];
 	
 	SDL_Rect tile_rect;
+	
 	
 	if ((fp_map = fopen(file_map, "r")) == 0) {
 		printf("Error opening map %s\n", file_map);
@@ -63,11 +64,18 @@ int map_init(char *file_map, char *file_tiles) {
 	
 	printf("Map size: %dx%d = %d tiles\n", width, height, width * height);
 	
-	map = (int*)malloc(sizeof(int) * width * height);
+	if ((map = (uint8_t**)malloc(sizeof(uint8_t*) * width)) == NULL) {
+		printf("malloc failed\n");
+	}
+	for (int i = 0; i < width; i++) {
+		if ((map[i] = (uint8_t*)malloc(sizeof(uint8_t) * height)) == NULL) {
+			printf("malloc failed\n");
+		}
+	}
 	
 	for(y = 0; y < height; y++) {
 		for(x = 0; x < width; x++) {
-			if (fscanf(fp_map, "%d", &map[x + (y * width)]) != 1) {
+			if (fscanf(fp_map, "%u", &map[x][y]) != 1) {
 				printf("Expected more map.\n");
 				return -1;
 			}
@@ -122,7 +130,7 @@ int map_init(char *file_map, char *file_tiles) {
 			tile_rect.x = x * TILE_WIDTH;
 			tile_rect.y = y * TILE_HEIGHT;
 			
-			SDL_BlitSurface(tiles[map[x + (width * y)]], NULL, map_surface, &tile_rect);
+			SDL_BlitSurface(tiles[map[x][y]], NULL, map_surface, &tile_rect);
 			
 		}
 	}
@@ -132,6 +140,11 @@ int map_init(char *file_map, char *file_tiles) {
 	map_rect.w = width * TILE_WIDTH;
 	map_rect.h = height * TILE_HEIGHT;
 	
+	create_level(world, map, width, height, TILE_WIDTH);
+	for (int i = 0; i < width; i++) {
+		free(map[i]);
+	}
+	free(map);
 	return 0;
 }
 

@@ -33,12 +33,12 @@
 #define MAX_OBJECTIVES 16
 
 // Definitions for various game data types
-#define bool 		int
-#define floorNo_t 	int
-#define playerNo_t 	unsigned
-#define teamNo_t 	unsigned 
-#define status_t	int
-#define pos_t 		unsigned
+typedef uint32_t floorNo_t;
+typedef uint32_t playerNo_t;
+typedef uint32_t teamNo_t;
+typedef uint32_t status_t;
+typedef uint32_t pos_t;
+typedef float	 vel_t;
 
 // Connect code Definitions
 #define CONNECT_CODE_ACCEPTED 0x001
@@ -125,8 +125,8 @@ typedef struct pkt10{
 	playerNo_t 	player_number;
 	pos_t 		xPos;
 	pos_t		yPos;
-	pos_t		xVel;
-	pos_t		yVel;
+	vel_t		xVel;
+	vel_t		yVel;
 } PKT_POS_UPDATE;
 
 typedef struct pkt11{

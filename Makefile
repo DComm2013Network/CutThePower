@@ -1,13 +1,13 @@
 CC=g++
-FLAGS=-Wall
-LIBS=-lSDL2 -lSDL2_image -lSDL2_net
+FLAGS=-Wall -std=c++11 -g
+LIBS=-lSDL2 -lSDL2_image -lSDL2_net -lpthread
 
 BINDIR=bin
 OBJDIR=obj
 SRCDIR=src
 
 BIN_DEFAULT=$(BINDIR)/CutThePower
-OBJ_DEFAULT=$(OBJDIR)/Gameplay/collision_system.o $(OBJDIR)/Gameplay/movement_system.o $(OBJDIR)/Gameplay/input_system.o $(OBJDIR)/Gameplay/render_system.o $(OBJDIR)/Graphics/render_system.o $(OBJDIR)/Graphics/map.o $(OBJDIR)/Input/keyinputsystem.o $(OBJDIR)/Input/mouseinputsystem.o $(OBJDIR)/main.o $(OBJDIR)/Network/GameplayCommunication.o $(OBJDIR)/Network/ServerCommunication.o $(OBJDIR)/Network/PipeUtils.o $(OBJDIR)/Network/NetworkRouter.o $(OBJDIR)/world.o
+OBJ_DEFAULT=$(OBJDIR)/Gameplay/collision_system.o $(OBJDIR)/Gameplay/movement_system.o $(OBJDIR)/Graphics/render_system.o $(OBJDIR)/Graphics/map.o $(OBJDIR)/Input/keyinputsystem.o $(OBJDIR)/Input/mouseinputsystem.o $(OBJDIR)/main.o $(OBJDIR)/Network/GameplayCommunication.o $(OBJDIR)/Network/ServerCommunication.o $(OBJDIR)/Network/PipeUtils.o $(OBJDIR)/Network/NetworkRouter.o $(OBJDIR)/world.o
 
 CutThePower: $(OBJ_DEFAULT)
 	test -d $(BINDIR) || mkdir -p $(BINDIR)
@@ -33,14 +33,6 @@ $(OBJDIR)/Gameplay/movement_system.o: $(SRCDIR)/Gameplay/movement_system.cpp
 	test -d $(OBJDIR)/Gameplay || mkdir -p $(OBJDIR)/Gameplay
 	$(CC) $(FLAGS) -c -o $(OBJDIR)/Gameplay/movement_system.o $(SRCDIR)/Gameplay/movement_system.cpp
 
-$(OBJDIR)/Gameplay/input_system.o: $(SRCDIR)/Gameplay/input_system.cpp
-	test -d $(OBJDIR)/Gameplay || mkdir -p $(OBJDIR)/Gameplay
-	$(CC) $(FLAGS) -c -o $(OBJDIR)/Gameplay/input_system.o $(SRCDIR)/Gameplay/input_system.cpp
-
-$(OBJDIR)/Gameplay/render_system.o: $(SRCDIR)/Gameplay/render_system.cpp
-	test -d $(OBJDIR)/Gameplay || mkdir -p $(OBJDIR)/Gameplay
-	$(CC) $(FLAGS) -c -o $(OBJDIR)/Gameplay/render_system.o $(SRCDIR)/Gameplay/render_system.cpp
-
 $(OBJDIR)/Graphics/render_system.o: $(SRCDIR)/Graphics/render_system.cpp
 	test -d $(OBJDIR)/Graphics || mkdir -p $(OBJDIR)/Graphics
 	$(CC) $(FLAGS) -c -o $(OBJDIR)/Graphics/render_system.o $(SRCDIR)/Graphics/render_system.cpp
@@ -58,7 +50,7 @@ $(OBJDIR)/Input/mouseinputsystem.o: $(SRCDIR)/Input/mouseinputsystem.cpp
 	$(CC) $(FLAGS) -c -o $(OBJDIR)/Input/mouseinputsystem.o $(SRCDIR)/Input/mouseinputsystem.cpp
 
 $(OBJDIR)/main.o: $(SRCDIR)/main.cpp
-	test -d $(OBJDIR)/main.o || mkdir -p $(OBJDIR)/main.o
+	test -d $(OBJDIR) || mkdir -p $(OBJDIR)
 	$(CC) $(FLAGS) -c -o $(OBJDIR)/main.o $(SRCDIR)/main.cpp
 
 $(OBJDIR)/Network/GameplayCommunication.o: $(SRCDIR)/Network/GameplayCommunication.cpp
@@ -78,6 +70,6 @@ $(OBJDIR)/Network/NetworkRouter.o: $(SRCDIR)/Network/NetworkRouter.cpp
 	$(CC) $(FLAGS) -c -o $(OBJDIR)/Network/NetworkRouter.o $(SRCDIR)/Network/NetworkRouter.cpp
 
 $(OBJDIR)/world.o: $(SRCDIR)/world.cpp
-	test -d $(OBJDIR)/world.o || mkdir -p $(OBJDIR)/world.o
+	test -d $(OBJDIR) || mkdir -p $(OBJDIR)
 	$(CC) $(FLAGS) -c -o $(OBJDIR)/world.o $(SRCDIR)/world.cpp
 
