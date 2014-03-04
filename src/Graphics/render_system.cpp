@@ -32,7 +32,7 @@
 -- be added.
 --
 ------------------------------------------------------------------------------------------------------------------*/
-int render_player_system(World& world, SDL_Surface* surface) {
+void render_player_system(World& world, SDL_Surface* surface) {
 	
 	unsigned int entity;
 	RenderPlayerComponent 	*renderPlayer;
@@ -42,7 +42,7 @@ int render_player_system(World& world, SDL_Surface* surface) {
 	
 	for(entity = 0; entity < MAX_ENTITIES; entity++){
 		
-		if ((world.mask[entity] & SYSTEM_MASK) == SYSTEM_MASK){
+		if (IN_THIS_COMPONENT(world.mask[entity], SYSTEM_MASK)){
 			
 			position = &(world.position[entity]);
 			renderPlayer = &(world.renderPlayer[entity]);			
@@ -52,10 +52,8 @@ int render_player_system(World& world, SDL_Surface* surface) {
 			
 			playerRect.w = renderPlayer->width;
 			playerRect.h = renderPlayer->height;
-			
-			SDL_BlitSurface(renderPlayer->playerSurface, NULL, surface, playerRect);			
+			//printf("mat messed up somewhere: x: %i, y: %i, w: %i, h: %i\n", playerRect.x, playerRect.y, renderPlayer->width, renderPlayer->height);
+			SDL_BlitSurface(renderPlayer->playerSurface, NULL, surface, &playerRect);
 		}
 	}
-	
-	return 1;
 }

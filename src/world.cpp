@@ -31,7 +31,7 @@ unsigned int create_entity(World* world, unsigned int attributes) {
 	return MAX_ENTITIES;
 }
 
-unsigned int create_level(World* world, int** map, int width, int height, int tileSize) {
+unsigned int create_level(World* world, uint8_t** map, int width, int height, int tileSize) {
 	unsigned int entity = 0;
 	int lastID = -1;
 	unsigned int tempMask = 0;
@@ -46,7 +46,10 @@ unsigned int create_level(World* world, int** map, int width, int height, int ti
 		if (world->mask[entity] == COMPONENT_EMPTY) {
 			lastID++;
 			world->mask[entity] = COMPONENT_LEVEL;
-			world->level[entity].map = (uint8_t**)malloc(sizeof(uint8_t) * width * height);
+			world->level[entity].map = (uint8_t**)malloc(sizeof(uint8_t*) * width);
+			for (i = 0; i < width; i++) {
+				world->level[entity].map[i] = (uint8_t*)malloc(sizeof(uint8_t) * height);
+			}
 			for (i = 0; i < width; i++) {
 				for (n = 0; n < height; n++) {
 					world->level[entity].map[i][n] = map[i][n];
@@ -61,6 +64,7 @@ unsigned int create_level(World* world, int** map, int width, int height, int ti
 		}
 	}
 	
+	
 	return MAX_ENTITIES;
 }
 
@@ -68,7 +72,7 @@ unsigned int create_player(World* world, int x, int y, bool controllable)
 {
 	unsigned int entity;
 	PositionComponent pos;
-	RenderComponent render;
+	RenderPlayerComponent render;
 	MovementComponent movement;
 	ControllableComponent control;
 	CommandComponent command;
@@ -78,9 +82,12 @@ unsigned int create_player(World* world, int x, int y, bool controllable)
 	//MovementComponent movement;
 	//CollisionComponent collision;
 	
-	render.colour = 0x000000 + (rand() % 0x1000000);
-	render.width = rand() % 20 + 5;
-	render.height = rand() % 20 + 5;
+	render.width = 20;
+	render.height = 20;
+	render.playerSurface = SDL_LoadBMP("assets/Graphics/dot.bmp");
+	if (!render.playerSurface) {
+		printf("mat is a doof\n");
+	}
 	
 	pos.x = x;
 	pos.y = y;
@@ -114,17 +121,21 @@ unsigned int create_player(World* world, int x, int y, bool controllable)
 			lastID += 1;
 			movement.id = lastID;
 			if (controllable) {
-				world->mask[entity] =  COMPONENT_POSITION | 
-									  COMPONENT_RENDER | 
-									  COMPONENT_COMMAND | 
-									  COMPONENT_MOVEMENT | 
-									  COMPONENT_COLLISION |
-									  COMPONENT_CONTROLLABLE; //| COMPONENT_MOVEMENT | COMPONENT_COLLISION;
+				world->mask[entity] =	COMPONENT_POSITION | 
+										COMPONENT_RENDER_PLAYER | 
+										COMPONENT_COMMAND | 
+										COMPONENT_MOVEMENT | 
+										COMPONENT_COLLISION |
+										COMPONENT_CONTROLLABLE; //| COMPONENT_MOVEMENT | COMPONENT_COLLISION;
 			} else {
-				world->mask[entity] =  COMPONENT_POSITION | COMPONENT_RENDER | COMPONENT_COMMAND | COMPONENT_COLLISION | COMPONENT_MOVEMENT;
+				world->mask[entity] =	COMPONENT_POSITION | 
+										COMPONENT_RENDER_PLAYER | 
+										COMPONENT_COMMAND | 
+										COMPONENT_COLLISION | 
+										COMPONENT_MOVEMENT;
 			}
 			world->position[entity] = pos;
-			world->render[entity] = render;
+			world->renderPlayer[entity] = render;
 			world->command[entity] = command;
 			world->movement[entity] = movement;
 			if (controllable) {

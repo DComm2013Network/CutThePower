@@ -15,11 +15,11 @@ typedef struct {
 	int level;
 } PositionComponent;
 
-typedef struct {
+/*typedef struct {
 	int colour;
 	int width;
 	int height;
-} RenderComponent;
+} RenderComponent;*/
 
 typedef struct {
 	bool active;

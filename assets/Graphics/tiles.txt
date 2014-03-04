@@ -1,18 +1,18 @@
 16
 
-00	assets/floor_small.bmp
-01	assets/wall_small.bmp
-02	assets/floor2_small.bmp
-03	assets/floor3_small.bmp
-04	assets/floor4_small.bmp
-05	assets/floor5_small.bmp
-06	assets/floor6_small.bmp
-07	assets/floor7_small.bmp
-08	assets/floor8_small.bmp
-09	assets/floor9_small.bmp
-10	assets/floor10_small.bmp
-11	assets/floor11_small.bmp
-12	assets/floor12_small.bmp
-13	assets/floor13_small.bmp
-14	assets/floor14_small.bmp
-15	assets/floor15_small.bmp
+00	assets/Graphics/floor_small.bmp
+01	assets/Graphics/wall_small.bmp
+02	assets/Graphics/floor2_small.bmp
+03	assets/Graphics/floor3_small.bmp
+04	assets/Graphics/floor4_small.bmp
+05	assets/Graphics/floor5_small.bmp
+06	assets/Graphics/floor6_small.bmp
+07	assets/Graphics/floor7_small.bmp
+08	assets/Graphics/floor8_small.bmp
+09	assets/Graphics/floor9_small.bmp
+10	assets/Graphics/floor10_small.bmp
+11	assets/Graphics/floor11_small.bmp
+12	assets/Graphics/floor12_small.bmp
+13	assets/Graphics/floor13_small.bmp
+14	assets/Graphics/floor14_small.bmp
+15	assets/Graphics/floor15_small.bmp

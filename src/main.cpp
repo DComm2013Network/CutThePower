@@ -4,8 +4,8 @@
 #include "world.h"
 
 int main(int argc, char* argv[]) {
-	SDL_Window *window;
-	SDL_Surface *surface;
+	SDL_Window *window = NULL;
+	SDL_Surface *surface = NULL;
 
 	World *world = (World*)malloc(sizeof(World));
 	printf("Current World size: %i\n", sizeof(World));
@@ -24,7 +24,10 @@ int main(int argc, char* argv[]) {
 	
 	init_world(world);
 	
+	map_init(world, "assets/Graphics/SampleFloor.txt", "assets/Graphics/tiles.txt");
+	
 	create_player(world, 50, 50, true);
+	
 	
 	while (running)
 	{
@@ -33,8 +36,8 @@ int main(int argc, char* argv[]) {
 		KeyInputSystem(world, &running);
 		MouseInputSystem(world);
 		movement_system(world);
-		render_system(world, surface);
-		//map_render(surface);
+		map_render(surface);
+		render_player_system(*world, surface);
 		
 		SDL_UpdateWindowSurface(window);
 	}

@@ -68,14 +68,14 @@ bool wall_collision(World* world, PositionComponent entity) {
 	int curlevel = -1;
 	int eposx = 0, eposy = 0;
 	for (i = 0; i < MAX_ENTITIES; i++) {
-		if (((world->mask[i] & LEVEL_MASK) != 0) && world->level[i].levelID == entity.level) {
+		if ((IN_THIS_COMPONENT(world->mask[i], LEVEL_MASK)) && world->level[i].levelID == entity.level) {
 			curlevel = i;
 			break;
 		}
 	}
 	
 	if (curlevel == -1) {
-		//perror("No Level found\n");
+		//printf("No Level found\n");
 		return false;
 	}
 	
