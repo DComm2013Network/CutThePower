@@ -5,6 +5,7 @@
 #include "components.h"
 
 #define SYSTEM_MASK (COMPONENT_RENDER_PLAYER | COMPONENT_POSITION)
+extern SDL_Rect map_rect;
 
 /*------------------------------------------------------------------------------------------------------------------
 -- FUNCTION: render_player_system
@@ -14,6 +15,7 @@
 -- REVISIONS: Sam Youssef - February 24, 2014: Updated the player render to get it working with multiple players
 --			  Mateusz Siwoski - February 28, 2014: Modified to pass in the Position Component, fixed not loading the image
 --													every time the frame is drawn
+--			  Jordan Marling/Mat Siwoski - March 6, 2014: Updated support for the camera.
 --
 -- DESIGNER: Jordan Marling/Mat Siwoski
 --
@@ -37,7 +39,6 @@ void render_player_system(World& world, SDL_Surface* surface) {
 	unsigned int entity;
 	RenderPlayerComponent 	*renderPlayer;
 	PositionComponent 		*position;
-	//SDL_Texture* playerTexture;
 	SDL_Rect playerRect;
 	
 	for(entity = 0; entity < MAX_ENTITIES; entity++){
@@ -47,12 +48,10 @@ void render_player_system(World& world, SDL_Surface* surface) {
 			position = &(world.position[entity]);
 			renderPlayer = &(world.renderPlayer[entity]);			
 			
-			playerRect.x = position->x - (renderPlayer->width / 2);
-			playerRect.y = position->y - (renderPlayer->height / 2);
-			
+			playerRect.x = position->x - (renderPlayer->width / 2) + map_rect.x;
+			playerRect.y = position->y - (renderPlayer->height / 2) + map_rect.y;
 			playerRect.w = renderPlayer->width;
 			playerRect.h = renderPlayer->height;
-			//printf("mat messed up somewhere: x: %i, y: %i, w: %i, h: %i\n", playerRect.x, playerRect.y, renderPlayer->width, renderPlayer->height);
 			SDL_BlitSurface(renderPlayer->playerSurface, NULL, surface, &playerRect);
 		}
 	}

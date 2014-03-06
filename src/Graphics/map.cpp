@@ -12,6 +12,7 @@
 
 SDL_Surface *map_surface;
 SDL_Rect map_rect;
+int w, h;
 
 /*------------------------------------------------------------------------------------------------------------------
 -- FUNCTION: map_init
@@ -137,8 +138,8 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 	
 	map_rect.x = 0;
 	map_rect.y = 0;
-	map_rect.w = width * TILE_WIDTH;
-	map_rect.h = height * TILE_HEIGHT;
+	w = map_rect.w = width * TILE_WIDTH;
+	h = map_rect.h = height * TILE_HEIGHT;
 	
 	create_level(world, map, width, height, TILE_WIDTH);
 	for (int i = 0; i < width; i++) {
@@ -153,11 +154,11 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 --
 -- DATE: February 26, 2014
 --
--- REVISIONS: 
+-- REVISIONS: March 6th, 2014 - Added Camera support for the map. 
 --
--- DESIGNER: Mat Siwoski
+-- DESIGNER: Mat Siwoski/Jordan Marling
 --
--- PROGRAMMER: Mat Siwoski
+-- PROGRAMMER: Mat Siwoski/Jordan Marling
 --
 -- INTERFACE: void map_render(SDL_Surface *surface
 --              SDL_Surface *surface: the surface for window.
@@ -169,10 +170,34 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 -- there are no errors in tiles. If so, pink background will show.
 --
 ------------------------------------------------------------------------------------------------------------------*/
-void map_render(SDL_Surface *surface) {
-
-	SDL_FillRect(surface, NULL, 0xFF33FF);
+void map_render(SDL_Surface *surface, int playerXPosition, int playerYPosition) {
+	SDL_Rect tempRect;
 	
-	SDL_BlitSurface(map_surface, NULL, surface, &map_rect);
+	SDL_FillRect(surface, NULL, 0xFF33FF);
+		
+	map_rect.x = (1280/2) -( playerXPosition + 20 / 2 );
+	map_rect.y = (768/2) - ( playerYPosition + 20 / 2 );
+	
+	if(map_rect.y + h < 768){
+		map_rect.y = 768 - h;
+	}
+	if (map_rect.x + w < 1280){
+		map_rect.x = 1280 - w ;
+	}	
+	if( map_rect.x > 0 )
+	{ 
+		map_rect.x = 0;
+	}
+	if( map_rect.y > 0 )
+	{
+		map_rect.y = 0;
+	}
+	
+	tempRect.x = map_rect.x;
+	tempRect.y = map_rect.y;
+	tempRect.w = map_rect.w;
+	tempRect.h = map_rect.h;
+	
+	SDL_BlitSurface(map_surface, NULL, surface, &tempRect);
 	
 }

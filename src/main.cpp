@@ -24,11 +24,9 @@ int main(int argc, char* argv[]) {
 	
 	init_world(world);
 	
-	map_init(world, "assets/Graphics/SampleFloor.txt", "assets/Graphics/tiles.txt");
-	
-	create_player(world, 50, 50, true);
-	
-	
+	map_init(world, "assets/Graphics/SampleFloor2.txt", "assets/Graphics/tiles.txt");
+	unsigned int entity = create_player(world, 50, 50, true);
+		
 	while (running)
 	{
 		
@@ -36,7 +34,7 @@ int main(int argc, char* argv[]) {
 		KeyInputSystem(world, &running);
 		MouseInputSystem(world);
 		movement_system(world);
-		map_render(surface);
+		map_render(surface, world->position[entity].x, world->position[entity].y);
 		render_player_system(*world, surface);
 		
 		SDL_UpdateWindowSurface(window);
