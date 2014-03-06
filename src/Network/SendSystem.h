@@ -9,6 +9,6 @@
 #include "NetworkRouter.h"
 #include "PipeUtils.h"
 
-void send_system(World& world, int fd, sem_t gplay_sem);
+void send_system(World& world, int fd);
 
 #endif

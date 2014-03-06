@@ -18,7 +18,6 @@ int main()
     pthread_t thread;
     int send_router_fd[2], rcv_router_fd[2];
     uint32_t type = 0;
-    sem_t gplay_sem;
     void * pkt;
 
     World * world = (World*) malloc(sizeof(World));
@@ -35,12 +34,10 @@ int main()
 	game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
 	game_net_lockfd		= eventfd(0, EFD_SEMAPHORE);
 	
-    sem_init(&gplay_sem, 0, 0);
     ndata->read_pipe = send_router_fd[READ];
     ndata->write_pipe = rcv_router_fd[WRITE];
-    ndata->pipesem = gplay_sem;
 
-    send_system(*world, send_router_fd[WRITE], gplay_sem);
+    send_system(*world, send_router_fd[WRITE]);
 
     pthread_create(&thread, NULL, networkRouter, (void *)ndata);
     pthread_detach(thread);

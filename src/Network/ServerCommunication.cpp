@@ -24,7 +24,8 @@
 #include "GameplayCommunication.h"
 #include "PipeUtils.h"
 #include "Packets.h"
-extern uint32_t packet_sizes[13];
+
+extern uint32_t packet_sizes[NUM_PACKETS];
 
 /*------------------------------------------------------------------------------------------
  * FUNCTION:    recv_thread_func
@@ -58,6 +59,7 @@ extern uint32_t packet_sizes[13];
  	NDATA				recv_data = (NDATA)ndata;
  	int 				numready;
 	uint32_t 			packet_type;
+	uint64_t			timestamp;
 	void 				*game_packet;
  	SDLNet_SocketSet 	set = make_socket_set(2, recv_data->tcp_sock, recv_data->udp_sock);
  	
@@ -76,9 +78,10 @@ extern uint32_t packet_sizes[13];
 		{
 			if(SDLNet_SocketReady(recv_data->tcp_sock))
 			{
-				if((game_packet = recv_tcp_packet(recv_data->tcp_sock, &packet_type)) == NULL)
+				if((game_packet = recv_tcp_packet(recv_data->tcp_sock, &packet_type, &timestamp)) == NULL)
 					return NULL;
-				if(write_packet(recv_data->write_pipe, packet_type, game_packet) == -1)
+				if(write_packet(recv_data->write_pipe, packet_type, game_packet) == -1 ||
+				   write_pipe(recv_data->write_pipe, &timestamp, sizeof(timestamp)) == -1)
 				{
 					free(game_packet);
 					return NULL;
@@ -88,9 +91,10 @@ extern uint32_t packet_sizes[13];
 
     		if(SDLNet_SocketReady(recv_data->udp_sock))
     		{
-				if((game_packet = recv_udp_packet(recv_data->udp_sock, &packet_type)) == NULL)
+				if((game_packet = recv_udp_packet(recv_data->udp_sock, &packet_type, &timestamp)) == NULL)
 					return NULL;
-				if(write_packet(recv_data->write_pipe, packet_type, game_packet) == -1)
+				if(write_packet(recv_data->write_pipe, packet_type, game_packet) == -1 ||
+				   write_pipe(recv_data->write_pipe, &timestamp, sizeof(timestamp)) == -1)
 				{
 					free(game_packet);
 					return NULL;
@@ -139,8 +143,8 @@ void* send_thread_func(void* ndata){
         	data = grab_send_packet(&type, snd_data->read_pipe, &ret);
         	if(type >= 90)
 				continue;
-
 			send_tcp(data, snd_data->tcp_sock, type);
+		}		
 		// else if(protocol == UDP){
 		// 	send_udp(data, snd_data->udp_sock);
 		// }
@@ -228,25 +232,28 @@ int send_udp(char * data, UDPsocket sock){
 --      NOTES:
 --      Reads the packet type first, then allocates and reads the packet into a data buffer.
 ----------------------------------------------------------------------------------------------------------------------*/
-void *recv_tcp_packet(TCPsocket sock, uint32_t *game_packet_type)
+void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp)
 {
-	void *game_packet;
+	void *packet;
 	
-	if(recv_tcp(sock, game_packet_type, sizeof(int)) == -1)
+	if(recv_tcp(sock, packet_type, sizeof(uint32_t)) == -1) /* Read the type of the packet */
 		return NULL;
 
-	uint32_t game_packet_size = packet_sizes[(*game_packet_type) - 1];
+	uint32_t packet_size = packet_sizes[(*packet_type) - 1];
 
-	if((game_packet = malloc(game_packet_size)) == NULL)
+	if((packet = malloc(packet_size)) == NULL)
 	{
 		perror("recv_tcp_packet: malloc");
 		return NULL;
 	}
 
-	if(recv_tcp(sock, game_packet, game_packet_size) == -1)
+	if(recv_tcp(sock, packet, packet_size) == -1) /* Read the remainder of the packet */
 		return NULL;
 	
-	return game_packet;
+	if(recv_tcp(sock, timestamp, sizeof(uint64_t)) == -1)
+		return NULL;
+	
+	return packet;
 }
 /*------------------------------------------------------------------------------------------------------------------
 --      FUNCTION: recv_udp_packet
@@ -264,27 +271,30 @@ void *recv_tcp_packet(TCPsocket sock, uint32_t *game_packet_type)
 --      NOTES:
 --      Reads the packet type into packet_type, then reads the 
 ----------------------------------------------------------------------------------------------------------------------*/
-void *recv_udp_packet(UDPsocket sock, uint32_t *game_packet_type)
+void *recv_udp_packet(UDPsocket sock, uint32_t *packet_type, uint64_t *timestamp)
 {
-	UDPpacket *pktdata = SDLNet_AllocPacket(MAX_UDP_RECV + sizeof(uint32_t)); /* Allocate space for the max + the packet type */
-	void *game_packet;
+	UDPpacket *pktdata = SDLNet_AllocPacket(MAX_UDP_RECV + sizeof(uint32_t) + sizeof(uint64_t)); /* Allocate space for the max packet, the packet type, and the timestamp */
+	void *packet;
 	uint32_t packet_size;
 
 	if(recv_udp(sock, pktdata) == -1)
 		return NULL;
 
-	*game_packet_type 	= ((uint32_t *)pktdata->data)[0];
-	packet_size 		= packet_sizes[(*game_packet_type) - 1];
-	game_packet			= malloc(packet_size);
+	*packet_type 	= ((uint32_t *)pktdata->data)[0];
+	packet_size 	= packet_sizes[(*packet_type) - 1];
+	packet			= malloc(packet_size);
 
-	if(!game_packet)
+	if(!packet)
 	{
-		perror("recv_udp: malloc");
+		perror("recv_udp_packet: malloc");
 		return NULL;
 	}
+	
+	memcpy(packet, pktdata->data + sizeof(uint32_t), packet_size); 					/* Read the packet, starting address is after the packet_size*/
+	*timestamp = *((uint64_t *)pktdata->data + packet_size + sizeof(uint32_t)); /* Read the timestamp, starting address is after packet_size and packet */
 
 	SDLNet_FreePacket(pktdata);
-	return game_packet;
+	return packet;
 }
 
 /*------------------------------------------------------------------------------------------------------------------
@@ -370,7 +380,7 @@ int recv_udp (UDPsocket sock, UDPpacket *udp_packet)
  *  Grabs the first packet on the pipe to be sent by send thread.
  *
  *----------------------------------------------------------------------------------------*/
-char * grab_send_packet(uint32_t *type, int fd, int *ret){
+char *grab_send_packet(uint32_t *type, int fd, int *ret){
 
 	if((*type = read_type(fd)) <= -1){
 		*ret = -1;

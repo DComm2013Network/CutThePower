@@ -31,13 +31,14 @@ static unsigned int *player_table = NULL; /**< A lookup table mapping server pla
  * @param[in] world 	The world struct to be updated.
  * @param[in] net_pipe	The read end of a pipe connected to the network module.
  *
- * @designer Shane Spoor
+ * @designer Shane Spoor, Clark Allenby
  * @author Shane Spoor
  */
 void client_update_system(World *world, int net_pipe) {
 	void* 		packet;
 	uint32_t 	type;
 	uint32_t 	num_packets;
+	uint64_t	signal = 1;
 	unsigned	i;
 	
 	if(!player_table)
@@ -46,8 +47,8 @@ void client_update_system(World *world, int net_pipe) {
 		memset(player_table, 255, MAX_PLAYERS * sizeof(unsigned int)); 
 	}
 	
-	write(
-	// Wait on the other semaphore
+	write(game_net_signalfd, &signal, sizeof(uint64_t));
+	read(game_net_lockfd, &signal, sizeof(uint64_t)); /* Wait for network to finish writing */
 	
 	num_packets = read_type(net_pipe); // the function just reads a 32 bit value, so this works; semantically, not ideal
 	

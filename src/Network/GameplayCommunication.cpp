@@ -24,7 +24,7 @@
 #include "GameplayCommunication.h"
 #include "Packets.h" /* extern packet_sizes[] */
 
-uint32_t packet_sizes[13] = {
+uint32_t packet_sizes[NUM_PACKETS] = {
 	sizeof(PKT_PLAYER_NAME),
 	sizeof(PKT_PLAYER_CONNECT),
 	sizeof(PKT_GAME_STATUS),
@@ -161,12 +161,8 @@ void* read_packet(int fd, uint32_t size)
  *----------------------------------------------------------------------------------------*/
 int write_packet(int write_fd, uint32_t packet_type, void *packet)
 {
-    if (write_pipe(write_fd, &packet_type, sizeof(packet_type)) == -1)
-    {
-        perror("Failed to write packet type: write_packet");
-        return -1;
-    }
-	if (write_pipe(write_fd, packet, packet_sizes[packet_type - 1]) == -1)
+    if (write_pipe(write_fd, &packet_type, sizeof(packet_type)) == -1 ||
+		write_pipe(write_fd, packet, packet_sizes[packet_type - 1]) == -1)
 	{
 		perror("Failed to write packet: write_pipe");
 		return -1;
