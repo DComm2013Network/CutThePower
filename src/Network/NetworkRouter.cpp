@@ -88,16 +88,29 @@ void *networkRouter(void *args)
     UDPsocket udp_sock;
 
     max_fd = recvfd[0] > ndata->read_pipe ? recvfd[0] : ndata->read_pipe;
-    resolve_host(&ipaddr, 42337, "127.0.0.1");
+    resolve_host(&ipaddr, 5323, "localhost");
 
-    tcp_sock = SDLNet_TCP_Open(&ipaddr);
+    // tcp_sock = SDLNet_TCP_Open(&ipaddr);
+    // if(!tcp_sock) {
+    //     printf("SDLNet_TCP_Open: %s\n", SDLNet_GetError());
+    //     exit(2);
+    // }
+
     tcp_sock2 = SDLNet_TCP_Open(&ipaddr); //  for loopback, return to tcp_sock when done
-    udp_sock = SDLNet_UDP_Open(42338);
+    if(!tcp_sock2) {
+        printf("SDLNet_TCP_Open: %s\n", SDLNet_GetError());
+        exit(2);
+    }//the fuck it fails, fucking error checking making me waste fuck
 
+    udp_sock = SDLNet_UDP_Open(42338);
+    if(!udp_sock) {
+        printf("SDLNet_UDP_Open: %s\n", SDLNet_GetError());
+        exit(2);
+    }
     optval = 1;
 
-    send->tcp_sock = tcp_sock;
-    send->udp_sock = udp_sock;
+    // send->tcp_sock = tcp_sock;
+    // send->udp_sock = udp_sock;
 
     receive->tcp_sock = tcp_sock2; // for loopback, return to tcp_sock when done
     receive->udp_sock = udp_sock;
@@ -112,11 +125,11 @@ void *networkRouter(void *args)
     receive->write_pipe = recvfd[1];
     receive->pipesem = recv_sem;
 
-    //pthread_create(&thread_send, NULL, recv_thread_func, (void *)&receive);
-    //pthread_detach(thread_send);
+    pthread_create(&thread_receive, NULL, recv_thread_func, (void *)&receive);
+    pthread_detach(thread_receive);
 
-    //pthread_create(&thread_receive, NULL, send_thread_func, (void *)&send);
-    //pthread_detach(thread_receive);
+   // pthread_create(&thread_send, NULL, send_thread_func, (void *)&send);
+    //pthread_detach(thread_send);
 
     while(1)
     {
@@ -130,27 +143,20 @@ void *networkRouter(void *args)
 
         if(FD_ISSET(recvfd[0], &listen_fds))
         {   
-            sem_wait(&send_sem);
         	packet = read_data(recvfd[0], &type);
-            if(type == 99999){
+            if(type >= 90){
                 continue;
             }
-            sem_post(&send_sem);
-            sem_wait(&ndata->pipesem);
             write_packet(ndata->write_pipe, type, packet);
-            sem_post(&ndata->pipesem);
         }
         if(FD_ISSET(ndata->read_pipe, &listen_fds))
         {   
-            sem_wait(&ndata->pipesem);
         	packet = read_data(ndata->read_pipe, &type);
-            if(type == 99999){
+            if(type >= 90){
                 continue;
             }
-            sem_post(&ndata->pipesem);
-            sem_wait(&recv_sem);
 			write_packet(sendfd[1], type, packet);
-            sem_post(&recv_sem);
+            sem_post(&send->pipesem);
         }
     }
     return NULL;

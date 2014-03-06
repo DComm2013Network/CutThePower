@@ -37,7 +37,7 @@ UDPpacket *alloc_packet(char * data);
 int resolve_host(IPaddress *ip_addr, const uint16_t port, const char *host_ip_string);
 
 /* Socket select functions */
-SDLNet_SocketSet make_socket_set(size_t num_sockets, ...);
+SDLNet_SocketSet make_socket_set(int num_sockets, ...);
 int check_sockets(SDLNet_SocketSet set);
 
 #endif

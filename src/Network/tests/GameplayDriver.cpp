@@ -4,33 +4,53 @@
 #include <stdlib.h>
 #include <sys/types.h>
 
-#include "GameplayCommunication.h"
-#include "NetworkRouter.h"
-#include "Functions.h"
+#include "../GameplayCommunication.h"
+#include "../NetworkRouter.h"
+#include "../Packets.h"
+#include "../../world.h"
+#include "../SendSystem.h"
 
 int main()
 {
     pthread_t thread;
-    PDATA data = (PDATA) malloc(sizeof(PDATA));
-    int fd[2];
+    int send_router_fd[2], rcv_router_fd[2];
+    uint32_t type = 0;
+    sem_t gplay_sem;
+    void * pkt;
 
-    create_pipe(fd);
+    World * world = (World*) malloc(sizeof(World));
 
-    data->read_pipe = fd[0];
-    data->write_pipe = fd[1];
+    create_player(*world, 10, 10, true);
+    
+    pthread_t router_thread;
 
-    pthread_create(&thread, NULL, networkRouter, (void *)&data);
+    NETWORK_DATA * ndata = (NETWORK_DATA*) malloc(sizeof(NETWORK_DATA));
+
+    create_pipe(rcv_router_fd);
+    create_pipe(send_router_fd);
+
+    sem_init(&gplay_sem, 0, 0);
+    ndata->read_pipe = send_router_fd[READ];
+    ndata->write_pipe = rcv_router_fd[WRITE];
+    ndata->pipesem = gplay_sem;
+
+    send_system(*world, send_router_fd[WRITE], gplay_sem);
+
+    pthread_create(&thread, NULL, networkRouter, (void *)ndata);
     pthread_detach(thread);
 
-    char message[128];
-    int result = read_pipe(fd[0], message, 128);
-
-    if(result < 0)
-    {
-        printf("%s\n", "Couldn't read to pipe!");
+    while(1)
+    {   
+        printf("Waiting\n");
+        sem_wait(&gplay_sem);
+        printf("Going\n");
+        pkt = read_data(rcv_router_fd[READ], &type);
+        if(type != 99999)
+        {
+            printf("Packet recieved\n");
+            printf("test5\n");
+            PKT_POS_UPDATE * pkt4 = (PKT_POS_UPDATE*)pkt;   
+            printf("num: %u x: %u y: %u\n", pkt4->player_number, pkt4->xPos, pkt4->yPos);   
+        }
     }
-
-    printf("%s\n", message);
-
-    printf("%s\n", "Finished");
 }

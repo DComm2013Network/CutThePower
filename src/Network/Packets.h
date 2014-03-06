@@ -62,6 +62,8 @@ typedef struct{
 
 #define TCP 0
 #define UDP 1
+#define READ 0
+#define WRITE 1
 
 // Game Status Definitions
 #define GAME_STATE_WAITING 0x001
@@ -95,7 +97,7 @@ typedef struct pkt03{
 typedef struct pkt04{
 	playerNo_t sendingPlayer_number;
 	char message[MAX_MESSAGE];
-} pkt04;
+} PKT_SND_CHAT;
 
 typedef struct pkt05{
 	playerNo_t	player_number;
