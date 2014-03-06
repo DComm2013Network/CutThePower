@@ -160,7 +160,7 @@ void* read_packet(int fd, uint32_t size)
 int write_packet(int write_fd, uint32_t packet_type, void *packet)
 {
     int temp;
-    if ((temp = write_pipe(write_fd, packet, packet_sizes[packet_type])) == -1)
+    if ((temp = write_pipe(write_fd, &packet_type, sizeof(uint32_t))) == -1)
     {
         perror("write_packet: write");
         return -1;

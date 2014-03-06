@@ -66,9 +66,10 @@ int main()
 
 	create_pipe(fd);
 
+	sem_init(&gplay_sem, 0, 1);
     ndata->read_pipe = fd[0];
     ndata->write_pipe = fd[1];
-    ndata->pipesem = sem_init(&gplay_sem, 0, 1);
+    ndata->pipesem = gplay_sem;
 
     send_system(*world, fd[1], gplay_sem);
 
@@ -76,7 +77,9 @@ int main()
     pthread_detach(thread);
 
    	while(1){
+   		sem_wait(&gplay_sem);
    		pkt = read_data(fd[0], &type);
+   		sem_post(&gplay_sem);
    		if(type != 99999)
    		{
    			printf("%d\n", type);

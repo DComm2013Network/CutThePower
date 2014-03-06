@@ -24,7 +24,6 @@
 #include "GameplayCommunication.h"
 #include "PipeUtils.h"
 #include "Packets.h"
-#include <unistd.h>
 extern uint32_t packet_sizes[13];
 
 /*------------------------------------------------------------------------------------------
@@ -80,7 +79,7 @@ extern uint32_t packet_sizes[13];
 				if((game_packet = recv_tcp_packet(recv_data->tcp_sock, &packet_type)) == NULL)
 					return NULL;
 				sem_wait(&recv_data->pipesem);
-				if(write_packet(recv_data->read_pipe, packet_type, game_packet) == -1)
+				if(write_packet(recv_data->write_pipe, packet_type, game_packet) == -1)
 				{
 					free(game_packet);
 					return NULL;
@@ -94,7 +93,7 @@ extern uint32_t packet_sizes[13];
 				if((game_packet = recv_udp_packet(recv_data->udp_sock, &packet_type)) == NULL)
 					return NULL;
 				sem_wait(&recv_data->pipesem);
-				if(write_packet(recv_data->read_pipe, packet_type, game_packet) == -1)
+				if(write_packet(recv_data->write_pipe, packet_type, game_packet) == -1)
 				{
 					free(game_packet);
 					return NULL;

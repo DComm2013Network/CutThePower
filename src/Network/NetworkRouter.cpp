@@ -102,19 +102,21 @@ void *networkRouter(void *args)
     receive->tcp_sock = tcp_sock2; // for loopback, return to tcp_sock when done
     receive->udp_sock = udp_sock;
 
+    sem_init(&send_sem, 0, 1);
     send->read_pipe = sendfd[0];
     send->write_pipe = sendfd[1];
-    send->pipesem = sem_init(&send_sem, 0, 1);
+    send->pipesem = send_sem;
 
+    sem_init(&recv_sem, 0, 1);
     receive->read_pipe = recvfd[0];
     receive->write_pipe = recvfd[1];
-    receive->pipesem = sem_init(&recv_sem, 0, 1);
+    receive->pipesem = recv_sem;
 
-    pthread_create(&thread_send, NULL, recv_thread_func, (void *)&receive);
-    pthread_detach(thread_send);
+    //pthread_create(&thread_send, NULL, recv_thread_func, (void *)&receive);
+    //pthread_detach(thread_send);
 
-    pthread_create(&thread_receive, NULL, send_thread_func, (void *)&send);
-    pthread_detach(thread_receive);
+    //pthread_create(&thread_receive, NULL, send_thread_func, (void *)&send);
+    //pthread_detach(thread_receive);
 
     while(1)
     {
@@ -130,6 +132,9 @@ void *networkRouter(void *args)
         {   
             sem_wait(&send_sem);
         	packet = read_data(recvfd[0], &type);
+            if(type == 99999){
+                continue;
+            }
             sem_post(&send_sem);
             sem_wait(&ndata->pipesem);
             write_packet(ndata->write_pipe, type, packet);
@@ -139,6 +144,9 @@ void *networkRouter(void *args)
         {   
             sem_wait(&ndata->pipesem);
         	packet = read_data(ndata->read_pipe, &type);
+            if(type == 99999){
+                continue;
+            }
             sem_post(&ndata->pipesem);
             sem_wait(&recv_sem);
 			write_packet(sendfd[1], type, packet);

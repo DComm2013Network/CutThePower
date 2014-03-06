@@ -2,6 +2,7 @@
 #define NETWORK_ROUTER_H
 
 #include <SDL2/SDL_net.h>
+#include <semaphore.h>
 #define READ_RECV_THREAD	0
 #define WRITE_SEND_THREAD 	1
 

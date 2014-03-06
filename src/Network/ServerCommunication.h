@@ -1,10 +1,11 @@
 #ifndef SERVER_COMMUNICATION_H
 #define SERVER_COMMUNICATION_H
 
-#include <thread>
+#include <pthread.h>
 #include <SDL2/SDL_net.h>
 #include <SDL2/SDL.h>
 #include <unistd.h>
+#include <semaphore.h>
 #include <stdio.h>
 #include <stdarg.h>
 
