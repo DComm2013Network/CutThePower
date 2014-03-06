@@ -29,7 +29,7 @@ uint32_t packet_sizes[13] = {
 	sizeof(struct pkt02),
 	sizeof(struct pkt03),
 	sizeof(struct pkt04),
-	sizeof(struct pkt05),
+	sizeof(struct pkt10),
 	sizeof(struct pkt06),
 	0,
 	sizeof(struct pkt08),
@@ -71,19 +71,22 @@ uint32_t packet_sizes[13] = {
 uint32_t read_type(int fd)
 {
 
-    uint32_t type, read_bytes;
+    void * buf;
+    int read_bytes;
 
-    if( (read_bytes = read_pipe(fd, &type, sizeof(int))) < 0)
+    if((read_bytes = read_pipe(fd, buf, sizeof(uint32_t))) < 0)
     {
         if(read_bytes == 0)
         {
-            return 0; //end of file .. nothing in pipe
+            return -2; //end of file .. nothing in pipe
         }
 
         return -1; //error .. check error
     }
 
-    return type;
+    uint32_t * type = (uint32_t*)buf;
+
+    return *type;
 }
 
 /*------------------------------------------------------------------------------------------
@@ -115,21 +118,17 @@ uint32_t read_type(int fd)
  *
  * A function for reading the size of the following data struct in the pipe.
  *
- *----------------------------------------------------------------------------------------*/
+ *--------------------------------- -------------------------------------------------------*/
 void* read_packet(int fd, uint32_t size)
 {
-    void* temp = (void*) malloc(size);
-	int read_bytes;
+    void* temp = (void*) malloc(size + 1);
+	int read_bytes = 0;
 
-    if( (read_bytes = read_pipe(fd, &temp, size)) < 0)
-    {
+    if((read_bytes = read_pipe(fd, temp, size)) == 0)
         return NULL; /* error .. check error */
-    }
 
     if(read_bytes == 0)
-    {
         return NULL; /* end of file .. nothing in pipe */
-    }
 
     return temp; //packet id not found .. can also return the scanned data instead
 }
@@ -160,7 +159,8 @@ void* read_packet(int fd, uint32_t size)
  *----------------------------------------------------------------------------------------*/
 int write_packet(int write_fd, uint32_t packet_type, void *packet)
 {
-    if (write_pipe(write_fd, &packet_type, sizeof(packet_type)) == -1)
+    int temp;
+    if ((temp = write_pipe(write_fd, packet, packet_sizes[packet_type])) == -1)
     {
         perror("write_packet: write");
         return -1;
@@ -202,15 +202,25 @@ int write_packet(int write_fd, uint32_t packet_type, void *packet)
  *----------------------------------------------------------------------------------------*/
 void *read_data(int fd, uint32_t *type){
 
-	void *packet;
+    int temp;
     
-    if((*type = read_type(fd)) <= 0){
+    if((temp = read_type(fd)) > 0){
+        *type = temp;
+    }
+    else
+    {
+        *type = 99999;
         return NULL;
     }
-    
+
+    void *packet = (void*) malloc(sizeof(packet_sizes[*type] + 1));
+
+    printf("%u type to grab\n", *type);
     if((packet = read_packet(fd, packet_sizes[*type])) == NULL){
-        return (void *)-2;
+        return NULL;
     }
+    printf("test2t\n");
 
     return packet;
 }
+

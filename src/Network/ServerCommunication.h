@@ -20,7 +20,7 @@ void *send_thread_func(void *ndata);
 /* Socket send functions */
 int send_tcp(char * data, TCPsocket sock);
 int send_udp(char * data, UDPsocket sock);
-char* grab_send_packet(int *protocol, uint32_t *type, int fd);
+char* grab_send_packet(uint32_t *type, int fd, int * ret);
 void* send_thread_func(void* ndata);
 
 /* Socket receive functions; "packets" in this context refer to gameplay packets */

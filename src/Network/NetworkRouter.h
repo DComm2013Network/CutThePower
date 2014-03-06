@@ -12,6 +12,7 @@ typedef struct NETWORK_DATA
     int         write_pipe;     /* pipe descriptor for writing */
     TCPsocket   tcp_sock;       /* TCP socket for server communication */
     UDPsocket   udp_sock;       /* UDP socket for server communication */
+    sem_t 		pipesem;
 } WNETWORK_DATA, *NDATA;
 
 void *networkRouter(void *args);

@@ -24,7 +24,7 @@
 #include "GameplayCommunication.h"
 #include "PipeUtils.h"
 #include "Packets.h"
-
+#include <unistd.h>
 extern uint32_t packet_sizes[13];
 
 /*------------------------------------------------------------------------------------------
@@ -79,12 +79,13 @@ extern uint32_t packet_sizes[13];
 			{
 				if((game_packet = recv_tcp_packet(recv_data->tcp_sock, &packet_type)) == NULL)
 					return NULL;
-
+				sem_wait(&recv_data->pipesem);
 				if(write_packet(recv_data->read_pipe, packet_type, game_packet) == -1)
 				{
 					free(game_packet);
 					return NULL;
 				}
+				sem_post(&recv_data->pipesem);
 				free(game_packet);
 			}
 
@@ -92,12 +93,13 @@ extern uint32_t packet_sizes[13];
     		{
 				if((game_packet = recv_udp_packet(recv_data->udp_sock, &packet_type)) == NULL)
 					return NULL;
-
+				sem_wait(&recv_data->pipesem);
 				if(write_packet(recv_data->read_pipe, packet_type, game_packet) == -1)
 				{
 					free(game_packet);
 					return NULL;
 				}
+				sem_post(&recv_data->pipesem);
 				free(game_packet);
 			}
     	}
@@ -135,22 +137,24 @@ void* send_thread_func(void* ndata){
 	int protocol = 0;
 	uint32_t type = 0;
 	char * data;
+	int ret = -1;
 
 	while(1){	
-	
-		if((data = grab_send_packet(&protocol, &type, snd_data->read_pipe)) < 0){
+		sem_wait(&snd_data->pipesem);
+		data = grab_send_packet(&type, snd_data->read_pipe, &ret);
+		sem_post(&snd_data->pipesem);
+		if(type <= -1){
 			continue;
 		}
 
-		if(protocol == TCP){
-			send_tcp(data, snd_data->tcp_sock);
-		}
-		else if(protocol == UDP){
-			send_udp(data, snd_data->udp_sock);
-		}
-		else{
-			perror("Invalid protocol.");
-		}
+		send_tcp(data, snd_data->tcp_sock);
+		
+		// else if(protocol == UDP){
+		// 	send_udp(data, snd_data->udp_sock);
+		// }
+		// else{
+		// 	perror("Invalid protocol.");
+		// }
 	}
 
 	return NULL;
@@ -376,15 +380,19 @@ int recv_udp (UDPsocket sock, UDPpacket *udp_packet)
  *  Grabs the first packet on the pipe to be sent by send thread.
  *
  *----------------------------------------------------------------------------------------*/
-char* grab_send_packet(int *protocol, uint32_t *type, int fd){
+char * grab_send_packet(uint32_t *type, int fd, int *ret){
 
-	*protocol = read_type(fd); //  grabs protocol
-	*type = read_type(fd); // grabs type
+	if((*type = read_type(fd)) <= -1){
+		*ret = -1;
+		return NULL;
+	}
 	uint32_t size = packet_sizes[*type];
 
-	char * data = (char*) malloc(sizeof(size));
+	char * data = (char*) malloc(sizeof(size + 1));
 
 	data = (char*)read_packet(fd, size); // reads data
+
+	*ret = 1;
 
 	return data;
 }
@@ -555,21 +563,4 @@ int check_sockets(SDLNet_SocketSet set)
 	}
 
 	return numready;
-}
-
-int read_protocol(int fd){
-	
-	int protocol, read_bytes;
-
-    if( (read_bytes = read_pipe(fd, &protocol, sizeof(int))) < 0)
-    {
-        if(read_bytes == 0)
-        {
-            return 0; //end of file .. nothing in pipe
-        }
-
-        return -1; //error .. check error
-    }
-
-    return read_bytes;
 }
