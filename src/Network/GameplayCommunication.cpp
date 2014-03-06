@@ -33,8 +33,8 @@ uint32_t packet_sizes[13] = {
 	sizeof(struct pkt06),
 	0,
 	sizeof(PKT_OBJECTIVE_STATUS),
-	0,
 	sizeof(PKT_POS_UPDATE),
+    0,
 	sizeof(PKT_ALL_POS_UPDATE),
 	sizeof(PKT_FLOOR_MOVE_REQUEST),
 	sizeof(PKT_FLOOR_MOVE)
@@ -122,13 +122,15 @@ void* read_packet(int fd, uint32_t size)
     void *temp = malloc(size);
 	int read_bytes;
 
-    if((read_bytes = read_pipe(fd, temp, size)) == -1)
+    if((read_bytes = read_pipe(fd, temp, size)) == -1){
         perror("Error on reading pipe : read_packet(int, uint32_t)\n");
         return NULL;
+    }
 
-    if(read_bytes == 0)
+    if(read_bytes == 0){
         perror("Nothing on pipe to read: read_packet(int, uint32_t)\n");
         return NULL;
+    }
 
     return temp; 
 }
@@ -209,7 +211,7 @@ void *read_data(int fd, uint32_t *type){
         return NULL;
     }
 
-    if((packet = read_packet(fd, packet_sizes[*type])) == NULL){
+    if((packet = read_packet(fd, packet_sizes[*type - 1])) == NULL){
         perror("Failed to read packet : read_data\n");
         return NULL;
     }

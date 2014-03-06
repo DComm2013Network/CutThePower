@@ -19,7 +19,7 @@ void *recv_thread_func(void *ndata);
 void *send_thread_func(void *ndata);
 
 /* Socket send functions */
-int send_tcp(char * data, TCPsocket sock);
+int send_tcp(char * data, TCPsocket sock, uint32_t type);
 int send_udp(char * data, UDPsocket sock);
 char* grab_send_packet(uint32_t *type, int fd, int * ret);
 void* send_thread_func(void* ndata);

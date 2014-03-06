@@ -136,19 +136,11 @@ void* send_thread_func(void* ndata){
 	fd_set listen_fds;
 
 	while(1){	
-		int ret;
-        FD_ZERO(&listen_fds);
-        FD_SET(snd_data->read_pipe, &listen_fds);
-        ret = select(snd_data->read_pipe, &listen_fds, NULL, NULL, NULL);
-
-        if(FD_ISSET(snd_data->read_pipe, &listen_fds))
-        {  
         	data = grab_send_packet(&type, snd_data->read_pipe, &ret);
         	if(type >= 90)
 				continue;
 
-			send_tcp(data, snd_data->tcp_sock);
-		}		
+			send_tcp(data, snd_data->tcp_sock, type);
 		// else if(protocol == UDP){
 		// 	send_udp(data, snd_data->udp_sock);
 		// }
@@ -175,16 +167,14 @@ void* send_thread_func(void* ndata){
 --      NOTES:
 --      Sends the packet data over the established tcp connection.
 ----------------------------------------------------------------------------------------------------------------------*/
-int send_tcp(char * data, TCPsocket sock){
+int send_tcp(char * data, TCPsocket sock, uint32_t type){
 
-	int len=strlen(data);
-	int result=SDLNet_TCP_Send(sock, data, len);
-	if(result < len) {
+	int result=SDLNet_TCP_Send(sock, data, type);
+	if(result < type) {
     	fprintf(stderr, "SDLNet_TCP_Send: %s\n", SDLNet_GetError());
     	return -1;
 	}
 
-	SDLNet_TCP_Close(sock);
 	return 0;
 }
 /*------------------------------------------------------------------------------------------------------------------

@@ -48,8 +48,6 @@ int main()
     while(1)
     {   
         printf("Waiting\n");
-        sem_wait(&gplay_sem);
-        printf("Going\n");
         pkt = read_data(rcv_router_fd[READ], &type);
         if(type != 99999)
         {

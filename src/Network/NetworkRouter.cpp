@@ -193,19 +193,20 @@ int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int send
 				int recvfd[2], pthread_t *thread_receive, pthread_t *thread_send)
 {
     IPaddress ipaddr;
-	TCPsocket tcp_sock;
+	TCPsocket tcp_sock, tcp_sock2;
 	UDPsocket udp_sock;
 	
 	create_pipe(sendfd);
 	create_pipe(recvfd);
 	
     *max_fd = recvfd[READ_END] > gameplay->read_pipe ? recvfd[READ_END] : gameplay->read_pipe;
-    resolve_host(&ipaddr, TCP_PORT, gameplay->ip_address_string);
+    resolve_host(&ipaddr, TCP_PORT, "localhost");
 
     tcp_sock = SDLNet_TCP_Open(&ipaddr);
+    tcp_sock2 = SDLNet_TCP_Open(&ipaddr);// SADDLASO?
     udp_sock = SDLNet_UDP_Open(UDP_PORT);
 
-    send->tcp_sock = tcp_sock;
+    send->tcp_sock = tcp_sock2;
     send->udp_sock = udp_sock;
 
     receive->tcp_sock = tcp_sock;
