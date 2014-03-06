@@ -1,0 +1,55 @@
+Update System Pseudocode
+------------------------
+
+Read the packet
+If the packet is null
+	check for error
+	if error
+		log it
+	return
+
+Switch on the packet type
+	case packet 2:
+		Get the client's player (maybe index 0? need some way of getting their entity)
+		Update the player component related to that entity (name, etc)
+	
+	case packet 3:
+		Loop through the players in the packet
+			If the player is valid and their info hasn't been recorded
+				Create a new player entity
+				Copy the player's name to the entity's player component
+				Store the player's team number in the entity's player component
+				Store the entity number in the corresponding index of the lookup table
+				// Ignore the ready status for now
+	
+	case packet 4:
+		// Do nothing, because this is a milestone 2 packet
+	
+	case packet 6:
+		// Do nothing, since there's no floor system yet
+	
+	case packet 7:
+		// I don't know. There's something relevant about this now with floors
+	
+	case packet 8:
+		// Somehow deal with the objectives; need a new way to do this
+	
+	case packet 9:
+		// Nothing for milestone 1. This is the "server auto-find" packet.
+	
+	case packet 11:
+		Loop through the players in the packet
+			If it's our player
+				Continue
+			Update the player's position, floor, velocity
+	
+	case packet 13:
+		// Do nothing for now, since this is (yet another) floor update packet
+	
+	case packet 1:
+	case packet 5:
+	case packet 10:
+	case packet 12:
+	default:
+		log error // something must have gone wrong if we got one of these
+		return
