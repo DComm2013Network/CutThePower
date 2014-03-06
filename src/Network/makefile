@@ -1,12 +1,15 @@
 CXX 		= g++
-CXXFLAGS	= -std=c++0x -c `sdl2-config --cflags`
-LDFLAGS		= `sdl2-config --libs` -lSDL2_net
-OBJECTS		= ServerCommunication.o GameplayCommunication.o PipeUtils.o NetworkRouter.o
+CXXFLAGS	= -std=c++0x -c `sdl2-config --cflags` 
+LDFLAGS		= `sdl2-config --libs` -lSDL2_net -pthread 
+OBJECTS		= ServerCommunication.o GameplayCommunication.o PipeUtils.o NetworkRouter.o SendSystem.o
 
 all: network
 	
 network: $(OBJECTS)
 	$(CXX) -o network_client $(OBJECTS) $(LDFLAGS)
+
+SendSystem.o: SendSystem.cpp
+	$(CXX) $(CXXFLAGS) SendSystem.cpp
 
 ServerCommunication.o: ServerCommunication.cpp
 	$(CXX) $(CXXFLAGS) ServerCommunication.cpp
