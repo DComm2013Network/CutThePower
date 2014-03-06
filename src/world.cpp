@@ -200,6 +200,6 @@ unsigned int create_player(World& world, int x, int y, bool controllable)
  * @designer
  * @author
  */
-void destory_entity(World& world, const unsigned int entity) {
+void destroy_entity(World& world, const unsigned int entity) {
 	world.mask[entity] = COMPONENT_EMPTY;
 }

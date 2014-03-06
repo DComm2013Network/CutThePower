@@ -19,7 +19,8 @@ typedef enum {
 	COMPONENT_RENDER = 1 << 8,
 	COMPONENT_CONTROLLABLE = 1 << 9,
 	COMPONENT_RENDER_PLAYER = 1 << 10,
-	COMPONENT_PLAYER = 1 << 11
+	COMPONENT_PLAYER = 1 << 11,
+	COMPONENT_TAG = 1 << 12
 } Components;
 
 #endif
