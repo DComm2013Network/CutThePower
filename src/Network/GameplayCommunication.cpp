@@ -73,7 +73,7 @@ uint32_t read_type(int fd)
 
     uint32_t type, read_bytes;
 
-    if( (read_bytes = read_pipe(fd, &type, sizeof(int))) < 0)
+    if( (read_bytes = read_pipe(fd, &type, sizeof(uint32_t))) < 0)
     {
         if(read_bytes == 0)
         {
@@ -118,10 +118,10 @@ uint32_t read_type(int fd)
  *----------------------------------------------------------------------------------------*/
 void* read_packet(int fd, uint32_t size)
 {
-    void* temp = (void*) malloc(size);
+    void *temp = malloc(size);
 	int read_bytes;
 
-    if( (read_bytes = read_pipe(fd, &temp, size)) < 0)
+    if((read_bytes = read_pipe(fd, temp, size)) < 0)
     {
         return NULL; /* error .. check error */
     }
@@ -165,7 +165,7 @@ int write_packet(int write_fd, uint32_t packet_type, void *packet)
         perror("write_packet: write");
         return -1;
     }
-	if (write_pipe(write_fd, packet, packet_sizes[packet_type]) == -1)
+	if (write_pipe(write_fd, packet, packet_sizes[packet_type - 1]) == -1)
 	{
 		perror("write_packet: write");
 		return -1;
@@ -208,7 +208,7 @@ void *read_data(int fd, uint32_t *type){
         return NULL;
     }
     
-    if((packet = read_packet(fd, packet_sizes[*type])) == NULL){
+    if((packet = read_packet(fd, packet_sizes[*type - 1])) == NULL){
         return (void *)-2;
     }
 

@@ -429,19 +429,19 @@ UDPpacket *alloc_packet(char *data){
 --      RETURNS: packet * - pointer to a packet structure
 --
 --      NOTES:
---     	Frames packets recieved from gameplay for sending to the server.
+--     	Frames packets received from gameplay for sending to the server.
 ----------------------------------------------------------------------------------------------------------------------*/
 internal_packet * frame_data(uint32_t type, void* data){
 
 	internal_packet * framing_pkt = (internal_packet*) malloc(sizeof(internal_packet));
 
 	switch(type){
-		case P_NAME: // TCP PACKETS
+		case 1: 				// PKT_PLAYER_NAME
 			framing_pkt->protocol = TCP;
 			framing_pkt->type = type;
 			framing_pkt->data = (char*)data;
 		break;
-		case P_POSUPDATE:
+		case 11:				// PKT_POS_UPDATE
 			framing_pkt->protocol = UDP;
 			framing_pkt->type = type;
 			framing_pkt->data = (char*)data;

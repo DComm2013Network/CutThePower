@@ -8,7 +8,7 @@
 -- to be used to communicate between the
 -- client and the server
 --
--- PROGRAM: Game-Client/Server
+-- PROGRAM: Network-Client/Server
 --
 -- FUNCTIONS:
 -- none

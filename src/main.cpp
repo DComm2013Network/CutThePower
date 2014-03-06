@@ -3,11 +3,7 @@
 #include "systems.h"
 #include "world.h"
 
-void this_had_better_fucking_work(World *world)
-{
-	world->controllable[0].active = 2;
-	printf("lol but it didn't\n");
-}
+int game_net_signalfd, game_net_lockfd;
 
 int main(int argc, char* argv[]) {
 	SDL_Window *window;
@@ -30,6 +26,9 @@ int main(int argc, char* argv[]) {
 	init_world(world);
 	
 	create_player(world, 50, 50, true);
+	
+	game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
+	game_net_lockfd		= eventfd(0, EFD_SEMAPHORE);
 	
 	while (running)
 	{
