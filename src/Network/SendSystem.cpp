@@ -82,11 +82,9 @@ int main()
    		sem_post(&gplay_sem);
    		if(type != 99999)
    		{
-   			printf("%d\n", type);
-   			printf("test5\n");
-			PKT_POS_UPDATE * pkt4 = (PKT_POS_UPDATE*)pkt;  
-			printf("test32\n");		
-			printf("num: %u x: %u y: %u", pkt4->player_number, pkt4->xPos, pkt4->yPos);	
+   			printf("Packet recieved\n");
+			PKT_POS_UPDATE * pkt4 = (PKT_POS_UPDATE*)pkt;  	
+			printf("num: %u x: %u y: %u\n", pkt4->player_number, pkt4->xPos, pkt4->yPos);	
    		}
    	}
 }

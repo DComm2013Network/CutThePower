@@ -71,10 +71,10 @@ uint32_t packet_sizes[13] = {
 uint32_t read_type(int fd)
 {
 
-    void * buf;
+    uint32_t type;
     int read_bytes;
 
-    if((read_bytes = read_pipe(fd, buf, sizeof(uint32_t))) < 0)
+    if((read_bytes = read_pipe(fd, &type, sizeof(uint32_t))) < 0)
     {
         if(read_bytes == 0)
         {
@@ -84,9 +84,7 @@ uint32_t read_type(int fd)
         return -1; //error .. check error
     }
 
-    uint32_t * type = (uint32_t*)buf;
-
-    return *type;
+    return type;
 }
 
 /*------------------------------------------------------------------------------------------
@@ -160,12 +158,14 @@ void* read_packet(int fd, uint32_t size)
 int write_packet(int write_fd, uint32_t packet_type, void *packet)
 {
     int temp;
-    if ((temp = write_pipe(write_fd, &packet_type, sizeof(uint32_t))) == -1)
+    
+    if ((temp = write_pipe(write_fd, &packet_type, sizeof(packet_type))) == -1)
     {
         perror("write_packet: write");
         return -1;
     }
-	if (write_pipe(write_fd, packet, packet_sizes[packet_type]) == -1)
+
+	if ((temp = write_pipe(write_fd, packet, packet_sizes[packet_type])) == -1)
 	{
 		perror("write_packet: write");
 		return -1;
