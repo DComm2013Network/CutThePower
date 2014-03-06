@@ -1,10 +1,11 @@
 #ifndef SERVER_COMMUNICATION_H
 #define SERVER_COMMUNICATION_H
 
-#include <thread>
+#include <pthread.h>
 #include <SDL2/SDL_net.h>
 #include <SDL2/SDL.h>
 #include <unistd.h>
+#include <semaphore.h>
 #include <stdio.h>
 #include <stdarg.h>
 
@@ -20,7 +21,7 @@ void *send_thread_func(void *ndata);
 /* Socket send functions */
 int send_tcp(char * data, TCPsocket sock);
 int send_udp(char * data, UDPsocket sock);
-char* grab_send_packet(int *protocol, uint32_t *type, int fd);
+char* grab_send_packet(uint32_t *type, int fd, int * ret);
 void* send_thread_func(void* ndata);
 
 /* Socket receive functions; "packets" in this context refer to gameplay packets */
@@ -36,7 +37,7 @@ UDPpacket *alloc_packet(char * data);
 int resolve_host(IPaddress *ip_addr, const uint16_t port, const char *host_ip_string);
 
 /* Socket select functions */
-SDLNet_SocketSet make_socket_set(size_t num_sockets, ...);
+SDLNet_SocketSet make_socket_set(int num_sockets, ...);
 int check_sockets(SDLNet_SocketSet set);
 
 #endif

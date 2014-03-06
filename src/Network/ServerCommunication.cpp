@@ -24,7 +24,6 @@
 #include "GameplayCommunication.h"
 #include "PipeUtils.h"
 #include "Packets.h"
-
 extern uint32_t packet_sizes[13];
 
 /*------------------------------------------------------------------------------------------
@@ -79,8 +78,7 @@ extern uint32_t packet_sizes[13];
 			{
 				if((game_packet = recv_tcp_packet(recv_data->tcp_sock, &packet_type)) == NULL)
 					return NULL;
-
-				if(write_packet(recv_data->read_pipe, packet_type, game_packet) == -1)
+				if(write_packet(recv_data->write_pipe, packet_type, game_packet) == -1)
 				{
 					free(game_packet);
 					return NULL;
@@ -92,8 +90,7 @@ extern uint32_t packet_sizes[13];
     		{
 				if((game_packet = recv_udp_packet(recv_data->udp_sock, &packet_type)) == NULL)
 					return NULL;
-
-				if(write_packet(recv_data->read_pipe, packet_type, game_packet) == -1)
+				if(write_packet(recv_data->write_pipe, packet_type, game_packet) == -1)
 				{
 					free(game_packet);
 					return NULL;
@@ -135,22 +132,29 @@ void* send_thread_func(void* ndata){
 	int protocol = 0;
 	uint32_t type = 0;
 	char * data;
+	int ret = -1;
+	fd_set listen_fds;
 
 	while(1){	
-	
-		if((data = grab_send_packet(&protocol, &type, snd_data->read_pipe)) < 0){
-			continue;
-		}
+		int ret;
+        FD_ZERO(&listen_fds);
+        FD_SET(snd_data->read_pipe, &listen_fds);
+        ret = select(snd_data->read_pipe, &listen_fds, NULL, NULL, NULL);
 
-		if(protocol == TCP){
+        if(FD_ISSET(snd_data->read_pipe, &listen_fds))
+        {  
+        	data = grab_send_packet(&type, snd_data->read_pipe, &ret);
+        	if(type >= 90)
+				continue;
+
 			send_tcp(data, snd_data->tcp_sock);
-		}
-		else if(protocol == UDP){
-			send_udp(data, snd_data->udp_sock);
-		}
-		else{
-			perror("Invalid protocol.");
-		}
+		}		
+		// else if(protocol == UDP){
+		// 	send_udp(data, snd_data->udp_sock);
+		// }
+		// else{
+		// 	perror("Invalid protocol.");
+		// }
 	}
 
 	return NULL;
@@ -376,15 +380,19 @@ int recv_udp (UDPsocket sock, UDPpacket *udp_packet)
  *  Grabs the first packet on the pipe to be sent by send thread.
  *
  *----------------------------------------------------------------------------------------*/
-char* grab_send_packet(int *protocol, uint32_t *type, int fd){
+char * grab_send_packet(uint32_t *type, int fd, int *ret){
 
-	*protocol = read_type(fd); //  grabs protocol
-	*type = read_type(fd); // grabs type
+	if((*type = read_type(fd)) <= -1){
+		*ret = -1;
+		return NULL;
+	}
 	uint32_t size = packet_sizes[*type];
 
-	char * data = (char*) malloc(sizeof(size));
+	char * data = (char*) malloc(sizeof(size + 1));
 
 	data = (char*)read_packet(fd, size); // reads data
+
+	*ret = 1;
 
 	return data;
 }
@@ -414,42 +422,7 @@ UDPpacket *alloc_packet(char *data){
 	}
 
 	return pktdata;
-}
-/*------------------------------------------------------------------------------------------------------------------
---      FUNCTION: frame_data
---
---      DATE: Febuary 15, 2014
---      REVISIONS: none
---
---      DESIGNER: Ramzi Chennafi
---      PROGRAMMER: Ramzi Chennafi
---
---      INTERFACE: packet * frame_data(int type, void* data)
---
---      RETURNS: packet * - pointer to a packet structure
---
---      NOTES:
---     	Frames packets received from gameplay for sending to the server.
-----------------------------------------------------------------------------------------------------------------------*/
-internal_packet * frame_data(uint32_t type, void* data){
-
-	internal_packet * framing_pkt = (internal_packet*) malloc(sizeof(internal_packet));
-
-	switch(type){
-		case 1: 				// PKT_PLAYER_NAME
-			framing_pkt->protocol = TCP;
-			framing_pkt->type = type;
-			framing_pkt->data = (char*)data;
-		break;
-		case 11:				// PKT_POS_UPDATE
-			framing_pkt->protocol = UDP;
-			framing_pkt->type = type;
-			framing_pkt->data = (char*)data;
-		break;
-	}
-
-	return framing_pkt;
-}	
+	
 /*------------------------------------------------------------------------------------------------------------------
 --      FUNCTION: resolve_host_ip
 --
@@ -501,11 +474,10 @@ int resolve_host(IPaddress *ip_addr, const uint16_t port, const char *host_ip_st
 --      Creates an IPaddress struct holding the IP address and port information for the SDL network functions. If the
 --		funciton fails, it will log an error and return NULL.
 ----------------------------------------------------------------------------------------------------------------------*/ 	
-SDLNet_SocketSet make_socket_set(size_t num_sockets, ...)
+SDLNet_SocketSet make_socket_set(int num_sockets, ...)
 {
-	va_list socket_list;
+	va_list socket_list; 	
 	SDLNet_SocketSet set = SDLNet_AllocSocketSet(num_sockets);
-	size_t i;
 
 	if(!set)
 	{
@@ -514,7 +486,7 @@ SDLNet_SocketSet make_socket_set(size_t num_sockets, ...)
 	}
 	
 	va_start(socket_list, num_sockets);
-	for(i = 0; i < num_sockets; ++i)
+	for(size_t i = 0; i < num_sockets; i++)
 	{
 		if(SDLNet_AddSocket(set, va_arg(socket_list, SDLNet_GenericSocket)) == -1)
 		{
@@ -546,7 +518,7 @@ SDLNet_SocketSet make_socket_set(size_t num_sockets, ...)
 ----------------------------------------------------------------------------------------------------------------------*/ 
 int check_sockets(SDLNet_SocketSet set)
 {
-	int numready = SDLNet_CheckSockets(set, INFINITE_TIMEOUT);
+	int numready = SDLNet_CheckSockets(set, 100000);
 
 	if(numready == -1)
 	{
@@ -555,21 +527,4 @@ int check_sockets(SDLNet_SocketSet set)
 	}
 
 	return numready;
-}
-
-int read_protocol(int fd){
-	
-	int protocol, read_bytes;
-
-    if( (read_bytes = read_pipe(fd, &protocol, sizeof(int))) < 0)
-    {
-        if(read_bytes == 0)
-        {
-            return 0; //end of file .. nothing in pipe
-        }
-
-        return -1; //error .. check error
-    }
-
-    return read_bytes;
 }

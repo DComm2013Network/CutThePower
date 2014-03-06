@@ -1,11 +1,32 @@
-#include "Packets.h"
-#include "../components.h"
-#include "../systems.h"
-#include "../world.h"
-#include "GameplayCommunication.h"
+#include "SendSystem.h"
+/*------------------------------------------------------------------------------------------
+ * FUNCTION:    send_system
+ *
+ * DATE:        March 5, 2014
+ *
+ * REVISIONS:   
+ *
+ * DESIGNER:    Ramzi Chennafi
+ *
+ * PROGRAMMER:  Ramzi Chennafi
+ *
+ * INTERFACE:   send_system(World& world, int fd, sem_t gplay_sem)
+ *                  world - game world, searched for updates
+ *					fd    - write file descriptor to the gameplay thread > network router thread
+ *					gplay_sem - semaphore for the gameplay thread > network router thread pipe
+ *
+ * RETURNS:     nothing
+ *
+ * NOTES:
+ *
+ * Checks the world for data and sends out data updates to be passed to the server. Currently sends out\
+ * only a position update.
+ *
+ * FUTURE FEATURES: Cached location of data after first go through for called data
+ *					Ability to specify which update will be sent
+ *----------------------------------------------------------------------------------------*/
+void send_system(World& world, int fd, sem_t gplay_sem) { 
 
-void send_system(World& world, int fd) {
-	
 		// PKT_PLAYER_NAME * pkt1 = (PKT_PLAYER_NAME *)malloc(sizeof(PKT_PLAYER_NAME));
 		// for (int j = 0; j < MAX_ENTITIES; j++) {
 		// 	if (IN_THIS_COMPONENT(world.mask[j], COMPONENT_PLAYER | COMPONENT_CONTROLLABLE))
@@ -37,8 +58,7 @@ void send_system(World& world, int fd) {
 
 		// for (int j = 0; j < MAX_ENTITIES; j++) {
 		// 	if (IN_THIS_COMPONENT(world.mask[j], COMPONENT_POSITION | COMPONENT_CONTROLLABLE))
-		// 	{
-		// 		break;
+		// 			// 		break;
 		// 	}
 		// }
 		// write_packet(fd, P_OBJSTATUS, pkt);	

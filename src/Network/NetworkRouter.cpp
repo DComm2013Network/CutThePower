@@ -71,7 +71,9 @@ int main()
  *----------------------------------------------------------------------------------------*/
 void *networkRouter(void *args)
 {
-    int 		fd[2];
+<<<<<<< HEAD
+    int sendfd[2];
+    int recvfd[2];
     fd_set 		listen_fds;
     fd_set		active;
     int 		max_fd;
@@ -85,8 +87,7 @@ void *networkRouter(void *args)
     NDATA 		send = (NDATA) malloc(sizeof(WNETWORK_DATA));
     NDATA 		receive = (NDATA) malloc(sizeof(WNETWORK_DATA));
 
-    create_pipe(fd);
-    if(init_router(&max_fd, send, receive, gameplay, fd, &thread_receive, &thread_send) == -1)
+    if(init_router(&max_fd, send, receive, gameplay, sendfd, recvfd, &thread_receive, &thread_send) == -1)
     	return NULL;
 
     FD_ZERO(&listen_fds);
@@ -101,16 +102,16 @@ void *networkRouter(void *args)
         ret = select(max_fd + 1, &active, NULL, NULL, NULL);
         /*if(ret < 0) 	Log an error */
 
-        if(ret && FD_ISSET(fd[READ_RECV_THREAD], &active))
+        if(ret && FD_ISSET(recvfd[READ_END], &active))
         {
-        	packet = read_data(fd[READ_RECV_THREAD], &type);
+        	packet = read_data(recvfd[READ_END], &type);
 			write_packet(gameplay->write_pipe, type, packet);
 			--ret;
         }
         if(ret && FD_ISSET(gameplay->read_pipe, &active))
         {
         	packet = read_data(gameplay->read_pipe, &type);
-			write_packet(fd[1], type, packet);
+			write_packet(sendfd[WRITE_END], type, packet);
 			--ret;
         }
         if(ret && FD_ISSET(game_net_signalfd, &active)
@@ -194,12 +195,15 @@ uint32_t determine_changed(void **packets, unsigned *changed)
  * @author   Shane Spoor
  * @designer Shane Spoor, Abhishek Bhardwaj
  */
-int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int fd[2], 
-				pthread_t *thread_receive, pthread_t *thread_send)
+int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int sendfd[2], 
+				int recvfd[2], pthread_t *thread_receive, pthread_t *thread_send)
 {
     IPaddress ipaddr;
 	TCPsocket tcp_sock;
 	UDPsocket udp_sock;
+	
+	create_pipe(sendfd);
+	create_pipe(recvfd);
 	
     *max_fd = fd[READ_END] > gameplay->read_pipe ? fd[READ_END] : gameplay->read_pipe;
     resolve_host(&ipaddr, TCP_PORT, gameplay->ip_address_string);
@@ -213,11 +217,11 @@ int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int fd[2
     receive->tcp_sock = tcp_sock;
     receive->udp_sock = udp_sock;
 
-    send->read_pipe = fd[READ_END];
-    send->write_pipe = fd[WRITE_END];
+    send->read_pipe = sendfd[READ_END];
+    send->write_pipe = sendfd[WRITE_END];
 
-    receive->read_pipe = fd[READ_END];
-    receive->write_pipe = fd[WRITE_END];
+    receive->read_pipe = recvfd[READ_END];
+    receive->write_pipe = recvfd[WRITE_END];
 
 	if(dispatch_thread(recv_thread_func, (void *)receive, thread_receive) == -1 ||
 	   dispatch_thread(send_thread_func, (void *)send, thread_send) == -1)

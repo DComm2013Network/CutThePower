@@ -25,19 +25,19 @@
 #include "Packets.h" /* extern packet_sizes[] */
 
 uint32_t packet_sizes[13] = {
-	sizeof(struct pkt01),
-	sizeof(struct pkt02),
-	sizeof(struct pkt03),
-	sizeof(struct pkt04),
+	sizeof(PKT_PLAYER_NAME),
+	sizeof(PKT_PLAYER_CONNECT),
+	sizeof(PKT_GAME_STATUS),
+	sizeof(PKT_SND_CHAT),
 	sizeof(struct pkt05),
 	sizeof(struct pkt06),
 	0,
-	sizeof(struct pkt08),
+	sizeof(PKT_OBJECTIVE_STATUS),
 	0,
-	sizeof(struct pkt10),
-	sizeof(struct pkt11),
-	sizeof(struct pkt12),
-	sizeof(struct pkt13)
+	sizeof(PKT_POS_UPDATE),
+	sizeof(PKT_ALL_POS_UPDATE),
+	sizeof(PKT_FLOOR_MOVE_REQUEST),
+	sizeof(PKT_FLOOR_MOVE)
 };
 
 /*------------------------------------------------------------------------------------------
@@ -70,17 +70,18 @@ uint32_t packet_sizes[13] = {
  *----------------------------------------------------------------------------------------*/
 uint32_t read_type(int fd)
 {
+    uint32_t type;
+    int read_bytes;
 
-    uint32_t type, read_bytes;
-
-    if( (read_bytes = read_pipe(fd, &type, sizeof(uint32_t))) < 0)
+    if((read_bytes = read_pipe(fd, &type, sizeof(uint32_t))) <= 0)
     {
         if(read_bytes == 0)
         {
-            return 0; //end of file .. nothing in pipe
+            perror("No data on pipe: read_type(int fd)\n");
+            return 99;
         }
-
-        return -1; //error .. check error
+        perror("Error while reading from pipe: read_type(int fd)\n");
+        return 98; //error .. check error
     }
 
     return type;
@@ -115,23 +116,21 @@ uint32_t read_type(int fd)
  *
  * A function for reading the size of the following data struct in the pipe.
  *
- *----------------------------------------------------------------------------------------*/
+ *--------------------------------- -------------------------------------------------------*/
 void* read_packet(int fd, uint32_t size)
 {
     void *temp = malloc(size);
 	int read_bytes;
 
-    if((read_bytes = read_pipe(fd, temp, size)) < 0)
-    {
-        return NULL; /* error .. check error */
-    }
+    if((read_bytes = read_pipe(fd, temp, size)) == -1)
+        perror("Error on reading pipe : read_packet(int, uint32_t)\n");
+        return NULL;
 
     if(read_bytes == 0)
-    {
-        return NULL; /* end of file .. nothing in pipe */
-    }
+        perror("Nothing on pipe to read: read_packet(int, uint32_t)\n");
+        return NULL;
 
-    return temp; //packet id not found .. can also return the scanned data instead
+    return temp; 
 }
 
 /*------------------------------------------------------------------------------------------
@@ -162,12 +161,12 @@ int write_packet(int write_fd, uint32_t packet_type, void *packet)
 {
     if (write_pipe(write_fd, &packet_type, sizeof(packet_type)) == -1)
     {
-        perror("write_packet: write");
+        perror("Failed to write packet type: write_packet");
         return -1;
     }
 	if (write_pipe(write_fd, packet, packet_sizes[packet_type - 1]) == -1)
 	{
-		perror("write_packet: write");
+		perror("Failed to write packet: write_pipe");
 		return -1;
 	}
 
@@ -202,15 +201,18 @@ int write_packet(int write_fd, uint32_t packet_type, void *packet)
  *----------------------------------------------------------------------------------------*/
 void *read_data(int fd, uint32_t *type){
 
-	void *packet;
-    
-    if((*type = read_type(fd)) <= 0){
+    int read_bytes;
+    void *packet 
+    *type = read_type(fd);
+    if(*type >= 90){
+        perror("Failed to read packet type from pipe: read_data\n");
         return NULL;
     }
-    
-    if((packet = read_packet(fd, packet_sizes[*type - 1])) == NULL){
-        return (void *)-2;
-    }
 
+    if((packet = read_packet(fd, packet_sizes[*type])) == NULL){
+        perror("Failed to read packet : read_data\n");
+        return NULL;
+    }
     return packet;
 }
+
