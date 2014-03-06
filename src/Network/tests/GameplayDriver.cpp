@@ -3,12 +3,15 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/types.h>
+#include <sys/eventfd.h>
 
 #include "../GameplayCommunication.h"
 #include "../NetworkRouter.h"
 #include "../Packets.h"
 #include "../../world.h"
 #include "../SendSystem.h"
+
+int game_net_signalfd, game_net_lockfd;
 
 int main()
 {
@@ -28,7 +31,10 @@ int main()
 
     create_pipe(rcv_router_fd);
     create_pipe(send_router_fd);
-
+	
+	game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
+	game_net_lockfd		= eventfd(0, EFD_SEMAPHORE);
+	
     sem_init(&gplay_sem, 0, 0);
     ndata->read_pipe = send_router_fd[READ];
     ndata->write_pipe = rcv_router_fd[WRITE];

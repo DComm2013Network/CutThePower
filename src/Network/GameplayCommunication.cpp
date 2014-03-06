@@ -202,7 +202,7 @@ int write_packet(int write_fd, uint32_t packet_type, void *packet)
 void *read_data(int fd, uint32_t *type){
 
     int read_bytes;
-    void *packet 
+    void *packet;
     *type = read_type(fd);
     if(*type >= 90){
         perror("Failed to read packet type from pipe: read_data\n");

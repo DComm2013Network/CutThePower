@@ -38,11 +38,6 @@
 
 extern int game_net_signalfd, game_net_lockfd;
 
-int main()
-{
-	return 0;
-}
-
 /*------------------------------------------------------------------------------------------
  * FUNCTION:    void networkRouter()
  *
@@ -71,7 +66,6 @@ int main()
  *----------------------------------------------------------------------------------------*/
 void *networkRouter(void *args)
 {
-<<<<<<< HEAD
     int sendfd[2];
     int recvfd[2];
     fd_set 		listen_fds;
@@ -91,7 +85,7 @@ void *networkRouter(void *args)
     	return NULL;
 
     FD_ZERO(&listen_fds);
-    FD_SET(fd[READ_RECV_THREAD], &listen_fds);
+    FD_SET(recvfd[READ_END], &listen_fds);
     FD_SET(gameplay->read_pipe, &listen_fds);
     FD_SET(game_net_signalfd, &listen_fds);
 
@@ -114,7 +108,7 @@ void *networkRouter(void *args)
 			write_packet(sendfd[WRITE_END], type, packet);
 			--ret;
         }
-        if(ret && FD_ISSET(game_net_signalfd, &active)
+        if(ret && FD_ISSET(game_net_signalfd, &active))
         {
         	read(game_net_signalfd, &timestamp, sizeof(uint64_t));
         	// Write the cached packets to gameplay
@@ -205,7 +199,7 @@ int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int send
 	create_pipe(sendfd);
 	create_pipe(recvfd);
 	
-    *max_fd = fd[READ_END] > gameplay->read_pipe ? fd[READ_END] : gameplay->read_pipe;
+    *max_fd = recvfd[READ_END] > gameplay->read_pipe ? recvfd[READ_END] : gameplay->read_pipe;
     resolve_host(&ipaddr, TCP_PORT, gameplay->ip_address_string);
 
     tcp_sock = SDLNet_TCP_Open(&ipaddr);

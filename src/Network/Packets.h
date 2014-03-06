@@ -55,12 +55,18 @@ typedef struct{
 #define READ 0
 #define WRITE 1
 
+#define P_NAME 		1
+#define P_CONNECT 	2
+#define G_STATUS	3
+#define P_OBJSTATUS 8
+#define P_POSUPDATE 10
+
 // Game Status Definitions
-#define GAME_STATE_WAITING 0x001
-#define GAME_STATE_ACTIVE 0x002
-#define GAME_STATE_OVER 0x003
-#define PLAYER_STATE_READY 0x004
-#define PLAYER_STATE_WAITING 0x005
+#define GAME_STATE_WAITING 		0x001
+#define GAME_STATE_ACTIVE 		0x002
+#define GAME_STATE_OVER 		0x003
+#define PLAYER_STATE_READY 		0x004
+#define PLAYER_STATE_WAITING 	0x005
 
 // Special floor Definitions
 #define FLOOR_LOBBY 0x000
