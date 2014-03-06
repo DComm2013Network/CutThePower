@@ -61,6 +61,8 @@ typedef struct{
 #define P_OBJSTATUS 8
 #define P_POSUPDATE 10
 
+#define NUM_PACKETS 14
+
 // Game Status Definitions
 #define GAME_STATE_WAITING 		0x001
 #define GAME_STATE_ACTIVE 		0x002

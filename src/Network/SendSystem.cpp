@@ -25,7 +25,7 @@
  * FUTURE FEATURES: Cached location of data after first go through for called data
  *					Ability to specify which update will be sent
  *----------------------------------------------------------------------------------------*/
-void send_system(World& world, int fd, sem_t gplay_sem) { 
+void send_system(World& world, int fd) { 
 
 		// PKT_PLAYER_NAME * pkt1 = (PKT_PLAYER_NAME *)malloc(sizeof(PKT_PLAYER_NAME));
 		// for (int j = 0; j < MAX_ENTITIES; j++) {

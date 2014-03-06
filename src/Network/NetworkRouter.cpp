@@ -35,8 +35,10 @@
 #include "GameplayCommunication.h"
 #include "ServerCommunication.h"
 #include "PipeUtils.h"
+#include "Packets.h"
 
 extern int game_net_signalfd, game_net_lockfd;
+extern uint32_t packet_sizes[NUM_PACKETS];
 
 /*------------------------------------------------------------------------------------------
  * FUNCTION:    void networkRouter()
@@ -66,14 +68,14 @@ extern int game_net_signalfd, game_net_lockfd;
  *----------------------------------------------------------------------------------------*/
 void *networkRouter(void *args)
 {
-    int sendfd[2];
-    int recvfd[2];
+    int 		sendfd[2];
+    int 		recvfd[2];
     fd_set 		listen_fds;
     fd_set		active;
     int 		max_fd;
     uint32_t 	type;
-    uint64_t	timestamp;
-    void 		*packet;
+    uint64_t	timestamp, cached_timestamps[NUM_PACKETS] = {0}, sem_buf;
+    void 		*packet, *cached_packets[NUM_PACKETS] = {0};
     pthread_t 	thread_send;
     pthread_t 	thread_receive;
     PDATA 		gameplay = (PDATA)args;
@@ -99,19 +101,35 @@ void *networkRouter(void *args)
         if(ret && FD_ISSET(recvfd[READ_END], &active))
         {
         	packet = read_data(recvfd[READ_END], &type);
+        	timestamp = read(recvfd[READ_END], &timestamp, sizeof(timestamp));
 			write_packet(gameplay->write_pipe, type, packet);
 			--ret;
         }
         if(ret && FD_ISSET(gameplay->read_pipe, &active))
         {
         	packet = read_data(gameplay->read_pipe, &type);
+        	timestamp = read(recvfd[READ_END], &timestamp, sizeof(timestamp));
 			write_packet(sendfd[WRITE_END], type, packet);
 			--ret;
         }
         if(ret && FD_ISSET(game_net_signalfd, &active))
         {
-        	read(game_net_signalfd, &timestamp, sizeof(uint64_t));
-        	// Write the cached packets to gameplay
+        	uint32_t num_changed;
+        	unsigned changed_mask = 0;
+
+        	read(game_net_signalfd, &sem_buf, sizeof(uint64_t)); /* Decrease the semaphore to 0 */
+        	num_changed = determine_changed(cached_packets, &changed_mask);
+        	write(gameplay->write_pipe, &num_changed, sizeof(num_changed));
+
+        	for(uint32_t i = 0; i < NUM_PACKETS; ++i)
+        	{
+        		if(changed_mask & (1 << i))
+        		{
+        			write(gameplay->write_pipe, &i, sizeof(i));
+        			write(gameplay->write_pipe, cached_packets[i], packet_sizes[i]);
+        		}
+        	}
+        	write(game_net_lockfd, &sem_buf, sizeof(sem_buf)); /* Gameplay can now read from the pipe */
 		}
         
     }

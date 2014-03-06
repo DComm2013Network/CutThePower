@@ -19,16 +19,14 @@ void *recv_thread_func(void *ndata);
 void *send_thread_func(void *ndata);
 
 /* Socket send functions */
-int send_tcp(char * data, TCPsocket sock);
-int send_udp(char * data, UDPsocket sock);
 char* grab_send_packet(uint32_t *type, int fd, int * ret);
 void* send_thread_func(void* ndata);
 
-/* Socket receive functions; "packets" in this context refer to gameplay packets */
+/* Socket receive functions */
 int recv_udp (UDPsocket sock, UDPpacket *udp_packet);
 int recv_tcp (TCPsocket sock, void *buf, size_t bufsize);
-void *recv_udp_packet(UDPsocket sock, uint32_t *game_packet_type);
-void *recv_tcp_packet(TCPsocket sock, uint32_t *game_packet_type);
+void *recv_udp_packet(UDPsocket sock, uint32_t *packet_type, uint64_t *timestamp);
+void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp);
 
 /* Socket creation and utilities */
 TCPsocket initiate_tcp();
