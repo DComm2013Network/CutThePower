@@ -25,7 +25,7 @@
  * FUTURE FEATURES: Cached location of data after first go through for called data
  *					Ability to specify which update will be sent
  *----------------------------------------------------------------------------------------*/
-void send_system(World& world, int fd) { 
+void send_system(World *world, int fd) { 
 
 		// PKT_PLAYER_NAME * pkt1 = (PKT_PLAYER_NAME *)malloc(sizeof(PKT_PLAYER_NAME));
 		// for (int j = 0; j < MAX_ENTITIES; j++) {
@@ -42,21 +42,21 @@ void send_system(World& world, int fd) {
 		PKT_TAGGING * pkt14 = (PKT_TAGGING*)malloc(sizeof(PKT_TAGGING));
 
 		for (int j = 0; j < MAX_ENTITIES; j++) {
-			if (IN_THIS_COMPONENT(world.mask[j], COMPONENT_POSITION | COMPONENT_CONTROLLABLE))
+			if (IN_THIS_COMPONENT(world->mask[j], COMPONENT_POSITION | COMPONENT_CONTROLLABLE))
 			{
-				pkt4->xPos = world.position[j].x;
-				pkt4->yPos = world.position[j].y;
-				pkt4->xVel = world.movement[j].movX;
-				pkt4->yVel = world.movement[j].movY;
-				pkt4->floor = world.position[j].level;
-				pkt4->player_number = world.player[j].playerNo;	
+				pkt4->xPos = world->position[j].x;
+				pkt4->yPos = world->position[j].y;
+				pkt4->xVel = world->movement[j].movX;
+				pkt4->yVel = world->movement[j].movY;
+				pkt4->floor = world->position[j].level;
+				pkt4->player_number = world->player[j].playerNo;	
 			}
 
-			if(IN_THIS_COMPONENT(world.mark[j], COMPONENT_TAG)) 
+			if(IN_THIS_COMPONENT(world->mask[j], COMPONENT_TAG)) 
 			{
 				pkt14->tagger_id = world->tag[j].tagger_id;
 				pkt14->taggee_id = world->tag[j].taggee_id;
-				destroy_entity(world, j);
+				destroy_entity(*world, j);
 			}
 		}
 		write_packet(fd, P_POSUPDATE - 1, pkt4);

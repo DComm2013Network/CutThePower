@@ -37,7 +37,7 @@ int main()
     ndata->read_pipe = send_router_fd[READ];
     ndata->write_pipe = rcv_router_fd[WRITE];
 
-    send_system(*world, send_router_fd[WRITE]);
+    send_system(world, send_router_fd[WRITE]);
 
     pthread_create(&thread, NULL, networkRouter, (void *)ndata);
     pthread_detach(thread);
