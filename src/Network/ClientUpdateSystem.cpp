@@ -11,6 +11,7 @@
 #include "network_systems.h"
 #include "GameplayCommunication.h"
 #include "PipeUtils.h"
+#include "../world.h"
 
 /**
  * TODO:	Rearrange the switch statement to put the most likely packets first. 
@@ -79,7 +80,10 @@ void client_update_system(World *world, int net_pipe) {
 			case 11:
 				client_update_pos(world, packet);
 				break;
-		
+			case 14:
+				//tagging logic
+				player_tag_packet(world, packet);
+				break;
 			// Should never receive a packet outside the above range (the rest are unpurposed or client->server packets); 
 			// discard it (and maybe log an error) if we get one
 			case 1:
@@ -121,6 +125,25 @@ void client_update_pos(World *world, void *packet)
 		world->position[player_table[i]].y		= pos_update->yPos[i];
 		world->position[player_table[i]].level	= pos_update->floor;
 	}
+}
+
+/**
+ * If this function is called, it means the current player got tagged.
+ * This packet is going to be passed to the gameplay and they'll manage it.
+ *
+ * @param[in, out]	world 	The world struct holding the data to be updated.
+ * @param[in] 		packet	The packet containing update information.
+ *
+ * @designer Abhishek Bhardwaj
+ * @author Abhishek Bhardwaj
+ */
+void player_tag_packet(World *world, void *packet)
+{
+	PKT_TAGGING * pkt14 = (PKT_TAGGING*)packet;
+
+	uint32_t entity = create_entity(world, COMPONENT_TAG);
+	world->tag[entity].tagger = pkt14->tagger_id;
+	world->tag[entity].taggee = pkt14->taggee_id;
 }
 
 /**
