@@ -76,7 +76,7 @@ extern uint32_t packet_sizes[NUM_PACKETS];
  
 		else if(numready)
 		{
-			if(SDLNet_SocketReady(recv_data->tcp_sock))
+			/*if(SDLNet_SocketReady(recv_data->tcp_sock))
 			{
 				if((game_packet = recv_tcp_packet(recv_data->tcp_sock, &packet_type, &timestamp)) == NULL)
 					return NULL;
@@ -87,7 +87,7 @@ extern uint32_t packet_sizes[NUM_PACKETS];
 					return NULL;
 				}
 				free(game_packet);
-			}
+			}*/
 
     		if(SDLNet_SocketReady(recv_data->udp_sock))
     		{
@@ -157,7 +157,7 @@ void* send_thread_func(void* ndata){
 				send_udp(data, snd_data->udp_sock, packet_sizes[type - 1]);
 			//}
 			printf("Done sending\n");
-		}		
+		}
 		// else if(protocol == UDP){
 		// 	
 		// }
@@ -214,6 +214,7 @@ int send_udp(void * data, UDPsocket sock, uint32_t size){
 	int numsent;
 	UDPpacket *pktdata = alloc_packet((char*)data,size);
 	memcpy(pktdata->data, data, size);
+	pktdata->len = size;
 
 	numsent=SDLNet_UDP_Send(sock, pktdata->channel, pktdata);
 	if(!numsent) {
@@ -239,7 +240,7 @@ int send_udp(void * data, UDPsocket sock, uint32_t size){
 --										int *game_packet_type: 	Pointer to an int in which to store the packet type.
 --										size_t *packet_size:	Pointer to a size_t in which to store the packet size.
 --
---      RETURNS: A data buffer containing the packet on success, or NULL on failure.
+--      RETURNS: A data buffer containing the packet on success, NULL on failure, -2 cast to void * on close connection.
 --
 --      NOTES:
 --      Reads the packet type first, then allocates and reads the packet into a data buffer.
@@ -248,8 +249,9 @@ void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 {
 	void *packet;
 	int res;
+	int numread;
 	
-	if(recv_tcp(sock, packet_type, sizeof(uint32_t)) <= 0) /* Read the type of the packet */
+	if((numread = recv_tcp(sock, packet_type, sizeof(uint32_t))) <= 0) /* Read the type of the packet */
 		return NULL;
 
 	uint32_t packet_size = packet_sizes[(*packet_type) - 1];
@@ -286,7 +288,7 @@ void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 ----------------------------------------------------------------------------------------------------------------------*/
 void *recv_udp_packet(UDPsocket sock, uint32_t *packet_type, uint64_t *timestamp)
 {
-	UDPpacket *pktdata = SDLNet_AllocPacket(MAX_UDP_RECV + sizeof(uint32_t) + sizeof(uint64_t)); /* Allocate space for the max packet, the packet type, and the timestamp */
+	UDPpacket *pktdata = SDLNet_AllocPacket(/*MAX_UDP_RECV + sizeof(uint32_t) + sizeof(uint64_t)*/656); /* Allocate space for the max packet, the packet type, and the timestamp */
 	void *packet;
 	uint32_t packet_size;
 
@@ -303,7 +305,7 @@ void *recv_udp_packet(UDPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 		return NULL;
 	}
 	
-	memcpy(packet, pktdata->data + sizeof(uint32_t), packet_size); 					/* Read the packet, starting address is after the packet_size*/
+	memcpy(packet, pktdata->data + sizeof(uint32_t), packet_size); 				/* Read the packet, starting address is after the packet_size*/
 	*timestamp = *((uint64_t *)pktdata->data + packet_size + sizeof(uint32_t)); /* Read the timestamp, starting address is after packet_size and packet */
 
 	SDLNet_FreePacket(pktdata);

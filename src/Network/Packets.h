@@ -63,7 +63,7 @@ typedef struct{
 #define P_OBJCTV_LOC 6
 #define P_UNDEF      7 // NOT DEFINED
 #define P_OBJSTATUS  8
-#define P_UNDEF2      9 // NOT DEFINED
+#define P_UNDEF2     9 // NOT DEFINED
 #define P_POSUPDATE  10
 #define G_ALLPOSUPDATE 11
 #define P_FLOOR_MOVE_REQ 12

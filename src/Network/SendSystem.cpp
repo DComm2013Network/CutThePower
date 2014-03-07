@@ -60,7 +60,7 @@ void send_system(World *world, int fd) {
 				
 			}
 		}
-		write_packet(fd, P_POSUPDATE-1, pkt4);
+		write_packet(fd, P_POSUPDATE, pkt4);
 		// PKT_OBJECTIVE_STATUS * pkt5 = (PKT_OBJECTIVE_STATUS)malloc(sizeof(PKT_OBJECTIVE_STATUS));
 
 		// for (int j = 0; j < MAX_ENTITIES; j++) {
