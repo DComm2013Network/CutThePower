@@ -215,18 +215,34 @@ uint32_t determine_changed(void **packets, unsigned *changed)
 int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int sendfd[2], 
 				int recvfd[2], pthread_t *thread_receive, pthread_t *thread_send)
 {
-    IPaddress ipaddr;
-	TCPsocket tcp_sock, tcp_sock2;
+    IPaddress ipaddr, udpaddr;
+	TCPsocket tcp_sock;
 	UDPsocket udp_sock;
-	
+    int channel;
+	               
 	create_pipe(sendfd);
 	create_pipe(recvfd);
 	
     *max_fd = recvfd[READ_END] > gameplay->read_pipe ? recvfd[READ_END] : gameplay->read_pipe;
     resolve_host(&ipaddr, TCP_PORT, "192.168.43.116");
-
+    resolve_host(&udpaddr, UDP_PORT, "192.168.43.116");
+    
     tcp_sock = SDLNet_TCP_Open(&ipaddr);
+    if(!tcp_sock) {
+        printf("SDLNet_UDP_Open: %s\n", SDLNet_GetError());
+        exit(2);
+    }
+
     udp_sock = SDLNet_UDP_Open(UDP_PORT);
+    if(!udp_sock) {
+        printf("SDLNet_UDP_Open: %s\n", SDLNet_GetError());
+        exit(2);
+    }
+
+    channel = SDLNet_UDP_Bind(udp_sock, 0, &udpaddr);
+    if(channel ==   -1) {
+        printf("SDLNet_UDP_Bind: %s\n", SDLNet_GetError());
+    }
 
     send->tcp_sock = tcp_sock;
     send->udp_sock = udp_sock;

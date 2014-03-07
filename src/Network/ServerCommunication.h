@@ -20,10 +20,9 @@ void *send_thread_func(void *ndata);
 
 /* Socket send functions */
 int send_tcp(void * data, TCPsocket sock, uint32_t type);
-int send_udp(void * data, UDPsocket sock);
+int send_udp(void * data, UDPsocket sock, uint32_t size);
 
 void* grab_send_packet(uint32_t *type, int fd, int * ret);
-void* send_thread_func(void* ndata);
 
 /* Socket receive functions */
 int recv_udp (UDPsocket sock, UDPpacket *udp_packet);
@@ -31,10 +30,11 @@ int recv_tcp (TCPsocket sock, void *buf, size_t bufsize);
 void *recv_udp_packet(UDPsocket sock, uint32_t *packet_type, uint64_t *timestamp);
 void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp);
 
+int get_protocol(int type);
 /* Socket creation and utilities */
 TCPsocket initiate_tcp();
 UDPsocket initiate_udp(uint16_t port);
-UDPpacket *alloc_packet(char * data);
+UDPpacket *alloc_packet(char * data, uint32_t size);
 int resolve_host(IPaddress *ip_addr, const uint16_t port, const char *host_ip_string);
 
 /* Socket select functions */

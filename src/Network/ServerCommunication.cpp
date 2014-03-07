@@ -144,12 +144,22 @@ void* send_thread_func(void* ndata){
         	if(ret != 1){
 				continue;
 			}
-			send_tcp(&type, snd_data->tcp_sock, sizeof(uint32_t));
-			send_tcp(data, snd_data->tcp_sock, packet_sizes[type - 1]);
+			
+			protocol = get_protocol(type);
+			// if(protocol == TCP)
+			// {
+			// 	send_tcp(&type, snd_data->tcp_sock, sizeof(uint32_t));
+			// 	send_tcp(data, snd_data->tcp_sock, packet_sizes[type - 1]);
+			// }
+			// else if(protocol == UDP)
+			// {
+				send_udp(&type, snd_data->udp_sock, sizeof(type));
+				send_udp(data, snd_data->udp_sock, packet_sizes[type - 1]);
+			//}
 			printf("Done sending\n");
 		}		
 		// else if(protocol == UDP){
-		// 	send_udp(data, snd_data->udp_sock);
+		// 	
 		// }
 		// else{
 		// 	perror("Invalid protocol.");
@@ -199,10 +209,11 @@ int send_tcp(void * data, TCPsocket sock, uint32_t size){
 --      Sends the specified data across UDP. Allocates the UDP packet, establishes the random socket for tranfer and then
 --		sends the data on the established socket. Frees the packet after completion.
 ----------------------------------------------------------------------------------------------------------------------*/
-int send_udp(char * data, UDPsocket sock){
+int send_udp(void * data, UDPsocket sock, uint32_t size){
 
 	int numsent;
-	UDPpacket *pktdata = alloc_packet(data);
+	UDPpacket *pktdata = alloc_packet((char*)data,size);
+	memcpy(pktdata->data, data, size);
 
 	numsent=SDLNet_UDP_Send(sock, pktdata->channel, pktdata);
 	if(!numsent) {
@@ -419,9 +430,9 @@ void*grab_send_packet(uint32_t *type, int fd, int *ret){
 --      NOTES:
 --      Creates a UDPpacket with the data passed to it.
 ----------------------------------------------------------------------------------------------------------------------*/
-UDPpacket *alloc_packet(char *data){
+UDPpacket *alloc_packet(char *data, uint32_t size){
 
-	UDPpacket *pktdata = SDLNet_AllocPacket(strlen(data));
+	UDPpacket *pktdata = SDLNet_AllocPacket(size);
 
 	if(!pktdata) {
 	    fprintf(stderr, "SDLNet_AllocPacket: %s\n", SDLNet_GetError());
@@ -534,4 +545,33 @@ int check_sockets(SDLNet_SocketSet set)
 	}
 
 	return numready;
+}
+
+int get_protocol(int type)
+{
+
+	int protocol;
+
+	switch(type)
+	{
+		case P_NAME:
+		case P_CONNECT:
+		case G_STATUS:
+		case P_CHAT:
+		case P_CLNT_LOBBY:
+		case P_OBJCTV_LOC:
+		case P_UNDEF:
+		case P_UNDEF2:
+		case P_OBJSTATUS:
+			protocol = TCP;
+			break;
+		case P_POSUPDATE:
+		case P_FLOOR_MOVE_REQ:
+		case P_FLOOR_MOVE:
+		case P_TAGGING:
+			protocol = UDP;
+			break;
+	}
+
+	return protocol;
 }
