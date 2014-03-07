@@ -19,6 +19,7 @@ int main()
     int send_router_fd[2], rcv_router_fd[2];
     uint32_t type = 0;
     void * pkt;
+    uint64_t timestamp;
 
     World * world = (World*) malloc(sizeof(World));
 
@@ -38,6 +39,7 @@ int main()
     ndata->write_pipe = rcv_router_fd[WRITE];
 
     send_system(world, send_router_fd[WRITE]);
+    //send_system(world, send_router_fd[WRITE]);
 
     pthread_create(&thread, NULL, networkRouter, (void *)ndata);
     pthread_detach(thread);
@@ -46,12 +48,13 @@ int main()
     {   
         printf("Waiting\n");
         pkt = read_data(rcv_router_fd[READ], &type);
+        read_pipe(rcv_router_fd[READ], &timestamp, sizeof(uint64_t));
+        printf("%ld\n", (long)(long)timestamp);
         if(type != 99999)
         {
             printf("Packet recieved\n");
-            printf("test5\n");
             PKT_ALL_POS_UPDATE * pkt11 = (PKT_ALL_POS_UPDATE*)pkt;   
-            printf("num: %u x: %u y: %u\n", pkt11->players_on_floor[2], pkt11->xPos[2], pkt11->yPos[2]); 
+            printf("num: %u x: %f y: %f\n", pkt11->players_on_floor[2], pkt11->xPos[2], pkt11->yPos[2]); 
         }
     }
 }

@@ -35,8 +35,8 @@ uint32_t packet_sizes[NUM_PACKETS] = {
 	0,
 	sizeof(PKT_OBJECTIVE_STATUS),
 	sizeof(PKT_POS_UPDATE),
-    0,
-	sizeof(PKT_ALL_POS_UPDATE),
+    0,  
+    sizeof(PKT_ALL_POS_UPDATE),
 	sizeof(PKT_FLOOR_MOVE_REQUEST),
 	sizeof(PKT_FLOOR_MOVE)
 };

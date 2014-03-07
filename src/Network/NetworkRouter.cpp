@@ -102,8 +102,9 @@ void *networkRouter(void *args)
         if(ret && FD_ISSET(recvfd[READ_END], &active))
         {
         	packet = read_data(recvfd[READ_END], &type);
-        	//timestamp = read(recvfd[READ_END], &timestamp, sizeof(timestamp));
+        	timestamp = read(recvfd[READ_END], &timestamp, sizeof(timestamp));
 			write_packet(gameplay->write_pipe, type, packet);
+            write_pipe(gameplay->write_pipe, &timestamp, sizeof(timestamp));
 			--ret;
         }
         if(ret && FD_ISSET(gameplay->read_pipe, &active))
@@ -225,10 +226,9 @@ int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int send
     resolve_host(&ipaddr, TCP_PORT, "192.168.43.116");
 
     tcp_sock = SDLNet_TCP_Open(&ipaddr);
-    tcp_sock2 = SDLNet_TCP_Open(&ipaddr);// SADDLASO?
     udp_sock = SDLNet_UDP_Open(UDP_PORT);
 
-    send->tcp_sock = tcp_sock2;
+    send->tcp_sock = tcp_sock;
     send->udp_sock = udp_sock;
 
     receive->tcp_sock = tcp_sock;
@@ -240,8 +240,8 @@ int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int send
     receive->read_pipe = recvfd[READ_END];
     receive->write_pipe = recvfd[WRITE_END];
 
-	if(dispatch_thread(recv_thread_func, (void *)receive, thread_receive) == -1 ||
-	   dispatch_thread(send_thread_func, (void *)send, thread_send) == -1)
+	if(dispatch_thread(send_thread_func, (void *)send, thread_send) == -1 ||
+        dispatch_thread(recv_thread_func, (void *)receive, thread_receive) == -1)
 	   return -1;
 	
 	return 0;

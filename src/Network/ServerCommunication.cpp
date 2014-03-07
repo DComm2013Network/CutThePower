@@ -147,7 +147,6 @@ void* send_thread_func(void* ndata){
 			send_tcp(&type, snd_data->tcp_sock, sizeof(uint32_t));
 			send_tcp(data, snd_data->tcp_sock, packet_sizes[type - 1]);
 			printf("Done sending\n");
-			break;
 		}		
 		// else if(protocol == UDP){
 		// 	send_udp(data, snd_data->udp_sock);
@@ -237,6 +236,7 @@ int send_udp(char * data, UDPsocket sock){
 void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp)
 {
 	void *packet;
+	int res;
 	
 	if(recv_tcp(sock, packet_type, sizeof(uint32_t)) == -1) /* Read the type of the packet */
 		return NULL;
@@ -245,11 +245,11 @@ void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 
 	if((packet = malloc(packet_size)) == NULL)
 	{
-		perror("recv_tcp_packet: malloc");
+		perror("recv_ tcp_packet: malloc");
 		return NULL;
 	}
 
-	if(recv_tcp(sock, packet, packet_size) == -1) /* Read the remainder of the packet */
+	if((res = recv_tcp(sock, packet, packet_size)) == -1) /* Read the remainder of the packet */
 		return NULL;
 	
 	if(recv_tcp(sock, timestamp, sizeof(uint64_t)) == -1)
