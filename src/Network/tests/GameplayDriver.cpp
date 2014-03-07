@@ -50,8 +50,8 @@ int main()
         {
             printf("Packet recieved\n");
             printf("test5\n");
-            PKT_POS_UPDATE * pkt4 = (PKT_POS_UPDATE*)pkt;   
-            printf("num: %u x: %u y: %u\n", pkt4->player_number, pkt4->xPos, pkt4->yPos);   
+            PKT_ALL_POS_UPDATE * pkt11 = (PKT_ALL_POS_UPDATE*)pkt;   
+            printf("num: %u x: %u y: %u\n", pkt11->players_on_floor[2], pkt11->xPos[2], pkt11->yPos[2]); 
         }
     }
 }

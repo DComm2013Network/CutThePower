@@ -49,17 +49,18 @@ void send_system(World *world, int fd) {
 				pkt4->xVel = world->movement[j].movX;
 				pkt4->yVel = world->movement[j].movY;
 				pkt4->floor = world->position[j].level;
-				pkt4->player_number = world->player[j].playerNo;	
+				pkt4->player_number = world->player[j].playerNo;
+				break;
 			}
 
 			if(IN_THIS_COMPONENT(world->mask[j], COMPONENT_TAG)) 
 			{
 				pkt14->tagger_id = world->tag[j].tagger_id;
 				pkt14->taggee_id = world->tag[j].taggee_id;
-				destroy_entity(*world, j);
+				
 			}
 		}
-		write_packet(fd, P_POSUPDATE - 1, pkt4);
+		write_packet(fd, P_POSUPDATE-1, pkt4);
 		// PKT_OBJECTIVE_STATUS * pkt5 = (PKT_OBJECTIVE_STATUS)malloc(sizeof(PKT_OBJECTIVE_STATUS));
 
 		// for (int j = 0; j < MAX_ENTITIES; j++) {

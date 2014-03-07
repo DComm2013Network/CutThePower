@@ -20,6 +20,7 @@
  *
  *----------------------------------------------------------------------------------------*/
 
+#include <cstring>
 #include "PipeUtils.h"
 #include "GameplayCommunication.h"
 #include "Packets.h" /* extern packet_sizes[] */
@@ -160,9 +161,15 @@ void* read_packet(int fd, uint32_t size)
  *
  *----------------------------------------------------------------------------------------*/
 int write_packet(int write_fd, uint32_t packet_type, void *packet)
-{
-    if (write_pipe(write_fd, &packet_type, sizeof(packet_type)) == -1 ||
-		write_pipe(write_fd, packet, packet_sizes[packet_type - 1]) == -1)
+{   
+    int temp;
+    if ((temp = write_pipe(write_fd, &packet_type, sizeof(packet_type))) <= 0)
+    {
+        perror("Failed to write packet: write_pipe");
+        return -1;
+    }
+	
+    if((temp = write_pipe(write_fd, packet, packet_sizes[packet_type - 1])) <= 0)
 	{
 		perror("Failed to write packet: write_pipe");
 		return -1;
@@ -184,7 +191,6 @@ int write_packet(int write_fd, uint32_t packet_type, void *packet)
  *
  * INTERFACE:   int read_data(void* packet, int fd)
  *
- * RETURNS:     int : -1 on pipe read error
  *                    -2 on packet read error
  *                    0 on empty read pipe
  *                    type of packet on success
@@ -211,6 +217,7 @@ void *read_data(int fd, uint32_t *type){
         perror("Failed to read packet : read_data\n");
         return NULL;
     }
+
     return packet;
 }
 

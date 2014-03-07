@@ -94,6 +94,7 @@ void *networkRouter(void *args)
     while(1)
     {
     	int ret;
+        int temptype, temptype2;
         active = listen_fds;
         ret = select(max_fd + 1, &active, NULL, NULL, NULL);
         /*if(ret < 0) 	Log an error */
@@ -101,14 +102,17 @@ void *networkRouter(void *args)
         if(ret && FD_ISSET(recvfd[READ_END], &active))
         {
         	packet = read_data(recvfd[READ_END], &type);
-        	timestamp = read(recvfd[READ_END], &timestamp, sizeof(timestamp));
+        	//timestamp = read(recvfd[READ_END], &timestamp, sizeof(timestamp));
 			write_packet(gameplay->write_pipe, type, packet);
 			--ret;
         }
         if(ret && FD_ISSET(gameplay->read_pipe, &active))
         {
+
+            // temptype = read_type(gameplay->read_pipe);
+            // temptype2 = read_type(gameplay->read_pipe);
         	packet = read_data(gameplay->read_pipe, &type);
-        	timestamp = read(recvfd[READ_END], &timestamp, sizeof(timestamp));
+        	//timestamp = read(recvfd[READ_END], &timestamp, sizeof(timestamp));
 			write_packet(sendfd[WRITE_END], type, packet);
 			--ret;
         }
@@ -218,7 +222,7 @@ int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int send
 	create_pipe(recvfd);
 	
     *max_fd = recvfd[READ_END] > gameplay->read_pipe ? recvfd[READ_END] : gameplay->read_pipe;
-    resolve_host(&ipaddr, TCP_PORT, "localhost");
+    resolve_host(&ipaddr, TCP_PORT, "192.168.43.116");
 
     tcp_sock = SDLNet_TCP_Open(&ipaddr);
     tcp_sock2 = SDLNet_TCP_Open(&ipaddr);// SADDLASO?

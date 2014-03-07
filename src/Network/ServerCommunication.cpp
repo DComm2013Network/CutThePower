@@ -135,15 +135,19 @@ void* send_thread_func(void* ndata){
 
 	int protocol = 0;
 	uint32_t type = 0;
-	char * data;
+	void * data;
 	int ret = -1;
 	fd_set listen_fds;
 
 	while(1){	
         	data = grab_send_packet(&type, snd_data->read_pipe, &ret);
-        	if(type >= 90)
+        	if(ret != 1){
 				continue;
-			send_tcp(data, snd_data->tcp_sock, type);
+			}
+			send_tcp(&type, snd_data->tcp_sock, sizeof(uint32_t));
+			send_tcp(data, snd_data->tcp_sock, packet_sizes[type - 1]);
+			printf("Done sending\n");
+			break;
 		}		
 		// else if(protocol == UDP){
 		// 	send_udp(data, snd_data->udp_sock);
@@ -169,10 +173,10 @@ void* send_thread_func(void* ndata){
 --      NOTES:
 --      Sends the packet data over the established tcp connection.
 ----------------------------------------------------------------------------------------------------------------------*/
-int send_tcp(char * data, TCPsocket sock, uint32_t type){
+int send_tcp(void * data, TCPsocket sock, uint32_t size){
 
-	int result=SDLNet_TCP_Send(sock, data, type);
-	if(result < type) {
+	int result=SDLNet_TCP_Send(sock, data, size);
+	if(result <= 0) {
     	fprintf(stderr, "SDLNet_TCP_Send: %s\n", SDLNet_GetError());
     	return -1;
 	}
@@ -378,17 +382,19 @@ int recv_udp (UDPsocket sock, UDPpacket *udp_packet)
  *  Grabs the first packet on the pipe to be sent by send thread.
  *
  *----------------------------------------------------------------------------------------*/
-char *grab_send_packet(uint32_t *type, int fd, int *ret){
+void*grab_send_packet(uint32_t *type, int fd, int *ret){
 
-	if((*type = read_type(fd)) <= -1){
+	*type = read_type(fd);
+	if(*type >= 90){
 		*ret = -1;
 		return NULL;
 	}
-	uint32_t size = packet_sizes[*type];
 
-	char * data = (char*) malloc(sizeof(size + 1));
+	uint32_t size = packet_sizes[*type - 1];
 
-	data = (char*)read_packet(fd, size); // reads data
+	void * data = (void*) malloc(sizeof(size));
+
+	data = read_packet(fd, size); // reads data
 
 	*ret = 1;
 
