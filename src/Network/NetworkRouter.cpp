@@ -31,6 +31,11 @@
 #include <sys/types.h>
 #include <SDL2/SDL_net.h>
 
+#include <netdb.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
 #include "NetworkRouter.h"
 #include "GameplayCommunication.h"
 #include "ServerCommunication.h"
@@ -39,6 +44,7 @@
 
 extern int game_net_signalfd, game_net_lockfd;
 extern uint32_t packet_sizes[NUM_PACKETS];
+
 
 /*------------------------------------------------------------------------------------------
  * FUNCTION:    void networkRouter()
@@ -72,6 +78,7 @@ void *networkRouter(void *args)
     int 		recvfd[2];
     fd_set 		listen_fds;
     fd_set		active;
+    int yes = 1; /* REMOVE LATER */
     int 		max_fd;
     uint32_t 	type;
     uint64_t	timestamp, cached_timestamps[NUM_PACKETS] = {0}, sem_buf;
@@ -90,6 +97,7 @@ void *networkRouter(void *args)
     FD_SET(recvfd[READ_END], &listen_fds);
     FD_SET(gameplay->read_pipe, &listen_fds);
     FD_SET(game_net_signalfd, &listen_fds);
+
 
     while(1)
     {
@@ -224,24 +232,24 @@ int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int send
 	create_pipe(recvfd);
 	
     *max_fd = recvfd[READ_END] > gameplay->read_pipe ? recvfd[READ_END] : gameplay->read_pipe;
-    resolve_host(&ipaddr, TCP_PORT, "192.168.0.22");
-    resolve_host(&udpaddr, UDP_PORT, "192.168.0.22");
+    resolve_host(&ipaddr, TCP_PORT, "192.168.0.38");
+    resolve_host(&udpaddr, 42338, "192.168.0.38");
     
     tcp_sock = SDLNet_TCP_Open(&ipaddr);
     if(!tcp_sock) {
-        printf("SDLNet_UDP_Open: %s\n", SDLNet_GetError());
+        fprintf(stderr, "SDLNet_TCP_Open: %s\n", SDLNet_GetError());
         exit(2);
     }
 
-    udp_sock = SDLNet_UDP_Open(UDP_PORT);
+    udp_sock = SDLNet_UDP_Open(42338);
     if(!udp_sock) {
-        printf("SDLNet_UDP_Open: %s\n", SDLNet_GetError());
+        fprintf(stderr, "SDLNet_UDP_Open: %s\n", SDLNet_GetError());
         exit(2);
     }
 
-    channel = SDLNet_UDP_Bind(udp_sock, 0, &udpaddr);
+    channel = SDLNet_UDP_Bind(udp_sock, -1, &udpaddr);
     if(channel ==   -1) {
-        printf("SDLNet_UDP_Bind: %s\n", SDLNet_GetError());
+        fprintf(stderr, "SDLNet_UDP_Bind: %s\n", SDLNet_GetError());
     }
 
     send->tcp_sock = tcp_sock;

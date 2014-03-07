@@ -19,6 +19,12 @@
  * This file contains all methods responsible for communication with the server.
  *
  *----------------------------------------------------------------------------------------*/
+
+#include <netdb.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+
 #include "NetworkRouter.h"
 #include "ServerCommunication.h"
 #include "GameplayCommunication.h"
@@ -61,11 +67,11 @@ extern uint32_t packet_sizes[NUM_PACKETS];
 	uint32_t 			packet_type;
 	uint64_t			timestamp;
 	void 				*game_packet;
- 	SDLNet_SocketSet 	set = make_socket_set(2, recv_data->tcp_sock, recv_data->udp_sock);
+ 	SDLNet_SocketSet 	set = make_socket_set(/*2*/1, /*recv_data->tcp_sock, */recv_data->udp_sock);
  	
  	if(!set)
  		return NULL;
- 	 		
+ 	
  	while(1)
  	{
  		if((numready = check_sockets(set)) == -1)
@@ -370,6 +376,13 @@ int recv_udp (UDPsocket sock, UDPpacket *udp_packet)
 		fprintf(stderr, "SDLNet_UDP_Recv: %s\n", SDLNet_GetError());
 		return -1;
 	}
+	
+	printf("UDP Packet incoming\n");
+			fprintf(stderr, "\tChan:    %d\n", udp_packet->channel);
+			fprintf(stderr, "\tLen:     %d\n", udp_packet->len);
+			fprintf(stderr, "\tMaxlen:  %d\n", udp_packet->maxlen);
+			fprintf(stderr, "\tStatus:  %d\n", udp_packet->status);
+			fprintf(stderr, "\tAddress: %u %u\n", udp_packet->address.host, udp_packet->address.port);
 
 	return 0;
 }
