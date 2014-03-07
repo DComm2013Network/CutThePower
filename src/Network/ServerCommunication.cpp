@@ -238,7 +238,7 @@ void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 	void *packet;
 	int res;
 	
-	if(recv_tcp(sock, packet_type, sizeof(uint32_t)) == -1) /* Read the type of the packet */
+	if(recv_tcp(sock, packet_type, sizeof(uint32_t)) <= 0) /* Read the type of the packet */
 		return NULL;
 
 	uint32_t packet_size = packet_sizes[(*packet_type) - 1];
@@ -249,10 +249,10 @@ void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 		return NULL;
 	}
 
-	if((res = recv_tcp(sock, packet, packet_size)) == -1) /* Read the remainder of the packet */
+	if((res = recv_tcp(sock, packet, packet_size)) <= 0) /* Read the remainder of the packet */
 		return NULL;
 	
-	if(recv_tcp(sock, timestamp, sizeof(uint64_t)) == -1)
+	if(recv_tcp(sock, timestamp, sizeof(uint64_t)) <= 0)
 		return NULL;
 	
 	return packet;
@@ -326,6 +326,9 @@ int recv_tcp(TCPsocket sock, void *buf, size_t bufsize)
 	{
     	fprintf(stderr, "SDLNet_TCP_Recv: %s\n", SDLNet_GetError());
     	return -1;
+	}
+	else if(numread == 0){
+		return -1;
 	}
 	
 	return numread;
