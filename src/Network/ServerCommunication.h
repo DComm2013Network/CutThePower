@@ -30,8 +30,9 @@ int recv_tcp (TCPsocket sock, void *buf, size_t bufsize);
 void *recv_udp_packet(UDPsocket sock, uint32_t *packet_type, uint64_t *timestamp);
 void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp);
 
-int get_protocol(int type);
+int get_protocol(uint32_t type);
 /* Socket creation and utilities */
+void close_connections(SDLNet_SocketSet set, TCPsocket tcpsock, UDPsocket udpsock);
 TCPsocket initiate_tcp();
 UDPsocket initiate_udp(uint16_t port);
 UDPpacket *alloc_packet(char * data, uint32_t size);
