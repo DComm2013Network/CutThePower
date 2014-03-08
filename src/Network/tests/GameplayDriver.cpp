@@ -13,6 +13,10 @@
 
 int game_net_signalfd, game_net_lockfd;
 
+/* TESTING CLIENT DRIVER FOR NETWORK */
+/* SENDS A PACKET USING THE SEND SYSTEM */
+/* WAITS TO RECIEVE A SERVER PACKET */
+
 int main()
 {
     pthread_t thread;

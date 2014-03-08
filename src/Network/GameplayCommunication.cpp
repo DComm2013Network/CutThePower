@@ -135,23 +135,35 @@ void* read_packet(int fd, uint32_t size)
 
     return temp; 
 }
-
-/*
-	main does thatdasdas
-	create_pipe(rcv_router_fd);
-    create_pipe(send_router_fd);
-    ndata->read_pipe = send_router_fd[READ];
-    ndata->write_pipe = rcv_router_fd[WRITE];
-*/
-void init_client_network(int read_pipe, int write_pipe){
+/*------------------------------------------------------------------------------------------
+ * FUNCTION:    iinit_client_network
+ *
+ * DATE:        March 6, 2014
+ *
+ * REVISIONS:   (Date and Description)
+ *
+ * DESIGNER:    Ramzi Chennafi
+ *
+ * PROGRAMMER:  Ramzi Chennafi
+ *
+ * INTERFACE:  void init_client_network(int send_router_fd[2], int rcv_router_fd[2])
+ *                  send_router_fd : set of pipes created for passing data to the network router
+ *                  rcv_router_fd : set of pipes created for grabing data from the network router
+ *
+ * RETURNS:    nothing
+ *
+ * NOTES:
+ * Called by the main function of the game. Intializes the client network component of the game
+ * Requires 2 pipes as arguments, these will be passed for communication to network router. The 
+ * read descriptor of rcv_router_fd will be passed to the update system by the game, while the 
+ * write descriptor of the send_router_fd will be passed to the send_system.
+ *----------------------------------------------------------------------------------------*/
+void init_client_network(int send_router_fd[2], int rcv_router_fd[2])
+{
     NETWORK_DATA * ndata = (NETWORK_DATA*) malloc(sizeof(NETWORK_DATA));
-
-    create_pipe(rcv_router_fd);
-    create_pipe(send_router_fd);
-	
-	game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
-	game_net_lockfd		= eventfd(0, EFD_SEMAPHORE);
-	
+    
+    ndata->read_pipe = send_router_fd[READ_END];
+    ndata->write_pipe = rcv_router_fd[WRITE_END];
 
     pthread_create(&thread, NULL, networkRouter, (void *)ndata);
     pthread_detach(thread);

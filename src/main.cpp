@@ -8,6 +8,11 @@ int game_net_signalfd, game_net_lockfd;
 int main(int argc, char* argv[]) {
 	SDL_Window *window;
 	SDL_Surface *surface;
+	int send_router_fd[2];
+	int rcv_router_fd[2];
+
+	create_pipe(send_router_fd);
+	create_pipe(rcv_router_fd);
 
 	World world;
 	bool running = true;
@@ -29,6 +34,8 @@ int main(int argc, char* argv[]) {
 	
 	game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
 	game_net_lockfd		= eventfd(0, EFD_SEMAPHORE);
+
+	init_client_network(send_router_fd, rcv_router_fd);
 	
 	while (running)
 	{
@@ -39,6 +46,8 @@ int main(int argc, char* argv[]) {
 		movement_system(world);
 		render_system(world, surface);
 		//map_render(surface);
+		send_system(&world, send_router_fd[WRITE_END]);
+		update_system(&world, rcv_router_fd[READ_END])
 		
 		SDL_UpdateWindowSurface(window);
 	}
