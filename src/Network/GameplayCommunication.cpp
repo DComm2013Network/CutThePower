@@ -21,10 +21,11 @@
  *----------------------------------------------------------------------------------------*/
 
 #include <cstring>
+#include <pthread.h>
 #include "PipeUtils.h"
 #include "GameplayCommunication.h"
 #include "Packets.h" /* extern packet_sizes[] */
-
+#include "NetworkRouter.h"
 uint32_t packet_sizes[NUM_PACKETS] = {
 	sizeof(PKT_PLAYER_NAME),
 	sizeof(PKT_PLAYER_CONNECT),
@@ -160,6 +161,7 @@ void* read_packet(int fd, uint32_t size)
  *----------------------------------------------------------------------------------------*/
 void init_client_network(int send_router_fd[2], int rcv_router_fd[2])
 {
+    pthread_t thread;
     NETWORK_DATA * ndata = (NETWORK_DATA*) malloc(sizeof(NETWORK_DATA));
     
     ndata->read_pipe = send_router_fd[READ_END];
