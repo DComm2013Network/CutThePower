@@ -39,6 +39,10 @@ int main()
     ndata->write_pipe = rcv_router_fd[WRITE];
 
     send_system(world, send_router_fd[WRITE]);
+    send_system(world, send_router_fd[WRITE]);
+    send_system(world, send_router_fd[WRITE]);
+    send_system(world, send_router_fd[WRITE]);
+    send_system(world, send_router_fd[WRITE]);
 
     pthread_create(&thread, NULL, networkRouter, (void *)ndata);
     pthread_detach(thread);
@@ -53,7 +57,7 @@ int main()
         {
             printf("Packet recieved\n");
             PKT_ALL_POS_UPDATE * pkt11 = (PKT_ALL_POS_UPDATE*)pkt;   
-            printf("num: %u x: %f y: %f\n", pkt11->players_on_floor[2], pkt11->xPos[2], pkt11->yPos[2]); 
+            printf("num: %u x: %f y: %f\n", pkt11->players_on_floor[0], pkt11->xPos[0], pkt11->yPos[0]); 
         }
     }
 }

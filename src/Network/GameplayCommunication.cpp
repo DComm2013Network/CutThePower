@@ -136,6 +136,26 @@ void* read_packet(int fd, uint32_t size)
     return temp; 
 }
 
+/*
+	main does thatdasdas
+	create_pipe(rcv_router_fd);
+    create_pipe(send_router_fd);
+    ndata->read_pipe = send_router_fd[READ];
+    ndata->write_pipe = rcv_router_fd[WRITE];
+*/
+void init_client_network(int read_pipe, int write_pipe){
+    NETWORK_DATA * ndata = (NETWORK_DATA*) malloc(sizeof(NETWORK_DATA));
+
+    create_pipe(rcv_router_fd);
+    create_pipe(send_router_fd);
+	
+	game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
+	game_net_lockfd		= eventfd(0, EFD_SEMAPHORE);
+	
+
+    pthread_create(&thread, NULL, networkRouter, (void *)ndata);
+    pthread_detach(thread);
+}
 /*------------------------------------------------------------------------------------------
  * FUNCTION:    write_packet
  *

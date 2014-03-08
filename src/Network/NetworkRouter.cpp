@@ -110,18 +110,14 @@ void *networkRouter(void *args)
         if(ret && FD_ISSET(recvfd[READ_END], &active))
         {
         	packet = read_data(recvfd[READ_END], &type);
-        	timestamp = read(recvfd[READ_END], &timestamp, sizeof(timestamp));
+        	read(recvfd[READ_END], &timestamp, sizeof(timestamp));
 			write_packet(gameplay->write_pipe, type, packet);
             write_pipe(gameplay->write_pipe, &timestamp, sizeof(timestamp));
 			--ret;
         }
         if(ret && FD_ISSET(gameplay->read_pipe, &active))
         {
-
-            // temptype = read_type(gameplay->read_pipe);
-            // temptype2 = read_type(gameplay->read_pipe);
         	packet = read_data(gameplay->read_pipe, &type);
-        	//timestamp = read(recvfd[READ_END], &timestamp, sizeof(timestamp));
 			write_packet(sendfd[WRITE_END], type, packet);
 			--ret;
         }
@@ -232,8 +228,8 @@ int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int send
 	create_pipe(recvfd);
 	
     *max_fd = recvfd[READ_END] > gameplay->read_pipe ? recvfd[READ_END] : gameplay->read_pipe;
-    resolve_host(&ipaddr, TCP_PORT, "192.168.0.38");
-    resolve_host(&udpaddr, 42338, "192.168.0.38");
+    resolve_host(&ipaddr, TCP_PORT, "192.168.0.4");
+    resolve_host(&udpaddr, UDP_PORT, "192.168.0.4");
     
     tcp_sock = SDLNet_TCP_Open(&ipaddr);
     if(!tcp_sock) {
@@ -241,7 +237,7 @@ int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int send
         exit(2);
     }
 
-    udp_sock = SDLNet_UDP_Open(42338);
+    udp_sock = SDLNet_UDP_Open(UDP_PORT);
     if(!udp_sock) {
         fprintf(stderr, "SDLNet_UDP_Open: %s\n", SDLNet_GetError());
         exit(2);
