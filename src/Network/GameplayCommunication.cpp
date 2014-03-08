@@ -159,6 +159,25 @@ void* read_packet(int fd, uint32_t size)
  * read descriptor of rcv_router_fd will be passed to the update system by the game, while the 
  * write descriptor of the send_router_fd will be passed to the send_system.
  *----------------------------------------------------------------------------------------*/
+  /*
+    INTEGRATION NOTES:
+
+    Integrated into the game. Game simply makes the pipes, calls this function then calls the update_system
+    and send_system on every loop. 
+
+    Changes to be made to makefile to integrate network:
+        Include the following for compiling in the makefile.
+            ClientUpdateSystem.cpp
+            GameplayCommunication.cpp
+            NetworkRouter.cpp
+            PipeUtils.cpp
+            SendSystem.cpp
+            ServerComunication.cpp
+            
+        The pipe switches below are also required
+            -pthread
+            -lSDL2_net
+ */
 void init_client_network(int send_router_fd[2], int rcv_router_fd[2])
 {
     pthread_t thread;
