@@ -1,0 +1,14 @@
+#ifndef SEND_SYS_H
+#define SEND_SYS_H
+
+#include "Packets.h"
+#include "../components.h"
+#include "../systems.h"
+#include "../world.h"
+#include "GameplayCommunication.h"
+#include "NetworkRouter.h"
+#include "PipeUtils.h"
+
+void send_system(World *world, int fd);
+
+#endif

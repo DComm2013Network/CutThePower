@@ -53,4 +53,9 @@ typedef struct {
 	char name[MAX_NAME];
 } PlayerComponent;
 
+typedef struct {
+	playerNo_t	tagger_id; /* the person who tagged */
+	playerNo_t  taggee_id; /* the person who got tagged */
+} TagComponent;
+
 #endif

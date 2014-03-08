@@ -15,10 +15,8 @@
 
 //This contains all of the entities' components and their respective component masks.
 typedef struct {
-	unsigned int mask[MAX_ENTITIES];
-
+	unsigned int 			mask[MAX_ENTITIES];
 	PositionComponent		position[MAX_ENTITIES];
-	//RenderComponent			render[MAX_ENTITIES];
 	CommandComponent		command[MAX_ENTITIES];
 	MovementComponent		movement[MAX_ENTITIES];
 	CollisionComponent		collision[MAX_ENTITIES];
@@ -29,12 +27,13 @@ typedef struct {
 	ButtonComponent			button[MAX_ENTITIES];
 	RenderPlayerComponent	renderPlayer[MAX_ENTITIES];
 	PlayerComponent			player[MAX_ENTITIES];
+	TagComponent			tag[MAX_ENTITIES];
 } World;
 
 void init_world(World* world);
 unsigned int create_entity(World* world, unsigned int attributes);
 unsigned int create_player(World* world, int x, int y, bool controllable);
 unsigned int create_level(World* world, uint8_t** map, int width, int height, int tileSize);
-void destory_entity(World* world, const unsigned int entity);
+void destroy_entity(World* world, const unsigned int entity);
 
 #endif

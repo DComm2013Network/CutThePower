@@ -1,11 +1,20 @@
+/**
+ * [File description]
+ *
+ * @file world.cpp
+ */
+
 #include "world.h"
 
 #include <stdlib.h>
 
-/*
- * 
+/**
  * This function initializes every mask to be 0, so that there are no components.
  * 
+ * @param world The world struct containing the entity masks to be zeroed.
+ *
+ * @designer
+ * @author 
  */
 void init_world(World* world) {
 	int i;
@@ -14,11 +23,18 @@ void init_world(World* world) {
 	}
 }
 
-/*
- * 
+/**
  * This function loops through the masks of all the entities and finds the first one
  * that is not used.
- * 
+ *
+ * @param world 		The world struct containing all entities.
+ * @param attributes 	The component mask to apply to the entity.
+ *
+ * @return 	The entity number if there was an entity available, or MAX_ENTITIES if all
+ *			of the entities are in use.
+ *
+ * @designer
+ * @author
  */
 unsigned int create_entity(World* world, unsigned int attributes) {
 	unsigned int entity;
@@ -31,6 +47,22 @@ unsigned int create_entity(World* world, unsigned int attributes) {
 	return MAX_ENTITIES;
 }
 
+/**
+ * [Brief description (one sentence)]
+ *
+ * [Detailed description (if necessary)]
+ *
+ * @param world
+ * @param map
+ * @param width
+ * @param height
+ * @param tileSize
+ *
+ * @return
+ *
+ * @designer
+ * @author
+ */
 unsigned int create_level(World* world, uint8_t** map, int width, int height, int tileSize) {
 	unsigned int entity = 0;
 	int lastID = -1;
@@ -68,8 +100,22 @@ unsigned int create_level(World* world, uint8_t** map, int width, int height, in
 	return MAX_ENTITIES;
 }
 
-unsigned int create_player(World* world, int x, int y, bool controllable) 
-{
+/**
+ * [Brief description (one sentence)]
+ *
+ * [Detailed description (if necessary)]
+ *
+ * @param world
+ * @param x
+ * @param y
+ * @param controllable
+ *
+ * @return
+ *
+ * @designer
+ * @author
+ */
+unsigned int create_player(World* world, int x, int y, bool controllable) {
 	unsigned int entity;
 	PositionComponent pos;
 	RenderPlayerComponent render;
@@ -152,11 +198,17 @@ unsigned int create_player(World* world, int x, int y, bool controllable)
 	return MAX_ENTITIES;
 }
 
-/*
- * 
+/**
  * Clean up is easy.
- * 
+ *
+ * [Detailed description (if necessary)]
+ *
+ * @param world
+ * @param entity
+ *
+ * @designer
+ * @author
  */
-void destory_entity(World* world, const unsigned int entity) {
+void destroy_entity(World* world, const unsigned int entity) {
 	world->mask[entity] = COMPONENT_EMPTY;
 }

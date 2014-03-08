@@ -3,34 +3,65 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/types.h>
+#include <sys/eventfd.h>
 
-#include "GameplayCommunication.h"
-#include "NetworkRouter.h"
-#include "Functions.h"
+#include "../GameplayCommunication.h"
+#include "../NetworkRouter.h"
+#include "../Packets.h"
+#include "../../world.h"
+#include "../SendSystem.h"
+
+int game_net_signalfd, game_net_lockfd;
+
+/* TESTING CLIENT DRIVER FOR NETWORK */
+/* SENDS A PACKET USING THE SEND SYSTEM */
+/* WAITS TO RECIEVE A SERVER PACKET */
 
 int main()
 {
     pthread_t thread;
-    PDATA data = (PDATA) malloc(sizeof(PDATA));
-    int fd[2];
+    int send_router_fd[2], rcv_router_fd[2];
+    uint32_t type = 0;
+    void * pkt;
+    uint64_t timestamp;
 
-    create_pipe(fd);
+    World * world = (World*) malloc(sizeof(World));
 
-    data->read_pipe = fd[0];
-    data->write_pipe = fd[1];
+    create_player(*world, 10, 10, true);
+    
+    pthread_t router_thread;
 
-    pthread_create(&thread, NULL, networkRouter, (void *)&data);
+    NETWORK_DATA * ndata = (NETWORK_DATA*) malloc(sizeof(NETWORK_DATA));
+
+    create_pipe(rcv_router_fd);
+    create_pipe(send_router_fd);
+	
+	game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
+	game_net_lockfd		= eventfd(0, EFD_SEMAPHORE);
+	
+    ndata->read_pipe = send_router_fd[READ];
+    ndata->write_pipe = rcv_router_fd[WRITE];
+
+    send_system(world, send_router_fd[WRITE]);
+    send_system(world, send_router_fd[WRITE]);
+    send_system(world, send_router_fd[WRITE]);
+    send_system(world, send_router_fd[WRITE]);
+    send_system(world, send_router_fd[WRITE]);
+
+    pthread_create(&thread, NULL, networkRouter, (void *)ndata);
     pthread_detach(thread);
 
-    char message[128];
-    int result = read_pipe(fd[0], message, 128);
-
-    if(result < 0)
-    {
-        printf("%s\n", "Couldn't read to pipe!");
+    while(1)
+    {   
+        printf("Waiting\n");
+        pkt = read_data(rcv_router_fd[READ], &type);
+        read_pipe(rcv_router_fd[READ], &timestamp, sizeof(uint64_t));
+        printf("%ld\n", (long)(long)timestamp);
+        if(type != 99999)
+        {
+            printf("Packet recieved\n");
+            PKT_ALL_POS_UPDATE * pkt11 = (PKT_ALL_POS_UPDATE*)pkt;   
+            printf("num: %u x: %f y: %f\n", pkt11->players_on_floor[0], pkt11->xPos[0], pkt11->yPos[0]); 
+        }
     }
-
-    printf("%s\n", message);
-
-    printf("%s\n", "Finished");
 }
