@@ -13,13 +13,15 @@
 SDL_Surface *map_surface;
 SDL_Rect map_rect;
 int w, h;
+int level;
 
 /*------------------------------------------------------------------------------------------------------------------
 -- FUNCTION: map_init
 --
 -- DATE: February 26, 2014
 --
--- REVISIONS: 
+-- REVISIONS: March 10th - Jordan Marling: Implemented reading in the file correctly for the Stairs, able to now set the
+--											location of the stairs & where the stairs will push the player to
 --
 -- DESIGNER: Jordan Marling/Mat Siwoski
 --
@@ -43,8 +45,11 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 	FILE *fp_tiles;
 	
 	int width, height;
-	int x, y, i;
+	int x, y, i, a;
 	uint8_t** map;
+	
+	char entity_type[64];
+	int entity_count;
 	
 	SDL_Surface **tiles;
 	int num_tiles;
@@ -59,14 +64,11 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 		return -1;
 	}
 	
-	if (fscanf(fp_map, "%d %d", &width, &height) != 2) {
+	if (fscanf(fp_map, "%d %d %d", &level, &width, &height) != 3) {
 		return -1;
 	}
 	
-	printf("Value of map: %d", map);
-	
 	printf("Map size: %dx%d = %d tiles\n", width, height, width * height);
-	printf("Value of map: %d", map);
 	
 	if ((map = (uint8_t**)malloc(sizeof(uint8_t*) * width)) == NULL) {
 		printf("malloc failed\n");
@@ -82,6 +84,27 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 		for(x = 0; x < width; x++) {
 			if (fscanf(fp_map, "%u", &map[x][y]) != 1) {
 				printf("Expected more map.\n");
+				return -1;
+			}
+		}
+	}
+	
+	if (fscanf(fp_map, "%d", &entity_count) == 1) {
+		
+		for(i = 0; i < entity_count; i++) {
+			
+			if (fscanf(fp_map, "%s", &entity_type) != 1) {
+				printf("Entity type error: %s\n", file_map);
+				return -1;
+			}
+			
+			//printf("Found entity: %s\n", entity_type);
+			
+			if (strcmp(entity_type, "stair") == 0) { //stair
+				fscanf(fp_map, "%d %d %d %d %d", &a, &a, &a, &a, &a);
+			}
+			else {
+				printf("Did not deal with the entity type: %s\n", entity_type);
 				return -1;
 			}
 		}
