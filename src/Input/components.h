@@ -1,9 +1,11 @@
 #ifndef INPUT_COMPONENT_H
 #define INPUT_COMPONENT_H
 
+#include "../components.h"
+
 typedef struct  {
-	int xPos;
-	int yPos;
+	int x;
+	int y;
 	bool rightClick;
 	bool leftClick;
 	

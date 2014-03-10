@@ -19,13 +19,20 @@
  * This file contains all methods responsible for communication with the server.
  *
  *----------------------------------------------------------------------------------------*/
+
+#include <netdb.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+
 #include "NetworkRouter.h"
 #include "ServerCommunication.h"
 #include "GameplayCommunication.h"
 #include "PipeUtils.h"
 #include "Packets.h"
 
-extern uint32_t packet_sizes[13];
+extern uint32_t packet_sizes[NUM_PACKETS];
+static int cnt_errno = 0;
 
 /*------------------------------------------------------------------------------------------
  * FUNCTION:    recv_thread_func
@@ -59,12 +66,13 @@ extern uint32_t packet_sizes[13];
  	NDATA				recv_data = (NDATA)ndata;
  	int 				numready;
 	uint32_t 			packet_type;
+	uint64_t			timestamp;
 	void 				*game_packet;
  	SDLNet_SocketSet 	set = make_socket_set(2, recv_data->tcp_sock, recv_data->udp_sock);
- 	
+	
  	if(!set)
  		return NULL;
- 	 		
+ 	
  	while(1)
  	{
  		if((numready = check_sockets(set)) == -1)
@@ -77,27 +85,48 @@ extern uint32_t packet_sizes[13];
 		{
 			if(SDLNet_SocketReady(recv_data->tcp_sock))
 			{
-				if((game_packet = recv_tcp_packet(recv_data->tcp_sock, &packet_type)) == NULL)
-					return NULL;
-
-				if(write_packet(recv_data->read_pipe, packet_type, game_packet) == -1)
+				if((game_packet = recv_tcp_packet(recv_data->tcp_sock, &packet_type, &timestamp)) == NULL)
 				{
-					free(game_packet);
-					return NULL;
+					if(cnt_errno == -3){
+						fprintf(stderr, "Failure in tcp recv : %s ", SDLNet_GetError());
+						exit(1);
+					}
+
+					if(cnt_errno == -2){
+						printf("Connection lost, exiting client.");
+						close_connections(set, recv_data->tcp_sock, recv_data->udp_sock);
+						exit(2);	
+					}
 				}
+					
+				if(write_packet(recv_data->write_pipe, packet_type, game_packet) == -1 ||
+				   write_pipe(recv_data->write_pipe, &timestamp, sizeof(timestamp)) == -1)
+				{
+					printf("TCP>Router: Error in write packet, flushing pipe");
+					fflush((FILE*)&recv_data->write_pipe);
+				}
+
 				free(game_packet);
 			}
 
     		if(SDLNet_SocketReady(recv_data->udp_sock))
     		{
-				if((game_packet = recv_udp_packet(recv_data->udp_sock, &packet_type)) == NULL)
-					return NULL;
-
-				if(write_packet(recv_data->read_pipe, packet_type, game_packet) == -1)
+				if((game_packet = recv_udp_packet(recv_data->udp_sock, &packet_type, &timestamp)) == NULL)
 				{
-					free(game_packet);
-					return NULL;
+					if(cnt_errno == -3)
+					{
+						printf("Failure in udp recv : %s ", SDLNet_GetError());
+						continue;
+					}
 				}
+
+				if(write_packet(recv_data->write_pipe, packet_type, game_packet) == -1 ||
+				   write_pipe(recv_data->write_pipe, &timestamp, sizeof(timestamp)) == -1)
+				{
+					printf("UDP>Router: Error in write packet, flushing pipe");
+					fflush((FILE*)&recv_data->write_pipe);
+				}
+
 				free(game_packet);
 			}
     	}
@@ -134,25 +163,29 @@ void* send_thread_func(void* ndata){
 
 	int protocol = 0;
 	uint32_t type = 0;
-	char * data;
+	void * data;
+	int ret = -1;
+	fd_set listen_fds;
 
 	while(1){	
-	
-		if((data = grab_send_packet(&protocol, &type, snd_data->read_pipe)) < 0){
+    	data = grab_send_packet(&type, snd_data->read_pipe, &ret);
+    	if(ret != 1){
 			continue;
 		}
-
-		if(protocol == TCP){
-			send_tcp(data, snd_data->tcp_sock);
+		
+		protocol = get_protocol(type);
+		if(protocol == TCP)
+		{
+			send_tcp(&type, snd_data->tcp_sock, sizeof(uint32_t));
+			send_tcp(data, snd_data->tcp_sock, packet_sizes[type - 1]);
 		}
-		else if(protocol == UDP){
-			send_udp(data, snd_data->udp_sock);
+		else if(protocol == UDP)
+		{
+			send_udp(&type, snd_data->udp_sock, sizeof(type));
+			send_udp(data, snd_data->udp_sock, packet_sizes[type - 1]);
 		}
-		else{
-			perror("Invalid protocol.");
-		}
+		printf("Done sending\n");
 	}
-
 	return NULL;
 }
 /*------------------------------------------------------------------------------------------------------------------
@@ -171,16 +204,14 @@ void* send_thread_func(void* ndata){
 --      NOTES:
 --      Sends the packet data over the established tcp connection.
 ----------------------------------------------------------------------------------------------------------------------*/
-int send_tcp(char * data, TCPsocket sock){
+int send_tcp(void * data, TCPsocket sock, uint32_t size){
 
-	int len=strlen(data);
-	int result=SDLNet_TCP_Send(sock, data, len);
-	if(result < len) {
+	int result=SDLNet_TCP_Send(sock, data, size);
+	if(result <= 0) {
     	fprintf(stderr, "SDLNet_TCP_Send: %s\n", SDLNet_GetError());
     	return -1;
 	}
 
-	SDLNet_TCP_Close(sock);
 	return 0;
 }
 /*------------------------------------------------------------------------------------------------------------------
@@ -200,10 +231,12 @@ int send_tcp(char * data, TCPsocket sock){
 --      Sends the specified data across UDP. Allocates the UDP packet, establishes the random socket for tranfer and then
 --		sends the data on the established socket. Frees the packet after completion.
 ----------------------------------------------------------------------------------------------------------------------*/
-int send_udp(char * data, UDPsocket sock){
+int send_udp(void * data, UDPsocket sock, uint32_t size){
 
 	int numsent;
-	UDPpacket *pktdata = alloc_packet(data);
+	UDPpacket *pktdata = alloc_packet((char*)data,size);
+	memcpy(pktdata->data, data, size);
+	pktdata->len = size;
 
 	numsent=SDLNet_UDP_Send(sock, pktdata->channel, pktdata);
 	if(!numsent) {
@@ -229,30 +262,32 @@ int send_udp(char * data, UDPsocket sock){
 --										int *game_packet_type: 	Pointer to an int in which to store the packet type.
 --										size_t *packet_size:	Pointer to a size_t in which to store the packet size.
 --
---      RETURNS: A data buffer containing the packet on success, or NULL on failure.
+--      RETURNS: A data buffer containing the packet on success, NULL on failure, -2 cast to void * on close connection.
 --
 --      NOTES:
 --      Reads the packet type first, then allocates and reads the packet into a data buffer.
 ----------------------------------------------------------------------------------------------------------------------*/
-void *recv_tcp_packet(TCPsocket sock, uint32_t *game_packet_type)
+void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp)
 {
-	void *game_packet;
-	
-	if(recv_tcp(sock, game_packet_type, sizeof(int)) == -1)
+	void *packet;
+	int numread;
+
+	numread = recv_tcp(sock, packet_type, sizeof(uint32_t));
+	if(numread < 0)
 		return NULL;
 
-	uint32_t game_packet_size = packet_sizes[(*game_packet_type) - 1];
+	uint32_t packet_size = packet_sizes[(*packet_type) - 1];
 
-	if((game_packet = malloc(game_packet_size)) == NULL)
+	if((packet = malloc(packet_size)) == NULL)
 	{
-		perror("recv_tcp_packet: malloc");
+		perror("recv_ tcp_packet: malloc");
+		cnt_errno = -1;
 		return NULL;
 	}
 
-	if(recv_tcp(sock, game_packet, game_packet_size) == -1)
-		return NULL;
-	
-	return game_packet;
+	numread = recv_tcp(sock, packet, packet_size);
+	numread = recv_tcp(sock, timestamp, sizeof(uint64_t));
+	return packet;
 }
 /*------------------------------------------------------------------------------------------------------------------
 --      FUNCTION: recv_udp_packet
@@ -270,27 +305,32 @@ void *recv_tcp_packet(TCPsocket sock, uint32_t *game_packet_type)
 --      NOTES:
 --      Reads the packet type into packet_type, then reads the 
 ----------------------------------------------------------------------------------------------------------------------*/
-void *recv_udp_packet(UDPsocket sock, uint32_t *game_packet_type)
+void *recv_udp_packet(UDPsocket sock, uint32_t *packet_type, uint64_t *timestamp)
 {
-	UDPpacket *pktdata = SDLNet_AllocPacket(MAX_UDP_RECV + sizeof(uint32_t)); /* Allocate space for the max + the packet type */
-	void *game_packet;
+	UDPpacket *pktdata = SDLNet_AllocPacket(/*MAX_UDP_RECV + sizeof(uint32_t) + sizeof(uint64_t)*/656); /* Allocate space for the max packet, the packet type, and the timestamp */
+	void *packet;
 	uint32_t packet_size;
 
-	if(recv_udp(sock, pktdata) == -1)
-		return NULL;
-
-	*game_packet_type 	= ((uint32_t *)pktdata->data)[0];
-	packet_size 		= packet_sizes[(*game_packet_type) - 1];
-	game_packet			= malloc(packet_size);
-
-	if(!game_packet)
-	{
-		perror("recv_udp: malloc");
+	if(recv_udp(sock, pktdata) == -1){
+		cnt_errno = -3;
 		return NULL;
 	}
 
+	*packet_type 	= ((uint32_t *)pktdata->data)[0];
+	packet_size 	= packet_sizes[(*packet_type) - 1];
+	packet			= malloc(packet_size);
+
+	if(!packet)
+	{
+		perror("recv_udp_packet: malloc");
+		exit(3);
+	}
+	
+	memcpy(packet, pktdata->data + sizeof(uint32_t), packet_size); 				/* Read the packet, starting address is after the packet_size*/
+	*timestamp = *((uint64_t *)(pktdata->data + packet_size + sizeof(uint32_t))); /* Read the timestamp, starting address is after packet_size and packet */
+
 	SDLNet_FreePacket(pktdata);
-	return game_packet;
+	return packet;
 }
 
 /*------------------------------------------------------------------------------------------------------------------
@@ -319,7 +359,10 @@ int recv_tcp(TCPsocket sock, void *buf, size_t bufsize)
 	if(numread == -1)
 	{
     	fprintf(stderr, "SDLNet_TCP_Recv: %s\n", SDLNet_GetError());
-    	return -1;
+    	return cnt_errno = -3;
+	}
+	else if(numread == 0){
+		return cnt_errno = -2;
 	}
 	
 	return numread;
@@ -348,7 +391,7 @@ int recv_udp (UDPsocket sock, UDPpacket *udp_packet)
 		fprintf(stderr, "SDLNet_UDP_Recv: %s\n", SDLNet_GetError());
 		return -1;
 	}
-
+	
 	return 0;
 }
 
@@ -376,15 +419,21 @@ int recv_udp (UDPsocket sock, UDPpacket *udp_packet)
  *  Grabs the first packet on the pipe to be sent by send thread.
  *
  *----------------------------------------------------------------------------------------*/
-char* grab_send_packet(int *protocol, uint32_t *type, int fd){
+void*grab_send_packet(uint32_t *type, int fd, int *ret){
 
-	*protocol = read_type(fd); //  grabs protocol
-	*type = read_type(fd); // grabs type
-	uint32_t size = packet_sizes[*type];
+	*type = read_type(fd);
+	if(*type >= 90){
+		*ret = -1;
+		return NULL;
+	}
 
-	char * data = (char*) malloc(sizeof(size));
+	uint32_t size = packet_sizes[*type - 1];
 
-	data = (char*)read_packet(fd, size); // reads data
+	void * data = (void*) malloc(sizeof(size));
+
+	data = read_packet(fd, size); // reads data
+
+	*ret = 1;
 
 	return data;
 }
@@ -404,9 +453,9 @@ char* grab_send_packet(int *protocol, uint32_t *type, int fd){
 --      NOTES:
 --      Creates a UDPpacket with the data passed to it.
 ----------------------------------------------------------------------------------------------------------------------*/
-UDPpacket *alloc_packet(char *data){
+UDPpacket *alloc_packet(char *data, uint32_t size){
 
-	UDPpacket *pktdata = SDLNet_AllocPacket(strlen(data));
+	UDPpacket *pktdata = SDLNet_AllocPacket(size);
 
 	if(!pktdata) {
 	    fprintf(stderr, "SDLNet_AllocPacket: %s\n", SDLNet_GetError());
@@ -415,41 +464,6 @@ UDPpacket *alloc_packet(char *data){
 
 	return pktdata;
 }
-/*------------------------------------------------------------------------------------------------------------------
---      FUNCTION: frame_data
---
---      DATE: Febuary 15, 2014
---      REVISIONS: none
---
---      DESIGNER: Ramzi Chennafi
---      PROGRAMMER: Ramzi Chennafi
---
---      INTERFACE: packet * frame_data(int type, void* data)
---
---      RETURNS: packet * - pointer to a packet structure
---
---      NOTES:
---     	Frames packets recieved from gameplay for sending to the server.
-----------------------------------------------------------------------------------------------------------------------*/
-internal_packet * frame_data(uint32_t type, void* data){
-
-	internal_packet * framing_pkt = (internal_packet*) malloc(sizeof(internal_packet));
-
-	switch(type){
-		case P_NAME: // TCP PACKETS
-			framing_pkt->protocol = TCP;
-			framing_pkt->type = type;
-			framing_pkt->data = (char*)data;
-		break;
-		case P_POSUPDATE:
-			framing_pkt->protocol = UDP;
-			framing_pkt->type = type;
-			framing_pkt->data = (char*)data;
-		break;
-	}
-
-	return framing_pkt;
-}	
 /*------------------------------------------------------------------------------------------------------------------
 --      FUNCTION: resolve_host_ip
 --
@@ -501,11 +515,10 @@ int resolve_host(IPaddress *ip_addr, const uint16_t port, const char *host_ip_st
 --      Creates an IPaddress struct holding the IP address and port information for the SDL network functions. If the
 --		funciton fails, it will log an error and return NULL.
 ----------------------------------------------------------------------------------------------------------------------*/ 	
-SDLNet_SocketSet make_socket_set(size_t num_sockets, ...)
+SDLNet_SocketSet make_socket_set(int num_sockets, ...)
 {
-	va_list socket_list;
+	va_list socket_list; 	
 	SDLNet_SocketSet set = SDLNet_AllocSocketSet(num_sockets);
-	size_t i;
 
 	if(!set)
 	{
@@ -514,7 +527,7 @@ SDLNet_SocketSet make_socket_set(size_t num_sockets, ...)
 	}
 	
 	va_start(socket_list, num_sockets);
-	for(i = 0; i < num_sockets; ++i)
+	for(size_t i = 0; i < num_sockets; i++)
 	{
 		if(SDLNet_AddSocket(set, va_arg(socket_list, SDLNet_GenericSocket)) == -1)
 		{
@@ -546,7 +559,7 @@ SDLNet_SocketSet make_socket_set(size_t num_sockets, ...)
 ----------------------------------------------------------------------------------------------------------------------*/ 
 int check_sockets(SDLNet_SocketSet set)
 {
-	int numready = SDLNet_CheckSockets(set, INFINITE_TIMEOUT);
+	int numready = SDLNet_CheckSockets(set, 100000);
 
 	if(numready == -1)
 	{
@@ -557,19 +570,82 @@ int check_sockets(SDLNet_SocketSet set)
 	return numready;
 }
 
-int read_protocol(int fd){
-	
-	int protocol, read_bytes;
+/*------------------------------------------------------------------------------------------------------------------
+--      FUNCTION: get_protocol
+--
+--      DATE: Febuary 21, 2014
+--      REVISIONS: none
+--
+--      DESIGNER: Shane Spoor
+--      PROGRAMMER: Shane Spoor
+--
+--      INTERFACE: int get_protocol(uint32_t type)
+--									int type : type of packet to get the protocol for
+--
+--      RETURNS: int : The correct protocol for the specified packet type.
+--
+--      NOTES:
+--      Grabs the correct protocol for the specified packet.
+----------------------------------------------------------------------------------------------------------------------*/ 
+int get_protocol(uint32_t type)
+{
+	int protocol;
 
-    if( (read_bytes = read_pipe(fd, &protocol, sizeof(int))) < 0)
-    {
-        if(read_bytes == 0)
-        {
-            return 0; //end of file .. nothing in pipe
-        }
+	switch(type)
+	{
+		case P_NAME:
+		case P_CONNECT:
+		case G_STATUS:
+		case P_CHAT:
+		case P_CLNT_LOBBY:
+		case P_OBJCTV_LOC:
+		case P_UNDEF:
+		case P_UNDEF2:
+		case P_OBJSTATUS:
+			protocol = TCP;
+			break;
+		case P_POSUPDATE:
+		case P_FLOOR_MOVE_REQ:
+		case P_FLOOR_MOVE:
+		case P_TAGGING:
+			protocol = UDP;
+			break;
+	}
 
-        return -1; //error .. check error
-    }
+	return protocol;
+}
+/*------------------------------------------------------------------------------------------------------------------
+--      FUNCTION: close_connections
+--
+--      DATE: Febuary 21, 2014
+--      REVISIONS: none
+--
+--      DESIGNER: Ramzi Chennafi
+--      PROGRAMMER: Ramzi Chennafi
+--
+--      INTERFACE: void close_connections(SDLNet_SocketSet set, TCPsocket tcpsock, UDPsocket udpsock)
+--									SDENet_SocketSet set: The set to exit.
+--									TCPsocket tcpsock : tcp socket to close
+--									UDPsocket udpsock : udp socket to cose
+--
+--      RETURNS: The number of sockets ready on success, or -1 on failure.
+--
+--      NOTES:
+--      Removes sockets from set and closes open sockets.
+----------------------------------------------------------------------------------------------------------------------*/ 
+void close_connections(SDLNet_SocketSet set, TCPsocket tcpsock, UDPsocket udpsock)
+{
+	int numused;
 
-    return read_bytes;
+	numused=SDLNet_UDP_DelSocket(set,udpsock);
+	if(numused==-1) {
+	    printf("SDLNet_DelSocket: %s\n", SDLNet_GetError());
+	}
+	numused=SDLNet_TCP_DelSocket(set,tcpsock);
+	if(numused==-1) {
+	    printf("SDLNet_DelSocket: %s\n", SDLNet_GetError());
+	}
+
+	SDLNet_TCP_Close(tcpsock);
+	SDLNet_UDP_Close(udpsock);
 }
