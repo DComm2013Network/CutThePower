@@ -106,14 +106,14 @@ void movement_system(World* world) {
 						remove_forcex(temp, *movement);
 						movement->movX = 0;
 					} else {
-						movement->movX *= 1 - 0.01;
+						movement->movX *= 1 - 0.1;
 					}
 					apply_forcey(temp, *movement);
 					if (code = collision_system(*world, temp, entity)) {
 						remove_forcey(temp, *movement);
 						movement->movY = 0;
 					} else {
-						movement->movY *= 1 - 0.01;
+						movement->movY *= 1 - 0.1;
 					}
 
 				}	

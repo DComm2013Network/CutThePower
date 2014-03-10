@@ -48,8 +48,8 @@ void render_player_system(World& world, SDL_Surface* surface) {
 			position = &(world.position[entity]);
 			renderPlayer = &(world.renderPlayer[entity]);			
 			
-			playerRect.x = position->x - (renderPlayer->width / 2) + map_rect.x;
-			playerRect.y = position->y - (renderPlayer->height / 2) + map_rect.y;
+			playerRect.x = position->x + map_rect.x;
+			playerRect.y = position->y + map_rect.y;
 			playerRect.w = renderPlayer->width;
 			playerRect.h = renderPlayer->height;
 			SDL_BlitSurface(renderPlayer->playerSurface, NULL, surface, &playerRect);
