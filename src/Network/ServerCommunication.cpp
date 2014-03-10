@@ -69,7 +69,7 @@ static int cnt_errno = 0;
 	uint64_t			timestamp;
 	void 				*game_packet;
  	SDLNet_SocketSet 	set = make_socket_set(2, recv_data->tcp_sock, recv_data->udp_sock);
-
+	
  	if(!set)
  		return NULL;
  	

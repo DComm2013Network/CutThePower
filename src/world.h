@@ -5,8 +5,8 @@
 
 #include "components.h"
 
-#define WIDTH 800
-#define HEIGHT 600
+#define WIDTH 1280
+#define HEIGHT 768
 
 //Maximum entities that will be used.
 #define MAX_ENTITIES 256
@@ -17,12 +17,11 @@
 typedef struct {
 	unsigned int 			mask[MAX_ENTITIES];
 	PositionComponent		position[MAX_ENTITIES];
-	RenderComponent			render[MAX_ENTITIES];
 	CommandComponent		command[MAX_ENTITIES];
 	MovementComponent		movement[MAX_ENTITIES];
 	CollisionComponent		collision[MAX_ENTITIES];
 	ControllableComponent	controllable[MAX_ENTITIES];
-	LevelComponent			level[1];
+	LevelComponent			level[MAX_ENTITIES];
 	MouseComponent			mouse[MAX_ENTITIES];
 	TextFieldComponent		text[MAX_ENTITIES];
 	ButtonComponent			button[MAX_ENTITIES];
@@ -31,10 +30,10 @@ typedef struct {
 	TagComponent			tag[MAX_ENTITIES];
 } World;
 
-void init_world(World& world);
-unsigned int create_entity(World& world);
-unsigned int create_player(World& world, int x, int y, bool controllable);
-unsigned int create_level(World& world, int map[MAX_WIDTH][MAX_HEIGHT], int width, int height, int tileSize);
-void destroy_entity(World& world, const unsigned int entity);
+void init_world(World* world);
+unsigned int create_entity(World* world, unsigned int attributes);
+unsigned int create_player(World* world, int x, int y, bool controllable);
+unsigned int create_level(World* world, uint8_t** map, int width, int height, int tileSize);
+void destroy_entity(World* world, const unsigned int entity);
 
 #endif

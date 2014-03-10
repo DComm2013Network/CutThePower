@@ -11,7 +11,7 @@
 typedef struct
 {
 	
-	int 					mask[ENTITY_COUNT];
+	int 			mask[ENTITY_COUNT];
 	RenderPlayerComponent	renderPlayer[ENTITY_COUNT];
 
 } World;

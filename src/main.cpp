@@ -14,7 +14,8 @@ int main(int argc, char* argv[]) {
 	create_pipe(send_router_fd);
 	create_pipe(rcv_router_fd);
 
-	World world;
+	World *world = (World*)malloc(sizeof(World));
+	printf("Current World size: %i\n", sizeof(World));
 	bool running = true;
 	
 	SDL_Init(SDL_INIT_VIDEO);
@@ -22,13 +23,14 @@ int main(int argc, char* argv[]) {
 	window = SDL_CreateWindow("Cut The Power", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_OPENGL);
 	surface = SDL_GetWindowSurface(window);
 	
-	if (window == NULL)
-	{
+	if (window == NULL) {
 		printf("Error initializing the window.\n");
 		return 1;
 	}
 	
 	init_world(world);
+	
+	map_init(world, "assets/Graphics/SampleFloor.txt", "assets/Graphics/tiles.txt");
 	
 	create_player(world, 50, 50, true);
 	
@@ -37,17 +39,14 @@ int main(int argc, char* argv[]) {
 
 	init_client_network(send_router_fd, rcv_router_fd);
 	
-	while (running)
-	{
-		
-		//INPUT
-		KeyInputSystem(&world, &running);
-		MouseInputSystem(&world);
+	while (running) {
+		//client_update_system(world, rcv_router_fd[READ_END]);
+		KeyInputSystem(world, &running);
+		MouseInputSystem(world);
 		movement_system(world);
-		render_system(world, surface);
-		//map_render(surface);
-		send_system(&world, send_router_fd[WRITE_END]);
-		update_system(&world, rcv_router_fd[READ_END])
+		map_render(surface);
+		render_player_system(*world, surface);
+		send_system(world, send_router_fd[WRITE_END]);
 		
 		SDL_UpdateWindowSurface(window);
 	}

@@ -4,7 +4,7 @@
 #include "../world.h"
 #include "components.h"
 
-#define SYSTEM_MASK (COMPONENT_RENDER_PLAYER)
+#define SYSTEM_MASK (COMPONENT_RENDER_PLAYER | COMPONENT_POSITION)
 
 /*------------------------------------------------------------------------------------------------------------------
 -- FUNCTION: render_player_system
@@ -12,6 +12,8 @@
 -- DATE: February 21, 2014
 --
 -- REVISIONS: Sam Youssef - February 24, 2014: Updated the player render to get it working with multiple players
+--			  Mateusz Siwoski - February 28, 2014: Modified to pass in the Position Component, fixed not loading the image
+--													every time the frame is drawn
 --
 -- DESIGNER: Jordan Marling/Mat Siwoski
 --
@@ -30,34 +32,28 @@
 -- be added.
 --
 ------------------------------------------------------------------------------------------------------------------*/
-
-/* POSSIBLY TEMPORARY!!! passing playerFilename may not be needed if gameplay gives us a complete player struct. */
-int render_player_system(World& world, SDL_Surface* surface, SDL_Rect* playerRect, char *playerFilename) {
+void render_player_system(World& world, SDL_Surface* surface) {
 	
 	unsigned int entity;
-	RenderPlayerComponent *renderPlayer;
-	
-	SDL_Texture* playerTexture;
-	SDL_Surface* playerSurface;
-	
-
+	RenderPlayerComponent 	*renderPlayer;
+	PositionComponent 		*position;
+	//SDL_Texture* playerTexture;
+	SDL_Rect playerRect;
 	
 	for(entity = 0; entity < MAX_ENTITIES; entity++){
 		
-		if ((world.mask[entity] & SYSTEM_MASK) == SYSTEM_MASK){
+		if (IN_THIS_COMPONENT(world.mask[entity], SYSTEM_MASK)){
 			
+			position = &(world.position[entity]);
 			renderPlayer = &(world.renderPlayer[entity]);			
-
-			/* POSSIBLY TEMPORARY!!! playerFilename may be different if gameplay gives us a complete player struct. */
-			playerSurface = SDL_LoadBMP(playerFilename);
-			SDL_BlitSurface(playerSurface, NULL, surface, playerRect);
 			
-			if (playerSurface == 0) {
-				printf("Error loading tile");
-				return 0;
-			}			
+			playerRect.x = position->x - (renderPlayer->width / 2);
+			playerRect.y = position->y - (renderPlayer->height / 2);
+			
+			playerRect.w = renderPlayer->width;
+			playerRect.h = renderPlayer->height;
+			//printf("mat messed up somewhere: x: %i, y: %i, w: %i, h: %i\n", playerRect.x, playerRect.y, renderPlayer->width, renderPlayer->height);
+			SDL_BlitSurface(renderPlayer->playerSurface, NULL, surface, &playerRect);
 		}
 	}
-	
-	return 1;
 }

@@ -55,7 +55,7 @@ void client_update_system(World *world, int net_pipe) {
 	// Commented out code is for adapting to multiple packet updates at a time
 	// for(i = 0; i < num_packets; ++i)
 	// {
-	while((packet = read_data(net_pipe, &type)) != NULL)	
+	while((packet = read_data(net_pipe, &type)) != NULL) {
 
 		switch (type) {
 			case P_CONNECT:
@@ -82,7 +82,8 @@ void client_update_system(World *world, int net_pipe) {
 				break;
 			case P_TAGGING:
 				//tagging logic
-				player_tag_packet(world, packet);
+				//I don't know how this compiled for you guys. -Clark
+				//player_tag_packet(world, packet);
 				break;
 			// Should never receive a packet outside the above range (the rest are unpurposed or client->server packets); 
 			// discard it (and maybe log an error) if we get one
@@ -142,8 +143,8 @@ void player_tag_packet(World *world, void *packet)
 	PKT_TAGGING * pkt14 = (PKT_TAGGING*)packet;
 
 	uint32_t entity = create_entity(world, COMPONENT_TAG);
-	world->tag[entity].tagger = pkt14->tagger_id;
-	world->tag[entity].taggee = pkt14->taggee_id;
+	world->tag[entity].tagger_id = pkt14->tagger_id;
+	world->tag[entity].taggee_id = pkt14->taggee_id;
 }
 
 /**
@@ -187,7 +188,7 @@ void client_update_status(World *world, void *packet)
 		
 		if(player_table[i] == UNASSIGNED)
 		{
-			entity 								= create_player(*world, 0, 0, false);
+			entity 								= create_player(world, 0, 0, false);
 			world->player[entity].teamNo 		= status_update->otherPlayers_teams[i];
 			world->player[entity].playerNo 		= i + 1;
 			player_table[i] 					= entity;

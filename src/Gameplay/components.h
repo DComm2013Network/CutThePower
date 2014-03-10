@@ -4,9 +4,6 @@
 #include "../components.h"
 #include "../Network/Packets.h"
 
-#define MAX_WIDTH 1
-#define MAX_HEIGHT 1
-
 //Example components. These should be in their simplest form so no duplicate data.
 
 typedef struct {
@@ -18,11 +15,11 @@ typedef struct {
 	int level;
 } PositionComponent;
 
-typedef struct {
+/*typedef struct {
 	int colour;
 	int width;
 	int height;
-} RenderComponent;
+} RenderComponent;*/
 
 typedef struct {
 	bool active;
@@ -34,7 +31,7 @@ typedef struct {
 
 typedef struct {
 	int levelID;
-	unsigned char map[MAX_WIDTH][MAX_HEIGHT];
+	uint8_t** map;
 	int width;
 	int height;
 	int tileSize;

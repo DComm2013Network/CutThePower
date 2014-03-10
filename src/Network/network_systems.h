@@ -15,7 +15,6 @@
 #define POS_UPDATE			2 	/**< Send the player's current position information. */
 #define OBJECTIVE_UPDATE	4 	/**< Send current obejctive states. */
 #define FLOOR_REQUEST		8 	/**< Request a floor change (desired floor should be specified in the World struct). */
-#define 
 
 void client_update_system(World *world, int net_pipe);
 void client_update_pos(World *world, void *packet);

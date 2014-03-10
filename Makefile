@@ -1,5 +1,5 @@
 CC=g++
-FLAGS=-Wall -std=c++11
+FLAGS=-Wall -std=c++11 -g
 LIBS=-lSDL2 -lSDL2_image -lSDL2_net -lpthread
 
 BINDIR=bin
@@ -7,7 +7,7 @@ OBJDIR=obj
 SRCDIR=src
 
 BIN_DEFAULT=$(BINDIR)/CutThePower
-OBJ_DEFAULT=$(OBJDIR)/Gameplay/collision_system.o $(OBJDIR)/Gameplay/movement_system.o $(OBJDIR)/Gameplay/render_system.o $(OBJDIR)/Graphics/render_system.o $(OBJDIR)/Graphics/map.o $(OBJDIR)/Input/keyinputsystem.o $(OBJDIR)/Input/mouseinputsystem.o $(OBJDIR)/main.o $(OBJDIR)/Network/GameplayCommunication.o $(OBJDIR)/Network/ServerCommunication.o $(OBJDIR)/Network/PipeUtils.o $(OBJDIR)/Network/NetworkRouter.o $(OBJDIR)/world.o
+OBJ_DEFAULT=$(OBJDIR)/Gameplay/collision_system.o $(OBJDIR)/Gameplay/movement_system.o $(OBJDIR)/Graphics/render_system.o $(OBJDIR)/Graphics/map.o $(OBJDIR)/Input/keyinputsystem.o $(OBJDIR)/Input/mouseinputsystem.o $(OBJDIR)/main.o $(OBJDIR)/Network/GameplayCommunication.o $(OBJDIR)/Network/ServerCommunication.o $(OBJDIR)/Network/PipeUtils.o $(OBJDIR)/Network/NetworkRouter.o $(OBJDIR)/Network/ClientUpdateSystem.o $(OBJDIR)/Network/SendSystem.o $(OBJDIR)/world.o
 
 CutThePower: $(OBJ_DEFAULT)
 	test -d $(BINDIR) || mkdir -p $(BINDIR)
@@ -32,10 +32,6 @@ $(OBJDIR)/Gameplay/collision_system.o: $(SRCDIR)/Gameplay/collision_system.cpp
 $(OBJDIR)/Gameplay/movement_system.o: $(SRCDIR)/Gameplay/movement_system.cpp
 	test -d $(OBJDIR)/Gameplay || mkdir -p $(OBJDIR)/Gameplay
 	$(CC) $(FLAGS) -c -o $(OBJDIR)/Gameplay/movement_system.o $(SRCDIR)/Gameplay/movement_system.cpp
-
-$(OBJDIR)/Gameplay/render_system.o: $(SRCDIR)/Gameplay/render_system.cpp
-	test -d $(OBJDIR)/Gameplay || mkdir -p $(OBJDIR)/Gameplay
-	$(CC) $(FLAGS) -c -o $(OBJDIR)/Gameplay/render_system.o $(SRCDIR)/Gameplay/render_system.cpp
 
 $(OBJDIR)/Graphics/render_system.o: $(SRCDIR)/Graphics/render_system.cpp
 	test -d $(OBJDIR)/Graphics || mkdir -p $(OBJDIR)/Graphics
@@ -72,6 +68,14 @@ $(OBJDIR)/Network/PipeUtils.o: $(SRCDIR)/Network/PipeUtils.cpp
 $(OBJDIR)/Network/NetworkRouter.o: $(SRCDIR)/Network/NetworkRouter.cpp
 	test -d $(OBJDIR)/Network || mkdir -p $(OBJDIR)/Network
 	$(CC) $(FLAGS) -c -o $(OBJDIR)/Network/NetworkRouter.o $(SRCDIR)/Network/NetworkRouter.cpp
+
+$(OBJDIR)/Network/ClientUpdateSystem.o: $(SRCDIR)/Network/ClientUpdateSystem.cpp
+	test -d $(OBJDIR)/Network || mkdir -p $(OBJDIR)/Network
+	$(CC) $(FLAGS) -c -o $(OBJDIR)/Network/ClientUpdateSystem.o $(SRCDIR)/Network/ClientUpdateSystem.cpp
+
+$(OBJDIR)/Network/SendSystem.o: $(SRCDIR)/Network/SendSystem.cpp
+	test -d $(OBJDIR)/Network || mkdir -p $(OBJDIR)/Network
+	$(CC) $(FLAGS) -c -o $(OBJDIR)/Network/SendSystem.o $(SRCDIR)/Network/SendSystem.cpp
 
 $(OBJDIR)/world.o: $(SRCDIR)/world.cpp
 	test -d $(OBJDIR) || mkdir -p $(OBJDIR)

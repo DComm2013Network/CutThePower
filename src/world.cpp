@@ -16,10 +16,10 @@
  * @designer
  * @author 
  */
-void init_world(World& world) {
+void init_world(World* world) {
 	int i;
 	for(i = 0; i < MAX_ENTITIES; ++i) {
-		world.mask[i] = COMPONENT_EMPTY;
+		world->mask[i] = COMPONENT_EMPTY;
 	}
 }
 
@@ -36,11 +36,11 @@ void init_world(World& world) {
  * @designer
  * @author
  */
-unsigned int create_entity(World& world, unsigned int attributes) {
+unsigned int create_entity(World* world, unsigned int attributes) {
 	unsigned int entity;
 	for(entity = 0; entity < MAX_ENTITIES; entity++) {
-		if (world.mask[entity] == COMPONENT_EMPTY) {
-			world.mask[entity] = attributes;
+		if (world->mask[entity] == COMPONENT_EMPTY) {
+			world->mask[entity] = attributes;
 			return entity;
 		}
 	}
@@ -63,36 +63,39 @@ unsigned int create_entity(World& world, unsigned int attributes) {
  * @designer
  * @author
  */
-unsigned int create_level(World& world, int map[MAX_WIDTH][MAX_HEIGHT], int width, int height, int tileSize) {
+unsigned int create_level(World* world, uint8_t** map, int width, int height, int tileSize) {
 	unsigned int entity = 0;
 	int lastID = -1;
 	unsigned int tempMask = 0;
 	int i = 0;
 	int n = 0;
-	if (width <= MAX_WIDTH && height <= MAX_HEIGHT) {
-		for (entity = 0; entity < MAX_ENTITIES; ++entity) {
-			tempMask = world.mask[entity] & COMPONENT_LEVEL;
-			if (tempMask == COMPONENT_LEVEL) {
-				lastID = world.level[entity].levelID;
+	for (entity = 0; entity < MAX_ENTITIES; ++entity) {
+		tempMask = world->mask[entity] & COMPONENT_LEVEL;
+		if (tempMask == COMPONENT_LEVEL) {
+			lastID = world->level[entity].levelID;
+		}
+	
+		if (world->mask[entity] == COMPONENT_EMPTY) {
+			lastID++;
+			world->mask[entity] = COMPONENT_LEVEL;
+			world->level[entity].map = (uint8_t**)malloc(sizeof(uint8_t*) * width);
+			for (i = 0; i < width; i++) {
+				world->level[entity].map[i] = (uint8_t*)malloc(sizeof(uint8_t) * height);
 			}
-		
-			if (world.mask[entity] == COMPONENT_EMPTY) {
-				lastID++;
-				world.mask[entity] = COMPONENT_LEVEL;
-				for (i = 0; i < width; i++) {
-					for (n = 0; n < height; n++) {
-						world.level[entity].map[i][n] = map[i][n];
-					}
+			for (i = 0; i < width; i++) {
+				for (n = 0; n < height; n++) {
+					world->level[entity].map[i][n] = map[i][n];
 				}
-				world.level[entity].levelID = lastID;
-				world.level[entity].width = width;
-				world.level[entity].height = height;
-				world.level[entity].tileSize = tileSize;
-				
-				return entity;
 			}
+			world->level[entity].levelID = lastID;
+			world->level[entity].width = width;
+			world->level[entity].height = height;
+			world->level[entity].tileSize = tileSize;
+			
+			return entity;
 		}
 	}
+	
 	
 	return MAX_ENTITIES;
 }
@@ -112,11 +115,10 @@ unsigned int create_level(World& world, int map[MAX_WIDTH][MAX_HEIGHT], int widt
  * @designer
  * @author
  */
-unsigned int create_player(World& world, int x, int y, bool controllable) 
-{
+unsigned int create_player(World* world, int x, int y, bool controllable) {
 	unsigned int entity;
 	PositionComponent pos;
-	RenderComponent render;
+	RenderPlayerComponent render;
 	MovementComponent movement;
 	ControllableComponent control;
 	CommandComponent command;
@@ -126,9 +128,12 @@ unsigned int create_player(World& world, int x, int y, bool controllable)
 	//MovementComponent movement;
 	//CollisionComponent collision;
 	
-	render.colour = 0x000000 + (rand() % 0x1000000);
-	render.width = rand() % 20 + 5;
-	render.height = rand() % 20 + 5;
+	render.width = 20;
+	render.height = 20;
+	render.playerSurface = SDL_LoadBMP("assets/Graphics/dot.bmp");
+	if (!render.playerSurface) {
+		printf("mat is a doof\n");
+	}
 	
 	pos.x = x;
 	pos.y = y;
@@ -153,36 +158,40 @@ unsigned int create_player(World& world, int x, int y, bool controllable)
 	control.active = true;
 	
 	for(entity = 0; entity < MAX_ENTITIES; ++entity) {
-		tempMask = world.mask[entity] & COMPONENT_POSITION;
+		tempMask = world->mask[entity] & COMPONENT_POSITION;
 		if (tempMask == COMPONENT_MOVEMENT) {
-			lastID = world.movement[entity].id;
+			lastID = world->movement[entity].id;
 		}
 		
-		if (world.mask[entity] == COMPONENT_EMPTY) {
+		if (world->mask[entity] == COMPONENT_EMPTY) {
 			lastID += 1;
 			movement.id = lastID;
 			if (controllable) {
-				world.mask[entity] =  COMPONENT_POSITION | 
-									  COMPONENT_RENDER | 
-									  COMPONENT_COMMAND | 
-									  COMPONENT_MOVEMENT | 
-									  COMPONENT_COLLISION |
-									  COMPONENT_CONTROLLABLE; //| COMPONENT_MOVEMENT | COMPONENT_COLLISION;
+				world->mask[entity] =	COMPONENT_POSITION | 
+										COMPONENT_RENDER_PLAYER | 
+										COMPONENT_COMMAND | 
+										COMPONENT_MOVEMENT | 
+										COMPONENT_COLLISION |
+										COMPONENT_CONTROLLABLE; //| COMPONENT_MOVEMENT | COMPONENT_COLLISION;
 			} else {
-				world.mask[entity] =  COMPONENT_POSITION | COMPONENT_RENDER | COMPONENT_COMMAND | COMPONENT_COLLISION | COMPONENT_MOVEMENT;
+				world->mask[entity] =	COMPONENT_POSITION | 
+										COMPONENT_RENDER_PLAYER | 
+										COMPONENT_COMMAND | 
+										COMPONENT_COLLISION | 
+										COMPONENT_MOVEMENT;
 			}
-			world.position[entity] = pos;
-			world.render[entity] = render;
-			world.command[entity] = command;
-			world.movement[entity] = movement;
+			world->position[entity] = pos;
+			world->renderPlayer[entity] = render;
+			world->command[entity] = command;
+			world->movement[entity] = movement;
 			if (controllable) {
-				world.controllable[entity] = control;
+				world->controllable[entity] = control;
 			}
-			//world.collision[entity] = collision;
+			//world->collision[entity] = collision;
 			if (controllable) {
-				world.controllable[entity] = control;
+				world->controllable[entity] = control;
 			}
-			//world.collision[entity] = collision;
+			//world->collision[entity] = collision;
 			return entity;
 		}
 	}
@@ -200,6 +209,6 @@ unsigned int create_player(World& world, int x, int y, bool controllable)
  * @designer
  * @author
  */
-void destroy_entity(World& world, const unsigned int entity) {
-	world.mask[entity] = COMPONENT_EMPTY;
+void destroy_entity(World* world, const unsigned int entity) {
+	world->mask[entity] = COMPONENT_EMPTY;
 }
