@@ -88,17 +88,17 @@ static int cnt_errno = 0;
 				if((game_packet = recv_tcp_packet(recv_data->tcp_sock, &packet_type, &timestamp)) == NULL)
 				{
 					if(cnt_errno == -3){
-						fprintf(stderr, "Failure in tcp recv : %s ", SDLNet_GetError());
+						fprintf(stderr, "Failure in tcp recv : %s \n", SDLNet_GetError());
 						exit(1);
 					}
 
 					if(cnt_errno == -2){
-						printf("Connection lost, exiting client.");
+						printf("Connection lost, exiting client.\n");
 						close_connections(set, recv_data->tcp_sock, recv_data->udp_sock);
 						exit(2);	
 					}
 				}
-				printf("Recieved TCP packet: %u", packet_type);		
+				printf("Recieved TCP packet: %u\n", packet_type);		
 				if(write_packet(recv_data->write_pipe, packet_type, game_packet) == -1 ||
 				   write_pipe(recv_data->write_pipe, &timestamp, sizeof(timestamp)) == -1)
 				{
@@ -119,7 +119,7 @@ static int cnt_errno = 0;
 						continue;
 					}
 				}
-				printf("Recieved TCP packet: %u", packet_type);	
+				printf("Recieved TCP packet: %u\n", packet_type);	
 				if(write_packet(recv_data->write_pipe, packet_type, game_packet) == -1 ||
 				   write_pipe(recv_data->write_pipe, &timestamp, sizeof(timestamp)) == -1)
 				{

@@ -1,5 +1,5 @@
 CC=g++
-FLAGS=-Wall -std=c++11 -g -fpermissive
+FLAGS=-Wall -std=c++11 -g
 LIBS=-lSDL2 -lSDL2_image -lSDL2_net -lpthread
 
 BINDIR=bin
@@ -22,7 +22,7 @@ clean:
 debug: $(OBJ_DEFAULT)
 	test -d $(BINDIR) || mkdir -p $(BINDIR)
 	$(CC) $(FLAGS) -g -o $(BINDIR)/CutThePower $(OBJ_DEFAULT) $(LIBS)
-	gdb -tui $(BINDIR)/CutThePower
+	gdb $(BINDIR)/CutThePower
 
 
 $(OBJDIR)/Gameplay/collision_system.o: $(SRCDIR)/Gameplay/collision_system.cpp

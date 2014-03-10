@@ -48,60 +48,60 @@ void client_update_system(World *world, int net_pipe) {
 		memset(player_table, 255, MAX_PLAYERS * sizeof(unsigned int)); 
 	}
 	
-	//write(game_net_signalfd, &signal, sizeof(uint64_t));
+	write(game_net_signalfd, &signal, sizeof(uint64_t));
 	//read(game_net_lockfd, &signal, sizeof(uint64_t)); /* Wait for network to finish writing */
 	
-	//num_packets = read_type(net_pipe); // the function just reads a 32 bit value, so this works; semantically, not ideal
+	num_packets = read_type(net_pipe); // the function just reads a 32 bit value, so this works; semantically, not ideal
 	
 	// Commented out code is for adapting to multiple packet updates at a time
-	// for(i = 0; i < num_packets; ++i)
-	// {
 
-	if (poll(&(struct pollfd){ .fd = net_pipe, .events = POLLIN }, 1, 0)!=1) {
-   		return;
-	}	
-
-	packet = read_data(net_pipe, &type);
-	printf("Recieved packet type: %u", type);
-		switch (type) {
-			case P_CONNECT:
-				if(client_update_info(world, packet) == CONNECT_CODE_DENIED)
-					return; // Pass error up to someone else to deal with
-				break;
-			case G_STATUS:
-				client_update_status(world, packet);
-				break;
-			case P_CHAT:
-				// Chat data
-				break;
-			case P_OBJCTV_LOC:
-				// Map info
-				break;
-			case 7: // undefined
-				// Floor stuff
-				break;
-			case P_OBJSTATUS:
-				// Objective update (game_status is significant here)
-				break;
-			case G_ALLPOSUPDATE:
-				client_update_pos(world, packet);
-				break;
-			case P_TAGGING:
-				//tagging logic
-				//I don't know how this compiled for you guys. -Clark
-				//player_tag_packet(world, packet);
-				break;
-			// Should never receive a packet outside the above range (the rest are unpurposed or client->server packets); 
-			// discard it (and maybe log an error) if we get one
-			case 1:
-			case 5:
-			case 9:
-			case 10:
-			case 12:
-			default:
-				break;
+	// if (poll(&(struct pollfd){ .fd = net_pipe, .events = POLLIN }, 1, 0)!=1) {
+ //   		return;
+	// }	
+	for(i = 0; i < num_packets; ++i)
+	{
+		packet = read_data(net_pipe, &type);
+		printf("Recieved packet type: %u\n", type);
+			switch (type) {
+				case P_CONNECT:
+					if(client_update_info(world, packet) == CONNECT_CODE_DENIED)
+						return; // Pass error up to someone else to deal with
+					break;
+				case G_STATUS:
+					client_update_status(world, packet);
+					break;
+				case P_CHAT:
+					// Chat data
+					break;
+				case P_OBJCTV_LOC:
+					// Map info
+					break;
+				case 7: // undefined
+					// Floor stuff
+					break;
+				case P_OBJSTATUS:
+					// Objective update (game_status is significant here)
+					break;
+				case G_ALLPOSUPDATE:
+					client_update_pos(world, packet);
+					break;
+				case P_TAGGING:
+					//tagging logic
+					//I don't know how this compiled for you guys. -Clark
+					//player_tag_packet(world, packet);
+					break;
+				// Should never receive a packet outside the above range (the rest are unpurposed or client->server packets); 
+				// discard it (and maybe log an error) if we get one
+				case 1:
+				case 5:
+				case 9:
+				case 10:
+				case 12:
+				default:
+					break;
+			}
+			free(packet);
 		}
-		free(packet);
 }
 /**
  * Updates the positions and movement properties of every other player.
