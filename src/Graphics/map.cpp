@@ -7,9 +7,12 @@
 #include <SDL2/SDL.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "map.h"
+#include "world.h"
 
+int level;
 SDL_Surface *map_surface;
 SDL_Rect map_rect;
 
@@ -42,8 +45,11 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 	FILE *fp_tiles;
 	
 	int width, height;
-	int x, y, i;
+	int x, y, i, a;
 	uint8_t** map;
+	
+	char entity_type[64];
+	int entity_count;
 	
 	SDL_Surface **tiles;
 	int num_tiles;
@@ -58,11 +64,12 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 		return -1;
 	}
 	
-	if (fscanf(fp_map, "%d %d", &width, &height) != 2) {
+	if (fscanf(fp_map, "%d %d %d", &level, &width, &height) != 3) {
+		printf("Error getting map information: %s\n", file_map);
 		return -1;
 	}
 	
-	printf("Map size: %dx%d = %d tiles\n", width, height, width * height);
+	printf("Map level %d: %dx%d = %d tiles\n", level, width, height, width * height);
 	
 	if ((map = (uint8_t**)malloc(sizeof(uint8_t*) * width)) == NULL) {
 		printf("malloc failed\n");
@@ -75,12 +82,35 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 	
 	for(y = 0; y < height; y++) {
 		for(x = 0; x < width; x++) {
-			if (fscanf(fp_map, "%u", &map[x][y]) != 1) {
+			if (fscanf(fp_map, "%ud", &map[x][y]) != 1) {
 				printf("Expected more map.\n");
 				return -1;
 			}
 		}
 	}
+	
+	if (fscanf(fp_map, "%d", &entity_count) == 1) {
+		
+		for(i = 0; i < entity_count; i++) {
+			
+			if (fscanf(fp_map, "%s", &entity_type) != 1) {
+				printf("Entity type error: %s\n", file_map);
+				return -1;
+			}
+			
+			//printf("Found entity: %s\n", entity_type);
+			
+			if (strcmp(entity_type, "stair") == 0) { //stair
+				//TODO: Create the stairs properly.
+				fscanf(fp_map, "%d %d %d %d %d", &a, &a, &a, &a, &a);
+			}
+			else {
+				printf("Did not deal with the entity type: %s\n", entity_type);
+				return -1;
+			}
+		}
+	}
+		
 	
 	fclose(fp_map);
 	
