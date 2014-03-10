@@ -5,8 +5,8 @@
 #include "../world.h"
 
 
-#define TILE_WIDTH		4
-#define TILE_HEIGHT		4
+#define TILE_WIDTH		40
+#define TILE_HEIGHT		40
 
 int map_init(World* world, char *file_map, char *tilemap);
 void map_render(SDL_Surface *surface, int x, int y);

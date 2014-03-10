@@ -63,11 +63,15 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 		return -1;
 	}
 	
+	printf("Value of map: %d", map);
+	
 	printf("Map size: %dx%d = %d tiles\n", width, height, width * height);
+	printf("Value of map: %d", map);
 	
 	if ((map = (uint8_t**)malloc(sizeof(uint8_t*) * width)) == NULL) {
 		printf("malloc failed\n");
 	}
+	
 	for (int i = 0; i < width; i++) {
 		if ((map[i] = (uint8_t*)malloc(sizeof(uint8_t) * height)) == NULL) {
 			printf("malloc failed\n");
@@ -140,6 +144,8 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 	map_rect.y = 0;
 	w = map_rect.w = width * TILE_WIDTH;
 	h = map_rect.h = height * TILE_HEIGHT;
+	
+	
 	
 	create_level(world, map, width, height, TILE_WIDTH);
 	for (int i = 0; i < width; i++) {

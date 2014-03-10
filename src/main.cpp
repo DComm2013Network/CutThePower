@@ -24,8 +24,8 @@ int main(int argc, char* argv[]) {
 	
 	init_world(world);
 	
-	map_init(world, "assets/Graphics/SampleFloor2.txt", "assets/Graphics/tiles.txt");
-	unsigned int entity = create_player(world, 50, 50, true);
+	map_init(world, "assets/Graphics/lobby.txt", "assets/Graphics/tiles_lobby.txt");
+	unsigned int entity = create_player(world, 600, 600, true);
 		
 	while (running)
 	{
