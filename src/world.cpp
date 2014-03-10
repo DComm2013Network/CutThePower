@@ -82,9 +82,9 @@ unsigned int create_player(World* world, int x, int y, bool controllable)
 	//MovementComponent movement;
 	//CollisionComponent collision;
 	
-	render.width = 20;
-	render.height = 20;
-	render.playerSurface = SDL_LoadBMP("assets/Graphics/dot.bmp");
+	render.width = 80;
+	render.height = 80;
+	render.playerSurface = IMG_Load("assets/Graphics/player_80px.png");
 	if (!render.playerSurface) {
 		printf("mat is a doof\n");
 	}
@@ -99,8 +99,8 @@ unsigned int create_player(World* world, int x, int y, bool controllable)
 	
 	movement.id = 0;
 	movement.lastDirection = 0;
-	movement.acceleration = 0.2;
-	movement.maxSpeed = 1.5;
+	movement.acceleration = 0.3;
+	movement.maxSpeed = 1.8;
 	movement.movX = 0;
 	movement.movY = 0;
 	
