@@ -98,7 +98,7 @@ static int cnt_errno = 0;
 						exit(2);	
 					}
 				}
-					
+				printf("Recieved TCP packet: %u", packet_type);		
 				if(write_packet(recv_data->write_pipe, packet_type, game_packet) == -1 ||
 				   write_pipe(recv_data->write_pipe, &timestamp, sizeof(timestamp)) == -1)
 				{
@@ -119,7 +119,7 @@ static int cnt_errno = 0;
 						continue;
 					}
 				}
-
+				printf("Recieved TCP packet: %u", packet_type);	
 				if(write_packet(recv_data->write_pipe, packet_type, game_packet) == -1 ||
 				   write_pipe(recv_data->write_pipe, &timestamp, sizeof(timestamp)) == -1)
 				{
@@ -181,8 +181,7 @@ void* send_thread_func(void* ndata){
 		}
 		else if(protocol == UDP)
 		{
-			send_udp(&type, snd_data->udp_sock, sizeof(type));
-			send_udp(data, snd_data->udp_sock, packet_sizes[type - 1]);
+			send_udp(data, &type, snd_data->udp_sock, packet_sizes[type - 1] + sizeof(uint32_t));
 		}
 		printf("Done sending\n");
 	}
@@ -231,11 +230,12 @@ int send_tcp(void * data, TCPsocket sock, uint32_t size){
 --      Sends the specified data across UDP. Allocates the UDP packet, establishes the random socket for tranfer and then
 --		sends the data on the established socket. Frees the packet after completion.
 ----------------------------------------------------------------------------------------------------------------------*/
-int send_udp(void * data, UDPsocket sock, uint32_t size){
+int send_udp(void * data, uint32_t * type, UDPsocket sock, uint32_t size){
 
 	int numsent;
-	UDPpacket *pktdata = alloc_packet((char*)data,size);
-	memcpy(pktdata->data, data, size);
+	UDPpacket *pktdata = alloc_packet(size);
+	memcpy(pktdata->data, type, sizeof(uint32_t));
+	memcpy(pktdata->data + sizeof(uint32_t), data, size - sizeof(uint32_t));
 	pktdata->len = size;
 
 	numsent=SDLNet_UDP_Send(sock, pktdata->channel, pktdata);
@@ -307,7 +307,7 @@ void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 ----------------------------------------------------------------------------------------------------------------------*/
 void *recv_udp_packet(UDPsocket sock, uint32_t *packet_type, uint64_t *timestamp)
 {
-	UDPpacket *pktdata = SDLNet_AllocPacket(/*MAX_UDP_RECV + sizeof(uint32_t) + sizeof(uint64_t)*/656); /* Allocate space for the max packet, the packet type, and the timestamp */
+	UDPpacket *pktdata = SDLNet_AllocPacket(MAX_UDP_RECV + sizeof(uint32_t) + sizeof(uint64_t)); /* Allocate space for the max packet, the packet type, and the timestamp */
 	void *packet;
 	uint32_t packet_size;
 
@@ -453,7 +453,7 @@ void*grab_send_packet(uint32_t *type, int fd, int *ret){
 --      NOTES:
 --      Creates a UDPpacket with the data passed to it.
 ----------------------------------------------------------------------------------------------------------------------*/
-UDPpacket *alloc_packet(char *data, uint32_t size){
+UDPpacket *alloc_packet(uint32_t size){
 
 	UDPpacket *pktdata = SDLNet_AllocPacket(size);
 

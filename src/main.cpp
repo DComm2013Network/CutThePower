@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
 	
 	window = SDL_CreateWindow("Cut The Power", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_OPENGL);
 	surface = SDL_GetWindowSurface(window);
-	
+		
 	if (window == NULL) {
 		printf("Error initializing the window.\n");
 		return 1;
@@ -31,23 +31,23 @@ int main(int argc, char* argv[]) {
 	init_world(world);
 	
 	map_init(world, "assets/Graphics/SampleFloor.txt", "assets/Graphics/tiles.txt");
-	
+		
 	create_player(world, 50, 50, true);
 	
 	game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
 	game_net_lockfd		= eventfd(0, EFD_SEMAPHORE);
 
 	init_client_network(send_router_fd, rcv_router_fd);
+	send_intialization(world, send_router_fd[WRITE_END]);
+	send_system(world, send_router_fd[WRITE_END]);
 	
 	while (running) {
-		//client_update_system(world, rcv_router_fd[READ_END]);
 		KeyInputSystem(world, &running);
 		MouseInputSystem(world);
 		movement_system(world);
 		map_render(surface);
 		render_player_system(*world, surface);
-		send_system(world, send_router_fd[WRITE_END]);
-		
+		client_update_system(world, rcv_router_fd[READ_END]);
 		SDL_UpdateWindowSurface(window);
 	}
 	return 0;

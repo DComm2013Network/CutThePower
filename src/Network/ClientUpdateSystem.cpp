@@ -12,6 +12,7 @@
 #include "GameplayCommunication.h"
 #include "PipeUtils.h"
 #include "../world.h"
+#include <sys/poll.h>
 
 /**
  * TODO:	Rearrange the switch statement to put the most likely packets first. 
@@ -55,8 +56,13 @@ void client_update_system(World *world, int net_pipe) {
 	// Commented out code is for adapting to multiple packet updates at a time
 	// for(i = 0; i < num_packets; ++i)
 	// {
-	while((packet = read_data(net_pipe, &type)) != NULL) {
 
+	if (poll(&(struct pollfd){ .fd = net_pipe, .events = POLLIN }, 1, 0)!=1) {
+   		return;
+	}	
+
+	packet = read_data(net_pipe, &type);
+	printf("Recieved packet type: %u", type);
 		switch (type) {
 			case P_CONNECT:
 				if(client_update_info(world, packet) == CONNECT_CODE_DENIED)
@@ -96,9 +102,7 @@ void client_update_system(World *world, int net_pipe) {
 				break;
 		}
 		free(packet);
-	}
 }
-
 /**
  * Updates the positions and movement properties of every other player.
  *

@@ -20,7 +20,7 @@ void *send_thread_func(void *ndata);
 
 /* Socket send functions */
 int send_tcp(void * data, TCPsocket sock, uint32_t type);
-int send_udp(void * data, UDPsocket sock, uint32_t size);
+int send_udp(void * data, uint32_t * type, UDPsocket sock, uint32_t size);
 
 void* grab_send_packet(uint32_t *type, int fd, int * ret);
 
@@ -35,7 +35,7 @@ int get_protocol(uint32_t type);
 void close_connections(SDLNet_SocketSet set, TCPsocket tcpsock, UDPsocket udpsock);
 TCPsocket initiate_tcp();
 UDPsocket initiate_udp(uint16_t port);
-UDPpacket *alloc_packet(char * data, uint32_t size);
+UDPpacket *alloc_packet(uint32_t size);
 int resolve_host(IPaddress *ip_addr, const uint16_t port, const char *host_ip_string);
 
 /* Socket select functions */
