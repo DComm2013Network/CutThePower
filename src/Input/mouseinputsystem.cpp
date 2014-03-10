@@ -2,6 +2,7 @@
 /*@{*/
 
 /**@file mouseinputsystem.cpp*/
+/*@}*/
 
 #include <SDL2/SDL.h>
 #include "world.h"
@@ -11,32 +12,21 @@
 
 int textField = -1;
 
-/*-----------------------------------------------------------------------------
--   FUNCTION:
--
--   DATE:
--
--   REVISIONS:  ...
--
--   DESIGNER:   Jordan Marling
--               Cory Thomas
--               Vincent Lau
--
--   PROGRAMMER: Jordan Marling
--
--   INTERFACE:  void MouseInputSystem(World *world)
--
--   RETURNS:    nothing!!!!!
--
--   PARAMETERS: world - pointer to the world structure (contains "world" info,
-                                                        entities / components)
--
--   NOTES:      Updates the mouse position for every frame. 
--               Currently not needed until text fields are implemented for menu.
--               Needed for the later "Field of View Looking" feature using mouse
--                   to rotate.
--
------------------------------------------------------------------------------*/
+/**
+ * Updates the mouse position for every frame. 
+ *
+ * Currently not needed until text fields are implemented for menu.
+ * Needed for the later "Field of View Looking" feature using mouse
+ * to rotate.
+ *
+ * @param world Pointer to the world structure (contains "world" info, entities / components)
+ *
+ * @designer Jordan Marling
+ * @designer Cory Thomas
+ * @designer Vincent Lau
+ *
+ * @author Jordan Marling
+ */
 void MouseInputSystem(World *world)
 {
     int entity, x, y;
@@ -110,4 +100,4 @@ void MouseInputSystem(World *world)
 
     }
 }
-/*@}*/
+
