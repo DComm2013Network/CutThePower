@@ -1,3 +1,7 @@
+/** @ingroup Graphics */
+/** @{ */
+/** @file systems.h */
+/** @} */
 #ifndef GRAPHICS_SYSTEMS_H
 #define GRAPHICS_SYSTEMS_H
 
