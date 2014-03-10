@@ -2,7 +2,7 @@
 
 00	assets/Graphics/tile_blue_40px.bmp
 01	assets/Graphics/wall_01_40px.bmp
-02	assets/Graphics/floor2_small.bmp
+02	assets/Graphics/wall_01_40px.bmp
 03	assets/Graphics/floor3_small.bmp
 04	assets/Graphics/floor4_small.bmp
 05	assets/Graphics/floor5_small.bmp
