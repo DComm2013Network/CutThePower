@@ -1,3 +1,6 @@
+/** @addtogroup Input */
+/** @file systems.h */
+/*@{*/
 #ifndef SYSTEMS_H
 #define SYSTEMS_H
 
@@ -7,3 +10,4 @@ void KeyInputSystem(World *world, bool *running);
 void MouseInputSystem(World *world);
 
 #endif
+/*@}*/

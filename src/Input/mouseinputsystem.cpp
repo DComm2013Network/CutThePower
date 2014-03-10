@@ -1,34 +1,13 @@
-/*-----------------------------------------------------------------------------
---  SOURCE FILE:    mouseinputsystem.cpp
---
---
---  PROGRAM:        CutThePower
---
---  FUNCTIONS:      void MouseInputSystem(World *world)
---
---
---
---  DATE:           2014/02/18
---
---  REVISIONS:      ...
---
---  DESIGNER:       Jordan Marling
---                  Cory Thomas
---                  Vincent Lau
---
---  PROGRAMMER:     Jordan Marling
---
---  NOTES:
---
---
---
---
------------------------------------------------------------------------------*/
+/** @ingroup Input */
+/*@{*/
+
+/**@file mouseinputsystem.cpp*/
+
 #include <SDL2/SDL.h>
 #include "world.h"
 #include "components.h"
 
-#define SYSTEM_MASK (COMPONENT_MOUSE)
+#define SYSTEM_MASK (COMPONENT_MOUSE) /**< Entities must have a mouse component to be processed by this system. */
 
 int textField = -1;
 
@@ -131,3 +110,4 @@ void MouseInputSystem(World *world)
 
     }
 }
+/*@}*/
