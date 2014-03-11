@@ -608,7 +608,7 @@ int get_protocol(uint32_t type)
 		case P_FLOOR_MOVE_REQ:
 		case P_FLOOR_MOVE:
 		case P_TAGGING:
-			protocol = UDP;
+			protocol = UDP;	
 			break;
 	}
 

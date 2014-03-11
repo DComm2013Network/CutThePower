@@ -34,12 +34,14 @@ int main(int argc, char* argv[]) {
 		
 	create_player(world, 50, 50, true);
 	
-	game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
-	game_net_lockfd		= eventfd(0, EFD_SEMAPHORE);
+	//game_net_lockfd		= eventfd(0, EFD_SEMAPHORE);
 
-	init_client_network(send_router_fd, rcv_router_fd);
-	send_intialization(world, send_router_fd[WRITE_END]);
-	send_system(world, send_router_fd[WRITE_END]);
+	#ifdef NETWORKON
+		game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
+
+		init_client_network(send_router_fd, rcv_router_fd);
+		send_intialization(world, send_router_fd[WRITE_END]);
+	#endif
 	
 	while (running) {
 		KeyInputSystem(world, &running);
@@ -47,7 +49,12 @@ int main(int argc, char* argv[]) {
 		movement_system(world);
 		map_render(surface);
 		render_player_system(*world, surface);
-		client_update_system(world, rcv_router_fd[READ_END]);
+	
+		#ifdef NETWORKON
+			send_system(world, send_router_fd[WRITE_END]);
+			client_update_system(world, rcv_router_fd[READ_END]);
+		#endif
+			
 		SDL_UpdateWindowSurface(window);
 	}
 	return 0;

@@ -13,12 +13,7 @@
 #include "PipeUtils.h"
 #include "../world.h"
 #include <sys/poll.h>
-
-/**
- * TODO:	Rearrange the switch statement to put the most likely packets first. 
- *			This would be, in order: 11, 8, 4, 7 (?), and we'll have to decide the rest later
- */
-
+ 
 extern int game_net_signalfd, game_net_lockfd;
 static unsigned int *player_table = NULL; /**< A lookup table mapping server player numbers to client entities. */
 
@@ -53,15 +48,15 @@ void client_update_system(World *world, int net_pipe) {
 	
 	num_packets = read_type(net_pipe); // the function just reads a 32 bit value, so this works; semantically, not ideal
 	
-	// Commented out code is for adapting to multiple packet updates at a time
+	// Commented out code is for recieving single pakets
 
 	// if (poll(&(struct pollfd){ .fd = net_pipe, .events = POLLIN }, 1, 0)!=1) {
- //   		return;
+    //   		return;
 	// }	
 	for(i = 0; i < num_packets; ++i)
 	{
 		packet = read_data(net_pipe, &type);
-		printf("Recieved packet type: %u\n", type);
+		fprintf(stderr, " %u\n", type);
 			switch (type) {
 				case P_CONNECT:
 					if(client_update_info(world, packet) == CONNECT_CODE_DENIED)
@@ -88,7 +83,7 @@ void client_update_system(World *world, int net_pipe) {
 				case P_TAGGING:
 					//tagging logic
 					//I don't know how this compiled for you guys. -Clark
-					//player_tag_packet(world, packet);
+					player_tag_packet(world, packet);
 					break;
 				// Should never receive a packet outside the above range (the rest are unpurposed or client->server packets); 
 				// discard it (and maybe log an error) if we get one

@@ -94,7 +94,7 @@ void *networkRouter(void *args)
     	return NULL;
 
     FD_ZERO(&listen_fds);
-    FD_SET(recvfd[READ_END], &listen_fds);
+    //FD_SET(recvfd[READ_END], &listen_fds);
     FD_SET(gameplay->read_pipe, &listen_fds);
     FD_SET(game_net_signalfd, &listen_fds);
 
@@ -107,14 +107,14 @@ void *networkRouter(void *args)
         ret = select(max_fd + 1, &active, NULL, NULL, NULL);
         /*if(ret < 0) 	Log an error */
 
-        if(ret && FD_ISSET(recvfd[READ_END], &active))
-        {
-        	packet = read_data(recvfd[READ_END], &type);
-        	read(recvfd[READ_END], &timestamp, sizeof(timestamp));
-			write_packet(gameplay->write_pipe, type, packet);
-            write_pipe(gameplay->write_pipe, &timestamp, sizeof(timestamp));
-			--ret;
-        }
+   //      if(ret && FD_ISSET(recvfd[READ_END], &active))
+   //      {
+   //      	packet = read_data(recvfd[READ_END], &type);
+   //      	read(recvfd[READ_END], &timestamp, sizeof(timestamp));
+			// write_packet(gameplay->write_pipe, type, packet);
+   //          write_pipe(gameplay->write_pipe, &timestamp, sizeof(timestamp));
+			// --ret;
+   //      }
         if(ret && FD_ISSET(gameplay->read_pipe, &active))
         {
         	packet = read_data(gameplay->read_pipe, &type);
@@ -138,7 +138,7 @@ void *networkRouter(void *args)
         			write(gameplay->write_pipe, cached_packets[i], packet_sizes[i]);
         		}
         	}
-        	write(game_net_lockfd, &sem_buf, sizeof(sem_buf)); /* Gameplay can now read from the pipe */
+        	//write(game_net_lockfd, &sem_buf, sizeof(sem_buf)); /* Gameplay can now read from the pipe */
 		}
         
     }

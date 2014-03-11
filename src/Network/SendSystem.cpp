@@ -41,17 +41,35 @@ void send_system(World *world, int fd) {
 				pkt4->player_number = world->player[j].playerNo;
 				break;
 			}
-
-			if(IN_THIS_COMPONENT(world->mask[j], COMPONENT_TAG)) 
-			{
-				pkt14->tagger_id = world->tag[j].tagger_id;
-				pkt14->taggee_id = world->tag[j].taggee_id;
-				
-			}
 		}
 		write_packet(fd, P_POSUPDATE, pkt4);
 }
-
+/*------------------------------------------------------------------------------------------
+ * FUNCTION:    send_intialization
+ *
+ * DATE:        March 5, 2014
+ *
+ * REVISIONS:   
+ *
+ * DESIGNER:    Ramzi Chennafi
+ *
+ * PROGRAMMER:  Ramzi Chennafi
+ *
+ * INTERFACE:   send_intialization(World& world, int fd)
+ *                  world - game world, searched for updates
+ *					fd    - write file descriptor to the gameplay thread > network router thread
+ *					
+ *
+ * RETURNS:     nothing
+ *
+ * NOTES:
+ *
+ * Checks the world for data and sends out data updates to be passed to the server. Currently sends out\
+ * only a position update.
+ *
+ * FUTURE FEATURES: Cached location of data after first go through for called data
+ *					Ability to specify which update will be sent
+ *----------------------------------------------------------------------------------------*/
 void send_intialization(World *world, int fd)
 {
 	PKT_PLAYER_NAME * pkt1 = (PKT_PLAYER_NAME *)malloc(sizeof(PKT_PLAYER_NAME));
