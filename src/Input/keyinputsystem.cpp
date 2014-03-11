@@ -1,30 +1,16 @@
-/*-----------------------------------------------------------------------------
---  SOURCE FILE: keyinputsystem.cpp
---
---
---  PROGRAM:    CutThePower
---
---  FUNCTIONS:  void KeyInputSystem(World *world, bool *running)
---
---
---
---  DATE:       2014/02/18
---
---  REVISIONS:      ...
---
---  DESIGNER:       Jordan Marling
---                  Cory Thomas
---                  Vincent Lau
---
---  PROGRAMMER:     Jordan Marling
--
---  NOTES:      *Features to Add*
---              - Keybinding
---              - Textfield editing
---
---
---
------------------------------------------------------------------------------*/
+/** @ingroup Input */
+/*@{*/
+
+/**
+ * @date 2014/02/18
+ *
+ * @todo Implement keybindings
+ * @todo Implement textfield editing and add more useable characters
+ * 
+ * @file keyinputsystem.cpp
+ */
+/*@}*/
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_keyboard.h>
 #include <SDL2/SDL_keycode.h>
@@ -33,37 +19,29 @@
 #include "../world.h"
 #include "components.h"
 
-#define SYSTEM_MASK (COMPONENT_COMMAND)
+#define SYSTEM_MASK (COMPONENT_COMMAND) /**< Entities with a command component will be processed by the system. */
 
-extern int textField;
+extern int textField; /**< Should add some documentation here */
 
-/*-----------------------------------------------------------------------------
--   FUNCTION:
--
--   DATE:
--
--   REVISIONS:  ...
--
--   DESIGNER:   Vincent Lau
--
--   PROGRAMMER: Jordan Marling
--
--   INTERFACE:  void KeyInputSystem(World *world, bool *running)
--
--   RETURNS:    nothing.
--
--   PARAMETERS: world - pointer to WORLD (structure containing "world" information,
-                                            entities/components)
--               running - state if the GAME is running or still in menu
--
--   NOTES:  Feb 18th - Textfield compatibility (typing) is not implemented yet
--           No Key-bind feature yet
--           W - Up
--           A - Left
--           S - Down
--           D - Right
--           Space - Action
------------------------------------------------------------------------------*/
+/**
+ * Polls the keyboard for input and performs the appropriate action.
+ *
+ * Current player commands:
+ * <ul>
+ *    <li><b>W</b> - Up</li>
+ *    <li><b>A</b> - Left</li>
+ *    <li><b>S</b> - Down</li>
+ *    <li><b>D</b> - Right</li>
+ *    <li><b>Space</b> - Action</li>
+ * </ul>
+ *
+ * @param[in, out]	world 	Pointer to WORLD (structure containing "world" information, entities/components)
+ * @param[out] 		running	Whether the GAME is running or still in menu
+ *
+ * @designer Vincent Lau
+ * @author Jordan Marlling
+ *
+ */
 void KeyInputSystem(World *world, bool *running)
 {
     int entity;
@@ -111,7 +89,7 @@ void KeyInputSystem(World *world, bool *running)
     }
 
     //loop?
-    for(entity = 0; entity < ENTITY_COUNT; entity++)
+    for(entity = 0; entity < MAX_ENTITIES; entity++)
     {
 
         if ((world->mask[entity] & SYSTEM_MASK) == SYSTEM_MASK)

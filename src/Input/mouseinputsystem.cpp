@@ -1,63 +1,32 @@
-/*-----------------------------------------------------------------------------
---  SOURCE FILE:    mouseinputsystem.cpp
---
---
---  PROGRAM:        CutThePower
---
---  FUNCTIONS:      void MouseInputSystem(World *world)
---
---
---
---  DATE:           2014/02/18
---
---  REVISIONS:      ...
---
---  DESIGNER:       Jordan Marling
---                  Cory Thomas
---                  Vincent Lau
---
---  PROGRAMMER:     Jordan Marling
---
---  NOTES:
---
---
---
---
------------------------------------------------------------------------------*/
+/** @ingroup Input */
+/*@{*/
+
+/**@file mouseinputsystem.cpp*/
+/*@}*/
+
 #include <SDL2/SDL.h>
 #include "../world.h"
 #include "components.h"
 
-#define SYSTEM_MASK (COMPONENT_MOUSE)
+#define SYSTEM_MASK (COMPONENT_MOUSE) /**< Entities must have a mouse component to be processed by this system. */
 
 int textField = -1;
 
-/*-----------------------------------------------------------------------------
--   FUNCTION:
--
--   DATE:
--
--   REVISIONS:  ...
--
--   DESIGNER:   Jordan Marling
--               Cory Thomas
--               Vincent Lau
--
--   PROGRAMMER: Jordan Marling
--
--   INTERFACE:  void MouseInputSystem(World *world)
--
--   RETURNS:    nothing!!!!!
--
--   PARAMETERS: world - pointer to the world structure (contains "world" info,
-                                                        entities / components)
--
--   NOTES:      Updates the mouse position for every frame. 
--               Currently not needed until text fields are implemented for menu.
--               Needed for the later "Field of View Looking" feature using mouse
--                   to rotate.
--
------------------------------------------------------------------------------*/
+/**
+ * Updates the mouse position for every frame. 
+ *
+ * Currently not needed until text fields are implemented for menu.
+ * Needed for the later "Field of View Looking" feature using mouse
+ * to rotate.
+ *
+ * @param world Pointer to the world structure (contains "world" info, entities / components)
+ *
+ * @designer Jordan Marling
+ * @designer Cory Thomas
+ * @designer Vincent Lau
+ *
+ * @author Jordan Marling
+ */
 void MouseInputSystem(World *world)
 {
     int entity, x, y;
@@ -68,7 +37,6 @@ void MouseInputSystem(World *world)
     TextFieldComponent *text;
     ButtonComponent *button;
     PositionComponent *position;
-    //SizeComponent *size;
 
     previousState = currentState;
     currentState = SDL_GetMouseState(&x, &y);
@@ -80,13 +48,12 @@ void MouseInputSystem(World *world)
         textField = -1;
     }
 
-    for(entity = 0; entity < ENTITY_COUNT; entity++)
+    for(entity = 0; entity < MAX_ENTITIES; entity++)
     {
 
         if ((world->mask[entity] & SYSTEM_MASK) == SYSTEM_MASK)
         {
             mouse = &(world->mouse[entity]);
-            //size = &(world->size[entity]);
 
             mouse->x = x;
             mouse->y = y;
@@ -131,3 +98,4 @@ void MouseInputSystem(World *world)
 
     }
 }
+

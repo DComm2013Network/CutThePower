@@ -25,5 +25,6 @@ int write_packet(int write_fd, uint32_t packet_type, void *packet);
 
 /* Gameplay wrapper */
 int update_data(void* packet, int fd);
+void init_client_network(int send_router_fd[2], int rcv_router_fd[2]);
 
 #endif
