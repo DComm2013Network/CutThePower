@@ -143,7 +143,14 @@ int KeyMapInit(char *file)
 	char command[64];
 	char value[64];
 	
-	if ((fp = fopen(file, "r")) == 0) {
+	if (file == 0 || (fp = fopen(file, "r")) == 0) {
+		
+		command_keys[C_UP] = SDL_SCANCODE_W;
+		command_keys[C_LEFT] = SDL_SCANCODE_A;
+		command_keys[C_DOWN] = SDL_SCANCODE_S;
+		command_keys[C_RIGHT] = SDL_SCANCODE_D;
+		command_keys[C_ACTION] = SDL_SCANCODE_SPACE;
+		
 		printf("Error opening file: %s\n", file);
 		return -1;
 	}
@@ -161,23 +168,18 @@ int KeyMapInit(char *file)
 		}
 		
 		if (strcmp(command, "C_UP") == 0) { //C_UP
-			//printf("Loading C_UP as %s\n", value);
 			command_keys[C_UP] = GetScancode(value);
 		}
 		else if (strcmp(command, "C_LEFT") == 0) { //C_LEFT
-			//printf("Loading C_LEFT as %s\n", value);
 			command_keys[C_LEFT] = GetScancode(value);
 		}
 		else if (strcmp(command, "C_DOWN") == 0) { //C_DOWN
-			//printf("Loading C_DOWN as %s\n", value);
 			command_keys[C_DOWN] = GetScancode(value);
 		}
 		else if (strcmp(command, "C_RIGHT") == 0) { //C_RIGHT
-			//printf("Loading C_RIGHT as %s\n", value);
 			command_keys[C_RIGHT] = GetScancode(value);
 		}
 		else if (strcmp(command, "C_ACTION") == 0) { //C_ACTION
-			//printf("Loading C_ACTION as %s\n", value);
 			command_keys[C_ACTION] = GetScancode(value);
 		}
 		else {

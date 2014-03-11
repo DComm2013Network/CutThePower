@@ -1,6 +1,6 @@
-C_UP		W
-C_LEFT		A
-C_DOWN		S
-C_RIGHT		D
+C_UP		w
+C_LEFT		a
+C_DOWN		s
+C_RIGHT		d
 
 C_ACTION	SPACE
