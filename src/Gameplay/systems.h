@@ -1,3 +1,7 @@
+/** @ingroup Gameplay */
+/** @{ */
+/** @file systems.h */
+/** @} */
 #ifndef SYSTEMS_H
 #define SYSTEMS_H
 
