@@ -1,7 +1,0 @@
-#ifndef GRAPHICSCOMPONENTS_H
-#define GRAPHICSCOMPONENTS_H
-
-
-
-
-#endif
