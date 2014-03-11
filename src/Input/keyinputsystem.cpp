@@ -11,6 +11,8 @@
  */
 /*@}*/
 
+#include <stdio.h>
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_keyboard.h>
 #include <SDL2/SDL_keycode.h>
@@ -21,7 +23,10 @@
 
 #define SYSTEM_MASK (COMPONENT_COMMAND) /**< Entities with a command component will be processed by the system. */
 
-extern int textField; /**< Should add some documentation here */
+int GetScancode(char *character);
+
+extern int textField; /**< This references the textField variable in the mouseinputsystem for the currently active textfield. */
+int command_keys[NUM_COMMANDS]; /**< This is the current keycodes mapped to each command. */
 
 /**
  * Polls the keyboard for input and performs the appropriate action.
@@ -39,15 +44,13 @@ extern int textField; /**< Should add some documentation here */
  * @param[out] 		running	Whether the GAME is running or still in menu
  *
  * @designer Vincent Lau
- * @author Jordan Marlling
+ * @author Jordan Marling
  *
  */
 void KeyInputSystem(World *world, bool *running)
 {
     int entity;
     CommandComponent *command;
-    /*PositionComponent *position;
-    SizeComponent *size;*/
 
     SDL_Event event;
     static const Uint8 *currentKeyboardState = 0, *prevKeyboardState = 0;
@@ -58,8 +61,6 @@ void KeyInputSystem(World *world, bool *running)
             *running = false;
         }
     }
-
-    //printf("%p\n", currentKeyboardState);
 
     prevKeyboardState = currentKeyboardState;
     currentKeyboardState = SDL_GetKeyboardState(NULL);
@@ -88,31 +89,23 @@ void KeyInputSystem(World *world, bool *running)
 
     }
 
-    //loop?
-    for(entity = 0; entity < MAX_ENTITIES; entity++)
-    {
+
+    for(entity = 0; entity < MAX_ENTITIES; entity++) {
 
         if ((world->mask[entity] & SYSTEM_MASK) == SYSTEM_MASK)
         {
             command = &(world->command[entity]);
-            /*position = &(world->positions[entity]);
-            size = &(world->size[entity]);*/
 
 
-            command->commands[C_UP] = (currentKeyboardState[SDL_SCANCODE_W] != 0);
-            command->commands[C_LEFT] = (currentKeyboardState[SDL_SCANCODE_A] != 0);
-            command->commands[C_DOWN] = (currentKeyboardState[SDL_SCANCODE_S] != 0);
-            command->commands[C_RIGHT] = (currentKeyboardState[SDL_SCANCODE_D] != 0);
+            //command->commands[C_UP] = (currentKeyboardState[SDL_SCANCODE_W] != 0);
+            //command->commands[C_LEFT] = (currentKeyboardState[SDL_SCANCODE_A] != 0);
+            //command->commands[C_DOWN] = (currentKeyboardState[SDL_SCANCODE_S] != 0);
+            //command->commands[C_RIGHT] = (currentKeyboardState[SDL_SCANCODE_D] != 0);
 
-
-            /*if (currentKeyboardState[SDL_SCANCODE_SPACE]) {
-                if (command->commands[C_ACTION]) {
-                    command->commands[C_ACTION] = false;
-                }
-                else {
-                    command->commands[C_ACTION] = true;
-                }
-            }*/
+            command->commands[C_UP] = (currentKeyboardState[command_keys[C_UP]] != 0);
+            command->commands[C_LEFT] = (currentKeyboardState[command_keys[C_LEFT]] != 0);
+            command->commands[C_DOWN] = (currentKeyboardState[command_keys[C_DOWN]] != 0);
+            command->commands[C_RIGHT] = (currentKeyboardState[command_keys[C_RIGHT]] != 0);
 
 
             command->commands[C_ACTION] = (currentKeyboardState[SDL_SCANCODE_SPACE] != 0) && action == false;
@@ -123,3 +116,110 @@ void KeyInputSystem(World *world, bool *running)
 
     }
 }
+
+/**
+ * Loads the desired keyboard commands.
+ *
+ * Current player commands:
+ * <ul>
+ *    <li><b>C_UP</b> - Up</li>
+ *    <li><b>C_LEFT</b> - Left</li>
+ *    <li><b>C_DOWN</b> - Down</li>
+ *    <li><b>C_RIGHT</b> - Right</li>
+ *    <li><b>C_ACTION</b> - Action</li>
+ * </ul>
+ *
+ * @param[in]		file 	The file to load the data.
+ *
+ * @designer Jordan Marling
+ * @author Jordan Marling
+ *
+ */
+int KeyMapInit(char *file) 
+{
+	
+	FILE *fp;
+	
+	char command[64];
+	char value[64];
+	
+	if ((fp = fopen(file, "r")) == 0) {
+		printf("Error opening file: %s\n", file);
+		return -1;
+	}
+	
+	while (!feof(fp)) {
+		
+		if (fscanf(fp, "%s %s", command, value) != 2) {
+			
+			if (feof(fp)) {
+				return 0;
+			}
+			
+			printf("Error loading line.\n");
+			return -1;
+		}
+		
+		if (strcmp(command, "C_UP") == 0) { //C_UP
+			//printf("Loading C_UP as %s\n", value);
+			command_keys[C_UP] = GetScancode(value);
+		}
+		else if (strcmp(command, "C_LEFT") == 0) { //C_LEFT
+			//printf("Loading C_LEFT as %s\n", value);
+			command_keys[C_LEFT] = GetScancode(value);
+		}
+		else if (strcmp(command, "C_DOWN") == 0) { //C_DOWN
+			//printf("Loading C_DOWN as %s\n", value);
+			command_keys[C_DOWN] = GetScancode(value);
+		}
+		else if (strcmp(command, "C_RIGHT") == 0) { //C_RIGHT
+			//printf("Loading C_RIGHT as %s\n", value);
+			command_keys[C_RIGHT] = GetScancode(value);
+		}
+		else if (strcmp(command, "C_ACTION") == 0) { //C_ACTION
+			//printf("Loading C_ACTION as %s\n", value);
+			command_keys[C_ACTION] = GetScancode(value);
+		}
+		else {
+			printf("Unable to load command: %s\n", command);
+		}
+	}
+	
+	return 0;
+}
+
+
+/**
+ * Returns the keycode based on a character.
+ *
+ * @param[in]		character 	The character to be loaded
+ *
+ * @designer Jordan Marling
+ * @author Jordan Marling
+ *
+ */
+ int GetScancode(char *character)
+ {
+	if (character == 0) {
+		return -1;
+	}
+	
+	if (strcmp(character, "UP") == 0) {
+		return SDL_SCANCODE_UP;
+	}
+	if (strcmp(character, "LEFT") == 0) {
+		return SDL_SCANCODE_LEFT;
+	}
+	if (strcmp(character, "DOWN") == 0) {
+		return SDL_SCANCODE_DOWN;
+	}
+	if (strcmp(character, "RIGHT") == 0) {
+		return SDL_SCANCODE_RIGHT;
+	}
+	if (strcmp(character, "SPACE") == 0) {
+		return SDL_SCANCODE_SPACE;
+	}
+	
+	
+	return SDL_GetScancodeFromName(character);
+ }

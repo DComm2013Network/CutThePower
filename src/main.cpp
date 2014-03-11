@@ -31,13 +31,14 @@ int main(int argc, char* argv[]) {
 	init_world(world);
 	
 	map_init(world, "assets/Graphics/SampleFloor.txt", "assets/Graphics/tiles.txt");
+	KeyMapInit("assets/Input/keymap.txt");
 	
 	create_player(world, 50, 50, true);
 	
 	game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
 	game_net_lockfd		= eventfd(0, EFD_SEMAPHORE);
 
-	init_client_network(send_router_fd, rcv_router_fd);
+	//init_client_network(send_router_fd, rcv_router_fd);
 	
 	while (running) {
 		//client_update_system(world, rcv_router_fd[READ_END]);
@@ -46,7 +47,7 @@ int main(int argc, char* argv[]) {
 		movement_system(world);
 		map_render(surface);
 		render_player_system(*world, surface);
-		send_system(world, send_router_fd[WRITE_END]);
+		//send_system(world, send_router_fd[WRITE_END]);
 		
 		SDL_UpdateWindowSurface(window);
 	}
