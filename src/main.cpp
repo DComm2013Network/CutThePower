@@ -3,6 +3,12 @@
 #include "systems.h"
 #include "world.h"
 
+/*
+==============================================
+	DEFINE NETWORKON TO ENABLE NETWORKING
+==============================================
+*/
+
 int game_net_signalfd, game_net_lockfd;
 
 int main(int argc, char* argv[]) {
@@ -54,7 +60,7 @@ int main(int argc, char* argv[]) {
 			send_system(world, send_router_fd[WRITE_END]);
 			client_update_system(world, rcv_router_fd[READ_END]);
 		#endif
-			
+
 		SDL_UpdateWindowSurface(window);
 	}
 	return 0;
