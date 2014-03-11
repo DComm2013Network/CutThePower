@@ -30,22 +30,18 @@ int main(int argc, char* argv[]) {
 	
 	init_world(world);
 	
-	map_init(world, "assets/Graphics/SampleFloor.txt", "assets/Graphics/tiles.txt");
+	map_init(world, "assets/Graphics/lobby/lobby.txt", "assets/Graphics/lobby/lobby_tiles.txt");
 	KeyMapInit("assets/Input/keymap.txt");
-	
-	create_player(world, 50, 50, true);
-	
-	game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
-	game_net_lockfd		= eventfd(0, EFD_SEMAPHORE);
-
-	//init_client_network(send_router_fd, rcv_router_fd);
-	
-	while (running) {
-		//client_update_system(world, rcv_router_fd[READ_END]);
+	unsigned int entity = create_player(world, 600, 600, true);
+		
+	while (running)
+	{
+		
+		//INPUT
 		KeyInputSystem(world, &running);
 		MouseInputSystem(world);
 		movement_system(world);
-		map_render(surface);
+		map_render(surface, world->position[entity].x, world->position[entity].y);
 		render_player_system(*world, surface);
 		//send_system(world, send_router_fd[WRITE_END]);
 		

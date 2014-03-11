@@ -1,8 +1,8 @@
 16
 
-00	assets/Graphics/blue_brick_40px.bmp
-01	assets/Graphics/tile_blue_40px.bmp
-02	assets/Graphics/wall_01_40px.bmp
+02	assets/Graphics/lobby_wall_1.bmp
+01	assets/Graphics/lobby_floor_1.bmp
+00	assets/Graphics/floor2_small.bmp
 03	assets/Graphics/floor3_small.bmp
 04	assets/Graphics/floor4_small.bmp
 05	assets/Graphics/floor5_small.bmp
