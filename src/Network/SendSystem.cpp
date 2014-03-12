@@ -1,30 +1,31 @@
+/** @ingroup Network */
+/** @{ */
+
+/**
+ * This file contains all methods responsible for reading data from gameplay and sending it 
+ * to the server.
+ *
+ * @file SendSystem.cpp
+ */
+
+/** @} */
 #include "SendSystem.h"
-/*------------------------------------------------------------------------------------------
- * FUNCTION:    send_system
- *
- * DATE:        March 5, 2014
- *
- * REVISIONS:   
- *
- * DESIGNER:    Ramzi Chennafi
- *
- * PROGRAMMER:  Ramzi Chennafi
- *
- * INTERFACE:   send_system(World& world, int fd, sem_t gplay_sem)
- *                  world - game world, searched for updates
- *					fd    - write file descriptor to the gameplay thread > network router thread
- *					gplay_sem - semaphore for the gameplay thread > network router thread pipe
- *
- * RETURNS:     nothing
- *
- * NOTES:
- *
+
+/**
  * Checks the world for data and sends out data updates to be passed to the server. Currently sends out\
  * only a position update.
  *
- * FUTURE FEATURES: Cached location of data after first go through for called data
- *					Ability to specify which update will be sent
- *----------------------------------------------------------------------------------------*/
+ * FUTURE FEATURES: - Cached location of data after first go through for called data
+ *					- Ability to specify which update will be sent
+ *					
+ * @param[in, out]  world  	game world, searched for updates
+ * @param[in]		fd 		write file descriptor to the gameplay thread > network router thread
+ *
+ * @return  void
+ *
+ * @designer    Ramzi Chennafi
+ * @author      Ramzi Chennafi
+ */
 void send_system(World *world, int fd) { 
 	
 		PKT_POS_UPDATE * pkt4 = (PKT_POS_UPDATE*)malloc(sizeof(PKT_POS_UPDATE));
@@ -44,32 +45,22 @@ void send_system(World *world, int fd) {
 		}
 		write_packet(fd, P_POSUPDATE, pkt4);
 }
-/*------------------------------------------------------------------------------------------
- * FUNCTION:    send_intialization
- *
- * DATE:        March 5, 2014
- *
- * REVISIONS:   
- *
- * DESIGNER:    Ramzi Chennafi
- *
- * PROGRAMMER:  Ramzi Chennafi
- *
- * INTERFACE:   send_intialization(World& world, int fd)
- *                  world - game world, searched for updates
- *					fd    - write file descriptor to the gameplay thread > network router thread
- *					
- *
- * RETURNS:     nothing
- *
- * NOTES:
- *
+
+/**
  * Checks the world for data and sends out data updates to be passed to the server. Currently sends out\
  * only a position update.
  *
- * FUTURE FEATURES: Cached location of data after first go through for called data
- *					Ability to specify which update will be sent
- *----------------------------------------------------------------------------------------*/
+ * FUTURE FEATURES: - Cached location of data after first go through for called data
+ *					- Ability to specify which update will be sent
+ *					
+ * @param[in, out]  world  	game world, searched for updates
+ * @param[in]		fd 		write file descriptor to the gameplay thread > network router thread
+ *
+ * @return  void
+ *
+ * @designer    Ramzi Chennafi
+ * @author      Ramzi Chennafi
+ */
 void send_intialization(World *world, int fd)
 {
 	PKT_PLAYER_NAME * pkt1 = (PKT_PLAYER_NAME *)malloc(sizeof(PKT_PLAYER_NAME));
