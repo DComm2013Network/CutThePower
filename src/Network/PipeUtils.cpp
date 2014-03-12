@@ -16,7 +16,7 @@
  *
  * NOTES:
  * 
- * This file contains all the utility functions that can be re-used in other parts of the
+ * This file contains all pipe utility functions that can be re-used in other parts of the
  * program.
  *
  *----------------------------------------------------------------------------------------*/

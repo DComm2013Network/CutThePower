@@ -10,9 +10,6 @@
 --
 -- PROGRAM: Network-Client/Server
 --
--- FUNCTIONS:
--- none
---
 -- DATE: January 27, 2014
 --
 -- REVISIONS: none
@@ -32,6 +29,7 @@
 #define MAX_MESSAGE 180
 #define MAX_OBJECTIVES 16
 
+
 // Definitions for various game data types
 typedef uint32_t floorNo_t;
 typedef uint32_t playerNo_t;
@@ -44,6 +42,17 @@ typedef float	 vel_t;
 #define CONNECT_CODE_ACCEPTED 0x001
 #define CONNECT_CODE_DENIED 0x000
 
+#define TIMEOUT 5000
+
+/**
+ * Encapsulates data for easy sending by the send thread.
+ *
+ * @property protocol The protocol (TCP or UDP) used to send this packet.
+ * @property type     The type of packet to send (1 through 14).
+ * @property data     The data contained in the packet.
+ *
+ * @struct internal_packet
+ */
 typedef struct{
 	int protocol;
 	uint32_t type;
@@ -55,20 +64,21 @@ typedef struct{
 #define READ 0
 #define WRITE 1
 
-#define P_NAME 		 1
-#define P_CONNECT 	 2
-#define G_STATUS	 3
-#define P_CHAT 		 4
-#define P_CLNT_LOBBY 5
-#define P_OBJCTV_LOC 6
-#define P_UNDEF      7 // NOT DEFINED
-#define P_OBJSTATUS  8
-#define P_UNDEF2     9 // NOT DEFINED
-#define P_POSUPDATE  10
-#define G_ALLPOSUPDATE 11
+#define P_NAME           1
+#define P_CONNECT        2
+#define G_STATUS         3
+#define P_CHAT           4
+#define P_CLNT_LOBBY     5
+#define P_OBJCTV_LOC     6
+#define P_UNDEF          7 // NOT DEFINED
+#define P_OBJSTATUS      8
+#define P_UNDEF2         9 // NOT DEFINED
+#define P_POSUPDATE      10
+#define G_ALLPOSUPDATE   11
 #define P_FLOOR_MOVE_REQ 12
-#define P_FLOOR_MOVE 13
-#define P_TAGGING 14
+#define P_FLOOR_MOVE     13
+#define P_TAGGING        14
+#define P_KEEPALIVE      4294967295 /**< Sent from client to server or vice versa if there has been no activity for @a TIMEOUT ms. */
 
 #define NUM_PACKETS  14
 

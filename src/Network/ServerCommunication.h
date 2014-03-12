@@ -9,10 +9,14 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#define INFINITE_TIMEOUT	-1 															/**< Tells SDL to wait for an "infinite" (49 day) timeout */
-#define MAX_TCP_RECV		(MAX_PLAYERS * sizeof(int) * 3) + (MAX_PLAYERS * MAX_NAME)	/**< The maximum size of a game packet sent over TCP from server to client */
-#define MAX_UDP_RECV		644			/**< The maximum size of a game packet sent over UDP from server to client */	
-#define MAX_SIZE 			
+#define INFINITE_TIMEOUT -1   /**< Tells SDL to wait for an "infinite" (49 day) timeout */
+#define MAX_TCP_RECV     2944 /**< Max TCP "packet" size from server to client (PKT_GAME_STATUS)*/
+#define MAX_UDP_RECV     644  /**< Max UDP packet size from server to client (PKT_ALL_POS_UPDATE)*/	
+
+#define ERR_STD_LIB     -1 /**< Indicates that a standard library function (e.g. malloc) failed. */
+#define ERR_CONN_CLOSED -2 /**< Indicates that the TCP connection was closed. */
+#define ERR_RECV_FAILED -3 /**< Indicates that receiving data from a socket failed. */
+#define ERR_CORRUPTED   -4 /**< Indicates that a UDP packet contains corrupted data. */
 
 /* Thread functions */
 void *recv_thread_func(void *ndata);
@@ -29,6 +33,8 @@ int recv_udp (UDPsocket sock, UDPpacket *udp_packet);
 int recv_tcp (TCPsocket sock, void *buf, size_t bufsize);
 void *recv_udp_packet(UDPsocket sock, uint32_t *packet_type, uint64_t *timestamp);
 void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp);
+int handle_tcp_in(int router_pipe_fd, TCPsocket tcp_sock);
+int handle_udp_in(int router_pipe_fd, UDPsocket udp_sock);
 
 int get_protocol(uint32_t type);
 /* Socket creation and utilities */

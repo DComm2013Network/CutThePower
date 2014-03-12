@@ -4,9 +4,9 @@
 #include "world.h"
 
 /*
-==============================================
-	DEFINE NETWORKON TO ENABLE NETWORKING
-==============================================
+===============================================
+	DEFINE NETWORKOFF TO DISABLE NETWORKING
+===============================================
 */
 
 int game_net_signalfd, game_net_lockfd;
@@ -39,10 +39,8 @@ int main(int argc, char* argv[]) {
 	map_init(world, "assets/Graphics/SampleFloor.txt", "assets/Graphics/tiles.txt");
 		
 	create_player(world, 50, 50, true);
-	
-	//game_net_lockfd		= eventfd(0, EFD_SEMAPHORE);
 
-	#ifdef NETWORKON
+	#ifndef NETWORKOFF
 		game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
 
 		init_client_network(send_router_fd, rcv_router_fd);
@@ -56,7 +54,7 @@ int main(int argc, char* argv[]) {
 		map_render(surface);
 		render_player_system(*world, surface);
 	
-		#ifdef NETWORKON
+		#ifndef NETWORKOFF
 			send_system(world, send_router_fd[WRITE_END]);
 			client_update_system(world, rcv_router_fd[READ_END]);
 		#endif

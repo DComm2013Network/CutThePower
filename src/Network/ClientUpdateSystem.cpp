@@ -14,7 +14,7 @@
 #include "../world.h"
 #include <sys/poll.h>
  
-extern int game_net_signalfd, game_net_lockfd;
+extern int game_net_signalfd;
 static unsigned int *player_table = NULL; /**< A lookup table mapping server player numbers to client entities. */
 
 /**
@@ -27,7 +27,8 @@ static unsigned int *player_table = NULL; /**< A lookup table mapping server pla
  * @param[in] world 	The world struct to be updated.
  * @param[in] net_pipe	The read end of a pipe connected to the network module.
  *
- * @designer Shane Spoor, Clark Allenby
+ * @designer Shane Spoor
+ * @designer Clark Allenby
  * @author Shane Spoor
  */
 void client_update_system(World *world, int net_pipe) {
@@ -42,17 +43,10 @@ void client_update_system(World *world, int net_pipe) {
 		player_table = (unsigned int *)malloc(sizeof(unsigned int) * MAX_PLAYERS);
 		memset(player_table, 255, MAX_PLAYERS * sizeof(unsigned int)); 
 	}
-	
+	fprintf(stderr, "About to signal network router.\n");
 	write(game_net_signalfd, &signal, sizeof(uint64_t));
-	//read(game_net_lockfd, &signal, sizeof(uint64_t)); /* Wait for network to finish writing */
-	
 	num_packets = read_type(net_pipe); // the function just reads a 32 bit value, so this works; semantically, not ideal
-	
-	// Commented out code is for recieving single pakets
-
-	// if (poll(&(struct pollfd){ .fd = net_pipe, .events = POLLIN }, 1, 0)!=1) {
-    //   		return;
-	// }	
+	fprintf(stderr, "Read something from network router.\n");
 	for(i = 0; i < num_packets; ++i)
 	{
 		packet = read_data(net_pipe, &type);

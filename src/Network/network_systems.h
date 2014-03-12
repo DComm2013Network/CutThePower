@@ -20,6 +20,7 @@ void client_update_system(World *world, int net_pipe);
 void client_update_pos(World *world, void *packet);
 void client_update_status(World *world, void *packet);
 int client_update_info(World *world, void *packet);
+void player_tag_packet(World *world, void *packet);
 
 void update_server(World *world, unsigned update_mask);
 

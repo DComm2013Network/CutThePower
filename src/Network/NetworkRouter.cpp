@@ -78,7 +78,6 @@ void *networkRouter(void *args)
     int 		recvfd[2];
     fd_set 		listen_fds;
     fd_set		active;
-    int yes = 1; /* REMOVE LATER */
     int 		max_fd;
     uint32_t 	type;
     uint64_t	timestamp, cached_timestamps[NUM_PACKETS] = {0}, sem_buf;
@@ -125,11 +124,11 @@ void *networkRouter(void *args)
         {
         	uint32_t num_changed;
         	unsigned changed_mask = 0;
-
+			fprintf(stderr, "Network router: signal received from client udpate system.\n");
         	read(game_net_signalfd, &sem_buf, sizeof(uint64_t)); /* Decrease the semaphore to 0 */
         	num_changed = determine_changed(cached_packets, &changed_mask);
         	write(gameplay->write_pipe, &num_changed, sizeof(num_changed));
-
+			fprintf(stderr, "Network router: num_changed = %d\n", num_changed);
         	for(uint32_t i = 0; i < NUM_PACKETS; ++i)
         	{
         		if(changed_mask & (1 << i))
@@ -211,10 +210,13 @@ uint32_t determine_changed(void **packets, unsigned *changed)
  * @param[out] fd             An integer array to hold two ends of a pipe.
  * @param[out] thread_receive Holds a handle to the receive thread.
  * @param[out] thread_send    Holds a handle to the send thread.
+ *
  * @return 0 on success, or -1 on failure.
  *
+ * @designer Shane Spoor
+ * @designer Abhishek Bhardwaj
+ *
  * @author   Shane Spoor
- * @designer Shane Spoor, Abhishek Bhardwaj
  */
 int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int sendfd[2], 
 				int recvfd[2], pthread_t *thread_receive, pthread_t *thread_send)
@@ -230,8 +232,8 @@ int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int send
     *max_fd = recvfd[READ_END] > gameplay->read_pipe ? recvfd[READ_END] : gameplay->read_pipe;
     resolve_host(&ipaddr, TCP_PORT, "192.168.43.215");
     resolve_host(&udpaddr, UDP_PORT, "192.168.43.215");
-    
     tcp_sock = SDLNet_TCP_Open(&ipaddr);
+
     if(!tcp_sock) {
         fprintf(stderr, "SDLNet_TCP_Open: %s\n", SDLNet_GetError());
         exit(2);
@@ -267,15 +269,3 @@ int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int send
 	return 0;
 }
 
-/*
-
-The gameplay module will basically create the pipe and call the networkRouter() function
-with the newly created pipe.
-
-Wrapper functions for creating the pipe, reading and writing to/from the pipe are present
-in the Functions.cpp file.
-
-All the functions that the gameplay side will need to use to read/write to the pipe are
-present in GameplayCommunication.cpp and Functions.cpp
-
-*/

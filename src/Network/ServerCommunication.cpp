@@ -1,24 +1,11 @@
-/*------------------------------------------------------------------------------------------
- * SOURCE FILE: ServerCommunication.cpp
- *
- * PROGRAM:     [BIG_GAME]
- *
- * FUNCTIONS:
- *                            
- *
- * DATE:        February 15, 2014
- *
- * REVISIONS:   (Date and Description)
- *
- * DESIGNER:    
- *
- * PROGRAMMER:  
- *
- * NOTES:
+/** @ingroup Network-Client */
+/** @{ */
+/**
+ * This file contains all functions responsible for communication with the server.
  * 
- * This file contains all methods responsible for communication with the server.
- *
- *----------------------------------------------------------------------------------------*/
+ * @file ServerCommunication.cpp
+ */
+/** @} */
 
 #include <netdb.h>
 #include <arpa/inet.h>
@@ -34,40 +21,27 @@
 extern uint32_t packet_sizes[NUM_PACKETS];
 static int cnt_errno = 0;
 
-/*------------------------------------------------------------------------------------------
- * FUNCTION:    recv_thread_func
+/**
+ * Monitors sockets to receive data from the server.
  *
- * DATE:        February 16, 2014
- *
- * REVISIONS:   (Date and Description)
- *
- * DESIGNER:    Shane Spoor
- *
- * PROGRAMMER:  Shane Spoor
- *
- * INTERFACE:   void recv_thread_func(void *ndata)
- *
- *										void *ndata: 	Pointer to a NETWORK_DATA struct
- *														containing socket descriptors and
- *														the pipe end to the Network Router
- *														thread.
- * RETURNS:     void
- *
- * NOTES:
- *
- * This thread will continuously monitor a TCP and a UDP socket which will receive data from
- * the server. Upon receiving data, the thread writes to the pipe connected to the network
+ * Upon receiving data, the thread writes to the pipe connected to the network
  * router thread. The thread will return in case of any error condition (wrapper functions
- * are responsible for error message logging).
+ * are responsible for minor error handling; if the thread returns, network should stop
+ * running altogether).
  *
- *----------------------------------------------------------------------------------------*/
+ * @param[in] ndata Pointer to a NETWORK_DATA struct containing socket descriptors and
+ *                  the pipe end to the Network Router thread.
+ *
+ * @designer Shane Spoor
+ * @author   Shane Spoor
+ *
+ * @date February 16, 2014
+ *
+ */
  void *recv_thread_func(void *ndata)
  {
  	NDATA				recv_data = (NDATA)ndata;
  	int 				numready;
-	uint32_t 			packet_type;
-	uint64_t			timestamp;
-	void 				*game_packet;
  	SDLNet_SocketSet 	set = make_socket_set(2, recv_data->tcp_sock, recv_data->udp_sock);
 	
  	if(!set)
@@ -76,87 +50,50 @@ static int cnt_errno = 0;
  	while(1)
  	{
  		if((numready = check_sockets(set)) == -1)
- 		{
- 			SDLNet_FreeSocketSet(set);
- 			return NULL;
- 		}
+        {
+            // write error message to the network socket
+     	    break;
+        }
  
-		else if(numready)
+        else if(numready == 0) // Timed out; tell network router to check if server is down
+        {
+            
+        }
+
+		else
 		{
 			if(SDLNet_SocketReady(recv_data->tcp_sock))
 			{
-				if((game_packet = recv_tcp_packet(recv_data->tcp_sock, &packet_type, &timestamp)) == NULL)
-				{
-					if(cnt_errno == -3){
-						fprintf(stderr, "Failure in tcp recv : %s \n", SDLNet_GetError());
-						exit(1);
-					}
-
-					if(cnt_errno == -2){
-						printf("Connection lost, exiting client.\n");
-						close_connections(set, recv_data->tcp_sock, recv_data->udp_sock);
-						exit(2);	
-					}
-				}
-				printf("Recieved TCP packet: %u\n", packet_type);		
-				if(write_packet(recv_data->write_pipe, packet_type, game_packet) == -1 ||
-				   write_pipe(recv_data->write_pipe, &timestamp, sizeof(timestamp)) == -1)
-				{
-					printf("TCP>Router: Error in write packet, flushing pipe");
-					fflush((FILE*)&recv_data->write_pipe);
-				}
-
-				free(game_packet);
-			}
+				if(handle_tcp_in(recv_data->write_pipe, recv_data->tcp_sock) == -1)
+                    break;
+            }
 
     		if(SDLNet_SocketReady(recv_data->udp_sock))
     		{
-				if((game_packet = recv_udp_packet(recv_data->udp_sock, &packet_type, &timestamp)) == NULL)
-				{
-					if(cnt_errno == -3)
-					{
-						printf("Failure in udp recv : %s ", SDLNet_GetError());
-						continue;
-					}
-				}
-				printf("Recieved TCP packet: %u\n", packet_type);	
-				if(write_packet(recv_data->write_pipe, packet_type, game_packet) == -1 ||
-				   write_pipe(recv_data->write_pipe, &timestamp, sizeof(timestamp)) == -1)
-				{
-					printf("UDP>Router: Error in write packet, flushing pipe");
-					fflush((FILE*)&recv_data->write_pipe);
-				}
-
-				free(game_packet);
+				if(handle_udp_in(recv_data->write_pipe, recv_data->udp_sock) == -1)
+                    break;
 			}
     	}
  	}
+
+    SDLNet_FreeSocketSet(set);
+    return NULL;
 }
-/*------------------------------------------------------------------------------------------
- * FUNCTION:    send_thread_func
+
+/**
+ * Sends data received from the network router pipe to the server.
+ * 
+ * The thread gets the data from the pipe and determines the protocol (UDP or TCP)
+ * to use, then sends the packet on corresponding socket.
  *
- * DATE:        Febuary 13 2014
+ * @param[in] ndata NETWORK_DATA containing a tcp socket, udp socket and a file
+ *                  descriptor to the network router send pipe.
  *
- * REVISIONS:   None
- *
- * DESIGNER:    Ramzi Chennafi
- *
- * PROGRAMMER:  Ramzi Chennafi
- *
- * INTERFACE:   void* send_thread_func(void* ndata){
- *					void * ndata : NETWORK_DATA pointer containing
- *								   a tcp socket, udp socket and a file
- *								   descriptor to the network router
- *								   send pipe.
- *
- * RETURNS:     Nothing
- *
- * NOTES:
- *
- *  Sends data received from the network router pipe to the server. Data sent on 
- *  pipe is recieved as a snd_pkt struct containing the protocol and raw data.
- *
- *----------------------------------------------------------------------------------------*/
+ * @designer Ramzi Chennafi
+ * @author   Ramzi Chennafi
+ * 
+ * @date Febuary 13 2014
+ */
 void* send_thread_func(void* ndata){
 
 	NDATA snd_data = (NDATA) ndata;
@@ -165,7 +102,6 @@ void* send_thread_func(void* ndata){
 	uint32_t type = 0;
 	void * data;
 	int ret = -1;
-	fd_set listen_fds;
 
 	while(1){	
     	data = grab_send_packet(&type, snd_data->read_pipe, &ret);
@@ -187,22 +123,22 @@ void* send_thread_func(void* ndata){
 	}
 	return NULL;
 }
-/*------------------------------------------------------------------------------------------------------------------
---      FUNCTION: send_tcp
---
---      DATE: January 20, 2014
---      REVISIONS: none
---
---      DESIGNER: Ramzi Chennafi
---      PROGRAMMER: Ramzi Chennafi
---
---      INTERFACE: int send_tcp(char * data)
---
---      RETURNS: int, 0 on success
---
---      NOTES:
---      Sends the packet data over the established tcp connection.
-----------------------------------------------------------------------------------------------------------------------*/
+
+/**
+ * Sends the packet data over the established TCP connection.
+ *
+ * @param[in] data The data to send.
+ * @param[in] sock The socket on which to send the data.
+ * @param[in] size The size of the data being sent.
+ *
+ * @return -1 on failure, 0 on success. 
+ *
+ * @designer Ramzi Chennafi
+ * @author   Ramzi Chennafi
+ *
+ * @date January 20, 2014
+ *
+ */
 int send_tcp(void * data, TCPsocket sock, uint32_t size){
 
 	int result=SDLNet_TCP_Send(sock, data, size);
@@ -213,23 +149,25 @@ int send_tcp(void * data, TCPsocket sock, uint32_t size){
 
 	return 0;
 }
-/*------------------------------------------------------------------------------------------------------------------
---      FUNCTION: send_udp
---
---      DATE: Febuary 15, 2014
---      REVISIONS: none
---
---      DESIGNER: Ramzi Chennafi
---      PROGRAMMER: Ramzi Chennafi
---
---      INTERFACE: int send_udp(char * data)
---
---      RETURNS: int, returns -1 on failure, 0 on success.
---
---      NOTES:
---      Sends the specified data across UDP. Allocates the UDP packet, establishes the random socket for tranfer and then
---		sends the data on the established socket. Frees the packet after completion.
-----------------------------------------------------------------------------------------------------------------------*/
+
+/**
+ * Sends the specified data over a UDP socket.
+ *
+ * Allocates the UDP packet, sends it, and frees the packet upon completion.
+ * If sending the packet was unsuccessful, the function prints an error message.
+ *
+ * @param[in] data The packet data to send.
+ * @param[in] type The type of packet to send.
+ * @param[in] sock The socket on which to send the data.
+ * @param[in] size The size of the packet.
+ *
+ * @return -1 on failure and 0 on success.
+ *
+ * @designer Ramzi Chennafi
+ * @author   Ramzi Chennafi
+ *
+ * @date Febuary 15, 2014
+ */
 int send_udp(void * data, uint32_t * type, UDPsocket sock, uint32_t size){
 
 	int numsent;
@@ -248,40 +186,144 @@ int send_udp(void * data, uint32_t * type, UDPsocket sock, uint32_t size){
 	return 0;
 }
 
-/*-------------------------------------------------------------------------------------------------------------------
---      FUNCTION: recv_tcp_packet
---
---      DATE: February 18th, 2014
---      REVISIONS: none
---
---      DESIGNER: Shane Spoor
---      PROGRAMMER: Shane Spoor
---
---      INTERFACE: void *recv_tcp_packet(tcp_socket sock, int *packet_type)
---										tcp_socket sock: 		The TCP socket from which to read.
---										int *game_packet_type: 	Pointer to an int in which to store the packet type.
---										size_t *packet_size:	Pointer to a size_t in which to store the packet size.
---
---      RETURNS: A data buffer containing the packet on success, NULL on failure, -2 cast to void * on close connection.
---
---      NOTES:
---      Reads the packet type first, then allocates and reads the packet into a data buffer.
-----------------------------------------------------------------------------------------------------------------------*/
+/**
+ * Handles the receipt of TCP data.
+ *
+ * Receives the TCP packet, if any, and writes it to the network router. Keep alive packets are
+ * ignored. On error, it writes an error message (preceded by an packet type indicating an error)
+ * and returns -1.
+ *
+ * @param[in] router_pipe_fd Descriptor for the write end of the pipe to the network router thread.
+ * @param[in] tcp_sock       The TCP socket from which to receive data.
+ *
+ * @return 0 on success, or -1 if an error occurred. 
+ *
+ * @designer Shane Spoor
+ * @author   Shane Spoor
+ *
+ */
+int handle_tcp_in(int router_pipe_fd, TCPsocket tcp_sock)
+{
+    void *game_packet;
+    uint32_t packet_type;
+    uint64_t timestamp;
+    
+    if((game_packet = recv_tcp_packet(tcp_sock, &packet_type, &timestamp)) == NULL)
+    {
+        if(packet_type != P_KEEPALIVE)
+        {
+            if(cnt_errno == ERR_RECV_FAILED)
+            {
+                fprintf(stderr, "Failure in tcp recv : %s \n", SDLNet_GetError());
+                return -1;
+            }
+
+            if(cnt_errno == ERR_CONN_CLOSED)
+            {
+                printf("Connection lost, exiting client.\n");
+                //close_connections(set, recv_data->tcp_sock, recv_data->udp_sock);
+                return -1;
+            }
+        }
+        else if(write_pipe(router_pipe_fd, &packet_type, sizeof(packet_type)) == -1)
+            return -1;
+    }
+    
+    printf("Received TCP packet: %u\n", packet_type);
+    if(write_packet(router_pipe_fd, packet_type, game_packet) == -1 ||
+       write_pipe(router_pipe_fd, &timestamp, sizeof(timestamp)) == -1)
+	{
+        fprintf(stderr, "TCP>Router: Error in write packet, flushing pipe");
+        fflush((FILE*)&router_pipe_fd);
+	}
+    free(game_packet);
+    return 0;
+}
+
+/**
+ * Handles the receipt of UDP packets.
+ *
+ * Receives the UDP packet and writes it to the network router. On error, it writes an error message 
+ * (preceded by an packet type indicating an error) and returns -1.
+ *
+ * @param[in] router_pipe_fd Descriptor for the write end of the pipe to the network router thread.
+ * @param[in] udp_sock       The UDP socket from which to receive data.
+ * 
+ * @return 0 on success, or -1 if an error occurred. 
+ *
+ * @designer Shane Spoor
+ * @author   Shane Spoor
+ *
+ * @date March 12, 2014
+ *
+ */
+int handle_udp_in(int router_pipe_fd, UDPsocket udp_sock)
+{
+    void *game_packet;
+    uint32_t packet_type;
+    uint64_t timestamp;
+
+    if((game_packet = recv_udp_packet(udp_sock, &packet_type, &timestamp)) == NULL)
+    {
+        if(cnt_errno == ERR_RECV_FAILED)
+        {
+            printf("Failure in udp recv : %s ", SDLNet_GetError());
+            return -1;
+        }
+        printf("Received UDP packet: %u\n", packet_type);	
+        if(write_packet(router_pipe_fd, packet_type, game_packet) == -1 ||
+            write_pipe(router_pipe_fd, &timestamp, sizeof(timestamp)) == -1)
+        {
+            printf("UDP>Router: Error in write packet, flushing pipe");
+            fflush((FILE*)&router_pipe_fd);
+        }
+    }
+    free(game_packet);
+    return 0;
+}
+
+/**
+ * Reads a packet from the specified TCP socket.
+ *
+ * The function stores the packet in an allocated buffer if it's read successfully
+ * and stores the packet type and timestamp in the variables passed by the caller.
+ *
+ * @param[in]  sock        The TCP socket from which to read.
+ * @param[out] packet_type Holds the packet type on successful return. It may hold an invalid
+ *                         packet type on failure.
+ * @param[out] timestamp   Holds the timestamp on successful return.
+ *
+ * @return  A data buffer containing the packet on success and NULL on failure.
+ *
+ * @designer Shane Spoor
+ * @author   Shane Spoor
+ *
+ * @date February 18th, 2014
+ */
 void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp)
 {
-	void *packet;
-	int numread;
+	void     *packet;
+	int      numread;
+    uint32_t packet_size;
 
 	numread = recv_tcp(sock, packet_type, sizeof(uint32_t));
 	if(numread < 0)
 		return NULL;
 
-	uint32_t packet_size = packet_sizes[(*packet_type) - 1];
+	else if(*packet_type == P_KEEPALIVE)
+        return NULL;
+    else if(*packet_type < 1 || *packet_type > NUM_PACKETS)
+    {
+        cnt_errno = ERR_CORRUPTED;
+        return NULL;
+    }
+
+	packet_size = packet_sizes[(*packet_type) - 1];
 
 	if((packet = malloc(packet_size)) == NULL)
 	{
 		perror("recv_ tcp_packet: malloc");
-		cnt_errno = -1;
+		cnt_errno = ERR_STD_LIB;
 		return NULL;
 	}
 
@@ -289,34 +331,46 @@ void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 	numread = recv_tcp(sock, timestamp, sizeof(uint64_t));
 	return packet;
 }
-/*------------------------------------------------------------------------------------------------------------------
---      FUNCTION: recv_udp_packet
---
---      DATE: Febuary 15, 2014
---      REVISIONS: none
---
---      DESIGNER: Ramzi Chennafi
---      PROGRAMMER: Ramzi Chennafi
---
---      INTERFACE: UDPpacket *recv_udp_packet(udp_socket sock, int *game_packet_type)
---
---      RETURNS: A data buffer containing the game packet on success, or NULL on failure.
---
---      NOTES:
---      Reads the packet type into packet_type, then reads the 
-----------------------------------------------------------------------------------------------------------------------*/
+
+/**
+ * Receives and processes a UDP packet containing a packet type, game data,
+ * and a timestamp.
+ *
+ * The packet type and timestamp will be stored in @a packet_type and @a timestamp
+ * if the function completes successfully. @a packet_type will contain an invalid
+ * packet type if one is read; similarly, the contents of timestamp will be invalid
+ * if the function receives an invalid timestamp. Note that the timestamp is not checked
+ * for validity.
+ *
+ * @param[in]  sock        The UDP socket from which to receive date.
+ * @param[out] packet_type Receives the valid packet type on successful return.
+ * @param[out] timestamp   Receives the timestamp (may not be valid) on successful return.
+ *
+ * @return A data buffer containing the game packet on success, or NULL on failure.
+ *
+ * @designer Shane Spoor
+ * @author   Shane Spoor
+ *
+ * @date Febuary 15, 2014
+ */
 void *recv_udp_packet(UDPsocket sock, uint32_t *packet_type, uint64_t *timestamp)
 {
-	UDPpacket *pktdata = SDLNet_AllocPacket(MAX_UDP_RECV + sizeof(uint32_t) + sizeof(uint64_t)); /* Allocate space for the max packet, the packet type, and the timestamp */
-	void *packet;
-	uint32_t packet_size;
+	void      *packet;
+	uint32_t  packet_size;
+    UDPpacket *pktdata = SDLNet_AllocPacket(MAX_UDP_RECV + sizeof(*packet_type) + sizeof(*timestamp));
 
 	if(recv_udp(sock, pktdata) == -1){
-		cnt_errno = -3;
+		cnt_errno = ERR_RECV_FAILED;
 		return NULL;
 	}
 
-	*packet_type 	= ((uint32_t *)pktdata->data)[0];
+	*packet_type 	= *((uint32_t *)pktdata->data);
+    if(*packet_type < 1 || *packet_type > NUM_PACKETS) // Impossible packet type; packet is corrupted
+    {
+        cnt_errno = ERR_CORRUPTED;
+        return NULL;
+    }
+
 	packet_size 	= packet_sizes[(*packet_type) - 1];
 	packet			= malloc(packet_size);
 
@@ -326,32 +380,29 @@ void *recv_udp_packet(UDPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 		exit(3);
 	}
 	
-	memcpy(packet, pktdata->data + sizeof(uint32_t), packet_size); 				/* Read the packet, starting address is after the packet_size*/
-	*timestamp = *((uint64_t *)(pktdata->data + packet_size + sizeof(uint32_t))); /* Read the timestamp, starting address is after packet_size and packet */
+	memcpy(packet, pktdata->data + sizeof(uint32_t), packet_size);
+    memcpy(timestamp, pktdata->data + packet_size + sizeof(uint32_t), sizeof(*timestamp));
+	//*timestamp = *((uint64_t *)(pktdata->data + packet_size + sizeof(uint32_t)));
 
 	SDLNet_FreePacket(pktdata);
 	return packet;
 }
 
-/*------------------------------------------------------------------------------------------------------------------
---      FUNCTION: recv_tcp
---
---      DATE: Febuary 21, 2014
---      REVISIONS: none
---
---      DESIGNER: Shane Spoor
---      PROGRAMMER: Shane Spoor
---
---      INTERFACE: int recv_tcp(tcp_socket sock, void *buf, size_t bufsize)
---								tcp_socket sock: The TCP socket from which to receive data.
---								void *buf:		The buffer into which the data will be read.
---								size_t bufsize:	The size of buf.
---
---      RETURNS: 0 if the packet was received successfully; -1 on failure.
---
---      NOTES:
---      Reads bufsize bytes into the buffer pointed to by buf.
-----------------------------------------------------------------------------------------------------------------------*/
+/**
+ * Reads the specified amount of data from a TCP socket.
+ *
+ * @param[in]  tcp_socket The TCP socket from which to receive data.
+ * @param[out] buf        The buffer into which the data will be read.
+ * @param[in]  bufsize    The size (in bytes) of buf.
+ *
+ * @return ERR_RECV_FAILED if SDLNet_TCP_Recv returns an error, and ERR_CONN_CLOSED if no
+ *         data was read (i.e., received a RST or a FIN).
+ *
+ * @designer Shane Spoor
+ * @author   Shane Spoor
+ *
+ * @date Febuary 21, 2014
+ */
 int recv_tcp(TCPsocket sock, void *buf, size_t bufsize)
 {
 	int numread = SDLNet_TCP_Recv(sock, buf, bufsize);
@@ -359,66 +410,54 @@ int recv_tcp(TCPsocket sock, void *buf, size_t bufsize)
 	if(numread == -1)
 	{
     	fprintf(stderr, "SDLNet_TCP_Recv: %s\n", SDLNet_GetError());
-    	return cnt_errno = -3;
+    	return cnt_errno = ERR_RECV_FAILED;
 	}
 	else if(numread == 0){
-		return cnt_errno = -2;
+		return cnt_errno = ERR_CONN_CLOSED;
 	}
 	
 	return numread;
 }
 
-/*------------------------------------------------------------------------------------------------------------------
---      FUNCTION: recv_udp
---
---      DATE: Febuary 21, 2014
---      REVISIONS: none
---
---      DESIGNER: Shane Spoor
---      PROGRAMMER: Shane Spoor
---
---      INTERFACE: int recv_udp(udp_socket sock, UDPpacket *upd_packet)
---
---      RETURNS: 0 if the packet was received successfully; -1 on failure.
---
---      NOTES:
---      Reads a packet into the buffer pointed udp_packet.
-----------------------------------------------------------------------------------------------------------------------*/
+/**
+ * Reads a packet into the buffer pointed to by @a udp_packet.
+ *
+ * @param[in]  sock       The socket from which to read.
+ * @param[out] udp_packet The udp packet buffer to hold the data. 
+ *
+ * @return -1 on failure (cnt_errno is set to ERR_RECV_FAILED) and 0 on success.
+ *
+ * @designer Shane Spoor
+ * @author   Shane Spoor
+ *
+ * @date Febuary 21, 2014
+ */
 int recv_udp (UDPsocket sock, UDPpacket *udp_packet)
 {
 	if(SDLNet_UDP_Recv(sock, udp_packet) == -1)
 	{
 		fprintf(stderr, "SDLNet_UDP_Recv: %s\n", SDLNet_GetError());
+        cnt_errno = ERR_RECV_FAILED;
 		return -1;
 	}
 	
 	return 0;
 }
 
-/*------------------------------------------------------------------------------------------
- * FUNCTION:    grab_send_packet
+/**
+ * Grabs the first packet on the pipe to be sent by the send thread.
  *
- * DATE:        Febuary 20 2014
+ * @param[out] type Receives the type of packet to send.
+ * @param[in]  fd   The read descriptor for the pipe between network router/send thread.
+ * @param[out] ret  If the function is successful, this hold 0; otherwise, it will hold -1.
  *
- * REVISIONS:   None.
+ * @return The packet on success or NULL on failure.
  *
- * DESIGNER:    Ramzi Chennafi
+ * @designer Ramzi Chennafi
+ * @author   Ramzi Chennafi
  *
- * PROGRAMMER:  Ramzi Chennafi
- *
- * INTERFACE:   char* grab_send_packet(int &protocol, int &type, int fd)
- *                  int &protocol : pointer to  a empty protocol int that is used to determine packet sending
- *					int &type     : pointer to an empty type int that is used to determine packet size (type)
- *					int fd        : file descriptor to the network router read pipe
- *					
- *
- * RETURNS:     char* : pointer to an array of chars containing packet data
- *
- * NOTES:
- *
- *  Grabs the first packet on the pipe to be sent by send thread.
- *
- *----------------------------------------------------------------------------------------*/
+ * @date Febuary 20 2014
+ */
 void*grab_send_packet(uint32_t *type, int fd, int *ret){
 
 	*type = read_type(fd);
@@ -437,22 +476,20 @@ void*grab_send_packet(uint32_t *type, int fd, int *ret){
 
 	return data;
 }
-/*------------------------------------------------------------------------------------------------------------------
---      FUNCTION: alloc_packet
---
---      DATE: Febuary 15, 2014
---      REVISIONS: none
---
---      DESIGNER: Ramzi Chennafi
---      PROGRAMMER: Ramzi Chennafi
---
---      INTERFACE: UDPpacket alloc_packet(char * data)
---
---      RETURNS: UDPpacket on success, null on failure
---
---      NOTES:
---      Creates a UDPpacket with the data passed to it.
-----------------------------------------------------------------------------------------------------------------------*/
+/**
+ * Creates a UDP packet of size @a size.
+ *
+ * If the function fails, it prints an error message before returning. 
+ *
+ * @param[in] size The size of the packet to create.
+ *
+ * @return A UDPpacket pointer on success or NULL on failure.
+ *
+ * @designer Ramzi Chennafi
+ * @author Ramzi Chennafi
+ *
+ * @date Febuary 15, 2014
+ */
 UDPpacket *alloc_packet(uint32_t size){
 
 	UDPpacket *pktdata = SDLNet_AllocPacket(size);
@@ -464,59 +501,47 @@ UDPpacket *alloc_packet(uint32_t size){
 
 	return pktdata;
 }
-/*------------------------------------------------------------------------------------------------------------------
---      FUNCTION: resolve_host_ip
---
---      DATE: Febuary 15, 2014
---      REVISIONS: none
---
---      DESIGNER: Shane Spoor
---      PROGRAMMER: Shane Spoor
---
---      INTERFACE: resolve_host(IPaddress *ip_addr, const uint16_t port, const char *host_ip_string)
---								IPaddress *ip_addr:		Pointer to the IPaddress struct which will receive the address
---														information.
---								uint16_t port:			The port to use for sending/receiving on the socket created
---														with this IPaddr struct.
---								char *host_ip_string:	The hostname or IP address (in dotted string form) to resolve.
---
---      RETURNS: -1 on failure, or 0 on success.
---
---      NOTES:
---      Creates an IPaddress struct holding the IP address and port information for the SDL network functions. If the
---		funciton fails, it will log an error and return NULL.
-----------------------------------------------------------------------------------------------------------------------*/
+/**
+ * Creates an IPaddress struct holding the IP address and port information for the SDL network functions
+ *
+ * @param[out] ip_addr        Pointer to the IPaddress struct which will receive the address information.
+ * @param[in]  port           The port to use for sending/receiving on the socket.
+ * @param[in]  host_ip_string The hostname or IP address (in dotted string form) to resolve.
+ *
+ * @return -1 on failure, or 0 on success.
+ *
+ * @designer Shane Spoor
+ * @author Shane Spoor
+ *
+ * @date Febuary 15, 2014
+ */
 int resolve_host(IPaddress *ip_addr, const uint16_t port, const char *host_ip_string)
 {
-	if(SDLNet_ResolveHost(ip_addr, host_ip_string, port) == -1)
-	{
-    	fprintf(stderr, "SDLNet_ResolveHost: %s\n", SDLNet_GetError());
-    	return -1;
+    if(SDLNet_ResolveHost(ip_addr, host_ip_string, port) == -1)
+    {
+        fprintf(stderr, "SDLNet_ResolveHost: %s\n", SDLNet_GetError());
+        return -1;
     }
     return 0;
 }
 
-/*------------------------------------------------------------------------------------------------------------------
---      FUNCTION: make_socket_set
---
---      DATE: Febuary 15, 2014
---      REVISIONS: none
---
---      DESIGNER: Shane Spoor
---      PROGRAMMER: Shane Spoor
---
---      INTERFACE: make_socket_set(size_t num_sockets, ...)
---									size_t num_sockets: The number of sockets to be added to the set.
---									...: A list of num_sockets of tcp_socket and udp_socket struct pointers to be added.
---
---      RETURNS: An SDLNet_SocketSet pointer on success, or NULL on failure.
---
---      NOTES:
---      Creates an IPaddress struct holding the IP address and port information for the SDL network functions. If the
---		funciton fails, it will log an error and return NULL.
-----------------------------------------------------------------------------------------------------------------------*/ 	
+/**
+ * Creates an IPaddress struct holding the IP address and port information for the SDL network functions.
+ *
+ * @param[in] num_sockets The number of sockets to be added to the set.
+ * @param[in] ...         A list of size @a num_sockets of TCPsocket and UDPsocket structs 
+ *                        to add to the set.
+ *
+ * @return An SDLNet_SocketSet pointer on success, or NULL on failure.
+ *
+ * @designer Shane Spoor
+ * @author Shane Spoor
+ *
+ * @date Febuary 15, 2014
+ */
 SDLNet_SocketSet make_socket_set(int num_sockets, ...)
 {
+    int i;
 	va_list socket_list; 	
 	SDLNet_SocketSet set = SDLNet_AllocSocketSet(num_sockets);
 
@@ -527,7 +552,7 @@ SDLNet_SocketSet make_socket_set(int num_sockets, ...)
 	}
 	
 	va_start(socket_list, num_sockets);
-	for(size_t i = 0; i < num_sockets; i++)
+	for(i = 0; i < num_sockets; i++)
 	{
 		if(SDLNet_AddSocket(set, va_arg(socket_list, SDLNet_GenericSocket)) == -1)
 		{
@@ -540,23 +565,18 @@ SDLNet_SocketSet make_socket_set(int num_sockets, ...)
 	return set;
 }
 
-/*------------------------------------------------------------------------------------------------------------------
---      FUNCTION: check_sockets
---
---      DATE: Febuary 21, 2014
---      REVISIONS: none
---
---      DESIGNER: Shane Spoor
---      PROGRAMMER: Shane Spoor
---
---      INTERFACE: check_sockets(SDLNet_SocketSet set)
---									SDENet_SocketSet set: The set to monitor for activity.
---
---      RETURNS: The number of sockets ready on success, or -1 on failure.
---
---      NOTES:
---      Runs select to determine whether the sockets have data to receive.
-----------------------------------------------------------------------------------------------------------------------*/ 
+/**
+ * Runs select to determine whether the sockets have data to receive.
+ *
+ * @param[in] set The set to monitor for activity.
+ *
+ * @return The number of sockets ready on success, or -1 on failure.
+ *
+ * @designer Shane Spoor
+ * @author Shane Spoor
+ *
+ * @date Febuary 21, 2014
+ */
 int check_sockets(SDLNet_SocketSet set)
 {
 	int numready = SDLNet_CheckSockets(set, 100000);
@@ -570,23 +590,18 @@ int check_sockets(SDLNet_SocketSet set)
 	return numready;
 }
 
-/*------------------------------------------------------------------------------------------------------------------
---      FUNCTION: get_protocol
---
---      DATE: Febuary 21, 2014
---      REVISIONS: none
---
---      DESIGNER: Shane Spoor
---      PROGRAMMER: Shane Spoor
---
---      INTERFACE: int get_protocol(uint32_t type)
---									int type : type of packet to get the protocol for
---
---      RETURNS: int : The correct protocol for the specified packet type.
---
---      NOTES:
---      Grabs the correct protocol for the specified packet.
-----------------------------------------------------------------------------------------------------------------------*/ 
+/**
+ * Grabs the correct protocol for the specified packet.
+ *
+ * @param[in] type The type of packet to get the protocol for.
+ *
+ * @return The correct protocol for the specified packet type.
+ *
+ * @designer Ramzi Chennafi
+ * @author   Ramzi Chennafi
+ *
+ * @date Febuary 21, 2014
+ */
 int get_protocol(uint32_t type)
 {
 	int protocol;
@@ -614,25 +629,22 @@ int get_protocol(uint32_t type)
 
 	return protocol;
 }
-/*------------------------------------------------------------------------------------------------------------------
---      FUNCTION: close_connections
---
---      DATE: Febuary 21, 2014
---      REVISIONS: none
---
---      DESIGNER: Ramzi Chennafi
---      PROGRAMMER: Ramzi Chennafi
---
---      INTERFACE: void close_connections(SDLNet_SocketSet set, TCPsocket tcpsock, UDPsocket udpsock)
---									SDENet_SocketSet set: The set to exit.
---									TCPsocket tcpsock : tcp socket to close
---									UDPsocket udpsock : udp socket to cose
---
---      RETURNS: The number of sockets ready on success, or -1 on failure.
---
---      NOTES:
---      Removes sockets from set and closes open sockets.
-----------------------------------------------------------------------------------------------------------------------*/ 
+
+/**
+ * Removes sockets from set and closes open sockets.
+ *
+ * If removing either or both of the sockets fails, the function prints
+ * an error message.
+ *
+ * @param[in] set     The set to free.
+ * @param[in] tcpsock The TCP socket to close.
+ * @param[in] udpsock The UDP socket to close.
+ *
+ * @designer Ramzi Chennafi
+ * @author   Ramzi Chennafi
+ *
+ * @date Febuary 21, 2014
+ */
 void close_connections(SDLNet_SocketSet set, TCPsocket tcpsock, UDPsocket udpsock)
 {
 	int numused;
