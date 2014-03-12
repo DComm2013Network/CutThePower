@@ -310,11 +310,59 @@ void create_textfield(World *world, char *name, int x, int y) {
 	
 }
 
+void create_main_menu_background(World *world) {
+	
+	unsigned int entity;
+	const int menu_animations = 19;
+	
+	entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION);
+	
+	world->position[entity].x = 0;
+	world->position[entity].y = 0;
+	world->position[entity].width = WIDTH;
+	world->position[entity].height = HEIGHT;
+	
+	world->animation[entity].triggered = false;
+	world->animation[entity].index = 0;
+	world->animation[entity].frames_to_skip = 2;
+	world->animation[entity].frame_count = 0;
+	
+	world->animation[entity].surfaces = (SDL_Surface**)malloc(sizeof(SDL_Surface*) * menu_animations);
+	
+	world->animation[entity].surfaces[0] = IMG_Load("assets/Graphics/menu/MainMenu_01.png");
+	world->animation[entity].surfaces[1] = IMG_Load("assets/Graphics/menu/MainMenu_02.png");
+	world->animation[entity].surfaces[2] = IMG_Load("assets/Graphics/menu/MainMenu_03.png");
+	world->animation[entity].surfaces[3] = IMG_Load("assets/Graphics/menu/MainMenu_04.png");
+	world->animation[entity].surfaces[4] = IMG_Load("assets/Graphics/menu/MainMenu_05.png");
+	world->animation[entity].surfaces[5] = IMG_Load("assets/Graphics/menu/MainMenu_06.png");
+	world->animation[entity].surfaces[6] = IMG_Load("assets/Graphics/menu/MainMenu_07.png");
+	world->animation[entity].surfaces[7] = IMG_Load("assets/Graphics/menu/MainMenu_08.png");
+	world->animation[entity].surfaces[8] = IMG_Load("assets/Graphics/menu/MainMenu_09.png");
+	world->animation[entity].surfaces[9] = IMG_Load("assets/Graphics/menu/MainMenu_10.png");
+	world->animation[entity].surfaces[10] = IMG_Load("assets/Graphics/menu/MainMenu_11.png");
+	world->animation[entity].surfaces[11] = IMG_Load("assets/Graphics/menu/MainMenu_12.png");
+	world->animation[entity].surfaces[12] = IMG_Load("assets/Graphics/menu/MainMenu_13.png");
+	world->animation[entity].surfaces[13] = IMG_Load("assets/Graphics/menu/MainMenu_14.png");
+	world->animation[entity].surfaces[14] = IMG_Load("assets/Graphics/menu/MainMenu_15.png");
+	world->animation[entity].surfaces[15] = IMG_Load("assets/Graphics/menu/MainMenu_16.png");
+	world->animation[entity].surfaces[16] = IMG_Load("assets/Graphics/menu/MainMenu_17.png");
+	world->animation[entity].surfaces[17] = IMG_Load("assets/Graphics/menu/MainMenu_18.png");
+	world->animation[entity].surfaces[18] = IMG_Load("assets/Graphics/menu/MainMenu_19.png");
+	
+	world->animation[entity].surface_count = menu_animations;
+	world->animation[entity].triggered = true;
+	
+	
+	world->renderPlayer[entity].width = WIDTH;
+	world->renderPlayer[entity].height = HEIGHT;
+	world->renderPlayer[entity].playerSurface = world->animation[entity].surfaces[0];
+}
+
 void create_main_menu(World* world) {
 	
 	init_world(world);
 	
-	unsigned int entity;
+	/*unsigned int entity;
 	
 	entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
 	
@@ -328,7 +376,9 @@ void create_main_menu(World* world) {
 	world->position[entity].x = 0;
 	world->position[entity].y = 0;
 	world->position[entity].width = WIDTH;
-	world->position[entity].height = HEIGHT;
+	world->position[entity].height = HEIGHT;*/
+	
+	create_main_menu_background(world);
 	
 	create_label(world, "assets/Graphics/menu/menu_label_cutthepower.png", (WIDTH / 2) - (TITLE_WIDTH / 2), (HEIGHT / 2) - 250, TITLE_WIDTH, TITLE_HEIGHT);
 	
@@ -343,7 +393,7 @@ void create_options_menu(World *world) {
 	
 	init_world(world);
 	
-	unsigned int entity;
+	/*unsigned int entity;
 	
 	entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
 	
@@ -357,7 +407,9 @@ void create_options_menu(World *world) {
 	world->position[entity].x = 0;
 	world->position[entity].y = 0;
 	world->position[entity].width = WIDTH;
-	world->position[entity].height = HEIGHT;
+	world->position[entity].height = HEIGHT;*/
+	
+	create_main_menu_background(world);
 	
 	create_label(world, "assets/Graphics/menu/menu_label_options.png", (WIDTH / 2) - (TITLE_WIDTH / 2), (HEIGHT / 2) - 250, TITLE_WIDTH, TITLE_HEIGHT);
 	
@@ -370,7 +422,7 @@ void create_keymap_menu(World *world) {
 	
 	init_world(world);
 	
-	unsigned int entity;
+	/*unsigned int entity;
 	
 	entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
 	
@@ -384,7 +436,9 @@ void create_keymap_menu(World *world) {
 	world->position[entity].x = 0;
 	world->position[entity].y = 0;
 	world->position[entity].width = WIDTH;
-	world->position[entity].height = HEIGHT;
+	world->position[entity].height = HEIGHT;*/
+	
+	create_main_menu_background(world);
 	
 	create_label(world, "assets/Graphics/menu/menu_label_keymap.png", (WIDTH / 2) - (TITLE_WIDTH / 2), (HEIGHT / 2) - 250, TITLE_WIDTH, TITLE_HEIGHT);
 	
@@ -428,7 +482,6 @@ void create_keymap_menu(World *world) {
 	create_button(world, "assets/Graphics/menu/menu_button_default.png", "keymap_default", (WIDTH / 2) - (BUTTON_WIDTH / 2) - 150, (HEIGHT / 2) + 275);
 }
 
-
 void create_credits_menu(World *world) {
 	
 	init_world(world);
@@ -453,12 +506,11 @@ void create_credits_menu(World *world) {
 	create_button(world, "assets/Graphics/menu/menu_button_back.png", "credits_back", (WIDTH / 2) - (BUTTON_WIDTH / 2), (HEIGHT / 2) + 275);
 }
 
-
 void create_setup_menu(World *world) {
 	
 	init_world(world);
 	
-	unsigned int entity;
+	/*unsigned int entity;
 	
 	entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
 	
@@ -472,7 +524,9 @@ void create_setup_menu(World *world) {
 	world->position[entity].x = 0;
 	world->position[entity].y = 0;
 	world->position[entity].width = WIDTH;
-	world->position[entity].height = HEIGHT;
+	world->position[entity].height = HEIGHT;*/
+	
+	create_main_menu_background(world);
 	
 	create_label(world, "assets/Graphics/menu/menu_label_setup.png", (WIDTH / 2) - (TITLE_WIDTH / 2), (HEIGHT / 2) - 250, TITLE_WIDTH, TITLE_HEIGHT);
 	

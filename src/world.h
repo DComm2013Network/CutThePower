@@ -31,6 +31,7 @@ typedef struct {
 	RenderPlayerComponent	renderPlayer[MAX_ENTITIES];
 	PlayerComponent			player[MAX_ENTITIES];
 	TagComponent			tag[MAX_ENTITIES];
+	AnimationComponent		animation[MAX_ENTITIES];
 } World;
 
 void init_world(World* world);

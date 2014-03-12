@@ -11,5 +11,6 @@
 /* POSSIBLY TEMPORARY!!! passing playerFilename may not be needed if gameplay gives us a complete player struct. */
 void render_player_system(World& world, SDL_Surface* surface);
 void init_render_player_system();
+void animation_system(World *world);
 
 #endif

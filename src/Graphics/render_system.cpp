@@ -7,6 +7,7 @@
 
 #include "../world.h"
 #include "components.h"
+#include "systems.h"
 
 #define SYSTEM_MASK (COMPONENT_RENDER_PLAYER | COMPONENT_POSITION) /**< The entity must have a render player and position component
                                                                     * for processing by this system. */

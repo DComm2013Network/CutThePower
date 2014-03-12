@@ -7,7 +7,7 @@ OBJDIR=obj
 SRCDIR=src
 
 BIN_DEFAULT=$(BINDIR)/CutThePower
-OBJ_DEFAULT=$(OBJDIR)/Gameplay/collision_system.o $(OBJDIR)/Gameplay/movement_system.o $(OBJDIR)/Graphics/render_system.o $(OBJDIR)/Graphics/map.o $(OBJDIR)/Input/keyinputsystem.o $(OBJDIR)/Input/mouseinputsystem.o $(OBJDIR)/main.o $(OBJDIR)/Network/GameplayCommunication.o $(OBJDIR)/Network/ServerCommunication.o $(OBJDIR)/Network/PipeUtils.o $(OBJDIR)/Network/NetworkRouter.o $(OBJDIR)/Network/ClientUpdateSystem.o $(OBJDIR)/Network/SendSystem.o $(OBJDIR)/world.o
+OBJ_DEFAULT=$(OBJDIR)/Gameplay/collision_system.o $(OBJDIR)/Gameplay/movement_system.o $(OBJDIR)/Graphics/render_system.o $(OBJDIR)/Graphics/animation_system.o $(OBJDIR)/Graphics/map.o $(OBJDIR)/Input/keyinputsystem.o $(OBJDIR)/Input/mouseinputsystem.o $(OBJDIR)/main.o $(OBJDIR)/Network/GameplayCommunication.o $(OBJDIR)/Network/ServerCommunication.o $(OBJDIR)/Network/PipeUtils.o $(OBJDIR)/Network/NetworkRouter.o $(OBJDIR)/Network/ClientUpdateSystem.o $(OBJDIR)/Network/SendSystem.o $(OBJDIR)/world.o
 
 CutThePower: $(OBJ_DEFAULT)
 	test -d $(BINDIR) || mkdir -p $(BINDIR)
@@ -36,6 +36,11 @@ $(OBJDIR)/Gameplay/movement_system.o: $(SRCDIR)/Gameplay/movement_system.cpp
 $(OBJDIR)/Graphics/render_system.o: $(SRCDIR)/Graphics/render_system.cpp
 	test -d $(OBJDIR)/Graphics || mkdir -p $(OBJDIR)/Graphics
 	$(CC) $(FLAGS) -c -o $(OBJDIR)/Graphics/render_system.o $(SRCDIR)/Graphics/render_system.cpp
+	
+
+$(OBJDIR)/Graphics/animation_system.o: $(SRCDIR)/Graphics/animation_system.cpp
+	test -d $(OBJDIR)/Graphics || mkdir -p $(OBJDIR)/Graphics
+	$(CC) $(FLAGS) -c -o $(OBJDIR)/Graphics/animation_system.o $(SRCDIR)/Graphics/animation_system.cpp
 
 $(OBJDIR)/Graphics/map.o: $(SRCDIR)/Graphics/map.cpp
 	test -d $(OBJDIR)/Graphics || mkdir -p $(OBJDIR)/Graphics
