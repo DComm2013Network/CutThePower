@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
 				printf( "Surface could not be created! SDL Error: %s\n", SDL_GetError() );
 				return 1;
 			} else{
-				if (map_init("assets/SampleFloor.txt", "assets/Graphics/tiles_lobby.txt") != 0) {
+				if (map_init("assets/SampleFloor3.txt", "assets/Graphics/tiles.txt") != 0) {
 					printf("Error loading map.\n");
 					return 1;
 				}

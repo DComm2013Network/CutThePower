@@ -15,6 +15,7 @@
 #include "map.h"
 
 SDL_Surface *map_surface; /**< The surface on which to render the map. */
+SDL_Surface *map_fogofwar; /**< Fog of war on top of the surface. */
 SDL_Rect map_rect;        /**< The rectangle containing the map. */
 int w;                    /**< The map's width. */
 int h;                    /**< The map's height. */
@@ -150,7 +151,11 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 	
 	//render to surface
 	map_surface = SDL_CreateRGBSurface(0, width * TILE_WIDTH, height * TILE_HEIGHT, 32, 0, 0, 0, 0);
-	
+	map_fogofwar = SDL_CreateRGBSurface(0, width * TILE_WIDTH, height * TILE_HEIGHT, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
+	SDL_Rect screenRect = {0, 0, width * TILE_WIDTH, height * TILE_HEIGHT};
+	SDL_FillRect(map_fogofwar, &screenRect, 0xFF202020);
+
+
 	tile_rect.w = TILE_WIDTH;
 	tile_rect.h = TILE_HEIGHT;
 	
