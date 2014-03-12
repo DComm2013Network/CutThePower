@@ -10,6 +10,16 @@
 
 unsigned int background = MAX_ENTITIES + 1;
 
+/**
+ * Destroys every entity in the world except for the background of the menu.
+ *
+ * @param world The world struct
+ *
+ * @designer Jordan Marling
+ * @designer Mat Siwoski
+ *
+ * @author Jordan Marling
+ */
 void destroy_menu(World *world) {
 	unsigned int entity;
 	
@@ -22,6 +32,19 @@ void destroy_menu(World *world) {
 	}
 }
 
+/**
+ * Creates a button entity to be displayed on a menu.
+ *
+ * @param world The world struct
+ * @param image The string of the image to be displayed as the button
+ * @param x The x coordinate of the button
+ * @param y The y coordinate of the button.
+ *
+ * @designer Jordan Marling
+ * @designer Mat Siwoski
+ *
+ * @author Jordan Marling
+ */
 void create_button(World *world, char *image, char *name, int x, int y) {
 	
 	char *new_name;
@@ -41,6 +64,7 @@ void create_button(World *world, char *image, char *name, int x, int y) {
 	
 	world->button[entity].prevState = false;
 	world->button[entity].currentState = false;
+	world->button[entity].hovered = false;
 	
 	new_name = (char*)malloc(sizeof(char) * strlen(name));
 	
@@ -49,6 +73,21 @@ void create_button(World *world, char *image, char *name, int x, int y) {
 	world->button[entity].label = new_name;
 }
 
+/**
+ * Creates a label entity to be displayed on a menu.
+ *
+ * @param world The world struct
+ * @param image The string of the image to be displayed as the button
+ * @param x The x coordinate of the button
+ * @param y The y coordinate of the button.
+ * @param w The width of the label.
+ * @param h The height of the label.
+ *
+ * @designer Jordan Marling
+ * @designer Mat Siwoski
+ *
+ * @author Jordan Marling
+ */
 void create_label(World *world, char *image, int x, int y, int w, int h) {
 	
 	unsigned int entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
@@ -66,6 +105,21 @@ void create_label(World *world, char *image, int x, int y, int w, int h) {
 	world->position[entity].height = h;
 }
 
+/**
+ * Creates a textfield entity to be displayed on a menu.
+ * 
+ * The text field is a text box that keeps track of user input.
+ *
+ * @param world The world struct
+ * @param name The name of the textfield.
+ * @param x The x coordinate of the button
+ * @param y The y coordinate of the button.
+ *
+ * @designer Jordan Marling
+ * @designer Mat Siwoski
+ *
+ * @author Jordan Marling
+ */
 void create_textfield(World *world, char *name, int x, int y) {
 	
 	unsigned int entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_TEXTFIELD | COMPONENT_MOUSE);
@@ -89,6 +143,16 @@ void create_textfield(World *world, char *name, int x, int y) {
 	
 }
 
+/**
+ * Creates an entity that serves as the background image on the menus.
+ *
+ * @param world The world struct
+ *
+ * @designer Jordan Marling
+ * @designer Mat Siwoski
+ *
+ * @author Jordan Marling
+ */
 void create_main_menu_background(World *world) {
 	
 	const int menu_animations = 20;
@@ -146,6 +210,20 @@ void create_main_menu_background(World *world) {
 }
 
 
+
+/**
+ * Creates the main menu
+ * 
+ * This menu has buttons to go to the setup menu, options menu, credits menu
+ * and exit the game.
+ *
+ * @param world The world struct
+ *
+ * @designer Jordan Marling
+ * @designer Mat Siwoski
+ *
+ * @author Jordan Marling
+ */
 void create_main_menu(World* world) {
 	
 	//init_world(world);
@@ -177,6 +255,19 @@ void create_main_menu(World* world) {
 	
 }
 
+/**
+ * Creates the options menu
+ * 
+ * This menu allows you to turn on and off sound and gives you
+ * a button to go to the keymap menu.
+ *
+ * @param world The world struct
+ *
+ * @designer Jordan Marling
+ * @designer Mat Siwoski
+ *
+ * @author Jordan Marling
+ */
 void create_options_menu(World *world) {
 	
 	//init_world(world);
@@ -201,11 +292,23 @@ void create_options_menu(World *world) {
 	
 	create_label(world, "assets/Graphics/menu/menu_label_options.png", (WIDTH / 2) - (TITLE_WIDTH / 2), (HEIGHT / 2) - 250, TITLE_WIDTH, TITLE_HEIGHT);
 	
-	create_button(world, "assets/Graphics/menu/menu_button_soundoff.png", "options_sound_off", (WIDTH / 2) - (BUTTON_WIDTH / 2), (HEIGHT / 2) + 50);
+	create_button(world, "assets/Graphics/menu/menu_button_soundon.png", "options_sound_on", (WIDTH / 2) - (BUTTON_WIDTH / 2), (HEIGHT / 2) + 50);
 	create_button(world, "assets/Graphics/menu/menu_button_keymap.png", "options_keymap", (WIDTH / 2) - (BUTTON_WIDTH / 2), (HEIGHT / 2) + 125);
 	create_button(world, "assets/Graphics/menu/menu_button_back.png", "options_back", (WIDTH / 2) - (BUTTON_WIDTH / 2), (HEIGHT / 2) + 200);
 }
 
+/**
+ * Creates the keymap menu.
+ * 
+ * This menu allows you to change your key bindings.
+ *
+ * @param world The world struct
+ *
+ * @designer Jordan Marling
+ * @designer Mat Siwoski
+ *
+ * @author Jordan Marling
+ */
 void create_keymap_menu(World *world) {
 	
 	//init_world(world);
@@ -270,6 +373,18 @@ void create_keymap_menu(World *world) {
 	create_button(world, "assets/Graphics/menu/menu_button_default.png", "keymap_default", (WIDTH / 2) - (BUTTON_WIDTH / 2) - 150, (HEIGHT / 2) + 275);
 }
 
+/**
+ * Creates the credits menu.
+ * 
+ * This menu displays everybody who worked on the project.
+ *
+ * @param world The world struct
+ *
+ * @designer Jordan Marling
+ * @designer Mat Siwoski
+ *
+ * @author Jordan Marling
+ */
 void create_credits_menu(World *world) {
 	
 	//init_world(world);
@@ -296,6 +411,18 @@ void create_credits_menu(World *world) {
 	create_button(world, "assets/Graphics/menu/menu_button_back.png", "credits_back", (WIDTH / 2) - (BUTTON_WIDTH / 2), (HEIGHT / 2) + 275);
 }
 
+/**
+ * Creates the Setup menu.
+ * 
+ * In this menu you input your username and server IP.
+ *
+ * @param world The world struct
+ *
+ * @designer Jordan Marling
+ * @designer Mat Siwoski
+ *
+ * @author Jordan Marling
+ */
 void create_setup_menu(World *world) {
 	
 	//init_world(world);
@@ -330,3 +457,42 @@ void create_setup_menu(World *world) {
 	create_button(world, "assets/Graphics/menu/menu_button_back.png", "setup_back", (WIDTH / 2) - (BUTTON_WIDTH / 2) + 150, (HEIGHT / 2) + 275);
 	create_button(world, "assets/Graphics/menu/menu_button_play.png", "setup_play", (WIDTH / 2) - (BUTTON_WIDTH / 2) - 150, (HEIGHT / 2) + 275);
 }
+
+/**
+ * Creates the Blue Screen Of Death menu.
+ * 
+ * In this menu you press x to exit or y to go to the main menu.
+ *
+ * @param world The world struct
+ *
+ * @designer Jordan Marling
+ * @designer Mat Siwoski
+ *
+ * @author Jordan Marling
+ */
+void create_bsod_menu(World *world) {
+	
+	unsigned int entity;
+	
+	entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
+	
+	world->renderPlayer[entity].width = WIDTH;
+	world->renderPlayer[entity].height = HEIGHT;
+	world->renderPlayer[entity].playerSurface = IMG_Load("assets/Graphics/end/blue_screen.png");
+	if (!world->renderPlayer[entity].playerSurface) {
+		printf("mat is a doof\n");
+	}
+	
+	world->position[entity].x = 0;
+	world->position[entity].y = 0;
+	world->position[entity].width = WIDTH;
+	world->position[entity].height = HEIGHT;
+	
+	create_button(world, "assets/Graphics/end/press_x_to_exit.png", "bsod_exit", (WIDTH / 2) - (BUTTON_WIDTH / 2) - 400, (HEIGHT / 2) + 100);
+	create_button(world, "assets/Graphics/end/press_y_to_continue.png", "bsod_continue", (WIDTH / 2) - (BUTTON_WIDTH / 2) - 400, (HEIGHT / 2) + 150);
+}
+
+
+
+
+

@@ -10,7 +10,10 @@
 void init_sound();
 void cleanup_sound();
 
+void enable_sound(bool enabled);
 void stop_music();
+void stop_effect();
+
 void play_music(int sound);
 void play_effect(int sound);
 

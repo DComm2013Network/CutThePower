@@ -12,10 +12,25 @@
 
 #include <stdlib.h>
 
-#define SYSTEM_MASK (COMPONENT_RENDER_PLAYER | COMPONENT_ANIMATION) /**< The entity must have a render player and position component */
+#define SYSTEM_MASK (COMPONENT_RENDER_PLAYER | COMPONENT_ANIMATION) /**< The entity must have a animation and render component */
 
 
-
+/**
+ * Updates animations
+ *
+ * Used to draw animations. This component determines which stage the animation
+ * is at and updates the render player component accordingly so no special system
+ * is needed for animations vs. static images.
+ * 
+ * The animation can also be triggered at a random time, and can also trigger a sound effect.
+ *
+ * @param world Pointer to the world structure (contains "world" info, entities / components)
+ *
+ * @designer Jordan Marling
+ * @designer Mat Siwoski
+ *
+ * @author Jordan Marling
+ */
 void animation_system(World *world) {
 	
 	unsigned int entity;

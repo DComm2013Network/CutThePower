@@ -4,6 +4,8 @@
  * @file world.cpp
  */
 
+#define ANIMATION_AMOUNT 6
+
 #include "world.h"
 
 #include <SDL2/SDL.h>
@@ -135,9 +137,10 @@ unsigned int create_player(World* world, int x, int y, bool controllable) {
 	//MovementComponent movement;
 	//CollisionComponent collision;
 	
-	render.width = 80;
-	render.height = 80;
-	render.playerSurface = IMG_Load("assets/Graphics/player_80px.png");
+	render.width = 40;
+	render.height = 40;
+	//render.playerSurface = IMG_Load("assets/Graphics/player_80px.png");
+	render.playerSurface = IMG_Load("assets/Graphics/hacker_down.png");
 	if (!render.playerSurface) {
 		printf("mat is a doof\n");
 	}
@@ -222,7 +225,15 @@ void destroy_entity(World* world, const unsigned int entity) {
 	world->mask[entity] = COMPONENT_EMPTY;
 }
 
-//TODO: IMPLEMENT
+/**
+ * Deletes all entities in the world.
+ *
+ * @param world The world struct
+ *
+ * @designer Jordan Marling
+ *
+ * @author Jordan Marling
+ */
 void destroy_world(World *world) {
 	unsigned int entity;
 	
@@ -230,3 +241,6 @@ void destroy_world(World *world) {
 		destroy_entity(world, entity);
 	}
 }
+
+
+

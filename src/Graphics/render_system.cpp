@@ -8,12 +8,11 @@
 #include "../world.h"
 #include "components.h"
 #include "systems.h"
+#include "../Input/menu.h"
 
 #define SYSTEM_MASK (COMPONENT_RENDER_PLAYER | COMPONENT_POSITION) /**< The entity must have a render player and position component
                                                                     * for processing by this system. */
 #define IMAGE_WIDTH			150
-#define CHARACTER_WIDTH		35
-#define CHARACTER_HEIGHT 	50
                                                                     
 extern SDL_Rect map_rect; /**< The rectangle containing the map. */
 
@@ -54,7 +53,6 @@ void render_player_system(World& world, SDL_Surface* surface) {
 	
 	
 	
-	
 	for(entity = 0; entity < MAX_ENTITIES; entity++){
 		
 		if (IN_THIS_COMPONENT(world.mask[entity], SYSTEM_MASK)){
@@ -66,7 +64,19 @@ void render_player_system(World& world, SDL_Surface* surface) {
 			playerRect.y = position->y + map_rect.y;
 			playerRect.w = renderPlayer->width;
 			playerRect.h = renderPlayer->height;
-			SDL_BlitSurface(renderPlayer->playerSurface, NULL, surface, &playerRect);
+			
+			if (IN_THIS_COMPONENT(world.mask[entity], COMPONENT_BUTTON)) {
+				
+				if (world.button[entity].hovered) {
+					playerRect.x -= 5;
+					playerRect.y -= 5;
+					playerRect.w += 10;
+					playerRect.h += 10;
+				}
+				
+			}
+			
+			SDL_BlitScaled(renderPlayer->playerSurface, NULL, surface, &playerRect);
 			
 			//check if a textbox.
 			if (IN_THIS_COMPONENT(world.mask[entity], COMPONENT_TEXTFIELD)) {

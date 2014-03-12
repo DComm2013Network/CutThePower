@@ -158,7 +158,6 @@ void KeyInputSystem(World *world, bool *running)
 			command->commands[C_ACTION] = (currentKeyboardState[command_keys[C_ACTION]] != 0) && (prevKeyboardState[command_keys[C_ACTION]] == 0);
 			
         }
-
     }
     
     //set the previous to the temp. current keystate so we don't get updates we never handled.

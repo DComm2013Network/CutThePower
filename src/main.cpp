@@ -48,6 +48,7 @@ int main(int argc, char* argv[]) {
 	//unsigned int entity = create_player(world, 600, 600, true);
 	
 	create_main_menu(world);
+	//create_bsod_menu(world);
 	
 	while (running)
 	{

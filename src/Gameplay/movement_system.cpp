@@ -117,12 +117,12 @@ void movement_system(World* world) {
 					}
 
 				}	
-					position->x = temp.x;
-					position->y = temp.y;
-				}
+				position->x = temp.x;
+				position->y = temp.y;
 			}
-		} 
-	}
+		}
+	} 
+}
 
 
 void add_force(World* world, unsigned int entity, float magnitude, float dir) {

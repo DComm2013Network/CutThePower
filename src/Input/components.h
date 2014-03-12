@@ -48,6 +48,7 @@ typedef struct  {
 	char *label;        /**< The text to go on the button. */
 	bool currentState;  /**< Whether the button is pressed or released. */
 	bool prevState;     /**< The button's previous state. */
+	bool hovered;		/**<If the mouse is hovered over the button. */
 	
 } ButtonComponent;
 
