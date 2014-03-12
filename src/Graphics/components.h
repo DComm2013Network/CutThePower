@@ -16,15 +16,7 @@
 /**
  * Contains the components related to rendering.
  *
- * @enum Components
-typedef enum{
-	COMPONENT_NONE = 0,               /**< The entity has no components.
-	COMPONENT_RENDER_PLAYER = 1 << 0, /**< The entity can be rendered.
-} Components;
-*/
-
-/**
- * Contains the information for rendering a player.
+ * @enum Components Contains the information for rendering a player.
  *
  * @struct RenderPlayerComponent
  */

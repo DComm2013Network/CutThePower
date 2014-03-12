@@ -10,6 +10,7 @@ int main(int argc, char* argv[]) {
 	SDL_Surface *surface;
 	int send_router_fd[2];
 	int rcv_router_fd[2];
+	unsigned int entity = -1;
 
 	create_pipe(send_router_fd);
 	create_pipe(rcv_router_fd);
@@ -30,20 +31,26 @@ int main(int argc, char* argv[]) {
 	
 	init_world(world);
 	
-	map_init(world, "assets/Graphics/lobby/lobby.txt", "assets/Graphics/lobby/lobby_tiles.txt");
+	//map_init(world, "assets/Graphics/lobby/lobby.txt", "assets/Graphics/lobby/lobby_tiles.txt");
+	//map_init(world, "assets/Graphics/lobby.txt", "assets/Graphics/tiles_lobby.txt");
+	
 	KeyMapInit("assets/Input/keymap.txt");
-	unsigned int entity = create_player(world, 600, 600, true);
-		
+	//unsigned int entity = create_player(world, 600, 600, true);
+	
+	create_main_menu(world);
+	
 	while (running)
 	{
 		
 		//INPUT
 		KeyInputSystem(world, &running);
-		MouseInputSystem(world);
+		MouseInputSystem(world, &entity);
 		movement_system(world);
-		map_render(surface, world->position[entity].x, world->position[entity].y);
+		if (entity < MAX_ENTITIES) {
+			map_render(surface, world, entity);
+			//send_system(world, send_router_fd[WRITE_END]);
+		}
 		render_player_system(*world, surface);
-		//send_system(world, send_router_fd[WRITE_END]);
 		
 		SDL_UpdateWindowSurface(window);
 	}

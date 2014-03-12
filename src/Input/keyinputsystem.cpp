@@ -20,13 +20,14 @@
 
 #include "../world.h"
 #include "components.h"
+#include "systems.h"
 
 #define SYSTEM_MASK (COMPONENT_COMMAND) /**< Entities with a command component will be processed by the system. */
 
 int GetScancode(char *character);
 
 extern int textField; /**< This references the textField variable in the mouseinputsystem for the currently active textfield. */
-int command_keys[NUM_COMMANDS]; /**< This is the current keycodes mapped to each command. */
+int *command_keys; /**< This is the current keycodes mapped to each command. */
 
 /**
  * Polls the keyboard for input and performs the appropriate action.
@@ -118,7 +119,7 @@ void KeyInputSystem(World *world, bool *running)
 }
 
 /**
- * Loads the desired keyboard commands.
+ * Loads the desired keyboard commands into the game array.
  *
  * Current player commands:
  * <ul>
@@ -137,16 +138,47 @@ void KeyInputSystem(World *world, bool *running)
  */
 int KeyMapInit(char *file) 
 {
+	return KeyMapInitArray(file, (int**)&command_keys);
+}
+
+/**
+ * Loads the desired keyboard commands.
+ *
+ * Current player commands:
+ * <ul>
+ *    <li><b>C_UP</b> - Up</li>
+ *    <li><b>C_LEFT</b> - Left</li>
+ *    <li><b>C_DOWN</b> - Down</li>
+ *    <li><b>C_RIGHT</b> - Right</li>
+ *    <li><b>C_ACTION</b> - Action</li>
+ * </ul>
+ *
+ * @param[in]		file 	The file to load the data.
+ *
+ * @designer Jordan Marling
+ * @author Jordan Marling
+ *
+ */
+int KeyMapInitArray(char *file, int **command_array) 
+{
 	
 	FILE *fp;
 	
 	char command[64];
 	char value[64];
 	
-	if ((fp = fopen(file, "r")) == 0) {
+	if (file == 0 || (fp = fopen(file, "r")) == 0) {
 		printf("Error opening file: %s\n", file);
 		return -1;
 	}
+	
+	*command_array = (int*)malloc(sizeof(int) * NUM_COMMANDS);
+	
+	(*command_array)[C_UP] = SDL_SCANCODE_W;
+	(*command_array)[C_LEFT] = SDL_SCANCODE_A;
+	(*command_array)[C_DOWN] = SDL_SCANCODE_S;
+	(*command_array)[C_RIGHT] = SDL_SCANCODE_D;
+	(*command_array)[C_ACTION] = SDL_SCANCODE_SPACE;
 	
 	while (!feof(fp)) {
 		
@@ -161,24 +193,19 @@ int KeyMapInit(char *file)
 		}
 		
 		if (strcmp(command, "C_UP") == 0) { //C_UP
-			//printf("Loading C_UP as %s\n", value);
-			command_keys[C_UP] = GetScancode(value);
+			(*command_array)[C_UP] = GetScancode(value);
 		}
 		else if (strcmp(command, "C_LEFT") == 0) { //C_LEFT
-			//printf("Loading C_LEFT as %s\n", value);
-			command_keys[C_LEFT] = GetScancode(value);
+			(*command_array)[C_LEFT] = GetScancode(value);
 		}
 		else if (strcmp(command, "C_DOWN") == 0) { //C_DOWN
-			//printf("Loading C_DOWN as %s\n", value);
-			command_keys[C_DOWN] = GetScancode(value);
+			(*command_array)[C_DOWN] = GetScancode(value);
 		}
 		else if (strcmp(command, "C_RIGHT") == 0) { //C_RIGHT
-			//printf("Loading C_RIGHT as %s\n", value);
-			command_keys[C_RIGHT] = GetScancode(value);
+			(*command_array)[C_RIGHT] = GetScancode(value);
 		}
 		else if (strcmp(command, "C_ACTION") == 0) { //C_ACTION
-			//printf("Loading C_ACTION as %s\n", value);
-			command_keys[C_ACTION] = GetScancode(value);
+			(*command_array)[C_ACTION] = GetScancode(value);
 		}
 		else {
 			printf("Unable to load command: %s\n", command);

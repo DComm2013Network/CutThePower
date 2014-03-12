@@ -14,6 +14,6 @@
 #define TILE_HEIGHT	40 /**< The height of a tile in pixels. */
 
 int map_init(World* world, char *file_map, char *tilemap);
-void map_render(SDL_Surface *surface, int x, int y);
+void map_render(SDL_Surface *surface, World *world, unsigned int player_entity);
 
 #endif

@@ -178,6 +178,7 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 	
 	
 	create_level(world, map, width, height, TILE_WIDTH);
+	
 	for (int i = 0; i < width; i++) {
 		free(map[i]);
 	}
@@ -205,19 +206,27 @@ int map_init(World* world, char *file_map, char *file_tiles) {
  *
  * @date February 26, 2014
  */
-void map_render(SDL_Surface *surface, int playerXPosition, int playerYPosition) {
+void map_render(SDL_Surface *surface, World *world, unsigned int player_entity) {
+	
 	SDL_Rect tempRect;
+	
+	int playerXPosition = world->position[player_entity].x;
+	int playerYPosition = world->position[player_entity].y;
+	int playerWidth = world->position[player_entity].width;
+	int playerHeight = world->position[player_entity].height;
+	
+	
 	
 	SDL_FillRect(surface, NULL, 0xFF33FF);
 		
-	map_rect.x = (1280/2) -( playerXPosition + 20 / 2 );
-	map_rect.y = (768/2) - ( playerYPosition + 20 / 2 );
+	map_rect.x = (WIDTH/2) -( playerXPosition + playerWidth / 2 );
+	map_rect.y = (HEIGHT/2) - ( playerYPosition + playerHeight / 2 );
 	
-	if(map_rect.y + h < 768){
-		map_rect.y = 768 - h;
+	if(map_rect.y + h < HEIGHT){
+		map_rect.y = HEIGHT - h;
 	}
-	if (map_rect.x + w < 1280){
-		map_rect.x = 1280 - w ;
+	if (map_rect.x + w < WIDTH){
+		map_rect.x = WIDTH - w ;
 	}	
 	if( map_rect.x > 0 )
 	{ 
@@ -227,6 +236,16 @@ void map_render(SDL_Surface *surface, int playerXPosition, int playerYPosition) 
 	{
 		map_rect.y = 0;
 	}
+	
+	if (map_rect.x + w < WIDTH) {
+		map_rect.x += (WIDTH / 2) - (w / 2);
+	}
+	if (map_rect.y + h < HEIGHT) {
+		map_rect.y += (HEIGHT / 2) - (h / 2);
+	}
+	
+	
+	
 	
 	tempRect.x = map_rect.x;
 	tempRect.y = map_rect.y;

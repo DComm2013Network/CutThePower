@@ -4,9 +4,28 @@
  * @file world.cpp
  */
 
+#define BUTTON_WIDTH 	400
+#define BUTTON_HEIGHT 	50
+#define LABEL_WIDTH		250
+#define LABEL_HEIGHT	52
+#define TITLE_WIDTH		750
+#define TITLE_HEIGHT	150
+#define KEYMAP_WIDTH	150
+#define KEYMAP_HEIGHT	50
+#define TEXT_WIDTH		410
+#define TEXT_HEIGHT		60
+
+#include "Input/systems.h"
 #include "world.h"
 
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_keycode.h>
+#include <SDL2/SDL_scancode.h>
+
 #include <stdlib.h>
+
+void create_label(World *world, char *image, int x, int y, int w, int h);
+void create_button(World *world, char *image, char *name, int x, int y);
 
 /**
  * This function initializes every mask to be 0, so that there are no components.
@@ -202,6 +221,8 @@ unsigned int create_player(World* world, int x, int y, bool controllable) {
  * Clean up is easy.
  *
  * [Detailed description (if necessary)]
+ * 
+ * TODO: free all memory on heap. Memory leaks suck.
  *
  * @param world
  * @param entity
@@ -211,4 +232,254 @@ unsigned int create_player(World* world, int x, int y, bool controllable) {
  */
 void destroy_entity(World* world, const unsigned int entity) {
 	world->mask[entity] = COMPONENT_EMPTY;
+}
+
+//TODO: IMPLEMENT
+void destroy_world(World *world) {
+	unsigned int entity;
+	
+	for(entity = 0; entity < MAX_ENTITIES; entity++) {
+		destroy_entity(world, entity);
+	}
+}
+
+void create_button(World *world, char *image, char *name, int x, int y) {
+	
+	char *new_name;
+	unsigned int entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_BUTTON | COMPONENT_MOUSE);
+	
+	world->renderPlayer[entity].width = BUTTON_WIDTH;
+	world->renderPlayer[entity].height = BUTTON_HEIGHT;
+	world->renderPlayer[entity].playerSurface = IMG_Load(image);
+	if (!world->renderPlayer[entity].playerSurface) {
+		printf("mat is a doof\n");
+	}
+	
+	world->position[entity].x = x;
+	world->position[entity].y = y;
+	world->position[entity].width = BUTTON_WIDTH;
+	world->position[entity].height = BUTTON_HEIGHT;
+	
+	world->button[entity].prevState = false;
+	world->button[entity].currentState = false;
+	
+	new_name = (char*)malloc(sizeof(char) * strlen(name));
+	
+	strcpy(new_name, name);
+	
+	world->button[entity].label = new_name;
+}
+
+void create_label(World *world, char *image, int x, int y, int w, int h) {
+	
+	unsigned int entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
+	
+	world->renderPlayer[entity].width = w;
+	world->renderPlayer[entity].height = h;
+	world->renderPlayer[entity].playerSurface = IMG_Load(image);
+	if (!world->renderPlayer[entity].playerSurface) {
+		printf("mat is a doof\n");
+	}
+	
+	world->position[entity].x = x;
+	world->position[entity].y = y;
+	world->position[entity].width = w;
+	world->position[entity].height = h;
+}
+
+void create_textfield(World *world, char *name, int x, int y) {
+	
+	unsigned int entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
+	
+	world->renderPlayer[entity].width = TEXT_WIDTH;
+	world->renderPlayer[entity].height = TEXT_HEIGHT;
+	world->renderPlayer[entity].playerSurface = IMG_Load("assets/Graphics/menu/text_field.png");
+	if (!world->renderPlayer[entity].playerSurface) {
+		printf("mat is a doof\n");
+	}
+	
+	world->position[entity].x = x;
+	world->position[entity].y = y;
+	world->position[entity].width = TEXT_WIDTH;
+	world->position[entity].height = TEXT_HEIGHT;
+	
+	
+	
+}
+
+void create_main_menu(World* world) {
+	
+	init_world(world);
+	
+	unsigned int entity;
+	
+	entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
+	
+	world->renderPlayer[entity].width = WIDTH;
+	world->renderPlayer[entity].height = HEIGHT;
+	world->renderPlayer[entity].playerSurface = IMG_Load("assets/Graphics/menu/MainMenu.png");
+	if (!world->renderPlayer[entity].playerSurface) {
+		printf("mat is a doof\n");
+	}
+	
+	world->position[entity].x = 0;
+	world->position[entity].y = 0;
+	world->position[entity].width = WIDTH;
+	world->position[entity].height = HEIGHT;
+	
+	create_label(world, "assets/Graphics/menu/menu_label_cutthepower.png", (WIDTH / 2) - (TITLE_WIDTH / 2), (HEIGHT / 2) - 250, TITLE_WIDTH, TITLE_HEIGHT);
+	
+	create_button(world, "assets/Graphics/menu/menu_button_play.png", "mainmenu_play", (WIDTH / 2) - (BUTTON_WIDTH / 2), (HEIGHT / 2) - 25);
+	create_button(world, "assets/Graphics/menu/menu_button_options.png", "mainmenu_options", (WIDTH / 2) - (BUTTON_WIDTH / 2), (HEIGHT / 2) + 50);
+	create_button(world, "assets/Graphics/menu/menu_button_credits.png", "mainmenu_credits", (WIDTH / 2) - (BUTTON_WIDTH / 2), (HEIGHT / 2) + 125);
+	create_button(world, "assets/Graphics/menu/menu_button_exit.png", "mainmenu_exit", (WIDTH / 2) - (BUTTON_WIDTH / 2), (HEIGHT / 2) + 200);
+	
+}
+
+void create_options_menu(World *world) {
+	
+	init_world(world);
+	
+	unsigned int entity;
+	
+	entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
+	
+	world->renderPlayer[entity].width = WIDTH;
+	world->renderPlayer[entity].height = HEIGHT;
+	world->renderPlayer[entity].playerSurface = IMG_Load("assets/Graphics/menu/MainMenu.png");
+	if (!world->renderPlayer[entity].playerSurface) {
+		printf("mat is a doof\n");
+	}
+	
+	world->position[entity].x = 0;
+	world->position[entity].y = 0;
+	world->position[entity].width = WIDTH;
+	world->position[entity].height = HEIGHT;
+	
+	create_label(world, "assets/Graphics/menu/menu_label_options.png", (WIDTH / 2) - (TITLE_WIDTH / 2), (HEIGHT / 2) - 250, TITLE_WIDTH, TITLE_HEIGHT);
+	
+	create_button(world, "assets/Graphics/menu/menu_button_soundoff.png", "options_sound_off", (WIDTH / 2) - (BUTTON_WIDTH / 2), (HEIGHT / 2) + 50);
+	create_button(world, "assets/Graphics/menu/menu_button_keymap.png", "options_keymap", (WIDTH / 2) - (BUTTON_WIDTH / 2), (HEIGHT / 2) + 125);
+	create_button(world, "assets/Graphics/menu/menu_button_back.png", "options_back", (WIDTH / 2) - (BUTTON_WIDTH / 2), (HEIGHT / 2) + 200);
+}
+
+void create_keymap_menu(World *world) {
+	
+	init_world(world);
+	
+	unsigned int entity;
+	
+	entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
+	
+	world->renderPlayer[entity].width = WIDTH;
+	world->renderPlayer[entity].height = HEIGHT;
+	world->renderPlayer[entity].playerSurface = IMG_Load("assets/Graphics/menu/MainMenu.png");
+	if (!world->renderPlayer[entity].playerSurface) {
+		printf("mat is a doof\n");
+	}
+	
+	world->position[entity].x = 0;
+	world->position[entity].y = 0;
+	world->position[entity].width = WIDTH;
+	world->position[entity].height = HEIGHT;
+	
+	create_label(world, "assets/Graphics/menu/menu_label_keymap.png", (WIDTH / 2) - (TITLE_WIDTH / 2), (HEIGHT / 2) - 250, TITLE_WIDTH, TITLE_HEIGHT);
+	
+	create_label(world, "assets/Graphics/menu/menu_label_up.png", (WIDTH / 2) - 550, (HEIGHT / 2) - 100, BUTTON_WIDTH, BUTTON_HEIGHT);
+	create_label(world, "assets/Graphics/menu/menu_label_down.png", (WIDTH / 2) - 550, (HEIGHT / 2) - 25, BUTTON_WIDTH, BUTTON_HEIGHT);
+	create_label(world, "assets/Graphics/menu/menu_label_left.png", (WIDTH / 2) - 550, (HEIGHT / 2) + 50, BUTTON_WIDTH, BUTTON_HEIGHT);
+	create_label(world, "assets/Graphics/menu/menu_label_right.png", (WIDTH / 2) - 550, (HEIGHT / 2) + 125, BUTTON_WIDTH, BUTTON_HEIGHT);
+	create_label(world, "assets/Graphics/menu/menu_label_action.png", (WIDTH / 2) - 550, (HEIGHT / 2) + 200, BUTTON_WIDTH, BUTTON_HEIGHT);
+	
+	//load information
+	const int pos = strlen("assets/Graphics/menu/keymap/keymap_");
+	int *commands;
+	char filename[64];
+	strcpy(filename, "assets/Graphics/menu/keymap/keymap_");
+	
+	KeyMapInitArray("assets/Input/keymap.txt", &commands);
+	
+	
+	strcpy((char*)(filename + pos), SDL_GetScancodeName((SDL_Scancode)commands[C_UP]));
+	strcpy((char*)(filename + pos + strlen(SDL_GetScancodeName((SDL_Scancode)commands[C_UP]))), ".png");
+	create_button(world, filename, "keymap_up", (WIDTH / 2) + 250, (HEIGHT / 2) - 100 + (0 * 75));
+	
+	strcpy((char*)(filename + pos), SDL_GetScancodeName((SDL_Scancode)commands[C_DOWN]));
+	strcpy((char*)(filename + pos + strlen(SDL_GetScancodeName((SDL_Scancode)commands[C_DOWN]))), ".png");
+	create_button(world, filename, "keymap_down", (WIDTH / 2) + 250, (HEIGHT / 2) - 100 + (1 * 75));
+	
+	strcpy((char*)(filename + pos), SDL_GetScancodeName((SDL_Scancode)commands[C_LEFT]));
+	strcpy((char*)(filename + pos + strlen(SDL_GetScancodeName((SDL_Scancode)commands[C_LEFT]))), ".png");
+	create_button(world, filename, "keymap_left", (WIDTH / 2) + 250, (HEIGHT / 2) - 100 + (2 * 75));
+	
+	strcpy((char*)(filename + pos), SDL_GetScancodeName((SDL_Scancode)commands[C_RIGHT]));
+	strcpy((char*)(filename + pos + strlen(SDL_GetScancodeName((SDL_Scancode)commands[C_RIGHT]))), ".png");
+	create_button(world, filename, "keymap_right", (WIDTH / 2) + 250, (HEIGHT / 2) - 100 + (3 * 75));
+	
+	strcpy((char*)(filename + pos), SDL_GetScancodeName((SDL_Scancode)commands[C_ACTION]));
+	strcpy((char*)(filename + pos + strlen(SDL_GetScancodeName((SDL_Scancode)commands[C_ACTION]))), ".png");
+	create_button(world, filename, "keymap_action", (WIDTH / 2) + 250, (HEIGHT / 2) - 100 + (4 * 75));
+	
+	
+	create_button(world, "assets/Graphics/menu/menu_button_back.png", "keymap_back", (WIDTH / 2) - (BUTTON_WIDTH / 2) + 150, (HEIGHT / 2) + 275);
+	create_button(world, "assets/Graphics/menu/menu_button_default.png", "keymap_default", (WIDTH / 2) - (BUTTON_WIDTH / 2) - 150, (HEIGHT / 2) + 275);
+}
+
+
+void create_credits_menu(World *world) {
+	
+	init_world(world);
+	
+	unsigned int entity;
+	
+	entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
+	
+	world->renderPlayer[entity].width = WIDTH;
+	world->renderPlayer[entity].height = HEIGHT;
+	world->renderPlayer[entity].playerSurface = IMG_Load("assets/Graphics/menu/credits.png");
+	if (!world->renderPlayer[entity].playerSurface) {
+		printf("mat is a doof\n");
+	}
+	
+	world->position[entity].x = 0;
+	world->position[entity].y = 0;
+	world->position[entity].width = WIDTH;
+	world->position[entity].height = HEIGHT;
+	
+	
+	create_button(world, "assets/Graphics/menu/menu_button_back.png", "credits_back", (WIDTH / 2) - (BUTTON_WIDTH / 2), (HEIGHT / 2) + 275);
+}
+
+
+void create_setup_menu(World *world) {
+	
+	init_world(world);
+	
+	unsigned int entity;
+	
+	entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
+	
+	world->renderPlayer[entity].width = WIDTH;
+	world->renderPlayer[entity].height = HEIGHT;
+	world->renderPlayer[entity].playerSurface = IMG_Load("assets/Graphics/menu/MainMenu.png");
+	if (!world->renderPlayer[entity].playerSurface) {
+		printf("mat is a doof\n");
+	}
+	
+	world->position[entity].x = 0;
+	world->position[entity].y = 0;
+	world->position[entity].width = WIDTH;
+	world->position[entity].height = HEIGHT;
+	
+	create_label(world, "assets/Graphics/menu/menu_label_setup.png", (WIDTH / 2) - (TITLE_WIDTH / 2), (HEIGHT / 2) - 250, TITLE_WIDTH, TITLE_HEIGHT);
+	
+	create_label(world, "assets/Graphics/menu/menu_label_username.png", (WIDTH / 2) - 550, (HEIGHT / 2) - 25, BUTTON_WIDTH, BUTTON_HEIGHT);
+	create_textfield(world, "setup_username", (WIDTH / 2) - 55, (HEIGHT / 2) - 30);
+	
+	create_label(world, "assets/Graphics/menu/menu_label_serverip.png", (WIDTH / 2) - 550, (HEIGHT / 2) + 50, BUTTON_WIDTH, BUTTON_HEIGHT);
+	create_textfield(world, "setup_serverip", (WIDTH / 2) - 55, (HEIGHT / 2) + 45);
+	
+	
+	create_button(world, "assets/Graphics/menu/menu_button_back.png", "setup_back", (WIDTH / 2) - (BUTTON_WIDTH / 2) + 150, (HEIGHT / 2) + 275);
+	create_button(world, "assets/Graphics/menu/menu_button_play.png", "setup_play", (WIDTH / 2) - (BUTTON_WIDTH / 2) - 150, (HEIGHT / 2) + 275);
 }

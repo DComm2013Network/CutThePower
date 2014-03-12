@@ -55,9 +55,9 @@ typedef struct  {
 #define NUM_COMMANDS	5 /**< Total number of commands that an entity can do */
 
 #define C_UP 			0 /**< Commands an entity to move up */
-#define C_LEFT 			1 /**< Commands an entity to move left */
-#define C_RIGHT 		2 /**< Commands an entity to move right */
-#define C_DOWN 			3 /**< Commands an entity to move down */
+#define C_DOWN 			1 /**< Commands an entity to move down */
+#define C_LEFT 			2 /**< Commands an entity to move left */
+#define C_RIGHT 		3 /**< Commands an entity to move right */
 #define C_ACTION 		4 /**< Commands an entity to perform an action */
 
 /**
