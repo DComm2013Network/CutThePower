@@ -12,6 +12,7 @@
 /*@}*/
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_keyboard.h>
@@ -28,6 +29,7 @@ int GetScancode(char *character);
 
 extern int textField; /**< This references the textField variable in the mouseinputsystem for the currently active textfield. */
 int *command_keys; /**< This is the current keycodes mapped to each command. */
+extern const char *character_map;
 
 /**
  * Polls the keyboard for input and performs the appropriate action.
@@ -54,42 +56,92 @@ void KeyInputSystem(World *world, bool *running)
     CommandComponent *command;
 
     SDL_Event event;
-    static const Uint8 *currentKeyboardState = 0, *prevKeyboardState = 0;
-    static bool action = false;
+    
+    //keyboard status
+    static const Uint8 *currentKeyboardState = 0; 	//the current status	
+    static Uint8 *prevKeyboardState = 0;			//the previous status
+    Uint8 *p = 0;									//save the current status and assign prevKeyboardState to this after loop.
+    static int numKeys = 0;
 
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_QUIT) {
             *running = false;
         }
     }
+    
+    currentKeyboardState = SDL_GetKeyboardState(&numKeys);
+    p = (Uint8*)malloc(sizeof(Uint8) * numKeys);
+	memcpy(p, currentKeyboardState, sizeof(Uint8) * numKeys);
 
-    prevKeyboardState = currentKeyboardState;
-    currentKeyboardState = SDL_GetKeyboardState(NULL);
-
-    if (prevKeyboardState == 0)
+	
+    if (prevKeyboardState == 0) {
+		if (prevKeyboardState == 0) {
+			prevKeyboardState = (Uint8*)malloc(sizeof(Uint8) * numKeys);
+		}
+		memcpy(prevKeyboardState, p, sizeof(Uint8) * numKeys);
         return;
-
+	}
+	
+	
     //If a textfield is focused
     if (textField != -1) {
-
-        //TextFieldComponent text = world->text[textField];
-
-        //TODO: Make this work.
-        //Add other characters.
-        /*for(int i = 'A'; i < 'z'; i++) {
-
-            if (currentKeyboardState[i] &&
-                !prevKeyboardState[i]) {
-
-                //will this work?
-                strcpy(text.text + text.length, SDL_GetScancodeName(SDL_GetScancodeFromName()));
-
-            }
-
-        }*/
-
+		
+        TextFieldComponent *text = &(world->text[textField]);
+        SDL_Scancode code;
+		
+		if (currentKeyboardState[SDL_SCANCODE_BACKSPACE] &&
+			!prevKeyboardState[SDL_SCANCODE_BACKSPACE]) {
+			text->length--;
+			if (text->length < 0) {
+				text->length = 0;
+			}
+		}
+		
+		if (text->length < MAX_STRING) {
+			
+			if (currentKeyboardState[SDL_SCANCODE_SPACE] &&
+				!prevKeyboardState[SDL_SCANCODE_SPACE]) {
+					
+				text->text[text->length] = '\0';
+				text->length++;
+				
+			}
+			
+			if (currentKeyboardState[SDL_SCANCODE_PERIOD] &&
+				!prevKeyboardState[SDL_SCANCODE_PERIOD]) {
+					
+				text->text[text->length] = '.';
+				text->length++;
+				
+			}
+			
+			for(int i = 'A'; i <= 'Z'; i++) {
+				
+				code = SDL_GetScancodeFromName((char*)&i);
+				
+				if (currentKeyboardState[code] &&
+					!prevKeyboardState[code]) {
+					
+					text->text[text->length] = (char)i;
+					text->length++;
+					
+				}
+			}
+			
+			for(int i = '0'; i <= '9'; i++) {
+				
+				code = SDL_GetScancodeFromName((char*)&i);
+				
+				if (currentKeyboardState[code] &&
+					!prevKeyboardState[code]) {
+					
+					text->text[text->length] = (char)i;
+					text->length++;
+					
+				}
+			}
+		}
     }
-
 
     for(entity = 0; entity < MAX_ENTITIES; entity++) {
 
@@ -97,25 +149,23 @@ void KeyInputSystem(World *world, bool *running)
         {
             command = &(world->command[entity]);
 
-
-            //command->commands[C_UP] = (currentKeyboardState[SDL_SCANCODE_W] != 0);
-            //command->commands[C_LEFT] = (currentKeyboardState[SDL_SCANCODE_A] != 0);
-            //command->commands[C_DOWN] = (currentKeyboardState[SDL_SCANCODE_S] != 0);
-            //command->commands[C_RIGHT] = (currentKeyboardState[SDL_SCANCODE_D] != 0);
-
             command->commands[C_UP] = (currentKeyboardState[command_keys[C_UP]] != 0);
             command->commands[C_LEFT] = (currentKeyboardState[command_keys[C_LEFT]] != 0);
             command->commands[C_DOWN] = (currentKeyboardState[command_keys[C_DOWN]] != 0);
             command->commands[C_RIGHT] = (currentKeyboardState[command_keys[C_RIGHT]] != 0);
 
-
-            command->commands[C_ACTION] = (currentKeyboardState[SDL_SCANCODE_SPACE] != 0) && action == false;
-
-            action = currentKeyboardState[SDL_SCANCODE_SPACE] != 0;
-
+			
+			command->commands[C_ACTION] = (currentKeyboardState[command_keys[C_ACTION]] != 0) && (prevKeyboardState[command_keys[C_ACTION]] == 0);
+			
         }
 
     }
+    
+    //set the previous to the temp. current keystate so we don't get updates we never handled.
+    if (prevKeyboardState == 0) {
+		prevKeyboardState = (Uint8*)malloc(sizeof(Uint8) * numKeys);
+	}
+	memcpy(prevKeyboardState, p, sizeof(Uint8) * numKeys);
 }
 
 /**

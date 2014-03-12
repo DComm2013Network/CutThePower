@@ -35,6 +35,7 @@ int main(int argc, char* argv[]) {
 	//map_init(world, "assets/Graphics/lobby.txt", "assets/Graphics/tiles_lobby.txt");
 	
 	KeyMapInit("assets/Input/keymap.txt");
+	init_render_player_system();
 	//unsigned int entity = create_player(world, 600, 600, true);
 	
 	create_main_menu(world);

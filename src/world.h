@@ -11,6 +11,9 @@
 //Maximum entities that will be used.
 #define MAX_ENTITIES 256
 
+//Maximum string lengths
+#define MAX_STRING 15
+
 #define IN_THIS_COMPONENT(mask, x) (((mask) & (x)) == (x))
 
 //This contains all of the entities' components and their respective component masks.

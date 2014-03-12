@@ -289,7 +289,7 @@ void create_label(World *world, char *image, int x, int y, int w, int h) {
 
 void create_textfield(World *world, char *name, int x, int y) {
 	
-	unsigned int entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
+	unsigned int entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_TEXTFIELD | COMPONENT_MOUSE);
 	
 	world->renderPlayer[entity].width = TEXT_WIDTH;
 	world->renderPlayer[entity].height = TEXT_HEIGHT;
@@ -303,7 +303,10 @@ void create_textfield(World *world, char *name, int x, int y) {
 	world->position[entity].width = TEXT_WIDTH;
 	world->position[entity].height = TEXT_HEIGHT;
 	
-	
+	world->text[entity].text = (char*)calloc(MAX_STRING, sizeof(char));
+	world->text[entity].length = 0;
+	world->text[entity].focused = false;
+	world->text[entity].number = false;
 	
 }
 
