@@ -41,11 +41,4 @@ unsigned int create_level(World* world, uint8_t** map, int width, int height, in
 void destroy_entity(World* world, const unsigned int entity);
 void destroy_world(World *world);
 
-void create_credits_menu(World *world);
-void create_keymap_menu(World *world);
-void create_main_menu(World* world);
-void create_options_menu(World *world);
-void create_play_menu(World *world);
-void create_setup_menu(World *world);
-
 #endif

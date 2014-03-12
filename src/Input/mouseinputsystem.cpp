@@ -8,6 +8,7 @@
 
 #include "../world.h"
 #include "components.h"
+#include "menu.h"
 #include "../Graphics/map.h"
 
 #define SYSTEM_MASK (COMPONENT_MOUSE) /**< Entities must have a mouse component to be processed by this system. */
@@ -111,7 +112,7 @@ void MouseInputSystem(World *world, unsigned int *player_entity)
 					//MAIN MENU
 					if (strcmp(button->label, "mainmenu_play") == 0) {
 						
-						destroy_world(world);
+						destroy_menu(world);
 						
 						//map_init(world, "assets/Graphics/lobby/lobby.txt", "assets/Graphics/lobby/lobby_tiles.txt");
 						//map_init(world, "assets/Graphics/SampleFloor.txt", "assets/Graphics/tiles_lobby.txt");
@@ -124,14 +125,14 @@ void MouseInputSystem(World *world, unsigned int *player_entity)
 					}
 					else if (strcmp(button->label, "mainmenu_options") == 0) {
 						
-						destroy_world(world);
+						destroy_menu(world);
 						
 						create_options_menu(world);
 						return;
 					}
 					else if (strcmp(button->label, "mainmenu_credits") == 0) {
 						
-						destroy_world(world);
+						destroy_menu(world);
 						
 						create_credits_menu(world);
 						
@@ -145,7 +146,7 @@ void MouseInputSystem(World *world, unsigned int *player_entity)
 					//OPTIONS
 					else if (strcmp(button->label, "options_back") == 0) {
 						
-						destroy_world(world);
+						destroy_menu(world);
 						
 						create_main_menu(world);
 						
@@ -165,7 +166,7 @@ void MouseInputSystem(World *world, unsigned int *player_entity)
 					}
 					else if (strcmp(button->label, "options_keymap") == 0) {
 						
-						destroy_world(world);
+						destroy_menu(world);
 						
 						create_keymap_menu(world);
 						
@@ -175,7 +176,7 @@ void MouseInputSystem(World *world, unsigned int *player_entity)
 					//KEYMAP
 					else if (strcmp(button->label, "keymap_back") == 0) {
 						
-						destroy_world(world);
+						destroy_menu(world);
 						
 						create_options_menu(world);
 						
@@ -185,7 +186,7 @@ void MouseInputSystem(World *world, unsigned int *player_entity)
 					//CREDITS
 					else if (strcmp(button->label, "credits_back") == 0) {
 						
-						destroy_world(world);
+						destroy_menu(world);
 						
 						create_main_menu(world);
 						
@@ -195,7 +196,7 @@ void MouseInputSystem(World *world, unsigned int *player_entity)
 					//SETUP
 					else if (strcmp(button->label, "setup_back") == 0) {
 						
-						destroy_world(world);
+						destroy_menu(world);
 						
 						create_main_menu(world);
 						

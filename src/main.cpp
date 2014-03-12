@@ -2,6 +2,10 @@
 
 #include "systems.h"
 #include "world.h"
+#include "Input/menu.h"
+
+#include <stdlib.h>
+#include <time.h>
 
 int game_net_signalfd, game_net_lockfd;
 
@@ -30,6 +34,7 @@ int main(int argc, char* argv[]) {
 	}
 	
 	init_world(world);
+	srand(time(NULL));//random initializer
 	
 	//map_init(world, "assets/Graphics/lobby/lobby.txt", "assets/Graphics/lobby/lobby_tiles.txt");
 	//map_init(world, "assets/Graphics/lobby.txt", "assets/Graphics/tiles_lobby.txt");

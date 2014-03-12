@@ -42,6 +42,7 @@ typedef struct {
 	bool triggered;
 	int frames_to_skip;
 	int frame_count;
+	int rand_frame;
 	
 } AnimationComponent;
 

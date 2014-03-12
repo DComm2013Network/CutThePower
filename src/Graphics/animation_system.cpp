@@ -9,6 +9,8 @@
 #include "components.h"
 #include "systems.h"
 
+#include <stdlib.h>
+
 #define SYSTEM_MASK (COMPONENT_RENDER_PLAYER | COMPONENT_ANIMATION) /**< The entity must have a render player and position component */
 
 
@@ -44,6 +46,17 @@ void animation_system(World *world) {
 						
 					}
 				}
+				
+			}
+			else { //do random stuff
+				
+				if (animation->rand_frame < 0)
+					continue;
+				
+				if (rand() % animation->rand_frame == 0) {
+					animation->triggered = true;
+				}
+				
 				
 			}
 			
