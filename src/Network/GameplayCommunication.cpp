@@ -1,31 +1,20 @@
-/*------------------------------------------------------------------------------------------
- * SOURCE FILE: GameplayCommunication.cpp
- *
- * PROGRAM:     [BIG_GAME]
- *
- * FUNCTIONS:
- *                            
- *
- * DATE:        February 15, 2014
- *
- * REVISIONS:   (Date and Description)
- *
- * DESIGNER:    Abhishek Bhardwaj
- *
- * PROGRAMMER:  Abhishek Bhardwaj
- *
- * NOTES:
- * 
+/** @ingroup Network */
+/** @{ */
+
+/**
  * This file contains all methods responsible for communication with the gameplay module.
  *
- *----------------------------------------------------------------------------------------*/
+ * @file GameplayCommunication.cpp
+ */
 
+/** @} */
 #include <cstring>
 #include <pthread.h>
 #include "PipeUtils.h"
 #include "GameplayCommunication.h"
 #include "Packets.h" /* extern packet_sizes[] */
 #include "NetworkRouter.h"
+
 uint32_t packet_sizes[NUM_PACKETS] = {
 	sizeof(PKT_PLAYER_NAME),
 	sizeof(PKT_PLAYER_CONNECT),
@@ -42,34 +31,20 @@ uint32_t packet_sizes[NUM_PACKETS] = {
 	sizeof(PKT_FLOOR_MOVE)
 };
 
-/*------------------------------------------------------------------------------------------
- * FUNCTION:    read_size_of_data
+/**
+ * A function for reading the type of the following data struct in the pipe.
+ * 
+ * @param[in]   fd  The file descriptor to read from.
  *
- * DATE:        February 15, 2014
+ * @return  <ul>
+ *              <li>Returns type of the following data struct on a successful read from the pipe.</li>
+ *              <li>Returns 99 if no data is found on the pipe.</li>
+ *              <li>Returns 98 if there's an error while reading from the pipe. </li>
+ *          </ul>
  *
- * REVISIONS:   (Date and Description)
- *
- * DESIGNER:    Abhishek Bhardwaj
- *
- * PROGRAMMER:  Abhishek Bhardwaj
- *
- * INTERFACE:   int read_size_of_data(int fd)
- *                  int fd              - file descriptor to read from 
- *
- * RETURNS:     int
- *                  [size of data]      -   On successful completion, the size of the following
- *                                          data struct is returned.
- *
- *                  0                   -   end of file .. nothing read
- *
- *                  -1                  -   On error and errno will be set to 
- *                                          indicate the type of error. [SET BY read_pipe]
- *
- * NOTES:
- *
- * A function for reading the size of the following data struct in the pipe.
- *
- *----------------------------------------------------------------------------------------*/
+ * @designer    Abhishek Bhardwaj
+ * @author      Abhishek Bhardwaj
+ */
 uint32_t read_type(int fd)
 {
     uint32_t type;
@@ -89,36 +64,20 @@ uint32_t read_type(int fd)
     return type;
 }
 
-/*------------------------------------------------------------------------------------------
- * FUNCTION:    read_packet
+/**
+ * A function for reading the packet from the pipe.
+ * 
+ * @param[in]   fd      The file descriptor to read from.
+ * @param[in]   size    size of the data to be scanned from the file descriptor.
  *
- * DATE:        February 15, 2014
+ * @return  <ul>
+ *              <li>Returns the scanned packet from the pipe if successful [Casted as void*].</li>
+ *              <li>Returns NULL if there's an error while reading or if the there's nothing on the pipe.</li>
+ *          </ul>
  *
- * REVISIONS:   (Date and Description)
- *
- * DESIGNER:    Abhishek Bhardwaj
- *
- * PROGRAMMER:  Abhishek Bhardwaj
- *
- * INTERFACE:   void *read_packet(int fd, int size)
- *                  int fd              - file descriptor to read from
- *                  int size            - size of data to be scanned from the fd
- *
- * RETURNS:     int
- *                  [packet]            -   On successful completion, a packet is returned.
- *
- *                  0                   -   end of file .. nothing read
- *
- *                  -1                  -   On error and errno will be set to 
- *                                          indicate the type of error. [SET BY read_pipe]
- *
- *                  -2                  -   packet id not found.
- *
- * NOTES:
- *
- * A function for reading the size of the following data struct in the pipe.
- *
- *--------------------------------- -------------------------------------------------------*/
+ * @designer    Abhishek Bhardwaj
+ * @author      Abhishek Bhardwaj
+ */
 void* read_packet(int fd, uint32_t size)
 {
     void *temp = malloc(size);
@@ -136,30 +95,24 @@ void* read_packet(int fd, uint32_t size)
 
     return temp; 
 }
-/*------------------------------------------------------------------------------------------
- * FUNCTION:    iinit_client_network
- *
- * DATE:        March 6, 2014
- *
- * REVISIONS:   (Date and Description)
- *
- * DESIGNER:    Ramzi Chennafi
- *
- * PROGRAMMER:  Ramzi Chennafi
- *
- * INTERFACE:  void init_client_network(int send_router_fd[2], int rcv_router_fd[2])
- *                  send_router_fd : set of pipes created for passing data to the network router
- *                  rcv_router_fd : set of pipes created for grabing data from the network router
- *
- * RETURNS:    nothing
- *
- * NOTES:
- * Called by the main function of the game. Intializes the client network component of the game
+
+/**
+ * Called by the main function of the game. Intializes the client network component of the game.
  * Requires 2 pipes as arguments, these will be passed for communication to network router. The 
  * read descriptor of rcv_router_fd will be passed to the update system by the game, while the 
  * write descriptor of the send_router_fd will be passed to the send_system.
- *----------------------------------------------------------------------------------------*/
-  /*
+ * 
+ * @param[in]   send_router_fd      Set of pipes created for passing data to the network router.
+ * @param[in]   rcv_router_fd       Set of pipes created for grabbing data from the network router.
+ *
+ * @return      void
+ *
+ * @designer    Ramzi Chennafi
+ * @author      Ramzi Chennafi
+ */
+void init_client_network(int send_router_fd[2], int rcv_router_fd[2])
+{
+    /*
     INTEGRATION NOTES:
 
     Integrated into the game. Game simply makes the pipes, calls this function then calls the update_system
@@ -177,9 +130,8 @@ void* read_packet(int fd, uint32_t size)
         The pipe switches below are also required
             -pthread
             -lSDL2_net
- */
-void init_client_network(int send_router_fd[2], int rcv_router_fd[2])
-{
+    */
+
     pthread_t thread;
     NETWORK_DATA * ndata = (NETWORK_DATA*) malloc(sizeof(NETWORK_DATA));
     
@@ -189,30 +141,24 @@ void init_client_network(int send_router_fd[2], int rcv_router_fd[2])
     pthread_create(&thread, NULL, networkRouter, (void *)ndata);
     pthread_detach(thread);
 }
-/*------------------------------------------------------------------------------------------
- * FUNCTION:    write_packet
- *
- * DATE:        February 21, 2014
- *
- * REVISIONS:   (Date and Description)
- *
- * DESIGNER:    Shane Spoor
- *
- * PROGRAMMER:  Shane Spoor
- *
- * INTERFACE:   int write_packet(int fd, int packet_type, size_t packet_size, void *packet)
- *                  int write_fd        - The write end of a pipe (to gameplay or network module).
- *                  int packet_type     - The type of packet written, as defined in Packets.h
- *					void *packet		- A pointer to the packet structure.
- *
- * RETURNS:     0 on successful write, or -1 if the write failed.
- *
- * NOTES:
+
+/**
  * Writes the packet type, packet size, and the packet itself to the pipe specified by fd.
  * This function should be used in conjunction with read_data_size and read_packet to transfer
  * gameplay information between the gameplay and network client modules.
+ * 
+ * @param[in]   write_fd      The write end of a pipe (to gameplay or network module).
+ * @param[in]   packet_type   The type of packet written, as defined in Packets.h
+ * @param[in]   packet        A pointer to the packet structure.
  *
- *----------------------------------------------------------------------------------------*/
+ * @return      <ul>
+ *                  <li>Returns 0 on a successful write.</li>
+ *                  <li>Returns -1 if the write failed.</li>
+ *              </ul>
+ *
+ * @designer    Shane Spoor
+ * @author      Shane Spoor
+ */
 int write_packet(int write_fd, uint32_t packet_type, void *packet)
 {   
     int temp;
@@ -231,31 +177,21 @@ int write_packet(int write_fd, uint32_t packet_type, void *packet)
 	return 0; 
 }
 
-/*------------------------------------------------------------------------------------------
- * FUNCTION:    update_data
+/**
+ * A wrapper function around read_type() and read_packet() for reading data from the pipe 
+ * and returning it.
+ * 
+ * @param[in]   fd      The file descriptor to read from.
+ * @param[in]   type    A pointer to the packet type.
  *
- * DATE:        Febuary 14 2014
+ * @return      <ul>
+ *                  <li>Returns the packet if successful.</li>
+ *                  <li>Returns NULL if it fails to read either of the type or the packet from the pipe.</li>
+ *              </ul>
  *
- * REVISIONS:   None
- *
- * DESIGNER:    Ramzi Chennafi
- *
- * PROGRAMMER:  Ramzi Chennafi
- *
- * INTERFACE:   int read_data(void* packet, int fd)
- *
- *                    -2 on packet read error
- *                    0 on empty read pipe
- *                    type of packet on success
- *                  
- *
- * NOTES:
- *
- *  Function called by gameplay to update the game to the latest received packet.
- *  Takes a pointer to a malloced packet structure of MAX_PACKET_SIZE and a file 
- *  descriptor to the pipe to read. Returns the type on success.
- *
- *----------------------------------------------------------------------------------------*/
+ * @designer    Ramzi Chennafi
+ * @author      Ramzi Chennafi
+ */
 void *read_data(int fd, uint32_t *type){
 
     int read_bytes;
