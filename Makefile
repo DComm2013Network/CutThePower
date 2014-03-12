@@ -1,13 +1,13 @@
 CC=g++
 FLAGS=-Wall -std=c++11
-LIBS=-lSDL2 -lSDL2_image -lSDL2_net -lpthread
+LIBS=-lSDL2 -lSDL2_image -lSDL2_net -lSDL2_mixer -lpthread
 
 BINDIR=bin
 OBJDIR=obj
 SRCDIR=src
 
 BIN_DEFAULT=$(BINDIR)/CutThePower
-OBJ_DEFAULT=$(OBJDIR)/Gameplay/collision_system.o $(OBJDIR)/Gameplay/movement_system.o $(OBJDIR)/Graphics/render_system.o $(OBJDIR)/Graphics/animation_system.o $(OBJDIR)/Graphics/map.o $(OBJDIR)/Input/keyinputsystem.o $(OBJDIR)/Input/mouseinputsystem.o $(OBJDIR)/Input/menu.o $(OBJDIR)/main.o $(OBJDIR)/Network/GameplayCommunication.o $(OBJDIR)/Network/ServerCommunication.o $(OBJDIR)/Network/PipeUtils.o $(OBJDIR)/Network/NetworkRouter.o $(OBJDIR)/Network/ClientUpdateSystem.o $(OBJDIR)/Network/SendSystem.o $(OBJDIR)/world.o
+OBJ_DEFAULT=$(OBJDIR)/Gameplay/collision_system.o $(OBJDIR)/Gameplay/movement_system.o $(OBJDIR)/Graphics/render_system.o $(OBJDIR)/Graphics/animation_system.o $(OBJDIR)/Graphics/map.o $(OBJDIR)/Input/keyinputsystem.o $(OBJDIR)/Input/mouseinputsystem.o $(OBJDIR)/Input/menu.o $(OBJDIR)/main.o $(OBJDIR)/sound.o $(OBJDIR)/Network/GameplayCommunication.o $(OBJDIR)/Network/ServerCommunication.o $(OBJDIR)/Network/PipeUtils.o $(OBJDIR)/Network/NetworkRouter.o $(OBJDIR)/Network/ClientUpdateSystem.o $(OBJDIR)/Network/SendSystem.o $(OBJDIR)/world.o
 
 CutThePower: $(OBJ_DEFAULT)
 	test -d $(BINDIR) || mkdir -p $(BINDIR)
@@ -61,6 +61,10 @@ $(OBJDIR)/Input/menu.o: $(SRCDIR)/Input/menu.cpp
 $(OBJDIR)/main.o: $(SRCDIR)/main.cpp
 	test -d $(OBJDIR) || mkdir -p $(OBJDIR)
 	$(CC) $(FLAGS) -c -o $(OBJDIR)/main.o $(SRCDIR)/main.cpp
+	
+$(OBJDIR)/sound.o: $(SRCDIR)/sound.cpp
+	test -d $(OBJDIR) || mkdir -p $(OBJDIR)
+	$(CC) $(FLAGS) -c -o $(OBJDIR)/sound.o $(SRCDIR)/sound.cpp
 
 $(OBJDIR)/Network/GameplayCommunication.o: $(SRCDIR)/Network/GameplayCommunication.cpp
 	test -d $(OBJDIR)/Network || mkdir -p $(OBJDIR)/Network

@@ -8,6 +8,7 @@
 #include "../world.h"
 #include "components.h"
 #include "systems.h"
+#include "../sound.h"
 
 #include <stdlib.h>
 
@@ -29,6 +30,12 @@ void animation_system(World *world) {
 			renderPlayer = &(world->renderPlayer[entity]);
 			
 			if (animation->triggered) {
+				
+				if (animation->index == 0 && animation->frame_count == 0 && animation->sound_effect > -1) {
+					
+					play_effect(animation->sound_effect);
+					
+				}
 				
 				animation->frame_count++;
 				

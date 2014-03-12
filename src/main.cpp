@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 
 #include "systems.h"
+#include "sound.h"
 #include "world.h"
 #include "Input/menu.h"
 
@@ -23,7 +24,8 @@ int main(int argc, char* argv[]) {
 	printf("Current World size: %i\n", sizeof(World));
 	bool running = true;
 	
-	SDL_Init(SDL_INIT_VIDEO);
+	//SDL_Init(SDL_INIT_VIDEO);
+	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
 	
 	window = SDL_CreateWindow("Cut The Power", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_OPENGL);
 	surface = SDL_GetWindowSurface(window);
@@ -32,6 +34,8 @@ int main(int argc, char* argv[]) {
 		printf("Error initializing the window.\n");
 		return 1;
 	}
+	
+	init_sound();
 	
 	init_world(world);
 	srand(time(NULL));//random initializer

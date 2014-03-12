@@ -43,6 +43,7 @@ typedef struct {
 	int frames_to_skip;
 	int frame_count;
 	int rand_frame;
+	int sound_effect;
 	
 } AnimationComponent;
 

@@ -6,6 +6,7 @@
 #include "../world.h"
 #include "../components.h"
 #include "systems.h"
+#include "../sound.h"
 
 unsigned int background = MAX_ENTITIES + 1;
 
@@ -107,7 +108,8 @@ void create_main_menu_background(World *world) {
 	world->animation[background].index = 0;
 	world->animation[background].frames_to_skip = 3;
 	world->animation[background].frame_count = 0;
-	world->animation[background].rand_frame = 800;
+	world->animation[background].rand_frame = 600;
+	world->animation[background].sound_effect = SOUND_EFFECT_MENU_THUNDER;
 	
 	world->animation[background].surfaces = (SDL_Surface**)malloc(sizeof(SDL_Surface*) * menu_animations);
 	
@@ -133,12 +135,14 @@ void create_main_menu_background(World *world) {
 	world->animation[background].surfaces[19] = IMG_Load("assets/Graphics/menu/MainMenu_19.png");
 	
 	world->animation[background].surface_count = menu_animations;
-	world->animation[background].triggered = true;
+	world->animation[background].triggered = false;
 	
 	
 	world->renderPlayer[background].width = WIDTH;
 	world->renderPlayer[background].height = HEIGHT;
 	world->renderPlayer[background].playerSurface = world->animation[background].surfaces[0];
+	
+	play_music(SOUND_MUSIC_MENU_RAIN);
 }
 
 
