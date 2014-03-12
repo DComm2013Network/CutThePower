@@ -1,25 +1,13 @@
-/*------------------------------------------------------------------------------------------
- * SOURCE FILE: ServerCommunication.cpp
- *
- * PROGRAM:     [BIG_GAME]
- *
- * FUNCTIONS:
- *                            
- *
- * DATE:        February 15, 2014
- *
- * REVISIONS:   (Date and Description)
- *
- * DESIGNER:    
- *
- * PROGRAMMER:  
- *
- * NOTES:
- * 
+/** @ingroup Network */
+/** @{ */
+
+/**
  * This file contains all methods responsible for communication with the server.
  *
- *----------------------------------------------------------------------------------------*/
+ * @file ServerCommunication.cpp
+ */
 
+/** @} */
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
@@ -34,33 +22,22 @@
 extern uint32_t packet_sizes[NUM_PACKETS];
 static int cnt_errno = 0;
 
-/*------------------------------------------------------------------------------------------
- * FUNCTION:    recv_thread_func
- *
- * DATE:        February 16, 2014
- *
- * REVISIONS:   (Date and Description)
- *
- * DESIGNER:    Shane Spoor
- *
- * PROGRAMMER:  Shane Spoor
- *
- * INTERFACE:   void recv_thread_func(void *ndata)
- *
- *										void *ndata: 	Pointer to a NETWORK_DATA struct
- *														containing socket descriptors and
- *														the pipe end to the Network Router
- *														thread.
- * RETURNS:     void
- *
- * NOTES:
- *
+/**
  * This thread will continuously monitor a TCP and a UDP socket which will receive data from
  * the server. Upon receiving data, the thread writes to the pipe connected to the network
  * router thread. The thread will return in case of any error condition (wrapper functions
  * are responsible for error message logging).
+ * 
+ * @param[in]   ndata  Pointer to a NETWORK_DATA struct.
  *
- *----------------------------------------------------------------------------------------*/
+ * @return  Nothing. It's a void function.
+ *			<ul>
+ *              <li>Returns NULL for terminating the thread if required.</li>
+ *          </ul>
+ *
+ * @designer    Shane Spoor
+ * @author      Shane Spoor
+ */
  void *recv_thread_func(void *ndata)
  {
  	NDATA				recv_data = (NDATA)ndata;
@@ -132,31 +109,21 @@ static int cnt_errno = 0;
     	}
  	}
 }
-/*------------------------------------------------------------------------------------------
- * FUNCTION:    send_thread_func
+
+/**
+ * This thread will send data received from the network router pipe to the server. Data sent on 
+ * pipe is recieved as a snd_pkt struct containing the protocol and raw data.
+ * 
+ * @param[in]   ndata  Pointer to a NETWORK_DATA struct.
  *
- * DATE:        Febuary 13 2014
+ * @return  Nothing. It's a void function.
+ *			<ul>
+ *              <li>Returns NULL for terminating the thread if required.</li>
+ *          </ul>
  *
- * REVISIONS:   None
- *
- * DESIGNER:    Ramzi Chennafi
- *
- * PROGRAMMER:  Ramzi Chennafi
- *
- * INTERFACE:   void* send_thread_func(void* ndata){
- *					void * ndata : NETWORK_DATA pointer containing
- *								   a tcp socket, udp socket and a file
- *								   descriptor to the network router
- *								   send pipe.
- *
- * RETURNS:     Nothing
- *
- * NOTES:
- *
- *  Sends data received from the network router pipe to the server. Data sent on 
- *  pipe is recieved as a snd_pkt struct containing the protocol and raw data.
- *
- *----------------------------------------------------------------------------------------*/
+ * @designer    Ramzi Chennafi
+ * @author      Ramzi Chennafi
+ */
 void* send_thread_func(void* ndata){
 
 	NDATA snd_data = (NDATA) ndata;
@@ -187,22 +154,22 @@ void* send_thread_func(void* ndata){
 	}
 	return NULL;
 }
-/*------------------------------------------------------------------------------------------------------------------
---      FUNCTION: send_tcp
---
---      DATE: January 20, 2014
---      REVISIONS: none
---
---      DESIGNER: Ramzi Chennafi
---      PROGRAMMER: Ramzi Chennafi
---
---      INTERFACE: int send_tcp(char * data)
---
---      RETURNS: int, 0 on success
---
---      NOTES:
---      Sends the packet data over the established tcp connection.
-----------------------------------------------------------------------------------------------------------------------*/
+
+/**
+ * Sends the packet data over the established tcp connection.
+ * 
+ * @param[in]   data  	Pointer to the data packet to send over TCP.
+ * @param[in]	sock 	The TCP socket to send data over.
+ * @param[in]	size 	The size of the data packet that will be sent.
+ *
+ * @return  <ul>
+ *              <li>Returns 0 on success.</li>
+ *				<li>Returns -1 if there's an error on send.</li>
+ *          </ul>
+ *
+ * @designer    Ramzi Chennafi
+ * @author      Ramzi Chennafi
+ */
 int send_tcp(void * data, TCPsocket sock, uint32_t size){
 
 	int result=SDLNet_TCP_Send(sock, data, size);
@@ -213,23 +180,24 @@ int send_tcp(void * data, TCPsocket sock, uint32_t size){
 
 	return 0;
 }
-/*------------------------------------------------------------------------------------------------------------------
---      FUNCTION: send_udp
---
---      DATE: Febuary 15, 2014
---      REVISIONS: none
---
---      DESIGNER: Ramzi Chennafi
---      PROGRAMMER: Ramzi Chennafi
---
---      INTERFACE: int send_udp(char * data)
---
---      RETURNS: int, returns -1 on failure, 0 on success.
---
---      NOTES:
---      Sends the specified data across UDP. Allocates the UDP packet, establishes the random socket for tranfer and then
---		sends the data on the established socket. Frees the packet after completion.
-----------------------------------------------------------------------------------------------------------------------*/
+
+/**
+ * Sends the specified data across UDP. Allocates the UDP packet, establishes the random socket for 
+ * tranfer and then sends the data on the established socket. Frees the packet after completion.
+ * 
+ * @param[in]   data  	Pointer to the data packet to send over UDP.
+ * @param[in]   type 	Type of the packet being sent.
+ * @param[in]	sock 	The UDP socket to send data over.
+ * @param[in]	size 	The size of the data packet that will be sent.
+ *
+ * @return  <ul>
+ *              <li>Returns 0 on success.</li>
+ *				<li>Returns -1 if there's an error on send.</li>
+ *          </ul>
+ *
+ * @designer    Ramzi Chennafi
+ * @author      Ramzi Chennafi
+ */
 int send_udp(void * data, uint32_t * type, UDPsocket sock, uint32_t size){
 
 	int numsent;
@@ -248,25 +216,21 @@ int send_udp(void * data, uint32_t * type, UDPsocket sock, uint32_t size){
 	return 0;
 }
 
-/*-------------------------------------------------------------------------------------------------------------------
---      FUNCTION: recv_tcp_packet
---
---      DATE: February 18th, 2014
---      REVISIONS: none
---
---      DESIGNER: Shane Spoor
---      PROGRAMMER: Shane Spoor
---
---      INTERFACE: void *recv_tcp_packet(tcp_socket sock, int *packet_type)
---										tcp_socket sock: 		The TCP socket from which to read.
---										int *game_packet_type: 	Pointer to an int in which to store the packet type.
---										size_t *packet_size:	Pointer to a size_t in which to store the packet size.
---
---      RETURNS: A data buffer containing the packet on success, NULL on failure, -2 cast to void * on close connection.
---
---      NOTES:
---      Reads the packet type first, then allocates and reads the packet into a data buffer.
-----------------------------------------------------------------------------------------------------------------------*/
+/**
+ * Reads the packet type first, then allocates and reads the packet into a data buffer which is returned.
+ * 
+ * @param[in]	sock 		The TCP socket to read data from.
+ * @param[in]   packet_type Type of the packet being received.
+ * @param[in]	timestamp	The timestamp.
+ *
+ * @return  <ul>
+ *              <li>Returns a data buffer containing the packet on success.</li>
+ *				<li>Returns NULL on failure.</li>
+ *          </ul>
+ *
+ * @designer    Shane Spoor
+ * @author      Shane Spoor
+ */
 void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp)
 {
 	void *packet;
@@ -289,22 +253,22 @@ void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 	numread = recv_tcp(sock, timestamp, sizeof(uint64_t));
 	return packet;
 }
-/*------------------------------------------------------------------------------------------------------------------
---      FUNCTION: recv_udp_packet
---
---      DATE: Febuary 15, 2014
---      REVISIONS: none
---
---      DESIGNER: Ramzi Chennafi
---      PROGRAMMER: Ramzi Chennafi
---
---      INTERFACE: UDPpacket *recv_udp_packet(udp_socket sock, int *game_packet_type)
---
---      RETURNS: A data buffer containing the game packet on success, or NULL on failure.
---
---      NOTES:
---      Reads the packet type into packet_type, then reads the 
-----------------------------------------------------------------------------------------------------------------------*/
+
+/**
+ * Reads the packet type into packet_type, then reads the data buffer which is returned (casted as void*).
+ * 
+ * @param[in]	sock 		The UDP socket to read data from.
+ * @param[in]   packet_type Type of the packet being sent.
+ * @param[in]	timestamp	The timestamp.
+ *
+ * @return  <ul>
+ *              <li>Returns a data buffer containing the packet on success.</li>
+ *				<li>Returns NULL on failure.</li>
+ *          </ul>
+ *
+ * @designer    Ramzi Chennafi
+ * @author      Ramzi Chennafi
+ */
 void *recv_udp_packet(UDPsocket sock, uint32_t *packet_type, uint64_t *timestamp)
 {
 	UDPpacket *pktdata = SDLNet_AllocPacket(MAX_UDP_RECV + sizeof(uint32_t) + sizeof(uint64_t)); /* Allocate space for the max packet, the packet type, and the timestamp */
