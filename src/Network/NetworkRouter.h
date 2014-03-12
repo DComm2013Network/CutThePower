@@ -1,3 +1,11 @@
+/** @ingroup Network */
+/** @{ */
+/**
+ * Header file functions related to the main router.
+ *
+ * @file NetworkRouter.h
+ */
+/** @} */
 #ifndef NETWORK_ROUTER_H
 #define NETWORK_ROUTER_H
 
@@ -13,13 +21,19 @@
 #define READ_END			0
 #define WRITE_END			1
 
-/* Thread structure */
+/**
+ * A structure of data that will be passed on to child threads.
+ * Contains read and write descriptors for communication with gameplay pipes
+ * and TCP and UDP sockets for communication with the server.
+ *
+ * @struct WNETWORK_DATA, *NDATA
+ */
 typedef struct NETWORK_DATA
 {
-    int         read_pipe;      /* pipe descriptor for reading */
-    int         write_pipe;     /* pipe descriptor for writing */
-    TCPsocket   tcp_sock;       /* TCP socket for server communication */
-    UDPsocket   udp_sock;       /* UDP socket for server communication */
+    int         read_pipe;      /**< pipe descriptor for reading */
+    int         write_pipe;     /**< pipe descriptor for writing */
+    TCPsocket   tcp_sock;       /**< TCP socket for server communication */
+    UDPsocket   udp_sock;       /**< UDP socket for server communication */
 } WNETWORK_DATA, *NDATA;
 
 void *networkRouter(void *args);

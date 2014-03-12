@@ -1,30 +1,13 @@
+/** @ingroup Network */
+/** @{ */
 /**
- * Description
+ * This is the main file for the client-side Network layer. This layer/component will contain
+ * all network related functions and will basically grab game data from the Gameplay module, dispatch 
+ * it to the server and vice-versa.
+ * 
  * @file NetworkRouter.cpp
  */
-
-/*------------------------------------------------------------------------------------------
- * SOURCE FILE: NetworkRouter.cpp
- *
- * PROGRAM:     [BIG_GAME]
- *
- * FUNCTIONS:
- *                            
- *
- * DATE:        February 15, 2014
- *
- * REVISIONS:   (Date and Description)
- *
- * DESIGNER:    Abhishek Bhardwaj
- *
- * PROGRAMMER:  Abhishek Bhardwaj
- *
- * NOTES:
- * 
- * This file contains ..
- *
- *----------------------------------------------------------------------------------------*/
-
+/** @} */
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -45,33 +28,28 @@
 extern int game_net_signalfd, game_net_lockfd;
 extern uint32_t packet_sizes[NUM_PACKETS];
 
-
-/*------------------------------------------------------------------------------------------
- * FUNCTION:    void networkRouter()
- *
- * DATE:        February 15, 2014
- *
- * REVISIONS:   (Date and Description)
- *
- * DESIGNER:    Abhishek Bhardwaj
- *
- * PROGRAMMER:  Abhishek Bhardwaj
- *
- * INTERFACE:   void networkRouter(int pipe[2])
- *                  int pipe[2]     -   The pipe descriptors to be used for 2-way
- *                                      communication with the gameplay module.
- *
- * RETURNS:     void
- *
- * NOTES:
- *
+/**
  * This is the main client-side network function that the Gameplay module will call inside
  * a new thread. 
  * 
- * This function will basically read data from the Gameplay module using [some
- * sort of IPC mechanism].
+ * This function will basically be the main driver of the networking layer and will be responsible
+ * for reading data from Gameplay and sending it to the server and then reading data from the server
+ * and sending it back to gameplay.
  *
- *----------------------------------------------------------------------------------------*/
+ * It will automatically determine the origin and destination of each data packet and deliver it.
+ *
+ * Uses both TCP and UDP to communicate with the server and uses the good old IPC pipes for communicating
+ * with the gameplay module.
+ * 
+ * @param[in]   args  A void pointer to the PDATA data structure.
+ *
+ * @return  <ul>
+ *              <li>Returns NULL if there are any problems.</li>
+ *          </ul>
+ *
+ * @designer    Abhishek Bhardwaj
+ * @author      Abhishek Bhardwaj
+ */
 void *networkRouter(void *args)
 {
     int 		sendfd[2];
@@ -91,7 +69,9 @@ void *networkRouter(void *args)
     NDATA 		receive = (NDATA) malloc(sizeof(WNETWORK_DATA));
 
     if(init_router(&max_fd, send, receive, gameplay, sendfd, recvfd, &thread_receive, &thread_send) == -1)
+    {
     	return NULL;
+    }
 
     FD_ZERO(&listen_fds);
     //FD_SET(recvfd[READ_END], &listen_fds);
@@ -154,7 +134,10 @@ void *networkRouter(void *args)
  * @param[in]  function	Function which the new thread will run.
  * @param[in]  params	The parameter(s) to pass to the thread function.
  * @param[out] handle	Stores a handle to the thread (for sending signals etc).
- * @return 0 on success, or -1 on failure.
+ *
+ * @return  <ul>
+ *              <li>0 on success, or -1 on failure.</li>
+ *          </ul>
  *
  * @designer Shane Spoor
  * @author	 Shane Spoor
@@ -175,9 +158,12 @@ int dispatch_thread(void *(*function)(void *), void *params, pthread_t *handle)
  * Determines which packets have new data.
  *
  * 
- * @param packets The array containing all currently cached packets.
- * @param changed A mask indicating which packets have new data.
- * @return The number of packets with new data.
+ * @param   packets     The array containing all currently cached packets.
+ * @param   changed     A mask indicating which packets have new data.
+ *
+ * @return <ul> 
+ *              <li>The number of packets with new data.</li>
+ *         </ul>
  *
  * @author 		Shane Spoor
  * @designer 	Shane Spoor
@@ -211,7 +197,10 @@ uint32_t determine_changed(void **packets, unsigned *changed)
  * @param[out] fd             An integer array to hold two ends of a pipe.
  * @param[out] thread_receive Holds a handle to the receive thread.
  * @param[out] thread_send    Holds a handle to the send thread.
- * @return 0 on success, or -1 on failure.
+ *
+ * @return <ul>
+ *              <li>0 on success, or -1 on failure.</li>
+ *         </ul>
  *
  * @author   Shane Spoor
  * @designer Shane Spoor, Abhishek Bhardwaj
