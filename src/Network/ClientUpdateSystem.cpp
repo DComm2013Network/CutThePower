@@ -92,6 +92,7 @@ void client_update_system(World *world, int net_pipe) {
 			free(packet);
 		}
 }
+
 /**
  * Updates the positions and movement properties of every other player.
  *
@@ -148,6 +149,9 @@ void player_tag_packet(World *world, void *packet)
  *
  * @param[out]	world 	The world struct containing the ojective states to be updated.
  * @param[in]	packet	The packet containing objective update information.
+ *
+ * @designer
+ * @author
  */
 void client_update_objectives(World *world, void *packet)
 {

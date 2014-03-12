@@ -1,3 +1,9 @@
+/** @ingroup Network */
+/** @{ */
+/**
+ * @file PipeUtils.h
+ */
+/** @} */
 #ifndef PIPE_UTILS_H
 #define PIPE_UTILS_H
 

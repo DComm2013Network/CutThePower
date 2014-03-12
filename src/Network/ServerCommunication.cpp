@@ -1,10 +1,12 @@
-/** @ingroup Network-Client */
+/** @ingroup Network */
 /** @{ */
+
 /**
- * This file contains all functions responsible for communication with the server.
- * 
+ * This file contains all methods responsible for communication with the server.
+ *
  * @file ServerCommunication.cpp
  */
+
 /** @} */
 
 #include <netdb.h>
@@ -31,6 +33,8 @@ static int cnt_errno = 0;
  *
  * @param[in] ndata Pointer to a NETWORK_DATA struct containing socket descriptors and
  *                  the pipe end to the Network Router thread.
+ *
+ * @return NULL upon termination.
  *
  * @designer Shane Spoor
  * @author   Shane Spoor
@@ -89,6 +93,8 @@ static int cnt_errno = 0;
  * @param[in] ndata NETWORK_DATA containing a tcp socket, udp socket and a file
  *                  descriptor to the network router send pipe.
  *
+ * @return  NULL upon termination
+ *
  * @designer Ramzi Chennafi
  * @author   Ramzi Chennafi
  * 
@@ -127,17 +133,19 @@ void* send_thread_func(void* ndata){
 /**
  * Sends the packet data over the established TCP connection.
  *
- * @param[in] data The data to send.
+ * @param[in] data Pointer to the data packet to send over TCP.
  * @param[in] sock The socket on which to send the data.
- * @param[in] size The size of the data being sent.
+ * @param[in] size The size of the packet being sent.
  *
- * @return -1 on failure, 0 on success. 
+ * @return <ul>
+ *              <li>Returns 0 on success.</li>
+ *				<li>Returns -1 if there's an error on send.</li>
+ *          </ul> 
  *
  * @designer Ramzi Chennafi
  * @author   Ramzi Chennafi
  *
  * @date January 20, 2014
- *
  */
 int send_tcp(void * data, TCPsocket sock, uint32_t size){
 
@@ -151,17 +159,21 @@ int send_tcp(void * data, TCPsocket sock, uint32_t size){
 }
 
 /**
+<<<<<<< HEAD
  * Sends the specified data over a UDP socket.
  *
  * Allocates the UDP packet, sends it, and frees the packet upon completion.
  * If sending the packet was unsuccessful, the function prints an error message.
  *
- * @param[in] data The packet data to send.
+ * @param[in] data Pointer to the data packet to send over UDP.
  * @param[in] type The type of packet to send.
  * @param[in] sock The socket on which to send the data.
  * @param[in] size The size of the packet.
  *
- * @return -1 on failure and 0 on success.
+ * @return <ul>
+ *              <li>Returns 0 on success.</li>
+ *				<li>Returns -1 if there's an error on send.</li>
+ *         </ul>
  *
  * @designer Ramzi Chennafi
  * @author   Ramzi Chennafi
@@ -187,6 +199,7 @@ int send_udp(void * data, uint32_t * type, UDPsocket sock, uint32_t size){
 }
 
 /**
+<<<<<<< HEAD
  * Handles the receipt of TCP data.
  *
  * Receives the TCP packet, if any, and writes it to the network router. Keep alive packets are
@@ -333,6 +346,7 @@ void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 }
 
 /**
+<<<<<<< HEAD
  * Receives and processes a UDP packet containing a packet type, game data,
  * and a timestamp.
  *
@@ -342,13 +356,17 @@ void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp
  * if the function receives an invalid timestamp. Note that the timestamp is not checked
  * for validity.
  *
- * @param[in]  sock        The UDP socket from which to receive date.
- * @param[out] packet_type Receives the valid packet type on successful return.
- * @param[out] timestamp   Receives the timestamp (may not be valid) on successful return.
+ * @param[in]  sock        The UDP socket to receive data from.
+ * @param[out] packet_type Receives the packet type.
+ * @param[out] timestamp   Receives the timestamp.
  *
- * @return A data buffer containing the game packet on success, or NULL on failure.
+ * @return <ul>
+ *              <li>Returns a data buffer containing the packet on success.</li>
+ *				<li>Returns NULL on failure.</li>
+ *         </ul>
  *
  * @designer Shane Spoor
+ * @designer Ramzi Chennafi
  * @author   Shane Spoor
  *
  * @date Febuary 15, 2014
