@@ -125,7 +125,6 @@ void* send_thread_func(void* ndata){
 		{
 			send_udp(data, &type, snd_data->udp_sock, packet_sizes[type - 1] + sizeof(uint32_t));
 		}
-		printf("Done sending\n");
 	}
 	return NULL;
 }
@@ -159,7 +158,6 @@ int send_tcp(void * data, TCPsocket sock, uint32_t size){
 }
 
 /**
-<<<<<<< HEAD
  * Sends the specified data over a UDP socket.
  *
  * Allocates the UDP packet, sends it, and frees the packet upon completion.
@@ -189,7 +187,7 @@ int send_udp(void * data, uint32_t * type, UDPsocket sock, uint32_t size){
 	pktdata->len = size;
 
 	numsent=SDLNet_UDP_Send(sock, pktdata->channel, pktdata);
-	if(!numsent) {
+	if(numsent < 0) {
     	fprintf(stderr,"SDLNet_UDP_Send: %s\n", SDLNet_GetError());
     	return -1;
 	}
@@ -199,7 +197,6 @@ int send_udp(void * data, uint32_t * type, UDPsocket sock, uint32_t size){
 }
 
 /**
-<<<<<<< HEAD
  * Handles the receipt of TCP data.
  *
  * Receives the TCP packet, if any, and writes it to the network router. Keep alive packets are
@@ -320,8 +317,22 @@ void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp
     uint32_t packet_size;
 
 	numread = recv_tcp(sock, packet_type, sizeof(uint32_t));
-	if(numread < 0)
+	if(numread < 0){
+		cnt_errno = -3;
 		return NULL;
+	}
+
+	if(numread == 0){
+		cnt_errno = -2;
+		return NULL;
+	}
+
+	if(*packet_type <= 0 || *packet_type > 14)
+	{
+		printf("recv_tcp_packet : Recieved Invalid Packet Type!\n");
+		cnt_errno = -4;
+		return NULL; 
+	}
 
 	else if(*packet_type == P_KEEPALIVE)
         return NULL;
@@ -341,12 +352,11 @@ void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 	}
 
 	numread = recv_tcp(sock, packet, packet_size);
-	numread = recv_tcp(sock, timestamp, sizeof(uint64_t));
+	//numread = recv_tcp(sock, timestamp, sizeof(uint64_t));
 	return packet;
 }
 
 /**
-<<<<<<< HEAD
  * Receives and processes a UDP packet containing a packet type, game data,
  * and a timestamp.
  *
@@ -377,6 +387,8 @@ void *recv_udp_packet(UDPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 	uint32_t  packet_size;
     UDPpacket *pktdata = SDLNet_AllocPacket(MAX_UDP_RECV + sizeof(*packet_type) + sizeof(*timestamp));
 
+	*packet_type = 1;
+
 	if(recv_udp(sock, pktdata) == -1){
 		cnt_errno = ERR_RECV_FAILED;
 		return NULL;
@@ -391,6 +403,13 @@ void *recv_udp_packet(UDPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 
 	packet_size 	= packet_sizes[(*packet_type) - 1];
 	packet			= malloc(packet_size);
+
+	if(*packet_type <= 0 || *packet_type > 14)
+	{
+		printf("recv_tcp_packet : Recieved Invalid Packet Type!\n");
+		cnt_errno = -4;
+		return NULL;
+	}
 
 	if(!packet)
 	{

@@ -26,7 +26,7 @@
  * @designer    Ramzi Chennafi
  * @author      Ramzi Chennafi
  */
-void send_system(World *world, int fd) { 
+void send_location(World *world, int fd) { 
 	
 		PKT_POS_UPDATE * pkt4 = (PKT_POS_UPDATE*)malloc(sizeof(PKT_POS_UPDATE));
 		PKT_TAGGING * pkt14 = (PKT_TAGGING*)malloc(sizeof(PKT_TAGGING));

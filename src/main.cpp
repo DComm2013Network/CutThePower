@@ -2,7 +2,7 @@
 
 #include "systems.h"
 #include "world.h"
-
+#define NETWORKON
 /*
 ===============================================
 	DEFINE NETWORKOFF TO DISABLE NETWORKING
@@ -51,10 +51,10 @@ int main(int argc, char* argv[]) {
 	while (running) {
 		KeyInputSystem(world, &running);
 		MouseInputSystem(world);
-		movement_system(world);
+		movement_system(world, send_router_fd[WRITE_END]);
 		map_render(surface);
 		render_player_system(*world, surface);
-	
+
 		#ifndef NETWORKOFF
 			send_system(world, send_router_fd[WRITE_END]);
 			client_update_system(world, rcv_router_fd[READ_END]);

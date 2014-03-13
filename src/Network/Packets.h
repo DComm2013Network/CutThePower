@@ -29,7 +29,6 @@
 #define MAX_MESSAGE 180
 #define MAX_OBJECTIVES 16
 
-
 // Definitions for various game data types
 typedef uint32_t floorNo_t;
 typedef uint32_t playerNo_t;
@@ -106,7 +105,7 @@ typedef struct pkt02{
 } PKT_PLAYER_CONNECT;
 
 typedef struct pkt03{
-	uint32_t	player_valid[MAX_PLAYERS];
+	int	player_valid[MAX_PLAYERS];
 	char 		otherPlayers_name[MAX_PLAYERS][MAX_NAME];
 	teamNo_t 	otherPlayers_teams[MAX_PLAYERS];
 	status_t	readystatus[MAX_PLAYERS];
@@ -126,14 +125,14 @@ typedef struct pkt05{
 
 typedef struct pkt06{
 	floorNo_t	map_data[MAX_FLOORS];
-	uint32_t	objective_locations[MAX_OBJECTIVES];
+	int	objective_locations[MAX_OBJECTIVES];
 } pkt06;
 //Packet 7: 0x0007
 // << UNPURPOSED >>
 
 typedef struct pkt08
 {
-	uint32_t	objectives_captured[MAX_OBJECTIVES];
+	int	objectives_captured[MAX_OBJECTIVES];
 	status_t	game_status;
 } PKT_OBJECTIVE_STATUS;
 
@@ -151,7 +150,7 @@ typedef struct pkt10{
 
 typedef struct pkt11{
 	floorNo_t 	floor;
-	uint32_t	players_on_floor[MAX_PLAYERS];
+	int	players_on_floor[MAX_PLAYERS];
 	pos_t		xPos[MAX_PLAYERS];
 	pos_t		yPos[MAX_PLAYERS];
 	pos_t		xVel[MAX_PLAYERS];
