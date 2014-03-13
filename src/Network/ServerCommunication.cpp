@@ -227,7 +227,7 @@ int handle_tcp_in(int router_pipe_fd, TCPsocket tcp_sock)
     {
         if(packet_type != P_KEEPALIVE)
         {
-            if(cnt_errno == ERR_TCP_RECV_FAILED)
+            if(cnt_errno == ERR_TCP_RECV_FAIL)
             {
                 fprintf(stderr, "Failure in TCP receive : %s \n", SDLNet_GetError());
                 return -1;
@@ -280,7 +280,7 @@ int handle_udp_in(int router_pipe_fd, UDPsocket udp_sock)
 
     if((game_packet = recv_udp_packet(udp_sock, &packet_type, &timestamp)) == NULL)
     {
-        if(cnt_errno == ERR_UDP_RECV_FAILED)
+        if(cnt_errno == ERR_UDP_RECV_FAIL)
         {
             fprintf(stderr, "Failure in UDP receive: %s ", SDLNet_GetError());
             return -1;
@@ -321,10 +321,10 @@ void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 	int      numread;
     uint32_t packet_size;
 
-	if(recv_tcp(sock, packet_type, sizeof(uint32_t) != 0)
+	if(recv_tcp(sock, packet_type, sizeof(uint32_t)) != 0)
 		return NULL;
 
-	if(*packet_type <= 0 || *packet_type > NUM_PACKETS))
+	if(*packet_type <= 0 || *packet_type > NUM_PACKETS)
 	{
 		printf("recv_tcp_packet: Received Invalid Packet Type!\n");
 		cnt_errno = ERR_CORRUPTED;
@@ -705,7 +705,7 @@ void close_connections(SDLNet_SocketSet set, TCPsocket tcpsock, UDPsocket udpsoc
  */
 void write_error(int error)
 {
-    int ret = sem_trywait(&err_sem)
+    int ret = sem_trywait(&err_sem);
     if(ret != -1) // If we got the semaphore
     {
         cnt_errno = error;

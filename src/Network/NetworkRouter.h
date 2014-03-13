@@ -10,7 +10,7 @@
 #define NETWORK_ROUTER_H
 
 #include <SDL2/SDL_net.h>
-#include <sempahore.h>
+#include <semaphore.h>
 #include "GameplayCommunication.h"
 
 #define READ_RECV_THREAD	0

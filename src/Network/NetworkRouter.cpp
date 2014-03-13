@@ -62,7 +62,7 @@ void *networkRouter(void *args)
     fd_set		active;
     int 		max_fd;
     uint32_t 	type;
-    uint64_t	timestamps[NUM_PACKETS] = {0}, sem_buf;
+    uint64_t	timestamps[NUM_PACKETS] = {0}, timestamp;
     void 		*packet, *cached_packets[NUM_PACKETS] = {0};
     pthread_t 	thread_send;
     pthread_t 	thread_receive;
@@ -84,7 +84,7 @@ void *networkRouter(void *args)
     while(1)
     {
     	int ret;
-        int temptype, temptype2;
+        //int temptype, temptype2;
         active = listen_fds;
         ret = select(max_fd + 1, &active, NULL, NULL, NULL);
 
@@ -93,9 +93,9 @@ void *networkRouter(void *args)
 			packet = read_data(recvfd[READ_END], &type);
 			read(recvfd[READ_END], &timestamp, sizeof(timestamp));
 
-            if(timestamp[type - 1] < timestamp)     // If the received packet is more recent, replace the cached one
+            if(timestamps[type - 1] < timestamp)     // If the received packet is more recent, replace the cached one
             {
-                timestamp[type - 1] = timestamp;
+                timestamps[type - 1] = timestamp;
                 free(cached_packets[type - 1]);
                 cached_packets[type - 1] = packet;
             }
@@ -227,7 +227,8 @@ int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int send
 
     if(!tcp_sock) {
         fprintf(stderr, "SDLNet_TCP_Open: %s\n", SDLNet_GetError());
-        exit(2);
+        write_error(ERR_NO_CONN);
+        exit(2); //should actually return here, but we need a function to clean up first
     }
 
     udp_sock = SDLNet_UDP_Open(UDP_PORT);
@@ -284,9 +285,9 @@ int update_gameplay(int gameplay_write_fd, void **packets, uint64_t *timestamps)
     unsigned changed_mask = 0;
 
     read(game_net_signalfd, &sem_buf, sizeof(uint64_t)); /* Receive the signal */
-    num_changed = determine_changed(cached_packets, &changed_mask);
+    num_changed = determine_changed(packets, &changed_mask);
 
-    if(write(gameplay->write_pipe, &num_changed, sizeof(num_changed)) == -1)
+    if(write(gameplay_write_fd, &num_changed, sizeof(num_changed)) == -1)
     {
         perror("update_gameplay: write");
         return -1;
@@ -299,14 +300,14 @@ int update_gameplay(int gameplay_write_fd, void **packets, uint64_t *timestamps)
     {
         if(changed_mask & (1 << i))
         {
-            if(write(gameplay->write_pipe, &i, sizeof(i)) == -1 ||
-               write(gameplay->write_pipe, cached_packets[i], packet_sizes[i]) == -1)
+            if(write(gameplay_write_fd, &i, sizeof(i)) == -1 ||
+               write(gameplay_write_fd, packets[i], packet_sizes[i]) == -1)
             {
                 perror("update_gameplay: write");
                 return -1;
             }
-            free(cached_packets[i]);
-            cached_packets[i] = NULL;
+            free(packets[i]);
+            packets[i] = NULL;
         }
     }
     return 0;

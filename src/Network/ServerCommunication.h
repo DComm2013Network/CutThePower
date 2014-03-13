@@ -5,7 +5,7 @@
 #include <SDL2/SDL_net.h>
 #include <SDL2/SDL.h>
 #include <unistd.h>
-#include <sempahore.h>
+#include <semaphore.h>
 #include <cstdio>
 #include <cstdarg>
 #include <cerrno>
