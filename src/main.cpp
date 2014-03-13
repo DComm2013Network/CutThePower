@@ -9,7 +9,8 @@
 ===============================================
 */
 
-int game_net_signalfd, game_net_lockfd;
+int game_net_signalfd;
+int network_ready = 0;
 
 int main(int argc, char* argv[]) {
 	SDL_Window *window;

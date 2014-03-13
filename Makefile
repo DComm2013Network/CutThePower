@@ -1,5 +1,5 @@
 CC=g++
-FLAGS=-Wall -std=c++11 -g
+FLAGS=-Wall -g -std=c++0x 
 LIBS=-lSDL2 -lSDL2_image -lSDL2_net -lpthread
 
 BINDIR=bin

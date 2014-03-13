@@ -15,6 +15,7 @@
 #include <sys/poll.h>
  
 extern int game_net_signalfd;
+extern int network_ready;
 static unsigned int *player_table = NULL; /**< A lookup table mapping server player numbers to client entities. */
 
 /**
@@ -43,10 +44,12 @@ void client_update_system(World *world, int net_pipe) {
 		player_table = (unsigned int *)malloc(sizeof(unsigned int) * MAX_PLAYERS);
 		memset(player_table, 255, MAX_PLAYERS * sizeof(unsigned int)); 
 	}
-	fprintf(stderr, "About to signal network router.\n");
+
+    if(!network_ready) // Don't try to read the pipe until the network module has been initialised
+        return;
+
 	write(game_net_signalfd, &signal, sizeof(uint64_t));
 	num_packets = read_type(net_pipe); // the function just reads a 32 bit value, so this works; semantically, not ideal
-	fprintf(stderr, "Read something from network router.\n");
 	for(i = 0; i < num_packets; ++i)
 	{
 		packet = read_data(net_pipe, &type);
