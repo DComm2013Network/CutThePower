@@ -84,7 +84,7 @@ unsigned int create_player(World* world, int x, int y, bool controllable)
 	
 	render.width = 80;
 	render.height = 80;
-	render.playerSurface = IMG_Load("assets/Graphics/player_80px.png");
+	render.playerSurface = IMG_Load("assets/Graphics/test_rob_40px.png");
 	if (!render.playerSurface) {
 		printf("mat is a doof\n");
 	}
