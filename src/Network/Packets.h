@@ -29,34 +29,11 @@
 #define MAX_MESSAGE 180
 #define MAX_OBJECTIVES 16
 
-// Definitions for various game data types
-typedef uint32_t floorNo_t;
-typedef uint32_t playerNo_t;
-typedef uint32_t teamNo_t;
-typedef uint32_t status_t;
-typedef float 	 pos_t;
-typedef float	 vel_t;
-
 // Connect code Definitions
 #define CONNECT_CODE_ACCEPTED 0x001
 #define CONNECT_CODE_DENIED 0x000
 
-#define TIMEOUT 5000
-
-/**
- * Encapsulates data for easy sending by the send thread.
- *
- * @property protocol The protocol (TCP or UDP) used to send this packet.
- * @property type     The type of packet to send (1 through 14).
- * @property data     The data contained in the packet.
- *
- * @struct internal_packet
- */
-typedef struct{
-	int protocol;
-	uint32_t type;
-	char * data;
-}internal_packet;
+#define TIMEOUT 5000	
 
 #define TCP 0
 #define UDP 1
@@ -92,6 +69,29 @@ typedef struct{
 // Special floor Definitions
 #define FLOOR_LOBBY 0x000
 
+/**
+ * Encapsulates data for easy sending by the send thread.
+ *
+ * @property protocol The protocol (TCP or UDP) used to send this packet.
+ * @property type     The type of packet to send (1 through 14).
+ * @property data     The data contained in the packet.
+ *
+ * @struct internal_packet
+ */
+typedef struct intpkt{
+	int protocol;
+	uint32_t type;
+	char * data;
+}internal_packet;
+
+// Definitions for various game data types
+typedef uint32_t floorNo_t;
+typedef uint32_t playerNo_t;
+typedef uint32_t teamNo_t;
+typedef uint32_t status_t;
+typedef uint32_t pos_t;
+typedef float	 vel_t;
+
 // Packet Definitions
 
 typedef struct pkt01{
@@ -126,7 +126,7 @@ typedef struct pkt05{
 typedef struct pkt06{
 	floorNo_t	map_data[MAX_FLOORS];
 	int	objective_locations[MAX_OBJECTIVES];
-} pkt06;
+} PKT_OBJ_LOC;
 //Packet 7: 0x0007
 // << UNPURPOSED >>
 
@@ -153,18 +153,20 @@ typedef struct pkt11{
 	int	players_on_floor[MAX_PLAYERS];
 	pos_t		xPos[MAX_PLAYERS];
 	pos_t		yPos[MAX_PLAYERS];
-	pos_t		xVel[MAX_PLAYERS];
-	pos_t		yVel[MAX_PLAYERS];
+	vel_t		xVel[MAX_PLAYERS];
+	vel_t		yVel[MAX_PLAYERS];
 } PKT_ALL_POS_UPDATE;
 
 typedef struct pkt12{
 	playerNo_t 	player_number;
 	floorNo_t 	current_floor;
 	floorNo_t 	desired_floor;
+	pos_t 		desired_xPos;
+	pos_t		desired_yPos;
 } PKT_FLOOR_MOVE_REQUEST;
 
 typedef struct pkt13{
-	floorNo_t new_floor;
+	floorNo_t new_floor;	
 	pos_t	xPos;
 	pos_t	yPos;
 } PKT_FLOOR_MOVE;

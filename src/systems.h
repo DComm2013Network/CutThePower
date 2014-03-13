@@ -10,5 +10,6 @@
 #include "Network/network_systems.h"
 #include "Network/GameplayCommunication.h"
 #include "Network/SendSystem.h"
+#include "Network/Packets.h"
 
 #endif

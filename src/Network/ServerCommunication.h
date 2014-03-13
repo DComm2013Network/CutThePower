@@ -15,7 +15,6 @@
 #define MAX_TCP_RECV     2944 /**< Max TCP "packet" size from server to client (PKT_GAME_STATUS)*/
 #define MAX_UDP_RECV     644  /**< Max UDP packet size from server to client (PKT_ALL_POS_UPDATE)*/	
 
-
 #define ERR_NO_CONN       1  /**< The TCP connection could not be opened. */
 #define ERR_CONN_CLOSED   2  /**< The TCP connection was closed. */
 #define ERR_TCP_RECV_FAIL 3  /**< Receiving data from a TCP socket failed. */

@@ -64,37 +64,48 @@ void client_update_system(World *world, int net_pipe) {
 				client_update_status(world, packet);
 				break;
 			case P_CHAT:
-				// Chat data
+				client_update_chat(world, packet);
 				break;
 			case P_OBJCTV_LOC:
-				// Map info
+				client_update_obj_loc(world, packet);
 				break;
 			case 7: // undefined
 				// Floor stuff
 				break;
 			case P_OBJSTATUS:
-				// Objective update (game_status is significant here)
+				client_update_obj_status(world, packet);
 				break;
 			case G_ALLPOSUPDATE:
 				client_update_pos(world, packet);
 				break;
+			case P_FLOOR_MOVE:
+				client_update_floor(world, packet);
+				break;
 			case P_TAGGING:
 				player_tag_packet(world, packet);
 				break;
-			// Should never receive a packet outside the above range (the rest are unpurposed or client->server packets); 
-			// discard it (and maybe log an error) if we get one
-			case 1:
-			case 5:
-			case 9:
-			case 10:
-			case 12:
 			default:
 				break;
 		}
 		free(packet);
 	}
 }
-
+void client_update_chat(World *world, void *packet)
+{
+	PKT_SND_CHAT *snd_chat = (PKT_SND_CHAT*)packet;
+}
+void client_update_obj_loc(World *world, void *packet)
+{
+	PKT_OBJ_LOC *obj_loc = (PKT_OBJ_LOC*) packet;
+}
+void client_update_obj_status(World *world, void *packet)
+{
+	PKT_OBJECTIVE_STATUS *obj_status =  (PKT_OBJECTIVE_STATUS*)packet;
+}
+void client_update_floor(World *world, void *packet)
+{
+	PKT_FLOOR_MOVE* floor_move = (PKT_FLOOR_MOVE*)packet;
+}
 /**
  * Updates the positions and movement properties of every other player.
  *
