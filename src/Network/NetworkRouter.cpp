@@ -85,15 +85,11 @@ void *networkRouter(void *args)
     while(1)
     {
     	int ret;
-        //int temptype, temptype2;
         active = listen_fds;
         ret = select(max_fd + 1, &active, NULL, NULL, NULL);
 
         if(ret && FD_ISSET(recvfd[READ_END], &active))
         {
-<<<<<<< HEAD
-			cached_packets[type] = read_data(recvfd[READ_END], &type);
-=======
 			packet = read_data(recvfd[READ_END], &type);
 			read(recvfd[READ_END], &timestamp, sizeof(timestamp));
 
@@ -107,7 +103,6 @@ void *networkRouter(void *args)
                 free(packet);
 
 			--ret;
->>>>>>> 428c284f29fea879af50ffc231e28b5afd817680
         }
 
         if(ret && FD_ISSET(gameplay->read_pipe, &active))
@@ -119,25 +114,10 @@ void *networkRouter(void *args)
 
         if(ret && FD_ISSET(game_net_signalfd, &active))
         {
-<<<<<<< HEAD
-        	uint32_t num_changed;
-        	unsigned changed_mask = 0;
-        	read(game_net_signalfd, &sem_buf, sizeof(uint64_t)); /* Decrease the semaphore to 0 */
-        	num_changed = determine_changed(cached_packets, &changed_mask);
-        	write(gameplay->write_pipe, &num_changed, sizeof(num_changed));
-			//fprintf(stderr, "Network router: num_changed = %d\n", num_changed);
-        	for(uint32_t i = 0; i < NUM_PACKETS; ++i)
-        	{
-        		if(changed_mask & (1 << i))
-        		{
-        			write(gameplay->write_pipe, &i, sizeof(i));
-        			write(gameplay->write_pipe, cached_packets[i], packet_sizes[i]);
-        		}
-        	}
-=======
         	if(update_gameplay(gameplay->write_pipe, cached_packets, timestamps) == -1)
                 return NULL;
->>>>>>> 428c284f29fea879af50ffc231e28b5afd817680
+
+            --ret;
 		}
         
     }

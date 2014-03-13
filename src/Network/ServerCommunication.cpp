@@ -25,7 +25,7 @@
 #include "Packets.h"
 
 extern uint32_t packet_sizes[NUM_PACKETS];
-static int cnt_errno = 0;
+static int cnt_errno = -1;
 extern sem_t err_sem;
 
 /**
@@ -74,19 +74,25 @@ extern sem_t err_sem;
 			if(SDLNet_SocketReady(recv_data->tcp_sock))
 			{
 				if((res = handle_tcp_in(recv_data->write_pipe, recv_data->tcp_sock)) == -1)
+				{
                     break;
-                
+                }
                 if(res == -2)
+                {
                 	continue;
+            	}	
             }
 
     		if(SDLNet_SocketReady(recv_data->udp_sock))
     		{
 				if((res = handle_udp_in(recv_data->write_pipe, recv_data->udp_sock)) == -1)
+				{
                     break;
-
+                }
                 if(res == -2)
+                {
                 	continue;
+				}
 			}
     	}
  	}
@@ -258,8 +264,8 @@ int handle_tcp_in(int router_pipe_fd, TCPsocket tcp_sock)
     
     printf("Received TCP packet: %u\n", packet_type);
     if(write_packet(router_pipe_fd, packet_type, game_packet) == -1 ||
-    	write_packet(router_pipe_fd, &timestamp, sizeof(timestamp)) == -1)
-	{
+        write_pipe(router_pipe_fd, &timestamp, sizeof(timestamp)) == -1)
+    {
         fprintf(stderr, "TCP>Router: Error in write packet, flushing pipe");
         fflush((FILE*)&router_pipe_fd);
 	}
@@ -341,7 +347,7 @@ void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 
 	numread = recv_tcp(sock, packet_type, sizeof(uint32_t));
 	if(numread < 0){
-		cnt_errno = ERR_RECV_FAILED;
+		cnt_errno = ERR_TCP_RECV_FAIL;
 		return NULL;
 	}
 
@@ -357,7 +363,7 @@ void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 		return NULL; 
 	}
 
-	else if(*packet_type == P_KEEPALIVE)
+	if(*packet_type == P_KEEPALIVE)
         return NULL;
 
 	packet_size = packet_sizes[(*packet_type) - 1];
@@ -429,7 +435,7 @@ void *recv_udp_packet(UDPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 	
 	memcpy(packet, pktdata->data + sizeof(uint32_t), packet_size);
     memcpy(timestamp, pktdata->data + packet_size + sizeof(uint32_t), sizeof(*timestamp));
-	//*timestamp = *((uint64_t *)(pktdata->data + packet_size + sizeof(uint32_t)));
+	*timestamp = *((uint64_t *)(pktdata->data + packet_size + sizeof(uint32_t)));
 
 	SDLNet_FreePacket(pktdata);
 	return packet;
@@ -464,7 +470,7 @@ int recv_tcp(TCPsocket sock, void *buf, size_t bufsize)
 		return cnt_errno = ERR_CONN_CLOSED;
 	}
 	
-	return 0;
+	return numread;
 }
 
 /**
