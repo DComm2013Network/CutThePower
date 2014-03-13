@@ -4,6 +4,10 @@
 /**
  * This file contains all methods responsible for communication with the server.
  *
+ * @todo Get rid of magic numbers in grab_send_packet
+ * @todo Make writing to cnt_errno thread safe
+ * @todo Write to network router requesting that keep alive be sent
+ * 
  * @file ServerCommunication.cpp
  */
 
@@ -22,6 +26,7 @@
 
 extern uint32_t packet_sizes[NUM_PACKETS];
 static int cnt_errno = 0;
+extern sem_t err_sem;
 
 /**
  * Monitors sockets to receive data from the server.
@@ -55,7 +60,7 @@ static int cnt_errno = 0;
  	{
  		if((numready = check_sockets(set)) == -1)
         {
-            // write error message to the network socket
+            // write error message to the network router
      	    break;
         }
  
@@ -228,21 +233,21 @@ int handle_tcp_in(int router_pipe_fd, TCPsocket tcp_sock)
     {
         if(packet_type != P_KEEPALIVE)
         {
-            if(cnt_errno == ERR_RECV_FAILED)
+            if(cnt_errno == ERR_TCP_RECV_FAIL)
             {
-                fprintf(stderr, "Failure in tcp recv : %s \n", SDLNet_GetError());
+                fprintf(stderr, "Failure in TCP receive : %s \n", SDLNet_GetError());
                 return -1;
             }
 
             if(cnt_errno == ERR_CONN_CLOSED)
             {
-                printf("Connection lost, exiting client.\n");
+                fprintf(stderr, "Server closed the connection.\n");
                 //close_connections(set, recv_data->tcp_sock, recv_data->udp_sock);
                 return -1;
             }
 
 
-	        if(cnt_errno == INVALID_TYPE)
+	        if(cnt_errno == ERR_CORRUPTED)
 	        {
 	        	return -2;
 	        }
@@ -252,7 +257,8 @@ int handle_tcp_in(int router_pipe_fd, TCPsocket tcp_sock)
     }
     
     printf("Received TCP packet: %u\n", packet_type);
-    if(write_packet(router_pipe_fd, packet_type, game_packet) == -1)
+    if(write_packet(router_pipe_fd, packet_type, game_packet) == -1 ||
+    	write_packet(router_pipe_fd, &timestamp, sizeof(timestamp)) == -1)
 	{
         fprintf(stderr, "TCP>Router: Error in write packet, flushing pipe");
         fflush((FILE*)&router_pipe_fd);
@@ -286,13 +292,13 @@ int handle_udp_in(int router_pipe_fd, UDPsocket udp_sock)
 
     if((game_packet = recv_udp_packet(udp_sock, &packet_type, &timestamp)) == NULL)
     {
-        if(cnt_errno == ERR_RECV_FAILED)
+        if(cnt_errno == ERR_UDP_RECV_FAIL)
         {
-            printf("Failure in udp recv : %s ", SDLNet_GetError());
+            fprintf(stderr, "Failure in UDP receive: %s ", SDLNet_GetError());
             return -1;
         }
 
-        if(cnt_errno == INVALID_TYPE)
+        if(cnt_errno == ERR_CORRUPTED)
         {
         	return -2;
         }
@@ -301,7 +307,7 @@ int handle_udp_in(int router_pipe_fd, UDPsocket udp_sock)
         if(write_packet(router_pipe_fd, packet_type, game_packet) == -1 ||
             write_pipe(router_pipe_fd, &timestamp, sizeof(timestamp)) == -1)
         {
-            printf("UDP>Router: Error in write packet, flushing pipe");
+            fprintf(stderr, "UDP>Router: Error in write packet, flushing pipe");
             fflush((FILE*)&router_pipe_fd);
         }
     }
@@ -344,32 +350,27 @@ void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 		return NULL;
 	}
 
-	if(*packet_type <= 0 || *packet_type > 14)
+	if(*packet_type <= 0 || *packet_type > NUM_PACKETS)
 	{
-		printf("recv_tcp_packet : Recieved Invalid Packet Type!\n");
-		cnt_errno = INVALID_TYPE;
+		printf("recv_tcp_packet: Received Invalid Packet Type!\n");
+		cnt_errno = ERR_CORRUPTED;
 		return NULL; 
 	}
 
 	else if(*packet_type == P_KEEPALIVE)
         return NULL;
-    else if(*packet_type < 1 || *packet_type > NUM_PACKETS)
-    {
-        cnt_errno = ERR_CORRUPTED;
-        return NULL;
-    }
 
 	packet_size = packet_sizes[(*packet_type) - 1];
 
 	if((packet = malloc(packet_size)) == NULL)
 	{
 		perror("recv_ tcp_packet: malloc");
-		cnt_errno = ERR_STD_LIB;
+		cnt_errno = errno;
 		return NULL;
 	}
 
 	numread = recv_tcp(sock, packet, packet_size);
-	//numread = recv_tcp(sock, timestamp, sizeof(uint64_t));
+	*timestamp = clock();
 	return packet;
 }
 
@@ -406,14 +407,13 @@ void *recv_udp_packet(UDPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 
 	*packet_type = 1;
 
-	if(recv_udp(sock, pktdata) == -1){
-		cnt_errno = ERR_RECV_FAILED;
+	if(recv_udp(sock, pktdata) == -1)
 		return NULL;
-	}
 
 	*packet_type 	= *((uint32_t *)pktdata->data);
     if(*packet_type < 1 || *packet_type > NUM_PACKETS) // Impossible packet type; packet is corrupted
     {
+		fprintf(stderr, "recv_udp_packet: Received Invalid Packet Type!\n");
         cnt_errno = ERR_CORRUPTED;
         return NULL;
     }
@@ -421,17 +421,10 @@ void *recv_udp_packet(UDPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 	packet_size 	= packet_sizes[(*packet_type) - 1];
 	packet			= malloc(packet_size);
 
-	if(*packet_type <= 0 || *packet_type > 14)
-	{
-		printf("recv_udp_packet : Recieved Invalid Packet Type!\n");
-		cnt_errno = -4;
-		return NULL;
-	}
-
 	if(!packet)
 	{
-		perror("recv_udp_packet: malloc");
-		exit(3);
+		cnt_errno = errno; // For printing later
+		return NULL;
 	}
 	
 	memcpy(packet, pktdata->data + sizeof(uint32_t), packet_size);
@@ -450,7 +443,7 @@ void *recv_udp_packet(UDPsocket sock, uint32_t *packet_type, uint64_t *timestamp
  * @param[in]  bufsize    The size (in bytes) of buf.
  *
  * @return ERR_RECV_FAILED if SDLNet_TCP_Recv returns an error, and ERR_CONN_CLOSED if no
- *         data was read (i.e., received a RST or a FIN).
+ *         data was read (i.e., received a RST or a FIN). Returns 0 on success.
  *
  * @designer Shane Spoor
  * @author   Shane Spoor
@@ -464,13 +457,14 @@ int recv_tcp(TCPsocket sock, void *buf, size_t bufsize)
 	if(numread == -1)
 	{
     	fprintf(stderr, "SDLNet_TCP_Recv: %s\n", SDLNet_GetError());
-    	return cnt_errno = ERR_RECV_FAILED;
+    	return cnt_errno = ERR_TCP_RECV_FAIL;
 	}
 	else if(numread == 0){
+        fprintf(stderr, "recv_tcp: Connection closed or reset.\n");
 		return cnt_errno = ERR_CONN_CLOSED;
 	}
 	
-	return numread;
+	return 0;
 }
 
 /**
@@ -491,7 +485,7 @@ int recv_udp (UDPsocket sock, UDPpacket *udp_packet)
 	if(SDLNet_UDP_Recv(sock, udp_packet) == -1)
 	{
 		fprintf(stderr, "SDLNet_UDP_Recv: %s\n", SDLNet_GetError());
-        cnt_errno = ERR_RECV_FAILED;
+        cnt_errno = ERR_UDP_RECV_FAIL;
 		return -1;
 	}
 	
@@ -503,7 +497,7 @@ int recv_udp (UDPsocket sock, UDPpacket *udp_packet)
  *
  * @param[out] type Receives the type of packet to send.
  * @param[in]  fd   The read descriptor for the pipe between network router/send thread.
- * @param[out] ret  If the function is successful, this hold 0; otherwise, it will hold -1.
+ * @param[out] ret  If the function is successful, this holds 1; otherwise, it will hold -1.
  *
  * @return The packet on success or NULL on failure.
  *
@@ -512,7 +506,7 @@ int recv_udp (UDPsocket sock, UDPpacket *udp_packet)
  *
  * @date Febuary 20 2014
  */
-void*grab_send_packet(uint32_t *type, int fd, int *ret){
+void *grab_send_packet(uint32_t *type, int fd, int *ret){
 
 	*type = read_type(fd);
 	if(*type >= 90){
@@ -530,6 +524,7 @@ void*grab_send_packet(uint32_t *type, int fd, int *ret){
 
 	return data;
 }
+
 /**
  * Creates a UDP packet of size @a size.
  *
@@ -715,3 +710,74 @@ void close_connections(SDLNet_SocketSet set, TCPsocket tcpsock, UDPsocket udpsoc
 	SDLNet_TCP_Close(tcpsock);
 	SDLNet_UDP_Close(udpsock);
 }
+
+/**
+ * Sets cnt_errno to the specified value.
+ *
+ * The function uses a semaphore to ensure thread safety. If a thread can't acquire
+ * the semaphore to write to cnt_errno, it does not block; any error reported this
+ * way will require the network threads to shut down, and all errors will be logged
+ * regardless.
+ *
+ * This behaviour may change in the future (by creating a linked list of errors, for
+ * example).
+ *
+ * @param[in] error The error number to store in cnt_errno.
+ *
+ * @designer Shane Spoor
+ * @author   Shane Spoor
+ *
+ * @date March 12, 2014
+ */
+void write_error(int error)
+{
+    int ret = sem_trywait(&err_sem);
+    if(ret != -1) // If we got the semaphore
+    {
+        cnt_errno = error;
+        sem_post(&err_sem);
+    }
+}
+
+/**
+ * Retrieves the error string for the current value of cnt_errno.
+ *
+ * The function uses a semaphore to ensure thread safety and will block if another
+ * thread owns the semaphore.
+ *
+ * The function may be extended to return a list of errors.
+ *
+ * @return The error string corresponding to the value of cnt_errno.
+ *
+ * @designer Shane Spoor
+ * @author   Shane Spoor
+ *
+ * @date March 12, 2014
+ */
+const char *get_error_string()
+{
+    int err;
+    static const char *error_strings[] = {
+        "Could not open the connection.",
+        "The server closed the connection.",
+        "Failed to receive TCP data.",
+        "Failed to receive a UDP packet.",
+        "Failed to send TCP data.",
+        "Failed to send a UDP packet.",
+        "Received corrupted data.",
+        "The remote host could not be resolved. Ensure the host name or IP address is valid.",
+        "The program could not allocate enough memory.",
+        "Could not write to a pipe.",
+        "Could not acquire a semaphore.",
+        "Could not remove socket from socket set."    
+    };
+
+    if(sem_wait(&err_sem) == -1)
+        return error_strings[ERR_NO_SEM - 1];
+    else
+    {
+        err = cnt_errno - 1;
+        sem_post(&err_sem);
+        return error_strings[err];
+    }
+}    

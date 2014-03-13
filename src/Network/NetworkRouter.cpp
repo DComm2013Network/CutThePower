@@ -4,7 +4,9 @@
  * This is the main file for the client-side Network layer. This layer/component will contain
  * all network related functions and will basically grab game data from the Gameplay module, dispatch 
  * it to the server and vice-versa.
- * 
+ *
+ * @todo Make a cleanup function
+ *
  * @file NetworkRouter.cpp
  */
 /** @} */
@@ -28,6 +30,7 @@
 extern int game_net_signalfd;
 extern int network_ready;
 extern uint32_t packet_sizes[NUM_PACKETS];
+sem_t err_sem;
 
 /**
  * This is the main client-side network function that the Gameplay module will call inside
@@ -59,7 +62,7 @@ void *networkRouter(void *args)
     fd_set		active;
     int 		max_fd;
     uint32_t 	type;
-    uint64_t	timestamp, cached_timestamps[NUM_PACKETS] = {0}, sem_buf;
+    uint64_t	timestamps[NUM_PACKETS] = {0}, timestamp;
     void 		*packet, *cached_packets[NUM_PACKETS] = {0};
     int         cached_types[NUM_PACKETS];
     pthread_t 	thread_send;
@@ -70,9 +73,7 @@ void *networkRouter(void *args)
     NDATA 		receive = (NDATA) malloc(sizeof(WNETWORK_DATA));
 
     if(init_router(&max_fd, send, receive, gameplay, sendfd, recvfd, &thread_receive, &thread_send) == -1)
-    {
     	return NULL;
-    }
 
     FD_ZERO(&listen_fds);
     FD_SET(recvfd[READ_END], &listen_fds);
@@ -84,13 +85,29 @@ void *networkRouter(void *args)
     while(1)
     {
     	int ret;
-        int temptype, temptype2;
+        //int temptype, temptype2;
         active = listen_fds;
         ret = select(max_fd + 1, &active, NULL, NULL, NULL);
 
         if(ret && FD_ISSET(recvfd[READ_END], &active))
         {
+<<<<<<< HEAD
 			cached_packets[type] = read_data(recvfd[READ_END], &type);
+=======
+			packet = read_data(recvfd[READ_END], &type);
+			read(recvfd[READ_END], &timestamp, sizeof(timestamp));
+
+            if(timestamps[type - 1] < timestamp)     // If the received packet is more recent, replace the cached one
+            {
+                timestamps[type - 1] = timestamp;
+                free(cached_packets[type - 1]);
+                cached_packets[type - 1] = packet;
+            }
+            else                                    // Otherwise discard it
+                free(packet);
+
+			--ret;
+>>>>>>> 428c284f29fea879af50ffc231e28b5afd817680
         }
 
         if(ret && FD_ISSET(gameplay->read_pipe, &active))
@@ -102,6 +119,7 @@ void *networkRouter(void *args)
 
         if(ret && FD_ISSET(game_net_signalfd, &active))
         {
+<<<<<<< HEAD
         	uint32_t num_changed;
         	unsigned changed_mask = 0;
         	read(game_net_signalfd, &sem_buf, sizeof(uint64_t)); /* Decrease the semaphore to 0 */
@@ -116,6 +134,10 @@ void *networkRouter(void *args)
         			write(gameplay->write_pipe, cached_packets[i], packet_sizes[i]);
         		}
         	}
+=======
+        	if(update_gameplay(gameplay->write_pipe, cached_packets, timestamps) == -1)
+                return NULL;
+>>>>>>> 428c284f29fea879af50ffc231e28b5afd817680
 		}
         
     }
@@ -215,6 +237,8 @@ int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int send
 	create_pipe(sendfd);
 	create_pipe(recvfd);
 	
+    sem_init(&err_sem, 0, 1);
+
     *max_fd = recvfd[READ_END] > gameplay->read_pipe ? recvfd[READ_END] : gameplay->read_pipe;
     *max_fd = game_net_signalfd > *max_fd ? game_net_signalfd : *max_fd;
 
@@ -225,7 +249,8 @@ int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int send
 
     if(!tcp_sock) {
         fprintf(stderr, "SDLNet_TCP_Open: %s\n", SDLNet_GetError());
-        exit(2);
+        write_error(ERR_NO_CONN);
+        exit(2); //should actually return here, but we need a function to clean up first
     }
 
     udp_sock = SDLNet_UDP_Open(UDP_PORT);
@@ -258,6 +283,57 @@ int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int send
 	return 0;
 }
 
+/**
+ * Initialises the variables used in the router thread or the send/receive threads.
+ *
+ * @param[in] gameplay_write_fd Write end of the pipe to the client/gameplay update system.
+ * @param[in] packets           The latest packets received from the server.
+ * @param[in] timestamps        An array of timestamps associated with each packet.
+ *
+ * @return <ul>
+ *              <li>0 on success</li>
+                <li>-1 on failure.</li>
+ *         </ul>
+ *
+ * @designer Shane Spoor
+ * @author   Shane Spoor
+ *
+ * @date March 12, 2014
+ */
+int update_gameplay(int gameplay_write_fd, void **packets, uint64_t *timestamps)
+{
+    uint32_t num_changed;
+    uint64_t sem_buf;
+    unsigned changed_mask = 0;
+
+    read(game_net_signalfd, &sem_buf, sizeof(uint64_t)); /* Receive the signal */
+    num_changed = determine_changed(packets, &changed_mask);
+
+    if(write(gameplay_write_fd, &num_changed, sizeof(num_changed)) == -1)
+    {
+        perror("update_gameplay: write");
+        return -1;
+    }
+
+    if(!num_changed)
+        return 0;
+
+    for(uint32_t i = 0; i < NUM_PACKETS; ++i)
+    {
+        if(changed_mask & (1 << i))
+        {
+            if(write(gameplay_write_fd, &i, sizeof(i)) == -1 ||
+               write(gameplay_write_fd, packets[i], packet_sizes[i]) == -1)
+            {
+                perror("update_gameplay: write");
+                return -1;
+            }
+            free(packets[i]);
+            packets[i] = NULL;
+        }
+    }
+    return 0;
+}
 /*
 
 The gameplay module will basically create the pipe and call the networkRouter() function
