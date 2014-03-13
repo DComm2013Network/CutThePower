@@ -13,6 +13,7 @@
 #include <stdlib.h>
 
 #include "map.h"
+#include "systems.h"
 
 SDL_Surface *map_surface; /**< The surface on which to render the map. */
 SDL_Rect map_rect;        /**< The rectangle containing the map. */
@@ -61,7 +62,6 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 	
 	SDL_Rect tile_rect;
 	
-	
 	if ((fp_map = fopen(file_map, "r")) == 0) {
 		printf("Error opening map %s\n", file_map);
 		return -1;
@@ -106,14 +106,47 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 			if (strcmp(entity_type, "stair") == 0) { //stair
 				fscanf(fp_map, "%d %d %d %d %d", &a, &a, &a, &a, &a);
 			}
+			else if (strcmp(entity_type, "object") == 0) { //animated objects
+				
+				unsigned int entity;
+				int x, y;
+				char *animation_name = (char*)malloc(sizeof(char) * 64);
+				char *animation_filename = (char*)malloc(sizeof(char) * 64);
+				
+				if (fscanf(fp_map, "%d %d %s %s", &x, &y, animation_filename, animation_name) != 4) {
+					printf("Error loading object!\n");
+					return -1;
+				}
+				
+				entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION);
+				
+				world->position[entity].x = TILE_WIDTH * x;
+				world->position[entity].y = TILE_HEIGHT * y;
+				
+				world->position[entity].width = TILE_WIDTH;
+				world->position[entity].height = TILE_HEIGHT;
+				
+				world->renderPlayer[entity].width = TILE_WIDTH;
+				world->renderPlayer[entity].height = TILE_HEIGHT;
+				
+				load_animation(animation_filename, world, entity);
+				play_animation(&(world->animation[entity]), animation_name);
+				
+				free(animation_name);
+				free(animation_filename);
+				
+			}
 			else {
 				printf("Did not deal with the entity type: %s\n", entity_type);
-				return -1;
+				break;
+				//return -1;
 			}
 		}
 	}
 	
 	fclose(fp_map);
+	
+	printf("FINISHED LOADING MAP\n");
 	
 	//load tiles
 	if ((fp_tiles = fopen(file_tiles, "r")) == 0) {
@@ -122,9 +155,16 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 	}
 	
 	if (fscanf(fp_tiles, "%d", &num_tiles) != 1) {
+		printf("Cannot find tile number\n");
 		return -1;
 	}
-	tiles = (SDL_Surface**)malloc(sizeof(SDL_Surface*) * num_tiles);
+	
+	if ((tiles = (SDL_Surface**)malloc(sizeof(SDL_Surface*) * (num_tiles + 1))) == 0) {
+		printf("Error mallocing tile surfaces\n");
+		return -1;
+	}
+	
+	printf("finished mallocing surfaces: %p\n", tiles);
 	
 	for(i = 0; i < num_tiles; i++) {
 		
@@ -133,7 +173,7 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 			return -1;
 		}
 		
-		if (fscanf(fp_tiles, "%s", (char*)&tile_filename) != 1) {
+		if (fscanf(fp_tiles, "%s", (char*)tile_filename) != 1) {
 			printf("Error reading tile map filename.\n");
 			return -1;
 		}
@@ -142,9 +182,14 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 			return -1;	
 		}
 		
-		tiles[pos] = SDL_LoadBMP(tile_filename);
+		if (pos >= num_tiles) {
+			printf("Trying to write to tiles outside of memory\n");
+			return -1;
+		}
 		
-		if (tiles[pos] == 0) {
+		tiles[pos] = IMG_Load(tile_filename);
+		
+		if (tiles[pos] == NULL) {
 			printf("Error loading tile: %s\n", tile_filename);
 			return -1;
 		}
@@ -153,8 +198,15 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 	
 	fclose(fp_tiles);
 	
+	printf("FINISHED LOADING TILES\n");
+	
 	//render to surface
 	map_surface = SDL_CreateRGBSurface(0, width * TILE_WIDTH, height * TILE_HEIGHT, 32, 0, 0, 0, 0);
+	
+	if (map_surface == 0) {
+		printf("error making map surface.\n");
+		return -1;
+	}
 	
 	tile_rect.w = TILE_WIDTH;
 	tile_rect.h = TILE_HEIGHT;
@@ -165,9 +217,17 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 			tile_rect.x = x * TILE_WIDTH;
 			tile_rect.y = y * TILE_HEIGHT;
 			
+			if (map[x][y] >= num_tiles) {
+				printf("Using tile %u that is bigger than %d\n", map[x][y], num_tiles);
+			}
+			
 			SDL_BlitSurface(tiles[map[x][y]], NULL, map_surface, &tile_rect);
 			
 		}
+	}
+	
+	for(i = 0; i < num_tiles; i++) {
+		SDL_FreeSurface(tiles[i]);
 	}
 	
 	map_rect.x = 0;
@@ -179,10 +239,13 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 	
 	create_level(world, map, width, height, TILE_WIDTH);
 	
-	for (int i = 0; i < width; i++) {
+	for (i = 0; i < width; i++) {
 		free(map[i]);
 	}
 	free(map);
+	
+	printf("FINISHED CREATING LEVEL\n");
+	
 	return 0;
 }
 
@@ -243,9 +306,6 @@ void map_render(SDL_Surface *surface, World *world, unsigned int player_entity) 
 	if (map_rect.y + h < HEIGHT) {
 		map_rect.y += (HEIGHT / 2) - (h / 2);
 	}
-	
-	
-	
 	
 	tempRect.x = map_rect.x;
 	tempRect.y = map_rect.y;

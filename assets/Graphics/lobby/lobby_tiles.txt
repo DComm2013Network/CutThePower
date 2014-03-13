@@ -1,5 +1,6 @@
-20
+21
 
+00	assets/Graphics/lobby/lobby_floor_1.bmp				0
 01	assets/Graphics/lobby/lobby_floor_1.bmp				0
 02	assets/Graphics/lobby/lobby_wall.bmp				1
 03	assets/Graphics/lobby/lobby_wall_bottom.bmp			1

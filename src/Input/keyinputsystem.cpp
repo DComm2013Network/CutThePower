@@ -21,7 +21,7 @@
 
 #include "../world.h"
 #include "components.h"
-#include "systems.h"
+#include "../systems.h"
 
 #define SYSTEM_MASK (COMPONENT_COMMAND) /**< Entities with a command component will be processed by the system. */
 
@@ -81,7 +81,6 @@ void KeyInputSystem(World *world, bool *running)
 		memcpy(prevKeyboardState, p, sizeof(Uint8) * numKeys);
         return;
 	}
-	
 	
     //If a textfield is focused
     if (textField != -1) {
@@ -157,6 +156,26 @@ void KeyInputSystem(World *world, bool *running)
 			
 			command->commands[C_ACTION] = (currentKeyboardState[command_keys[C_ACTION]] != 0) && (prevKeyboardState[command_keys[C_ACTION]] == 0);
 			
+			
+			
+			if (command->commands[C_ACTION]) {
+				
+				unsigned int mainframe = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION);
+				
+				world->position[mainframe].x = world->position[entity].x;
+				world->position[mainframe].y = world->position[entity].y;
+				
+				world->position[mainframe].width = TILE_WIDTH;
+				world->position[mainframe].height = TILE_HEIGHT;
+				
+				world->renderPlayer[mainframe].width = TILE_WIDTH;
+				world->renderPlayer[mainframe].height = TILE_HEIGHT;
+				
+				load_animation("assets/Graphics/objects/computers/mainframe_5_animation.txt", world, mainframe);
+				play_animation(&(world->animation[mainframe]), "mainframe");
+				
+			}
+			
         }
     }
     
@@ -165,6 +184,7 @@ void KeyInputSystem(World *world, bool *running)
 		prevKeyboardState = (Uint8*)malloc(sizeof(Uint8) * numKeys);
 	}
 	memcpy(prevKeyboardState, p, sizeof(Uint8) * numKeys);
+	free(p);
 }
 
 /**

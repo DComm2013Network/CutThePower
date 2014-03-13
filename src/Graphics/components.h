@@ -21,7 +21,6 @@
  * @struct RenderPlayerComponent
  */
 typedef struct{
-	SDL_Texture *playerTexture; /**< The texture with which to render the player. */
 	SDL_Surface *playerSurface; /**< The surface on to which to render the player. */
 	int width;                  /**< The player's height in pixels. */
 	int height;                 /**< The player's width in pixels. */
@@ -37,6 +36,7 @@ typedef struct {
 	int frames_to_skip;
 	int frame_count;
 	int sound_effect;
+	int loop;
 	
 } Animation;
 

@@ -88,8 +88,16 @@ unsigned int create_level(World* world, uint8_t** map, int width, int height, in
 			lastID++;
 			world->mask[entity] = COMPONENT_LEVEL;
 			world->level[entity].map = (uint8_t**)malloc(sizeof(uint8_t*) * width);
+			
+			if (world->level[entity].map == 0) {
+				printf("mallocing error.\n");
+			}
 			for (i = 0; i < width; i++) {
 				world->level[entity].map[i] = (uint8_t*)malloc(sizeof(uint8_t) * height);
+				
+				if (world->level[entity].map[i] == 0) {
+					printf("mallocing error.\n");
+				}
 			}
 			for (i = 0; i < width; i++) {
 				for (n = 0; n < height; n++) {
@@ -140,10 +148,10 @@ unsigned int create_player(World* world, int x, int y, bool controllable) {
 	render.width = 40;
 	render.height = 40;
 	//render.playerSurface = IMG_Load("assets/Graphics/player_80px.png");
-	render.playerSurface = IMG_Load("assets/Graphics/hacker_down.png");
-	if (!render.playerSurface) {
-		printf("mat is a doof\n");
-	}
+	//render.playerSurface = IMG_Load("assets/Graphics/hacker_down.png");
+	//if (!render.playerSurface) {
+	//	printf("mat is a doof\n");
+	//}
 	
 	pos.x = x;
 	pos.y = y;
@@ -222,6 +230,34 @@ unsigned int create_player(World* world, int x, int y, bool controllable) {
  * @author
  */
 void destroy_entity(World* world, const unsigned int entity) {
+	
+	int i, j;
+	
+	if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_ANIMATION)) {
+		
+		for(i = 0; i < world->animation[entity].animation_count; i++) {
+			
+			//free(world->animation[entity].animations[i].name);
+			
+			for(j = 0; j < world->animation[entity].animations[j].surface_count; j++) {
+				
+				//SDL_FreeSurface(world->animation[entity].animations[j].surfaces[j]);
+				
+			}
+		}
+		//free(world->animation[entity].animations);
+		
+	}
+	else if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_RENDER_PLAYER)) {
+		
+		//printf("POINTER: %p\n", world->renderPlayer[entity].playerSurface);
+		
+		//if (world->renderPlayer[entity].playerSurface != NULL)
+			//SDL_FreeSurface(world->renderPlayer[entity].playerSurface);
+		
+	}
+	
+	
 	world->mask[entity] = COMPONENT_EMPTY;
 }
 

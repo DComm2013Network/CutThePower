@@ -55,7 +55,7 @@ int main(int argc, char* argv[]) {
 		
 		//INPUT
 		KeyInputSystem(world, &running);
-		MouseInputSystem(world, &entity);
+		MouseInputSystem(world, &entity, &running);
 		movement_system(world);
 		if (entity < MAX_ENTITIES) {
 			map_render(surface, world, entity);
@@ -66,6 +66,9 @@ int main(int argc, char* argv[]) {
 		
 		SDL_UpdateWindowSurface(window);
 	}
+	
+	cleanup_sound();
+	
 	return 0;
 }
 

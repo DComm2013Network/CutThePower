@@ -88,15 +88,20 @@ void movement_system(World* world) {
 				
 				if (command->commands[C_UP]) {
 					add_force(world, entity, world->movement[entity].acceleration, -90);
+					play_animation(&(world->animation[entity]), "up");
 				}
 				if (command->commands[C_DOWN]) {
 					add_force(world, entity, world->movement[entity].acceleration, 90);
+					play_animation(&(world->animation[entity]), "down");
 				}
 				if (command->commands[C_LEFT]) {
 					add_force(world, entity, world->movement[entity].acceleration, 180);
+					play_animation(&(world->animation[entity]), "left");
 				}
 				if (command->commands[C_RIGHT]) {
 					add_force(world, entity, world->movement[entity].acceleration, 0);
+					
+					play_animation(&(world->animation[entity]), "right");
 				}
 
 				int code = 0;

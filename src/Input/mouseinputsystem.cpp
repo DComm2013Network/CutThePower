@@ -30,7 +30,7 @@ int textField = -1;
  *
  * @author Jordan Marling
  */
-void MouseInputSystem(World *world, unsigned int *player_entity)
+void MouseInputSystem(World *world, unsigned int *player_entity, bool *running)
 {
     int entity, e, x, y;
     static Uint32 previousState = 0;
@@ -141,7 +141,8 @@ void MouseInputSystem(World *world, unsigned int *player_entity)
 					}
 					else if (strcmp(button->label, "mainmenu_exit") == 0) {
 						destroy_world(world);
-						exit(0);
+						*running = false;
+						return;
 					}
 					
 					//OPTIONS
@@ -215,12 +216,34 @@ void MouseInputSystem(World *world, unsigned int *player_entity)
 						stop_music();
 						stop_effect();
 						
-						map_init(world, "assets/Graphics/lobby/lobby.txt", "assets/Graphics/lobby/lobby_tiles.txt");
+						map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/map01_tiles.txt");
+						//map_init(world, "assets/Graphics/lobby/lobby.txt", "assets/Graphics/lobby/lobby_tiles.txt");
 						//map_init(world, "assets/Graphics/SampleFloor.txt", "assets/Graphics/tiles_lobby.txt");
 						
 						*player_entity = create_player(world, 600, 600, true);
 						
 						world->mask[*player_entity] |= COMPONENT_ANIMATION;
+						
+						load_animation("assets/Graphics/player/robber/rob_animation.txt", world, *player_entity);
+						
+						
+						/*unsigned int mainframe = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION);
+						
+						world->position[mainframe].x = 200;
+						world->position[mainframe].y = 200;
+
+						world->position[mainframe].width = 40;
+						world->position[mainframe].height = 40;
+						world->position[mainframe].s = 0;
+						world->position[mainframe].level = 0;
+						
+						world->renderPlayer[mainframe].width = 40;
+						world->renderPlayer[mainframe].height = 40;
+						
+						load_animation("assets/Graphics/objects/computers/mainframe_5_animation.txt", world, mainframe);
+						play_animation(&(world->animation[mainframe]), "mainframe");
+						
+						*/
 						
 						//load_animation("assets/Graphics/robber/rob_animation.txt", &(world->animation[*player_entity]));
 						

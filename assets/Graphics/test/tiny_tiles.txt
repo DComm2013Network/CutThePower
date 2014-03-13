@@ -1,4 +1,0 @@
-2
-
-0 assets/floor_small.bmp
-1 assets/wall_small.bmp

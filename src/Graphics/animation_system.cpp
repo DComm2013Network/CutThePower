@@ -57,20 +57,22 @@ void animation_system(World *world) {
 					}
 				}
 				
-				if (animation->index >= animation->surface_count) {
-					
-					animation->index = 0;
-					animation->frame_count = 0;
-					animationComponent->current_animation = -1;
-					renderPlayer->playerSurface = animation->surfaces[0];
-					continue;
-				}
-				
 				animation->frame_count++;
 				
 				if (animation->frame_count > animation->frames_to_skip) {
 					
 					animation->frame_count = 0;
+					
+					if (animation->index >= animation->surface_count) {
+						
+						animation->index = 0;
+						animation->frame_count = 0;
+						if (animation->loop == -1) {
+							animationComponent->current_animation = -1;
+							renderPlayer->playerSurface = animation->surfaces[0];
+							continue;
+						}
+					}
 					
 					renderPlayer->playerSurface = animation->surfaces[animation->index];
 					
@@ -100,7 +102,7 @@ int load_animation(char *filename, World *world, unsigned int entity) {
 	FILE *fp;
 	
 	char animation_name[64];
-	int animation_frames, frames_to_skip, triggered_sound;
+	int animation_frames, frames_to_skip, triggered_sound, loop_animation;
 	int frame_index, animation_index;
 	
 	char animation_filename[64];
@@ -122,15 +124,18 @@ int load_animation(char *filename, World *world, unsigned int entity) {
 	
 	for(animation_index = 0; animation_index < animationComponent->animation_count; animation_index++) {
 		
-		if (fscanf(fp, "%s %d %d %d", animation_name, &animation_frames, &frames_to_skip, &triggered_sound) != 4) {
+		if (fscanf(fp, "%s %d %d %d %d", animation_name, &animation_frames, &frames_to_skip, &triggered_sound, &loop_animation) != 5) {
 			printf("Expected more animations!\n");
 			return -1;
 		}
 		
 		animationComponent->animations[animation_index].surfaces = (SDL_Surface**)malloc(sizeof(SDL_Surface*) * animation_frames);
+		
 		animationComponent->animations[animation_index].surface_count = animation_frames;
 		animationComponent->animations[animation_index].frames_to_skip = frames_to_skip;
 		animationComponent->animations[animation_index].sound_effect = triggered_sound;
+		animationComponent->animations[animation_index].loop = loop_animation;
+		
 		animationComponent->animations[animation_index].name = (char*)malloc(sizeof(char) * strlen(animation_name));
 		strcpy(animationComponent->animations[animation_index].name, animation_name);
 		
@@ -144,6 +149,10 @@ int load_animation(char *filename, World *world, unsigned int entity) {
 			//printf("File: %s\n", animation_filename);
 			
 			animationComponent->animations[animation_index].surfaces[frame_index] = IMG_Load(animation_filename);
+			
+			if (animationComponent->animations[animation_index].surfaces[frame_index] == 0) {
+				printf("Error loading file: %s\n", animation_filename);
+			}
 		}
 		
 		//printf("Loaded animation: %s\n", animationComponent->animations[animation_index].name);
@@ -169,11 +178,18 @@ void play_animation(AnimationComponent *animationComponent, char *animation_name
 	
 	for(i = 0; i < animationComponent->animation_count; i++) {
 		
+		//printf("Looking at animation: %s\n", animationComponent->animations[i].name);
+		
 		if (strcmp(animationComponent->animations[i].name, animation_name) == 0) {
+			
+			if (animationComponent->current_animation == i)
+				return;
 			
 			animationComponent->current_animation = i;
 			animationComponent->animations[i].frame_count = 0;
 			animationComponent->animations[i].index = 0;
+			
+			//printf("Playing animation: %s\n", animationComponent->animations[i].name);
 			
 			return;
 		}
