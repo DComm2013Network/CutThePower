@@ -114,7 +114,15 @@ void client_update_pos(World *world, void *packet)
 	for (int i = 0; i < MAX_PLAYERS; i++)
 	{
 		if (!pos_update->players_on_floor[i] || player_table[i] == CLIENT_PLAYER) // If they're not on this floor or it's our player
+		{
+			if(!pos_update->players_on_floor[i])
+			{
+				destroy_entity(world, i);
+				player_table[i] = UNASSIGNED;
+			}
+
 			continue;
+		}
 
 		world->movement[player_table[i]].movX	= pos_update->xVel[i];
 		world->movement[player_table[i]].movY 	= pos_update->yVel[i];
