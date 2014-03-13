@@ -17,6 +17,10 @@
  * 
  * @param[in]   pipe_ends  An identifier for the pipe. (pipe_ends[0] - for reading, pipe_ends[1] - for writing)
  *
+ * Revisions: <ul>
+ *            <li>Shane Spoor - March 12, 2014 - Removed non-blocking flag.</li>
+ *            </ul> 
+ *
  * @return  <ul>
  *              <li>Returns 0 on successful completion.</li>
  *              <li>Returns -1 on error and errno is set to indicate the type of error.</li>
@@ -30,13 +34,10 @@ int create_pipe(int pipe_ends[2])
 	int ret = pipe(pipe_ends);
 	int flags[2];
 	if(ret < 0)
+    {
+        perror("create_pipe");
 		return ret;
-	
-	if((flags[0] = fcntl(pipe_ends[0], F_GETFD, 0)) == -1 || (flags[1] = fcntl(pipe_ends[1], F_SETFD, O_NONBLOCK)) == -1)
-		return -1;
-	
-	if(fcntl(pipe_ends[0], F_SETFD, flags[0] | O_NONBLOCK) == -1 || fcntl(pipe_ends[1], F_SETFD, flags[1] | O_NONBLOCK) == -1)
-		return -1;
+    }
 
     return 0;
 }
@@ -46,6 +47,10 @@ int create_pipe(int pipe_ends[2])
  * 
  * This basically "writes up to count bytes from the buffer pointed buf to the file 
  * referred to by the file descriptor fd".
+ *
+ * Revisions: <ul>
+ *            <li>Shane Spoor - March 12, 2014 - Added error message printing on failure.</li>
+ *            </ul> 
  * 
  * @param[in]   fd      File descriptor to write to.
  * @param[in]   buf     A pointer to the buffer with the data.
@@ -62,7 +67,12 @@ int create_pipe(int pipe_ends[2])
  */
 int write_pipe(int fd, const void *buf, size_t count)
 {
-    return (write(fd, buf, count));
+    int ret = write(fd, buf, count);
+    
+    if(ret == -1)
+        perror("write_pipe");        
+
+    return ret;
 }
 
 /**
@@ -72,6 +82,10 @@ int write_pipe(int fd, const void *buf, size_t count)
  * starting at buf".
  *
  * NOTE: It's not an error if the number of bytes returned is smaller than the number of bytes requested.
+ *
+ * Revisions: <ul>
+ *            <li>Shane Spoor - March 12, 2014 - Added error message printing on failure.</li>
+ *            </ul> 
  * 
  * @param[in]   fd      File descriptor to read from.
  * @param[in]   buf     A pointer to the buffer with the data.
@@ -88,5 +102,10 @@ int write_pipe(int fd, const void *buf, size_t count)
  */
 int read_pipe(int fd, void *buf, size_t count)
 {
-    return (read(fd, buf, count));
+    int ret = read(fd, buf, count);
+    
+    if(ret == -1)
+        perror("read_pipe");        
+
+    return ret;
 }

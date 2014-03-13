@@ -38,6 +38,7 @@ typedef struct NETWORK_DATA
 
 void *networkRouter(void *args);
 int dispatch_thread(void *(*function)(void *), void *params, pthread_t *handle);
+int update_gameplay(int gameplay_write_fd, void **packets, uint64_t *timestamps);
 uint32_t determine_changed(void **packets, unsigned *changed);
 int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int sendfd[2],
 				int recvfd[2], pthread_t *thread_receive, pthread_t *thread_send);

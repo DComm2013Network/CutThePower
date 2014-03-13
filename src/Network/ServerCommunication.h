@@ -5,18 +5,21 @@
 #include <SDL2/SDL_net.h>
 #include <SDL2/SDL.h>
 #include <unistd.h>
-#include <semaphore.h>
-#include <stdio.h>
-#include <stdarg.h>
+#include <cstdio>
+#include <cstdarg>
+#include <cerrno>
 
 #define INFINITE_TIMEOUT -1   /**< Tells SDL to wait for an "infinite" (49 day) timeout */
 #define MAX_TCP_RECV     2944 /**< Max TCP "packet" size from server to client (PKT_GAME_STATUS)*/
 #define MAX_UDP_RECV     644  /**< Max UDP packet size from server to client (PKT_ALL_POS_UPDATE)*/	
 
-#define ERR_STD_LIB     -1 /**< Indicates that a standard library function (e.g. malloc) failed. */
-#define ERR_CONN_CLOSED -2 /**< Indicates that the TCP connection was closed. */
-#define ERR_RECV_FAILED -3 /**< Indicates that receiving data from a socket failed. */
-#define ERR_CORRUPTED   -4 /**< Indicates that a UDP packet contains corrupted data. */
+#define ERR_CONN_CLOSED   -2 /**< The TCP connection was closed. */
+#define ERR_TCP_RECV_FAIL -3 /**< Receiving data from a TCP socket failed. */
+#define ERR_UDP_RECV_FAIL -4 /**< Receiving data from a UDP socket failed. */
+#define ERR_TCP_SEND_FAIL -5 /**< Sending over a TCP socket failed. */
+#define ERR_UDP_SEND_FAIL -6 /**< Sending over a UDP socket failed. */
+#define ERR_CORRUPTED     -7 /**< A packet contains corrupted data. */
+#define ERR_NO_HOST       -8 /**< The host couldn't be resolved. */
 
 /* Thread functions */
 void *recv_thread_func(void *ndata);

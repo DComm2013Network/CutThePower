@@ -36,7 +36,7 @@ SDL_Rect map_rect;
 -- Tiles are being loaded from the array. 
 --
 ------------------------------------------------------------------------------------------------------------------*/
-int map_init(World* world, char *file_map, char *file_tiles) {
+int map_init(World* world, const char *file_map, const char *file_tiles) {
 	
 	FILE *fp_map;
 	FILE *fp_tiles;

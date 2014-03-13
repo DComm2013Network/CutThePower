@@ -59,7 +59,7 @@ void *networkRouter(void *args)
     fd_set		active;
     int 		max_fd;
     uint32_t 	type;
-    uint64_t	timestamp, cached_timestamps[NUM_PACKETS] = {0}, sem_buf;
+    uint64_t	timestamps[NUM_PACKETS] = {0}, sem_buf;
     void 		*packet, *cached_packets[NUM_PACKETS] = {0};
     pthread_t 	thread_send;
     pthread_t 	thread_receive;
@@ -69,9 +69,7 @@ void *networkRouter(void *args)
     NDATA 		receive = (NDATA) malloc(sizeof(WNETWORK_DATA));
 
     if(init_router(&max_fd, send, receive, gameplay, sendfd, recvfd, &thread_receive, &thread_send) == -1)
-    {
     	return NULL;
-    }
 
     FD_ZERO(&listen_fds);
     FD_SET(recvfd[READ_END], &listen_fds);
@@ -91,8 +89,16 @@ void *networkRouter(void *args)
         {
 			packet = read_data(recvfd[READ_END], &type);
 			read(recvfd[READ_END], &timestamp, sizeof(timestamp));
-			// write_packet(gameplay->write_pipe, type, packet);
-            write_pipe(gameplay->write_pipe, &timestamp, sizeof(timestamp));
+
+            if(timestamp[type - 1] < timestamp)     // If the received packet is more recent, replace the cached one
+            {
+                timestamp[type - 1] = timestamp;
+                free(cached_packets[type - 1]);
+                cached_packets[type - 1] = packet;
+            }
+            else                                    // Otherwise discard it
+                free(packet);
+
 			--ret;
         }
 
@@ -105,21 +111,8 @@ void *networkRouter(void *args)
 
         if(ret && FD_ISSET(game_net_signalfd, &active))
         {
-        	uint32_t num_changed;
-        	unsigned changed_mask = 0;
-			fprintf(stderr, "Network router: signal received from client udpate system.\n");
-        	read(game_net_signalfd, &sem_buf, sizeof(uint64_t)); /* Decrease the semaphore to 0 */
-        	num_changed = determine_changed(cached_packets, &changed_mask);
-        	write(gameplay->write_pipe, &num_changed, sizeof(num_changed));
-			fprintf(stderr, "Network router: num_changed = %d\n", num_changed);
-        	for(uint32_t i = 0; i < NUM_PACKETS; ++i)
-        	{
-        		if(changed_mask & (1 << i))
-        		{
-        			write(gameplay->write_pipe, &i, sizeof(i));
-        			write(gameplay->write_pipe, cached_packets[i], packet_sizes[i]);
-        		}
-        	}
+        	if(update_gameplay(gameplay->write_pipe, cached_packets, timestamps) == -1)
+                return NULL;
 		}
         
     }
@@ -262,6 +255,57 @@ int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int send
 	return 0;
 }
 
+/**
+ * Initialises the variables used in the router thread or the send/receive threads.
+ *
+ * @param[in] gameplay_write_fd Write end of the pipe to the client/gameplay update system.
+ * @param[in] packets           The latest packets received from the server.
+ * @param[in] timestamps        An array of timestamps associated with each packet.
+ *
+ * @return <ul>
+ *              <li>0 on success</li>
+                <li>-1 on failure.</li>
+ *         </ul>
+ *
+ * @designer Shane Spoor
+ * @author   Shane Spoor
+ *
+ * @date March 12, 2014
+ */
+int update_gameplay(int gameplay_write_fd, void **packets, uint64_t *timestamps)
+{
+    uint32_t num_changed;
+    uint64_t sem_buf;
+    unsigned changed_mask = 0;
+
+    read(game_net_signalfd, &sem_buf, sizeof(uint64_t)); /* Receive the signal */
+    num_changed = determine_changed(cached_packets, &changed_mask);
+
+    if(write(gameplay->write_pipe, &num_changed, sizeof(num_changed)) == -1)
+    {
+        perror("update_gameplay: write");
+        return -1;
+    }
+
+    if(!num_changed)
+        return 0;
+
+    for(uint32_t i = 0; i < NUM_PACKETS; ++i)
+    {
+        if(changed_mask & (1 << i))
+        {
+            if(write(gameplay->write_pipe, &i, sizeof(i)) == -1 ||
+               write(gameplay->write_pipe, cached_packets[i], packet_sizes[i]) == -1)
+            {
+                perror("update_gameplay: write");
+                return -1;
+            }
+            free(cached_packets[i]);
+            cached_packets[i] = NULL;
+        }
+    }
+    return 0;
+}
 /*
 
 The gameplay module will basically create the pipe and call the networkRouter() function
