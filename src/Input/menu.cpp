@@ -5,7 +5,7 @@
 #include "menu.h"
 #include "../world.h"
 #include "../components.h"
-#include "systems.h"
+#include "../systems.h"
 #include "../sound.h"
 
 unsigned int background = MAX_ENTITIES + 1;
@@ -168,7 +168,7 @@ void create_main_menu_background(World *world) {
 	world->position[background].width = WIDTH;
 	world->position[background].height = HEIGHT;
 	
-	world->animation[background].triggered = false;
+	/*world->animation[background].triggered = false;
 	world->animation[background].index = 0;
 	world->animation[background].frames_to_skip = 3;
 	world->animation[background].frame_count = 0;
@@ -199,14 +199,16 @@ void create_main_menu_background(World *world) {
 	world->animation[background].surfaces[19] = IMG_Load("assets/Graphics/menu/MainMenu_19.png");
 	
 	world->animation[background].surface_count = menu_animations;
-	world->animation[background].triggered = false;
+	world->animation[background].triggered = false;*/
 	
+	load_animation("assets/Graphics/menu/mainmenu_animation.txt", world, background);
 	
 	world->renderPlayer[background].width = WIDTH;
 	world->renderPlayer[background].height = HEIGHT;
-	world->renderPlayer[background].playerSurface = world->animation[background].surfaces[0];
+	//world->renderPlayer[background].playerSurface = world->animation[background].surfaces[0];
 	
 	play_music(SOUND_MUSIC_MENU_RAIN);
+	//play_animation(&(world->animation[background]), "mainmenu");
 }
 
 

@@ -27,6 +27,19 @@ typedef struct{
 	int height;                 /**< The player's width in pixels. */
 } RenderPlayerComponent;
 
+
+typedef struct {
+	
+	char *name;
+	SDL_Surface **surfaces;
+	int index;
+	int surface_count;
+	int frames_to_skip;
+	int frame_count;
+	int sound_effect;
+	
+} Animation;
+
 /**
  * Contains the components related to animation.
  *
@@ -36,14 +49,13 @@ typedef struct{
  */
 typedef struct {
 	
-	SDL_Surface **surfaces;
-	int index;
-	int surface_count;
-	bool triggered;
-	int frames_to_skip;
-	int frame_count;
-	int rand_frame;
-	int sound_effect;
+	Animation *animations;
+	int animation_count;
+	int current_animation;
+	
+	int rand_animation;
+	int rand_occurance;
+	
 	
 } AnimationComponent;
 

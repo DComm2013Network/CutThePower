@@ -8,6 +8,7 @@
 
 #include "../world.h"
 #include "components.h"
+#include "../systems.h"
 #include "menu.h"
 #include "../Graphics/map.h"
 #include "../sound.h"
@@ -211,6 +212,9 @@ void MouseInputSystem(World *world, unsigned int *player_entity)
 						
 						destroy_world(world);
 						
+						stop_music();
+						stop_effect();
+						
 						map_init(world, "assets/Graphics/lobby/lobby.txt", "assets/Graphics/lobby/lobby_tiles.txt");
 						//map_init(world, "assets/Graphics/SampleFloor.txt", "assets/Graphics/tiles_lobby.txt");
 						
@@ -218,7 +222,10 @@ void MouseInputSystem(World *world, unsigned int *player_entity)
 						
 						world->mask[*player_entity] |= COMPONENT_ANIMATION;
 						
-						world->animation[*player_entity].triggered = false;
+						//load_animation("assets/Graphics/robber/rob_animation.txt", &(world->animation[*player_entity]));
+						
+						
+						/*world->animation[*player_entity].triggered = false;
 						world->animation[*player_entity].index = 0;
 						world->animation[*player_entity].frames_to_skip = 30;
 						world->animation[*player_entity].frame_count = 0;
@@ -231,7 +238,7 @@ void MouseInputSystem(World *world, unsigned int *player_entity)
 						world->animation[*player_entity].surfaces[2] = IMG_Load("assets/Graphics/player/rob_down3.png");
 						
 						world->animation[*player_entity].surface_count = 3;
-						world->animation[*player_entity].triggered = true;
+						world->animation[*player_entity].triggered = true;*/
 						
 						
 						return;

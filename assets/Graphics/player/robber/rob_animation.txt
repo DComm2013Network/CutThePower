@@ -1,0 +1,21 @@
+4
+
+down 3
+assets/Graphics/player/rob_down1.png
+assets/Graphics/player/rob_down2.png
+assets/Graphics/player/rob_down3.png
+
+up 3
+assets/Graphics/player/rob_up1.png
+assets/Graphics/player/rob_up2.png
+assets/Graphics/player/rob_up3.png
+
+left 3
+assets/Graphics/player/rob_left1.png
+assets/Graphics/player/rob_left2.png
+assets/Graphics/player/rob_left3.png
+
+right 3
+assets/Graphics/player/rob_right1.png
+assets/Graphics/player/rob_right2.png
+assets/Graphics/player/rob_right3.png
