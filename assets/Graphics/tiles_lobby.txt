@@ -1,0 +1,18 @@
+16
+
+02	assets/Graphics/lobby_wall_1.bmp		0
+01	assets/Graphics/lobby_floor_1.bmp		0
+00	assets/Graphics/floor2_small.bmp		0
+03	assets/Graphics/floor3_small.bmp		0
+04	assets/Graphics/floor4_small.bmp		0
+05	assets/Graphics/floor5_small.bmp		0
+06	assets/Graphics/floor6_small.bmp		0
+07	assets/Graphics/floor7_small.bmp		0
+08	assets/Graphics/floor8_small.bmp		0
+09	assets/Graphics/floor9_small.bmp		0
+10	assets/Graphics/floor10_small.bmp		0
+11	assets/Graphics/floor11_small.bmp		0
+12	assets/Graphics/floor12_small.bmp		0
+13	assets/Graphics/floor13_small.bmp		0
+14	assets/Graphics/floor14_small.bmp		0
+15	assets/Graphics/floor15_small.bmp		0
