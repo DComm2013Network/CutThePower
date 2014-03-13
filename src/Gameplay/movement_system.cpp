@@ -12,11 +12,12 @@
 #define PI 3.14159265
 
 
-void movement_system(World* world) {
+void movement_system(World* world, int sendpipe) {
 	unsigned int entity;
 	PositionComponent		*position;
 	CommandComponent		*command;
 	ControllableComponent 	*controllable;
+	int network_change = 0;
 
 	//loop through each entity and see if the system can do work on it.
 	for(entity = 0; entity < MAX_ENTITIES; entity++) {
@@ -37,18 +38,21 @@ void movement_system(World* world) {
 				temp.s = position->s;
 				temp.level = position->level;
 				
-				
 				if (command->commands[C_UP]) {
 					add_force(world, entity, world->movement[entity].acceleration, -90);
+					network_change++;
 				}
 				if (command->commands[C_DOWN]) {
 					add_force(world, entity, world->movement[entity].acceleration, 90);
+					network_change++;
 				}
 				if (command->commands[C_LEFT]) {
 					add_force(world, entity, world->movement[entity].acceleration, 180);
+					network_change++;
 				}
 				if (command->commands[C_RIGHT]) {
 					add_force(world, entity, world->movement[entity].acceleration, 0);
+					network_change++;
 				}
 				
 				temp.x = world->position[entity].x + world->movement[entity].movX;
@@ -60,6 +64,7 @@ void movement_system(World* world) {
 						//position data based on the collision that occurred.
 						world->movement[entity].movX = world->movement[entity].movX - (temp.x - world->position[entity].x);
 						world->movement[entity].movY = world->movement[entity].movY - (temp.y - world->position[entity].y);
+						network_change++;
 					}
 					//application of all of the forces this tick
 					apply_force(world, entity);
@@ -68,6 +73,9 @@ void movement_system(World* world) {
 					world->movement[entity].movX *= 1 - 0.01;
 					world->movement[entity].movY *= 1 - 0.01;
 				}
+				
+				if(network_change > 0)
+					send_location(world, sendpipe);
 			}
 		} 
 	}

@@ -2,7 +2,7 @@
 
 #include "systems.h"
 #include "world.h"
-
+#define NETWORKON
 /*
 ==============================================
 	DEFINE NETWORKON TO ENABLE NETWORKING
@@ -40,7 +40,6 @@ int main(int argc, char* argv[]) {
 		
 	create_player(world, 50, 50, true);
 	
-	//game_net_lockfd		= eventfd(0, EFD_SEMAPHORE);
 
 	#ifdef NETWORKON
 		game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
@@ -52,12 +51,11 @@ int main(int argc, char* argv[]) {
 	while (running) {
 		KeyInputSystem(world, &running);
 		MouseInputSystem(world);
-		movement_system(world);
+		movement_system(world, send_router_fd[WRITE_END]);
 		map_render(surface);
 		render_player_system(*world, surface);
 	
 		#ifdef NETWORKON
-			send_system(world, send_router_fd[WRITE_END]);
 			client_update_system(world, rcv_router_fd[READ_END]);
 		#endif
 

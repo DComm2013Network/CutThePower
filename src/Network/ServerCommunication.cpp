@@ -69,6 +69,10 @@ static int cnt_errno = 0;
 						exit(1);
 					}
 
+					if(cnt_errno == -4){
+						continue;
+					}
+
 					if(cnt_errno == -2){
 						printf("Connection lost, exiting client.\n");
 						close_connections(set, recv_data->tcp_sock, recv_data->udp_sock);
@@ -76,8 +80,7 @@ static int cnt_errno = 0;
 					}
 				}
 				printf("Recieved TCP packet: %u\n", packet_type);		
-				if(write_packet(recv_data->write_pipe, packet_type, game_packet) == -1 ||
-				   write_pipe(recv_data->write_pipe, &timestamp, sizeof(timestamp)) == -1)
+				if(write_packet(recv_data->write_pipe, packet_type, game_packet) == -1)
 				{
 					printf("TCP>Router: Error in write packet, flushing pipe");
 					fflush((FILE*)&recv_data->write_pipe);
@@ -95,6 +98,11 @@ static int cnt_errno = 0;
 						printf("Failure in udp recv : %s ", SDLNet_GetError());
 						continue;
 					}
+
+					if(cnt_errno == -4){
+						continue;
+					}
+
 				}
 				printf("Recieved TCP packet: %u\n", packet_type);	
 				if(write_packet(recv_data->write_pipe, packet_type, game_packet) == -1 ||
@@ -150,7 +158,6 @@ void* send_thread_func(void* ndata){
 		{
 			send_udp(data, &type, snd_data->udp_sock, packet_sizes[type - 1] + sizeof(uint32_t));
 		}
-		printf("Done sending\n");
 	}
 	return NULL;
 }
@@ -207,7 +214,7 @@ int send_udp(void * data, uint32_t * type, UDPsocket sock, uint32_t size){
 	pktdata->len = size;
 
 	numsent=SDLNet_UDP_Send(sock, pktdata->channel, pktdata);
-	if(!numsent) {
+	if(numsent < 0) {
     	fprintf(stderr,"SDLNet_UDP_Send: %s\n", SDLNet_GetError());
     	return -1;
 	}
@@ -237,8 +244,22 @@ void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 	int numread;
 
 	numread = recv_tcp(sock, packet_type, sizeof(uint32_t));
-	if(numread < 0)
+	if(numread < 0){
+		cnt_errno = -3;
 		return NULL;
+	}
+
+	if(numread == 0){
+		cnt_errno = -2;
+		return NULL;
+	}
+
+	if(*packet_type <= 0 || *packet_type > 14)
+	{
+		printf("recv_tcp_packet : Recieved Invalid Packet Type!\n");
+		cnt_errno = -4;
+		return NULL; 
+	}
 
 	uint32_t packet_size = packet_sizes[(*packet_type) - 1];
 
@@ -250,7 +271,7 @@ void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 	}
 
 	numread = recv_tcp(sock, packet, packet_size);
-	numread = recv_tcp(sock, timestamp, sizeof(uint64_t));
+	//numread = recv_tcp(sock, timestamp, sizeof(uint64_t));
 	return packet;
 }
 
@@ -275,6 +296,8 @@ void *recv_udp_packet(UDPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 	void *packet;
 	uint32_t packet_size;
 
+	*packet_type = 1;
+
 	if(recv_udp(sock, pktdata) == -1){
 		cnt_errno = -3;
 		return NULL;
@@ -283,6 +306,13 @@ void *recv_udp_packet(UDPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 	*packet_type 	= ((uint32_t *)pktdata->data)[0];
 	packet_size 	= packet_sizes[(*packet_type) - 1];
 	packet			= malloc(packet_size);
+
+	if(*packet_type <= 0 || *packet_type > 14)
+	{
+		printf("recv_tcp_packet : Recieved Invalid Packet Type!\n");
+		cnt_errno = -4;
+		return NULL;
+	}
 
 	if(!packet)
 	{

@@ -14,7 +14,7 @@
 #include "../world.h"
 #include <sys/poll.h>
  
-extern int game_net_signalfd, game_net_lockfd;
+extern int game_net_signalfd;
 static unsigned int *player_table = NULL; /**< A lookup table mapping server player numbers to client entities. */
 
 /**
@@ -44,19 +44,13 @@ void client_update_system(World *world, int net_pipe) {
 	}
 	
 	write(game_net_signalfd, &signal, sizeof(uint64_t));
-	//read(game_net_lockfd, &signal, sizeof(uint64_t)); /* Wait for network to finish writing */
 	
 	num_packets = read_type(net_pipe); // the function just reads a 32 bit value, so this works; semantically, not ideal
 	
-	// Commented out code is for recieving single pakets
-
-	// if (poll(&(struct pollfd){ .fd = net_pipe, .events = POLLIN }, 1, 0)!=1) {
-    //   		return;
-	// }	
 	for(i = 0; i < num_packets; ++i)
 	{
 		packet = read_data(net_pipe, &type);
-		fprintf(stderr, " %u\n", type);
+		
 			switch (type) {
 				case P_CONNECT:
 					if(client_update_info(world, packet) == CONNECT_CODE_DENIED)
@@ -81,8 +75,6 @@ void client_update_system(World *world, int net_pipe) {
 					client_update_pos(world, packet);
 					break;
 				case P_TAGGING:
-					//tagging logic
-					//I don't know how this compiled for you guys. -Clark
 					player_tag_packet(world, packet);
 					break;
 				// Should never receive a packet outside the above range (the rest are unpurposed or client->server packets); 
