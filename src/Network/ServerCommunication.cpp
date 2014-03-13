@@ -47,7 +47,7 @@ static int cnt_errno = 0;
  	NDATA				recv_data = (NDATA)ndata;
  	int 				numready;
  	SDLNet_SocketSet 	set = make_socket_set(2, recv_data->tcp_sock, recv_data->udp_sock);
-	
+	int 				res = 0;
  	if(!set)
  		return NULL;
  	
@@ -68,14 +68,20 @@ static int cnt_errno = 0;
 		{
 			if(SDLNet_SocketReady(recv_data->tcp_sock))
 			{
-				if(handle_tcp_in(recv_data->write_pipe, recv_data->tcp_sock) == -1)
+				if((res = handle_tcp_in(recv_data->write_pipe, recv_data->tcp_sock)) == -1)
                     break;
+                
+                if(res == -2)
+                	continue;
             }
 
     		if(SDLNet_SocketReady(recv_data->udp_sock))
     		{
-				if(handle_udp_in(recv_data->write_pipe, recv_data->udp_sock) == -1)
+				if((res = handle_udp_in(recv_data->write_pipe, recv_data->udp_sock)) == -1)
                     break;
+
+                if(res == -2)
+                	continue;
 			}
     	}
  	}
@@ -234,14 +240,19 @@ int handle_tcp_in(int router_pipe_fd, TCPsocket tcp_sock)
                 //close_connections(set, recv_data->tcp_sock, recv_data->udp_sock);
                 return -1;
             }
+
+
+	        if(cnt_errno == INVALID_TYPE)
+	        {
+	        	return -2;
+	        }
         }
         else if(write_pipe(router_pipe_fd, &packet_type, sizeof(packet_type)) == -1)
             return -1;
     }
     
     printf("Received TCP packet: %u\n", packet_type);
-    if(write_packet(router_pipe_fd, packet_type, game_packet) == -1 ||
-       write_pipe(router_pipe_fd, &timestamp, sizeof(timestamp)) == -1)
+    if(write_packet(router_pipe_fd, packet_type, game_packet) == -1)
 	{
         fprintf(stderr, "TCP>Router: Error in write packet, flushing pipe");
         fflush((FILE*)&router_pipe_fd);
@@ -280,6 +291,12 @@ int handle_udp_in(int router_pipe_fd, UDPsocket udp_sock)
             printf("Failure in udp recv : %s ", SDLNet_GetError());
             return -1;
         }
+
+        if(cnt_errno == INVALID_TYPE)
+        {
+        	return -2;
+        }
+
         printf("Received UDP packet: %u\n", packet_type);	
         if(write_packet(router_pipe_fd, packet_type, game_packet) == -1 ||
             write_pipe(router_pipe_fd, &timestamp, sizeof(timestamp)) == -1)
@@ -318,19 +335,19 @@ void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 
 	numread = recv_tcp(sock, packet_type, sizeof(uint32_t));
 	if(numread < 0){
-		cnt_errno = -3;
+		cnt_errno = ERR_RECV_FAILED;
 		return NULL;
 	}
 
 	if(numread == 0){
-		cnt_errno = -2;
+		cnt_errno = ERR_CONN_CLOSED;
 		return NULL;
 	}
 
 	if(*packet_type <= 0 || *packet_type > 14)
 	{
 		printf("recv_tcp_packet : Recieved Invalid Packet Type!\n");
-		cnt_errno = -4;
+		cnt_errno = INVALID_TYPE;
 		return NULL; 
 	}
 
@@ -406,7 +423,7 @@ void *recv_udp_packet(UDPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 
 	if(*packet_type <= 0 || *packet_type > 14)
 	{
-		printf("recv_tcp_packet : Recieved Invalid Packet Type!\n");
+		printf("recv_udp_packet : Recieved Invalid Packet Type!\n");
 		cnt_errno = -4;
 		return NULL;
 	}

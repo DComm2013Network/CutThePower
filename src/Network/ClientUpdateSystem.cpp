@@ -54,45 +54,45 @@ void client_update_system(World *world, int net_pipe) {
 	for(i = 0; i < num_packets; ++i)
 	{
 		packet = read_data(net_pipe, &type);
-		
-			switch (type) {
-				case P_CONNECT:
-					if(client_update_info(world, packet) == CONNECT_CODE_DENIED)
-						return; // Pass error up to someone else to deal with
-					break;
-				case G_STATUS:
-					client_update_status(world, packet);
-					break;
-				case P_CHAT:
-					// Chat data
-					break;
-				case P_OBJCTV_LOC:
-					// Map info
-					break;
-				case 7: // undefined
-					// Floor stuff
-					break;
-				case P_OBJSTATUS:
-					// Objective update (game_status is significant here)
-					break;
-				case G_ALLPOSUPDATE:
-					client_update_pos(world, packet);
-					break;
-				case P_TAGGING:
-					player_tag_packet(world, packet);
-					break;
-				// Should never receive a packet outside the above range (the rest are unpurposed or client->server packets); 
-				// discard it (and maybe log an error) if we get one
-				case 1:
-				case 5:
-				case 9:
-				case 10:
-				case 12:
-				default:
-					break;
-			}
-			free(packet);
+		printf("Updating with packet type %u\n", type);
+		switch (type) {
+			case P_CONNECT:
+				if(client_update_info(world, packet) == CONNECT_CODE_DENIED)
+					return; // Pass error up to someone else to deal with
+				break;
+			case G_STATUS:
+				client_update_status(world, packet);
+				break;
+			case P_CHAT:
+				// Chat data
+				break;
+			case P_OBJCTV_LOC:
+				// Map info
+				break;
+			case 7: // undefined
+				// Floor stuff
+				break;
+			case P_OBJSTATUS:
+				// Objective update (game_status is significant here)
+				break;
+			case G_ALLPOSUPDATE:
+				client_update_pos(world, packet);
+				break;
+			case P_TAGGING:
+				player_tag_packet(world, packet);
+				break;
+			// Should never receive a packet outside the above range (the rest are unpurposed or client->server packets); 
+			// discard it (and maybe log an error) if we get one
+			case 1:
+			case 5:
+			case 9:
+			case 10:
+			case 12:
+			default:
+				break;
 		}
+		free(packet);
+	}
 }
 
 /**

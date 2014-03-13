@@ -17,7 +17,7 @@
 #define ERR_CONN_CLOSED -2 /**< Indicates that the TCP connection was closed. */
 #define ERR_RECV_FAILED -3 /**< Indicates that receiving data from a socket failed. */
 #define ERR_CORRUPTED   -4 /**< Indicates that a UDP packet contains corrupted data. */
-
+#define INVALID_TYPE    -5
 /* Thread functions */
 void *recv_thread_func(void *ndata);
 void *send_thread_func(void *ndata);

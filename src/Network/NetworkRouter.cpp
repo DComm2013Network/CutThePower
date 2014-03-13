@@ -61,6 +61,7 @@ void *networkRouter(void *args)
     uint32_t 	type;
     uint64_t	timestamp, cached_timestamps[NUM_PACKETS] = {0}, sem_buf;
     void 		*packet, *cached_packets[NUM_PACKETS] = {0};
+    int         cached_types[NUM_PACKETS];
     pthread_t 	thread_send;
     pthread_t 	thread_receive;
     PDATA 		gameplay = (PDATA)args;
@@ -89,11 +90,7 @@ void *networkRouter(void *args)
 
         if(ret && FD_ISSET(recvfd[READ_END], &active))
         {
-			packet = read_data(recvfd[READ_END], &type);
-			read(recvfd[READ_END], &timestamp, sizeof(timestamp));
-			// write_packet(gameplay->write_pipe, type, packet);
-            write_pipe(gameplay->write_pipe, &timestamp, sizeof(timestamp));
-			--ret;
+			cached_packets[type] = read_data(recvfd[READ_END], &type);
         }
 
         if(ret && FD_ISSET(gameplay->read_pipe, &active))
@@ -107,11 +104,10 @@ void *networkRouter(void *args)
         {
         	uint32_t num_changed;
         	unsigned changed_mask = 0;
-			fprintf(stderr, "Network router: signal received from client udpate system.\n");
         	read(game_net_signalfd, &sem_buf, sizeof(uint64_t)); /* Decrease the semaphore to 0 */
         	num_changed = determine_changed(cached_packets, &changed_mask);
         	write(gameplay->write_pipe, &num_changed, sizeof(num_changed));
-			fprintf(stderr, "Network router: num_changed = %d\n", num_changed);
+			//fprintf(stderr, "Network router: num_changed = %d\n", num_changed);
         	for(uint32_t i = 0; i < NUM_PACKETS; ++i)
         	{
         		if(changed_mask & (1 << i))
