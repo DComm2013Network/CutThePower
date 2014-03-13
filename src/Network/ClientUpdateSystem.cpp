@@ -14,7 +14,7 @@
 #include "../world.h"
 #include <sys/poll.h>
  
-extern int game_net_signalfd;
+extern int game_net_signalfd, game_net_lockfd;
 extern int network_ready;
 static unsigned int *player_table = NULL; /**< A lookup table mapping server player numbers to client entities. */
 
@@ -37,6 +37,7 @@ void client_update_system(World *world, int net_pipe) {
 	uint32_t 	type;
 	uint32_t 	num_packets;
 	uint64_t	signal = 1;
+	uint64_t 	sem_buf;
 	unsigned	i;
 	
 	if(!player_table)
@@ -50,7 +51,7 @@ void client_update_system(World *world, int net_pipe) {
 
 	write(game_net_signalfd, &signal, sizeof(uint64_t));
 	num_packets = read_type(net_pipe); // the function just reads a 32 bit value, so this works; semantically, not ideal
-
+	read(game_net_lockfd, &sem_buf, sizeof(uint64_t));
 	for(i = 0; i < num_packets; ++i)
 	{
 		packet = read_data(net_pipe, &type);

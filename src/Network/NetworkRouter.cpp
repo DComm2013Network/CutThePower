@@ -27,7 +27,7 @@
 #include "PipeUtils.h"
 #include "Packets.h"
 
-extern int game_net_signalfd;
+extern int game_net_signalfd, game_net_lockfd;
 extern int network_ready;
 extern uint32_t packet_sizes[NUM_PACKETS];
 sem_t err_sem;
@@ -222,8 +222,8 @@ int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int send
     *max_fd = recvfd[READ_END] > gameplay->read_pipe ? recvfd[READ_END] : gameplay->read_pipe;
     *max_fd = game_net_signalfd > *max_fd ? game_net_signalfd : *max_fd;
 
-    resolve_host(&ipaddr, TCP_PORT, "192.168.0.49");
-    resolve_host(&udpaddr, UDP_PORT, "192.168.0.49");
+    resolve_host(&ipaddr, TCP_PORT, "192.168.43.27");
+    resolve_host(&udpaddr, UDP_PORT, "192.168.43.27");
     
     tcp_sock = SDLNet_TCP_Open(&ipaddr);
 
@@ -284,6 +284,7 @@ int update_gameplay(int gameplay_write_fd, void **packets, uint64_t *timestamps)
 {
     uint32_t num_changed;
     uint64_t sem_buf;
+    uint64_t signal = 1;
     unsigned changed_mask = 0;
 
     read(game_net_signalfd, &sem_buf, sizeof(uint64_t)); /* Receive the signal */
@@ -312,6 +313,7 @@ int update_gameplay(int gameplay_write_fd, void **packets, uint64_t *timestamps)
             packets[i] = NULL;
         }
     }
+    write(game_net_lockfd, &signal, sizeof(uint64_t));
     return 0;
 }
 /*

@@ -9,7 +9,7 @@
 ===============================================
 */
 
-int game_net_signalfd;
+int game_net_signalfd, game_net_lockfd;
 int network_ready = 0;
 
 int main(int argc, char* argv[]) {
@@ -43,6 +43,7 @@ int main(int argc, char* argv[]) {
 
 	#ifndef NETWORKOFF
 		game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
+		game_net_lockfd     = eventfd(0, EFD_SEMAPHORE);
 
 		init_client_network(send_router_fd, rcv_router_fd);
 		send_intialization(world, send_router_fd[WRITE_END]);
