@@ -26,6 +26,7 @@
 
 extern uint32_t packet_sizes[NUM_PACKETS];
 static int cnt_errno = 0;
+extern sem_t err_sem;
 
 /**
  * Monitors sockets to receive data from the server.
@@ -683,3 +684,74 @@ void close_connections(SDLNet_SocketSet set, TCPsocket tcpsock, UDPsocket udpsoc
 	SDLNet_TCP_Close(tcpsock);
 	SDLNet_UDP_Close(udpsock);
 }
+
+/**
+ * Sets cnt_errno to the specified value.
+ *
+ * The function uses a semaphore to ensure thread safety. If a thread can't acquire
+ * the semaphore to write to cnt_errno, it does not block; any error reported this
+ * way will require the network threads to shut down, and all errors will be logged
+ * regardless.
+ *
+ * This behaviour may change in the future (by creating a linked list of errors, for
+ * example).
+ *
+ * @param[in] error The error number to store in cnt_errno.
+ *
+ * @designer Shane Spoor
+ * @author   Shane Spoor
+ *
+ * @date March 12, 2014
+ */
+void write_error(int error)
+{
+    int ret = sem_trywait(&err_sem)
+    if(ret != -1) // If we got the semaphore
+    {
+        cnt_errno = error;
+        sem_post(&err_sem);
+    }
+}
+
+/**
+ * Retrieves the error string for the current value of cnt_errno.
+ *
+ * The function uses a semaphore to ensure thread safety and will block if another
+ * thread owns the semaphore.
+ *
+ * The function may be extended to return a list of errors.
+ *
+ * @return The error string corresponding to the value of cnt_errno.
+ *
+ * @designer Shane Spoor
+ * @author   Shane Spoor
+ *
+ * @date March 12, 2014
+ */
+const char *get_error_string()
+{
+    int err;
+    static const char *error_strings[] = {
+        "Could not open the connection.",
+        "The server closed the connection.",
+        "Failed to receive TCP data.",
+        "Failed to receive a UDP packet.",
+        "Failed to send TCP data.",
+        "Failed to send a UDP packet.",
+        "Received corrupted data.",
+        "The remote host could not be resolved. Ensure the host name or IP address is valid.",
+        "The program could not allocate enough memory.",
+        "Could not write to a pipe.",
+        "Could not acquire a semaphore.",
+        "Could not remove socket from socket set."    
+    };
+
+    if(sem_wait(&err_sem) == -1)
+        return error_strings[ERR_NO_SEM - 1];
+    else
+    {
+        err = cnt_errno - 1;
+        sem_post(&err_sem);
+        return error_strings[err];
+    }
+}    

@@ -4,7 +4,9 @@
  * This is the main file for the client-side Network layer. This layer/component will contain
  * all network related functions and will basically grab game data from the Gameplay module, dispatch 
  * it to the server and vice-versa.
- * 
+ *
+ * @todo Make a cleanup function
+ *
  * @file NetworkRouter.cpp
  */
 /** @} */
@@ -28,6 +30,7 @@
 extern int game_net_signalfd;
 extern int network_ready;
 extern uint32_t packet_sizes[NUM_PACKETS];
+sem_t err_sem;
 
 /**
  * This is the main client-side network function that the Gameplay module will call inside
@@ -212,6 +215,8 @@ int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int send
 	create_pipe(sendfd);
 	create_pipe(recvfd);
 	
+    sem_init(&err_sem, 0, 1);
+
     *max_fd = recvfd[READ_END] > gameplay->read_pipe ? recvfd[READ_END] : gameplay->read_pipe;
     *max_fd = game_net_signalfd > *max_fd ? game_net_signalfd : *max_fd;
 
