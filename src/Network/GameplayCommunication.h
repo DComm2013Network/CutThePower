@@ -15,6 +15,9 @@
 #include <cstdint>
 #include <cerrno>
 
+#define NET_SHUTDOWN -1 /**< The network will write this to the gameplay 
+                             module (possibly followed by an error message) on shutdown. */
+
 /**
  * A structure of data that will be passed on to child threads.
  *

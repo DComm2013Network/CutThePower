@@ -347,12 +347,12 @@ void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 
 	numread = recv_tcp(sock, packet_type, sizeof(uint32_t));
 	if(numread < 0){
-		write_error(ERR_TCP_RECV_FAIL);
+		set_error(ERR_TCP_RECV_FAIL);
 		return NULL;
 	}
 
 	if(numread == 0){
-		write_error(ERR_CONN_CLOSED);
+		set_error(ERR_CONN_CLOSED);
 		return NULL;
 	}
 
@@ -361,8 +361,8 @@ void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 
 	if((*packet_type <= 0 || *packet_type > NUM_PACKETS) && *packet_type)
 	{
-		printf("recv_tcp_packet: Received Invalid Packet Type!\n");
-		write_error(ERR_CORRUPTED);
+		fprintf(stderr, "recv_tcp_packet: Received Invalid Packet Type!\n");
+		set_error(ERR_CORRUPTED);
 		return NULL; 
 	}
 
@@ -371,7 +371,7 @@ void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 	if((packet = malloc(packet_size)) == NULL)
 	{
 		perror("recv_ tcp_packet: malloc");
-		write_error(errno);
+		set_error(ERR_NO_MEM);
 		return NULL;
 	}
 
@@ -670,7 +670,7 @@ int get_protocol(uint32_t type)
 		case P_CLNT_LOBBY:
 		case P_OBJCTV_LOC:
 		case P_UNDEF:
-		case P_UNDEF2:
+		case P_KEEPALIVE:
 		case P_OBJSTATUS:
 			protocol = TCP;
 			break;
@@ -735,7 +735,7 @@ void close_connections(SDLNet_SocketSet set, TCPsocket tcpsock, UDPsocket udpsoc
  *
  * @date March 12, 2014
  */
-void write_error(int error)
+void set_error(int error)
 {
     int ret = sem_trywait(&err_sem);
     if(ret != -1) // If we got the semaphore
@@ -775,15 +775,22 @@ const char *get_error_string()
         "The program could not allocate enough memory.",
         "Could not write to a pipe.",
         "Could not acquire a semaphore.",
-        "Could not remove socket from socket set."    
+        "Could not remove socket from socket set.",
+        "Could not allocate a socket set.",
+        "Network router thread failed to initialise."  
     };
 
     if(sem_wait(&err_sem) == -1)
-        return error_strings[ERR_NO_SEM - 1];
+        return error_strings[(ERR_NO_SEM * -1) - 1];
     else
     {
-        err = cnt_errno - 1;
+        err = cnt_errno;
         sem_post(&err_sem);
+        if(!err)
+            return NULL;
+
+        err *= -1;
+        err -= 1;
         return error_strings[err];
     }
 }    

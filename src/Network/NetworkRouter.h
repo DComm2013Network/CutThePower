@@ -11,7 +11,15 @@
 
 #include <SDL2/SDL_net.h>
 #include <semaphore.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <fcntl.h>
 #include "GameplayCommunication.h"
+#include "ServerCommunication.h"
+#include "PipeUtils.h"
+#include "Packets.h"
 
 #define READ_RECV_THREAD	0
 #define WRITE_SEND_THREAD 	1
@@ -43,6 +51,7 @@ int update_gameplay(int gameplay_write_fd, void **packets, uint64_t *timestamps)
 uint32_t determine_changed(void **packets, unsigned *changed);
 int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int sendfd[2],
 				int recvfd[2], pthread_t *thread_receive, pthread_t *thread_send);
+void net_cleanup(NDATA send, NDATA receive, PDATA gameplay, void **cached_packets);
 
 #endif
 
