@@ -347,31 +347,33 @@ void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 
 	numread = recv_tcp(sock, packet_type, sizeof(uint32_t));
 	if(numread < 0){
-		cnt_errno = ERR_TCP_RECV_FAIL;
+		write_error(ERR_TCP_RECV_FAIL);
 		return NULL;
 	}
 
 	if(numread == 0){
-		cnt_errno = ERR_CONN_CLOSED;
+		write_error(ERR_CONN_CLOSED);
 		return NULL;
 	}
 
-	if(*packet_type <= 0 || *packet_type > NUM_PACKETS)
+    if(*packet_type == P_KEEPALIVE)
+        return NULL;
+
+	if((*packet_type <= 0 || *packet_type > NUM_PACKETS) && *packet_type)
 	{
 		printf("recv_tcp_packet: Received Invalid Packet Type!\n");
-		cnt_errno = ERR_CORRUPTED;
+		write_error(ERR_CORRUPTED);
 		return NULL; 
 	}
 
-	if(*packet_type == P_KEEPALIVE)
-        return NULL;
+
 
 	packet_size = packet_sizes[(*packet_type) - 1];
 
 	if((packet = malloc(packet_size)) == NULL)
 	{
 		perror("recv_ tcp_packet: malloc");
-		cnt_errno = errno;
+		write_error(errno);
 		return NULL;
 	}
 

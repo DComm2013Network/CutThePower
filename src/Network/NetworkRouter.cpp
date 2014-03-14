@@ -62,7 +62,7 @@ void *networkRouter(void *args)
     fd_set		active;
     int 		max_fd;
     uint32_t 	type;
-    uint64_t	timestamps[NUM_PACKETS] = {0}, timestamp;
+    uint64_t	timestamps[NUM_PACKETS] = {0}, timestamp, signal = 1;
     void 		*packet, *cached_packets[NUM_PACKETS] = {0};
     int         cached_types[NUM_PACKETS];
     pthread_t 	thread_send;
@@ -118,6 +118,7 @@ void *networkRouter(void *args)
                 return NULL;
 
             --ret;
+            write(game_net_lockfd, &signal, sizeof(uint64_t));
 		}
         
     }
@@ -222,8 +223,8 @@ int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int send
     *max_fd = recvfd[READ_END] > gameplay->read_pipe ? recvfd[READ_END] : gameplay->read_pipe;
     *max_fd = game_net_signalfd > *max_fd ? game_net_signalfd : *max_fd;
 
-    resolve_host(&ipaddr, TCP_PORT, "192.168.43.27");
-    resolve_host(&udpaddr, UDP_PORT, "192.168.43.27");
+    resolve_host(&ipaddr, TCP_PORT, "192.168.1.76");
+    resolve_host(&udpaddr, UDP_PORT, "192.168.1.76");
     
     tcp_sock = SDLNet_TCP_Open(&ipaddr);
 
@@ -313,7 +314,6 @@ int update_gameplay(int gameplay_write_fd, void **packets, uint64_t *timestamps)
             packets[i] = NULL;
         }
     }
-    write(game_net_lockfd, &signal, sizeof(uint64_t));
     return 0;
 }
 /*

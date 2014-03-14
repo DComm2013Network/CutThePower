@@ -99,10 +99,13 @@ void client_update_obj_loc(World *world, void *packet)
 {
 	PKT_OBJ_LOC *obj_loc = (PKT_OBJ_LOC*) packet;
 }
+
 void client_update_obj_status(World *world, void *packet)
 {
-	PKT_OBJECTIVE_STATUS *obj_status =  (PKT_OBJECTIVE_STATUS*)packet;
+	PKT_OBJ_LOC *obj_loc = (PKT_OBJ_LOC*) packet;
 }
+
+
 void client_update_floor(World *world, void *packet)
 {
 	PKT_FLOOR_MOVE* floor_move = (PKT_FLOOR_MOVE*)packet;
