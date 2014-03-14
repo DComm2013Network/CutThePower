@@ -5,7 +5,7 @@
  * all network related functions and will basically grab game data from the Gameplay module, dispatch 
  * it to the server and vice-versa.
  *
- * @todo Make a cleanup function
+ * @todo Change name of send (don't really want to use the name of a function)
  *
  * @file NetworkRouter.cpp
  */
@@ -333,31 +333,27 @@ int update_gameplay(int gameplay_write_fd, void **packets, uint64_t *timestamps)
  *
  * @date March 14, 2014
  */
-void net_cleanup(NDATA send, NDATA receive, PDATA gameplay, void **cached_packets)
+void net_cleanup(NDATA send_data, NDATA receive_data, PDATA gameplay, void **cached_packets)
 {
     const char   *errstr;
     uint32_t     shutdown      = (uint32_t)NET_SHUTDOWN;
     unsigned int changed_mask  = 0;
     
-    /* Close sockets */
-    SDLNet_TCP_Close(send->tcp_sock);
-    SDLNet_UDP_Close(send->udp_sock);
-    
     /* Close pipes for thread communication, checking that they're valid first */
-    if(fcntl(send->read_pipe, F_GETFD) != -1 || errno != EBADF)
+    if(fcntl(send_data->read_pipe, F_GETFD) != -1 || errno != EBADF)
     {
-        close(send->read_pipe);
-        close(send->write_pipe);
+        close(send_data->read_pipe);
+        close(send_data->write_pipe);
     }
-    if(fcntl(receive->read_pipe, F_GETFD) != -1 || errno != EBADF)
+    if(fcntl(receive_data->read_pipe, F_GETFD) != -1 || errno != EBADF)
     {
-        close(receive->read_pipe);
-        close(receive->write_pipe);
+        close(receive_data->read_pipe);
+        close(receive_data->write_pipe);
     }
     
     /* Free NDATA */
-    free(send);
-    free(receive);
+    free(send_data);
+    free(receive_data);
     
     /* Tell gameplay we're shutting down */
     write_pipe(gameplay->write_pipe, &shutdown, sizeof(shutdown));
