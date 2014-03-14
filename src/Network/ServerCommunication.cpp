@@ -27,6 +27,7 @@
 extern uint32_t packet_sizes[NUM_PACKETS];
 static int cnt_errno = -1;
 extern sem_t err_sem;
+static uint64_t tcp_seq_num = 0;
 
 /**
  * Monitors sockets to receive data from the server.
@@ -308,14 +309,13 @@ int handle_udp_in(int router_pipe_fd, UDPsocket udp_sock)
         {
         	return -2;
         }
-
-        printf("Received UDP packet: %u\n", packet_type);	
-        if(write_packet(router_pipe_fd, packet_type, game_packet) == -1 ||
-            write_pipe(router_pipe_fd, &timestamp, sizeof(timestamp)) == -1)
-        {
-            fprintf(stderr, "UDP>Router: Error in write packet, flushing pipe");
-            fflush((FILE*)&router_pipe_fd);
-        }
+    }
+    printf("Received UDP packet: %u\n", packet_type);	
+    if(write_packet(router_pipe_fd, packet_type, game_packet) == -1 ||
+        write_pipe(router_pipe_fd, &timestamp, sizeof(timestamp)) == -1)
+    {
+        fprintf(stderr, "UDP>Router: Error in write packet, flushing pipe");
+        fflush((FILE*)&router_pipe_fd);
     }
     free(game_packet);
     return 0;
@@ -373,7 +373,7 @@ void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 	}
 
 	numread = recv_tcp(sock, packet, packet_size);
-	*timestamp = clock();
+	*timestamp = tcp_seq_num++;
 	return packet;
 }
 
@@ -443,7 +443,7 @@ void *recv_udp_packet(UDPsocket sock, uint32_t *packet_type, uint64_t *timestamp
  *
  * @param[in]  tcp_socket The TCP socket from which to receive data.
  * @param[out] buf        The buffer into which the data will be read.
- * @param[in]  bufsize    The size (in bytes) of buf.
+ * @param[in]  bufsize    The size (in bytes) of buf.cd
  *
  * @return ERR_RECV_FAILED if SDLNet_TCP_Recv returns an error, and ERR_CONN_CLOSED if no
  *         data was read (i.e., received a RST or a FIN). Returns 0 on success.
