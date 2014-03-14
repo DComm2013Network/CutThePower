@@ -1,5 +1,5 @@
 #include "sound.h"
-#include "SDL2/SDL_mixer.h"
+#include <SDL2/SDL_mixer.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -27,6 +27,7 @@ void init_sound() {
 	effects = (Mix_Chunk**)malloc(sizeof(Mix_Chunk*) * SOUND_EFFECT_NUM);
 	
 	music[0] = Mix_LoadMUS("assets/Sound/menu/sound_menu_bg.wav");
+	music[1] = Mix_LoadMUS("assets/Sound/maps/lobby_bg.wav");
 	
 	effects[0] = Mix_LoadWAV("assets/Sound/menu/sound_menu_thunder.wav");
 	

@@ -21,7 +21,7 @@
 
 #include "../world.h"
 #include "components.h"
-#include "systems.h"
+#include "../systems.h"
 
 #define SYSTEM_MASK (COMPONENT_COMMAND) /**< Entities with a command component will be processed by the system. */
 
@@ -81,8 +81,7 @@ void KeyInputSystem(World *world, bool *running)
 		memcpy(prevKeyboardState, p, sizeof(Uint8) * numKeys);
         return;
 	}
-	
-	
+
     //If a textfield is focused
     if (textField != -1) {
 		
@@ -157,6 +156,34 @@ void KeyInputSystem(World *world, bool *running)
 			
 			command->commands[C_ACTION] = (currentKeyboardState[command_keys[C_ACTION]] != 0) && (prevKeyboardState[command_keys[C_ACTION]] == 0);
 			
+			//THIS IS VENDING MACHINE SIMULIATOR CODE
+			//DELETE IF YOU DO NOT WANT TO PLACE VENDING MACHINES!!!!!
+			if (command->commands[C_ACTION]) {
+				
+				unsigned int mainframe = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION | COMPONENT_COLLISION);
+				
+				int x = (int)((world->position[entity].x + world->position[entity].width / 2) / TILE_WIDTH);
+				int y = (int)((world->position[entity].y + world->position[entity].height / 2) / TILE_HEIGHT);
+				
+				world->position[mainframe].x = x * TILE_WIDTH;
+				world->position[mainframe].y = y * TILE_HEIGHT;
+				
+				world->position[mainframe].width = TILE_WIDTH;
+				world->position[mainframe].height = TILE_HEIGHT;
+				
+				world->renderPlayer[mainframe].width = TILE_WIDTH;
+				world->renderPlayer[mainframe].height = TILE_HEIGHT;
+				
+				world->collision[mainframe].type = COLLISION_SOLID;
+				world->collision[mainframe].active = true;
+				world->collision[mainframe].radius = 1;
+				
+				load_animation("assets/Graphics/objects/computers/mainframe_5_animation.txt", world, mainframe);
+				play_animation(&(world->animation[mainframe]), "mainframe");
+				
+			}
+			//END DELETE
+			
         }
     }
     
@@ -165,6 +192,7 @@ void KeyInputSystem(World *world, bool *running)
 		prevKeyboardState = (Uint8*)malloc(sizeof(Uint8) * numKeys);
 	}
 	memcpy(prevKeyboardState, p, sizeof(Uint8) * numKeys);
+	free(p);
 }
 
 /**

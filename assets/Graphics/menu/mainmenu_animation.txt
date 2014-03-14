@@ -1,0 +1,25 @@
+1
+
+mainmenu 20 4 0 -1
+assets/Graphics/menu/MainMenu_01.png
+assets/Graphics/menu/MainMenu_02.png
+assets/Graphics/menu/MainMenu_03.png
+assets/Graphics/menu/MainMenu_04.png
+assets/Graphics/menu/MainMenu_05.png
+assets/Graphics/menu/MainMenu_06.png
+assets/Graphics/menu/MainMenu_07.png
+assets/Graphics/menu/MainMenu_08.png
+assets/Graphics/menu/MainMenu_09.png
+assets/Graphics/menu/MainMenu_10.png
+assets/Graphics/menu/MainMenu_11.png
+assets/Graphics/menu/MainMenu_11.png
+assets/Graphics/menu/MainMenu_12.png
+assets/Graphics/menu/MainMenu_13.png
+assets/Graphics/menu/MainMenu_14.png
+assets/Graphics/menu/MainMenu_15.png
+assets/Graphics/menu/MainMenu_16.png
+assets/Graphics/menu/MainMenu_17.png
+assets/Graphics/menu/MainMenu_18.png
+assets/Graphics/menu/MainMenu_19.png
+
+0 800
