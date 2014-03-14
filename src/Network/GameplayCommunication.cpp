@@ -194,7 +194,6 @@ int write_packet(int write_fd, uint32_t packet_type, void *packet)
  * @author      Ramzi Chennafi
  */
 void *read_data(int fd, uint32_t *type){
-
     int read_bytes;
     void *packet;
     *type = read_type(fd);

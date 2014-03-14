@@ -58,6 +58,7 @@ void *networkRouter(void *args)
 {
     int 		sendfd[2];
     int 		recvfd[2];
+    uint64_t    signal = 1;
     fd_set 		listen_fds;
     fd_set		active;
     int 		max_fd;
@@ -115,13 +116,16 @@ void *networkRouter(void *args)
         if(ret && FD_ISSET(game_net_signalfd, &active))
         {
         	if(update_gameplay(gameplay->write_pipe, cached_packets, timestamps) == -1)
+            {
+                write(game_net_lockfd, &signal, sizeof(uint64_t));
                 return NULL;
+            }
 
             --ret;
             write(game_net_lockfd, &signal, sizeof(uint64_t));
 		}
-        
-    }
+        write(game_net_lockfd, &signal, sizeof(uint64_t));
+    }   
     return NULL;
 }
 
@@ -217,8 +221,6 @@ int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int send
 	               
 	create_pipe(sendfd);
 	create_pipe(recvfd);
-	
-    sem_init(&err_sem, 0, 1);
 
     *max_fd = recvfd[READ_END] > gameplay->read_pipe ? recvfd[READ_END] : gameplay->read_pipe;
     *max_fd = game_net_signalfd > *max_fd ? game_net_signalfd : *max_fd;
@@ -298,22 +300,27 @@ int update_gameplay(int gameplay_write_fd, void **packets, uint64_t *timestamps)
     }
 
     if(!num_changed)
+    {
         return 0;
+    }
 
     for(uint32_t i = 0; i < NUM_PACKETS; ++i)
     {
         if(changed_mask & (1 << i))
-        {
+        {   
+            i++;
             if(write(gameplay_write_fd, &i, sizeof(i)) == -1 ||
-               write(gameplay_write_fd, packets[i], packet_sizes[i]) == -1)
+               write(gameplay_write_fd, packets[i - 1], packet_sizes[i - 1]) == -1)
             {
                 perror("update_gameplay: write");
                 return -1;
             }
+            i--;
             free(packets[i]);
             packets[i] = NULL;
         }
     }
+
     return 0;
 }
 /*
