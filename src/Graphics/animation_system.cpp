@@ -31,7 +31,7 @@
  *
  * @author Jordan Marling
  */
-void animation_system(World *world) {
+void animation_system(World *world, unsigned int *player_entity) {
 	
 	unsigned int entity;
 	AnimationComponent 		*animationComponent;
@@ -67,6 +67,30 @@ void animation_system(World *world) {
 						animation->index = 0;
 						animation->frame_count = 0;
 						if (animation->loop == -1) {
+							
+							if (animationComponent->id == 0) { //0 is the intro screen!
+								
+								destroy_world(world);
+						
+								stop_music();
+								stop_effect();
+								
+								//map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/map01_tiles.txt");
+								//map_init(world, "assets/Graphics/lobby/lobby.txt", "assets/Graphics/lobby/lobby_tiles.txt");
+								//map_init(world, "assets/Graphics/SampleFloor.txt", "assets/Graphics/tiles_lobby.txt");
+								
+								map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/map01_tiles.txt");
+								*player_entity = create_player(world, 600, 600, true, COLLISION_HACKER);
+													
+								world->mask[*player_entity] |= COMPONENT_ANIMATION;
+								
+								load_animation("assets/Graphics/player/robber/rob_animation.txt", world, *player_entity);
+						
+								
+								return;
+							}
+							
+							
 							animationComponent->current_animation = -1;
 							renderPlayer->playerSurface = animation->surfaces[0];
 							continue;
@@ -120,6 +144,7 @@ int load_animation(char *filename, World *world, unsigned int entity) {
 	
 	animationComponent->animations = (Animation*)malloc(sizeof(Animation) * animationComponent->animation_count);
 	animationComponent->current_animation = -1;
+	animationComponent->id = -1;
 	
 	for(animation_index = 0; animation_index < animationComponent->animation_count; animation_index++) {
 		
@@ -143,7 +168,7 @@ int load_animation(char *filename, World *world, unsigned int entity) {
 		for (frame_index = 0; frame_index < animation_frames; frame_index++) {
 			
 			if (fscanf(fp, "%s", animation_filename) != 1) {
-				printf("Error loading animation file.\n");
+				printf("Error loading animation file: %s\n", animation_filename);
 				return -1;
 			}
 			

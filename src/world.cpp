@@ -74,38 +74,33 @@ unsigned int create_entity(World* world, unsigned int attributes) {
  * @author
  */
 unsigned int create_level(World* world, int** map, int width, int height, int tileSize) {
+	
 	unsigned int entity = 0;
 	int lastID = -1;
-	unsigned int tempMask = 0;
 	int i = 0;
 	int n = 0;
-	for (entity = 0; entity < MAX_ENTITIES; ++entity) {
-		tempMask = world->mask[entity] & COMPONENT_LEVEL;
-		if (tempMask == COMPONENT_LEVEL) {
-			lastID = world->level[entity].levelID;
-		}
 	
-		if (world->mask[entity] == COMPONENT_EMPTY) {
-			lastID++;
-			world->mask[entity] = COMPONENT_LEVEL;
-			world->level[entity].map = (int**)malloc(sizeof(int*) * width);
-			for (i = 0; i < width; i++) {
-				world->level[entity].map[i] = (int*)malloc(sizeof(int) * height);
-				for (n = 0; n < height; n++) {
-					world->level[entity].map[i][n] = map[i][n];
-				}
-			}
-			world->level[entity].levelID = lastID;
-			world->level[entity].width = width;
-			world->level[entity].height = height;
-			world->level[entity].tileSize = tileSize;
+	entity = create_entity(world, COMPONENT_LEVEL);
+	
+	printf("Map level entity: %u\n", entity);
+	printf("CREATE LEVEL SIZE: %d %d\n", width, height);
+	
+	lastID++;
+	world->level[entity].map = (int**)malloc(sizeof(int*) * width);
+	for (i = 0; i < width; i++) {
+		world->level[entity].map[i] = (int*)malloc(sizeof(int) * height);
+		for (n = 0; n < height; n++) {
 			
-			return entity;
+			world->level[entity].map[i][n] = map[i][n];
+			
 		}
 	}
+	world->level[entity].levelID = lastID;
+	world->level[entity].width = width;
+	world->level[entity].height = height;
+	world->level[entity].tileSize = tileSize;
 	
-	
-	return MAX_ENTITIES;
+	return entity;
 }
 
 /**

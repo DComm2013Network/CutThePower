@@ -153,6 +153,8 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 		}
 	}
 	
+	printf("Map load size %d %d\n", width, height);
+	
 	for(y = 0; y < height; y++) {
 		for(x = 0; x < width; x++) {
 			
@@ -283,7 +285,7 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 	
 	
 	
-	//create_level(world, collision_map, width, height, TILE_WIDTH);
+	create_level(world, collision_map, width, height, TILE_WIDTH);
 	
 	for (i = 0; i < width; i++) {
 		free(map[i]);
@@ -310,7 +312,7 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 		}
 	}*/
 	
-	create_level(world, collision_map, width, height, TILE_WIDTH);
+	//create_level(world, collision_map, width, height, TILE_WIDTH);
 	
 	//free(tileTypes);
 	//free(collisionTypes);

@@ -120,7 +120,7 @@ int main(int argc, char* argv[]) {
 			map_render(surface, world, entity);
 			//send_system(world, send_router_fd[WRITE_END]);
 		}
-		animation_system(world);
+		animation_system(world, &entity);
 		render_player_system(*world, surface);
 		
 		SDL_UpdateWindowSurface(window);

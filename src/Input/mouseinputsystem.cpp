@@ -221,12 +221,17 @@ void MouseInputSystem(World *world, unsigned int *player_entity, bool *running)
 						//map_init(world, "assets/Graphics/lobby/lobby.txt", "assets/Graphics/lobby/lobby_tiles.txt");
 						//map_init(world, "assets/Graphics/SampleFloor.txt", "assets/Graphics/tiles_lobby.txt");
 						
+						#if 0
+						
 						map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/map01_tiles.txt");
 						*player_entity = create_player(world, 600, 600, true, COLLISION_HACKER);
 											
 						world->mask[*player_entity] |= COMPONENT_ANIMATION;
 						
 						load_animation("assets/Graphics/player/robber/rob_animation.txt", world, *player_entity);
+						#else
+						create_intro(world);
+						#endif
 						
 						return;
 					}

@@ -389,5 +389,27 @@ void create_bsod_menu(World *world) {
 
 
 
-
+void create_intro(World *world) {
+	
+	unsigned int entity;
+	
+	entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION);
+	
+	world->position[entity].x = 0;
+	world->position[entity].y = 0;
+	world->position[entity].width = WIDTH;
+	world->position[entity].height = HEIGHT;
+	
+	load_animation("assets/Graphics/intro/intro_animation.txt", world, entity);
+	play_animation(&(world->animation[entity]), "intro");
+	
+	world->animation[entity].id = 0;
+	
+	world->renderPlayer[entity].width = WIDTH;
+	world->renderPlayer[entity].height = HEIGHT;
+	
+	//play_music(SOUND_MUSIC_MENU_RAIN);
+	
+	
+}
 

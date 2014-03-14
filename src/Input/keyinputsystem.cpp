@@ -160,7 +160,7 @@ void KeyInputSystem(World *world, bool *running)
 			//DELETE IF YOU DO NOT WANT TO PLACE VENDING MACHINES!!!!!
 			if (command->commands[C_ACTION]) {
 				
-				unsigned int mainframe = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION);
+				unsigned int mainframe = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION | COMPONENT_COLLISION);
 				
 				int x = (int)((world->position[entity].x + world->position[entity].width / 2) / TILE_WIDTH);
 				int y = (int)((world->position[entity].y + world->position[entity].height / 2) / TILE_HEIGHT);
@@ -173,6 +173,10 @@ void KeyInputSystem(World *world, bool *running)
 				
 				world->renderPlayer[mainframe].width = TILE_WIDTH;
 				world->renderPlayer[mainframe].height = TILE_HEIGHT;
+				
+				world->collision[mainframe].type = COLLISION_SOLID;
+				world->collision[mainframe].active = true;
+				world->collision[mainframe].radius = 1;
 				
 				load_animation("assets/Graphics/objects/computers/mainframe_5_animation.txt", world, mainframe);
 				play_animation(&(world->animation[mainframe]), "mainframe");

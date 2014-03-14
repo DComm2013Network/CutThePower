@@ -54,7 +54,7 @@ typedef struct {
 	
 	int rand_animation;
 	int rand_occurance;
-	
+	int id;
 	
 } AnimationComponent;
 

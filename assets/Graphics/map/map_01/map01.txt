@@ -41,11 +41,16 @@
 04 09 10 09 09 09 09 09 09 10 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 10 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 05
 
 
-7
+12
 object 01 01 assets/Graphics/objects/computers/mainframe_5_animation.txt mainframe
 object 04 01 assets/Graphics/objects/computers/mainframe_5_animation.txt mainframe
-object 10 12 assets/Graphics/objects/npc/piano_tl_animation.txt play
-object 11 12 assets/Graphics/objects/npc/piano_tr_animation.txt play
-object 10 13 assets/Graphics/objects/npc/piano_bl_animation.txt play
-object 11 13 assets/Graphics/objects/npc/piano_br_animation.txt play
+object 10 12 assets/Graphics/objects/npc/piano/piano_tl_animation.txt play
+object 11 12 assets/Graphics/objects/npc/piano/piano_tr_animation.txt play
+object 10 13 assets/Graphics/objects/npc/piano/piano_bl_animation.txt play
+object 11 13 assets/Graphics/objects/npc/piano/piano_br_animation.txt play
+object 08 12 assets/Graphics/objects/npc/drums/drum_tl_animation.txt drum
+object 09 12 assets/Graphics/objects/npc/drums/drum_tr_animation.txt drum
+object 08 13 assets/Graphics/objects/npc/drums/drum_bl_animation.txt drum
+object 09 13 assets/Graphics/objects/npc/drums/drum_br_animation.txt drum
+object 10 15 assets/Graphics/objects/npc/guitar/guitar_animation.txt guitar
 sound 1
