@@ -126,13 +126,13 @@ int main(int argc, char* argv[]) {
 		movement_system(world, send_router_fd[WRITE_END]);
 		if (entity < MAX_ENTITIES) {
 			map_render(surface, world, entity);
-			//send_system(world, send_router_fd[WRITE_END]);
 		}
 		animation_system(world, &entity);
 		render_player_system(*world, surface);
 		
 		#ifndef NETWORKOFF
 			client_update_system(world, rcv_router_fd[READ_END]);
+			send_system(world, send_router_fd[WRITE_END]);
 		#endif
 
 		SDL_UpdateWindowSurface(window);
