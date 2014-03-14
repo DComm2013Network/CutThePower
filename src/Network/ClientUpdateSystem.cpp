@@ -143,7 +143,7 @@ void client_update_pos(World *world, void *packet)
 			continue;
 
         else if(player_table[i] == UNASSIGNED) // They're on the floor but haven't yet been created
-            player_table[i] = create_player(world, pos_update->xPos[i], pos_update->yPos[i], false);
+            player_table[i] = create_player(world, pos_update->xPos[i], pos_update->yPos[i], false, COLLISION_HACKER);
 
 		world->movement[player_table[i]].movX	= pos_update->xVel[i];
 		world->movement[player_table[i]].movY 	= pos_update->yVel[i];
@@ -216,7 +216,7 @@ void client_update_status(World *world, void *packet)
 		
 		if(player_table[i] == UNASSIGNED)
 		{
-			entity 								= create_player(world, 0, 0, false);
+			entity 								= create_player(world, 0, 0, false, COLLISION_HACKER);
 			world->player[entity].teamNo 		= status_update->otherPlayers_teams[i];
 			world->player[entity].playerNo 		= i + 1;
 			player_table[i] 					= entity;

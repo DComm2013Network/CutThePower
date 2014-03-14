@@ -8,7 +8,7 @@
 #include <stdio.h>
 
 #define FPS_MAX 120
-#define NETWORKOFF
+//#define NETWORKOFF
 
 int game_net_signalfd, game_net_lockfd;
 int network_ready = 0;
@@ -100,14 +100,6 @@ int main(int argc, char* argv[]) {
 	
 	create_main_menu(world);
 	//create_bsod_menu(world);
-	
-	#ifndef NETWORKOFF
-		game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
-		game_net_lockfd     = eventfd(0, EFD_SEMAPHORE);
-
-		init_client_network(send_router_fd, rcv_router_fd);
-		send_intialization(world, send_router_fd[WRITE_END]);
-	#endif
 	//map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/map01_tiles.txt");
 	//entity = create_player(world, 600, 600, true, COLLISION_HACKER);
 						
@@ -117,6 +109,15 @@ int main(int argc, char* argv[]) {
 	
 	FPS fps;
 	fps.init();
+
+	#ifndef NETWORKOFF
+		game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
+		game_net_lockfd     = eventfd(0, EFD_SEMAPHORE);
+
+		init_client_network(send_router_fd, rcv_router_fd);
+		send_intialization(world, send_router_fd[WRITE_END]);
+	#endif
+
 	while (running)
 	{
 		
@@ -132,7 +133,7 @@ int main(int argc, char* argv[]) {
 		
 		#ifndef NETWORKOFF
 			client_update_system(world, rcv_router_fd[READ_END]);
-			send_system(world, send_router_fd[WRITE_END]);
+			send_location(world, send_router_fd[WRITE_END]);
 		#endif
 
 		SDL_UpdateWindowSurface(window);
