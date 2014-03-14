@@ -211,9 +211,12 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 				world->renderPlayer[entity].width = TILE_WIDTH;
 				world->renderPlayer[entity].height = TILE_HEIGHT;
 				
+				world->collision[entity].id = 0;
 				world->collision[entity].type = COLLISION_SOLID;
+				world->collision[entity].timer = 0;
+				world->collision[entity].timerMax = 0;
 				world->collision[entity].active = true;
-				world->collision[entity].radius = 1;
+				world->collision[entity].radius = 0;
 				
 				load_animation(animation_filename, world, entity);
 				play_animation(&(world->animation[entity]), animation_name);

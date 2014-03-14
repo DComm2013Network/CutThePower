@@ -173,10 +173,10 @@ int entity_collision(World *world, PositionComponent entity, int entityID) {
 	//entity.y += entity.height / 2;
 	for (i = 0; i < MAX_ENTITIES; i++) {
 		if (i != entityID && (world->mask[i] & COLLISION_MASK) != 0) {
-			if (entity.x + entity.width > world->position[i].x - world->collision[i].radius &&
-				entity.x < world->position[i].x + world->position[i].width + world->collision[i].radius &&
-				entity.y + entity.height > world->position[i].y - world->collision[i].radius &&
-				entity.y < world->position[i].y + world->position[i].height + world->collision[i].radius
+			if (entity.x + entity.width -1 > world->position[i].x - world->collision[i].radius + 1 &&
+				entity.x  + 1< world->position[i].x + world->position[i].width + world->collision[i].radius - 1&&
+				entity.y + entity.height -1 > world->position[i].y - world->collision[i].radius + 1&&
+				entity.y  + 1< world->position[i].y + world->position[i].height + world->collision[i].radius - 1
 				&& world->collision[i].active) {
 				return i;
 			}
