@@ -73,7 +73,7 @@ unsigned int create_entity(World* world, unsigned int attributes) {
  * @designer
  * @author
  */
-unsigned int create_level(World* world, uint32_t** map, int width, int height, int tileSize) {
+unsigned int create_level(World* world, int** map, int width, int height, int tileSize) {
 	unsigned int entity = 0;
 	int lastID = -1;
 	unsigned int tempMask = 0;
@@ -88,11 +88,9 @@ unsigned int create_level(World* world, uint32_t** map, int width, int height, i
 		if (world->mask[entity] == COMPONENT_EMPTY) {
 			lastID++;
 			world->mask[entity] = COMPONENT_LEVEL;
-			world->level[entity].map = (uint32_t**)malloc(sizeof(uint32_t*) * width);
+			world->level[entity].map = (int**)malloc(sizeof(int*) * width);
 			for (i = 0; i < width; i++) {
-				world->level[entity].map[i] = (uint32_t*)malloc(sizeof(uint32_t) * height);
-			}
-			for (i = 0; i < width; i++) {
+				world->level[entity].map[i] = (int*)malloc(sizeof(int) * height);
 				for (n = 0; n < height; n++) {
 					world->level[entity].map[i][n] = map[i][n];
 				}
@@ -343,7 +341,7 @@ unsigned int create_stair(World* world, int targetLevel, int targetX, int target
  */
 void destroy_entity(World* world, const unsigned int entity) {
 
-	int i, j;
+	/*int i, j;
 	
 	if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_ANIMATION)) {
 		
@@ -367,7 +365,7 @@ void destroy_entity(World* world, const unsigned int entity) {
 		//if (world->renderPlayer[entity].playerSurface != NULL)
 			//SDL_FreeSurface(world->renderPlayer[entity].playerSurface);
 		
-	}
+	}*/
 	
 	world->mask[entity] = COMPONENT_EMPTY;
 }

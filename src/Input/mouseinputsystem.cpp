@@ -217,53 +217,16 @@ void MouseInputSystem(World *world, unsigned int *player_entity, bool *running)
 						stop_music();
 						stop_effect();
 						
-						map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/map01_tiles.txt");
+						//map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/map01_tiles.txt");
 						//map_init(world, "assets/Graphics/lobby/lobby.txt", "assets/Graphics/lobby/lobby_tiles.txt");
 						//map_init(world, "assets/Graphics/SampleFloor.txt", "assets/Graphics/tiles_lobby.txt");
 						
+						map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/map01_tiles.txt");
 						*player_entity = create_player(world, 600, 600, true, COLLISION_HACKER);
-						
+											
 						world->mask[*player_entity] |= COMPONENT_ANIMATION;
 						
 						load_animation("assets/Graphics/player/robber/rob_animation.txt", world, *player_entity);
-						
-						/*unsigned int mainframe = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION);
-						
-						world->position[mainframe].x = 200;
-						world->position[mainframe].y = 200;
-
-						world->position[mainframe].width = 40;
-						world->position[mainframe].height = 40;
-						world->position[mainframe].s = 0;
-						world->position[mainframe].level = 0;
-						
-						world->renderPlayer[mainframe].width = 40;
-						world->renderPlayer[mainframe].height = 40;
-						
-						load_animation("assets/Graphics/objects/computers/mainframe_5_animation.txt", world, mainframe);
-						play_animation(&(world->animation[mainframe]), "mainframe");
-						
-						*/
-						
-						//load_animation("assets/Graphics/robber/rob_animation.txt", &(world->animation[*player_entity]));
-						
-						
-						/*world->animation[*player_entity].triggered = false;
-
-						world->animation[*player_entity].index = 0;
-						world->animation[*player_entity].frames_to_skip = 30;
-						world->animation[*player_entity].frame_count = 0;
-						world->animation[*player_entity].rand_frame = -1;
-						world->animation[*player_entity].sound_effect = -1;
-						
-						world->animation[*player_entity].surfaces = (SDL_Surface**)malloc(sizeof(SDL_Surface*) * 3);
-						world->animation[*player_entity].surfaces[0] = IMG_Load("assets/Graphics/player/rob_down1.png");
-						world->animation[*player_entity].surfaces[1] = IMG_Load("assets/Graphics/player/rob_down2.png");
-						world->animation[*player_entity].surfaces[2] = IMG_Load("assets/Graphics/player/rob_down3.png");
-						
-						world->animation[*player_entity].surface_count = 3;
-<<<<<<< HEAD
-						world->animation[*player_entity].triggered = true;*/
 						
 						return;
 					}

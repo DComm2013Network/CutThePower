@@ -137,7 +137,7 @@ int load_animation(char *filename, World *world, unsigned int entity) {
 		animationComponent->animations[animation_index].sound_effect = triggered_sound;
 		animationComponent->animations[animation_index].loop = loop_animation;
 		
-		animationComponent->animations[animation_index].name = (char*)malloc(sizeof(char) * strlen(animation_name));
+		animationComponent->animations[animation_index].name = (char*)malloc(sizeof(char) * strlen(animation_name) + 1);
 		strcpy(animationComponent->animations[animation_index].name, animation_name);
 		
 		for (frame_index = 0; frame_index < animation_frames; frame_index++) {
@@ -195,8 +195,6 @@ void play_animation(AnimationComponent *animationComponent, char *animation_name
 	int i;
 	
 	for(i = 0; i < animationComponent->animation_count; i++) {
-		
-		//printf("Looking at animation: %s\n", animationComponent->animations[i].name);
 		
 		if (strcmp(animationComponent->animations[i].name, animation_name) == 0) {
 			

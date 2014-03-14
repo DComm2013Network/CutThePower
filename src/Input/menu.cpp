@@ -66,7 +66,7 @@ void create_button(World *world, char *image, char *name, int x, int y) {
 	world->button[entity].currentState = false;
 	world->button[entity].hovered = false;
 	
-	new_name = (char*)malloc(sizeof(char) * strlen(name));
+	new_name = (char*)malloc(sizeof(char) * strlen(name) + 1);
 	
 	strcpy(new_name, name);
 	
@@ -136,7 +136,7 @@ void create_textfield(World *world, char *name, int x, int y) {
 	world->position[entity].width = TEXT_WIDTH;
 	world->position[entity].height = TEXT_HEIGHT;
 	
-	world->text[entity].text = (char*)calloc(MAX_STRING, sizeof(char));
+	world->text[entity].text = (char*)calloc(MAX_STRING + 1, sizeof(char));
 	world->text[entity].length = 0;
 	world->text[entity].focused = false;
 	world->text[entity].number = false;
@@ -193,24 +193,6 @@ void create_main_menu_background(World *world) {
  */
 void create_main_menu(World* world) {
 	
-	//init_world(world);
-	
-	/*unsigned int entity;
-	
-	entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
-	
-	world->renderPlayer[entity].width = WIDTH;
-	world->renderPlayer[entity].height = HEIGHT;
-	world->renderPlayer[entity].playerSurface = IMG_Load("assets/Graphics/menu/MainMenu.png");
-	if (!world->renderPlayer[entity].playerSurface) {
-		printf("mat is a doof\n");
-	}
-	
-	world->position[entity].x = 0;
-	world->position[entity].y = 0;
-	world->position[entity].width = WIDTH;
-	world->position[entity].height = HEIGHT;*/
-	
 	create_main_menu_background(world);
 	
 	create_label(world, "assets/Graphics/menu/menu_label_cutthepower.png", (WIDTH / 2) - (TITLE_WIDTH / 2), (HEIGHT / 2) - 250, TITLE_WIDTH, TITLE_HEIGHT);
@@ -237,24 +219,6 @@ void create_main_menu(World* world) {
  */
 void create_options_menu(World *world) {
 	
-	//init_world(world);
-	
-	/*unsigned int entity;
-	
-	entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
-	
-	world->renderPlayer[entity].width = WIDTH;
-	world->renderPlayer[entity].height = HEIGHT;
-	world->renderPlayer[entity].playerSurface = IMG_Load("assets/Graphics/menu/MainMenu.png");
-	if (!world->renderPlayer[entity].playerSurface) {
-		printf("mat is a doof\n");
-	}
-	
-	world->position[entity].x = 0;
-	world->position[entity].y = 0;
-	world->position[entity].width = WIDTH;
-	world->position[entity].height = HEIGHT;*/
-	
 	create_main_menu_background(world);
 	
 	create_label(world, "assets/Graphics/menu/menu_label_options.png", (WIDTH / 2) - (TITLE_WIDTH / 2), (HEIGHT / 2) - 250, TITLE_WIDTH, TITLE_HEIGHT);
@@ -277,24 +241,6 @@ void create_options_menu(World *world) {
  * @author Jordan Marling
  */
 void create_keymap_menu(World *world) {
-	
-	//init_world(world);
-	
-	/*unsigned int entity;
-	
-	entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
-	
-	world->renderPlayer[entity].width = WIDTH;
-	world->renderPlayer[entity].height = HEIGHT;
-	world->renderPlayer[entity].playerSurface = IMG_Load("assets/Graphics/menu/MainMenu.png");
-	if (!world->renderPlayer[entity].playerSurface) {
-		printf("mat is a doof\n");
-	}
-	
-	world->position[entity].x = 0;
-	world->position[entity].y = 0;
-	world->position[entity].width = WIDTH;
-	world->position[entity].height = HEIGHT;*/
 	
 	create_main_menu_background(world);
 	
@@ -391,24 +337,6 @@ void create_credits_menu(World *world) {
  * @author Jordan Marling
  */
 void create_setup_menu(World *world) {
-	
-	//init_world(world);
-	
-	/*unsigned int entity;
-	
-	entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
-	
-	world->renderPlayer[entity].width = WIDTH;
-	world->renderPlayer[entity].height = HEIGHT;
-	world->renderPlayer[entity].playerSurface = IMG_Load("assets/Graphics/menu/MainMenu.png");
-	if (!world->renderPlayer[entity].playerSurface) {
-		printf("mat is a doof\n");
-	}
-	
-	world->position[entity].x = 0;
-	world->position[entity].y = 0;
-	world->position[entity].width = WIDTH;
-	world->position[entity].height = HEIGHT;*/
 	
 	create_main_menu_background(world);
 	

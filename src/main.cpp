@@ -52,7 +52,7 @@ public:
 	void update() {
 		numFrames++;
 		float display_fps = ( numFrames/(float)(SDL_GetTicks() - startTime) )*1000;
-		printf("%f\n", display_fps);
+		//printf("%f\n", display_fps);
 		if (numFrames >= (100.0 / ((double)60 / FPS_MAX))) {
 			startTime = SDL_GetTicks();
 			numFrames = 0;
@@ -97,15 +97,15 @@ int main(int argc, char* argv[]) {
 	init_render_player_system();
 	//unsigned int entity = create_player(world, 600, 600, true);
 	
-	//create_main_menu(world);
+	create_main_menu(world);
 	//create_bsod_menu(world);
 	
-	map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/map01_tiles.txt");
-	entity = create_player(world, 600, 600, true, COLLISION_HACKER);
+	//map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/map01_tiles.txt");
+	//entity = create_player(world, 600, 600, true, COLLISION_HACKER);
 						
-	world->mask[entity] |= COMPONENT_ANIMATION;
+	//world->mask[entity] |= COMPONENT_ANIMATION;
 	
-	load_animation("assets/Graphics/player/robber/rob_animation.txt", world, entity);
+	//load_animation("assets/Graphics/player/robber/rob_animation.txt", world, entity);
 	
 	FPS fps;
 	fps.init();

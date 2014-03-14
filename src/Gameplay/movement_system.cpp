@@ -94,6 +94,15 @@ void apply_deceleration_y(MovementComponent &movement, float friction) {
 }
 
 void handle_x_collision(CollisionData data, PositionComponent& position, MovementComponent &movement) {
+	switch(data.entity_code) {
+	case COLLISION_SOLID:
+		remove_forcex(position, movement);
+		movement.movX = 0;
+		break;
+	default:
+		break;
+	}
+
 	switch(data.map_code) {
 	case COLLISION_WALL:
 		remove_forcex(position, movement);
@@ -115,6 +124,15 @@ void handle_x_collision(CollisionData data, PositionComponent& position, Movemen
 }
 
 void handle_y_collision(CollisionData data, PositionComponent& position, MovementComponent &movement) {
+	switch(data.entity_code) {
+	case COLLISION_SOLID:
+		remove_forcey(position, movement);
+		movement.movY = 0;
+		break;
+	default:
+		break;
+	}
+
 	switch(data.map_code) {
 	case COLLISION_WALL:
 		remove_forcey(position, movement);

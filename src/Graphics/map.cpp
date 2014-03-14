@@ -57,7 +57,7 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 	int width, height;
 	int x, y, i, a;
 	//uint8_t** map;
-	uint32_t **collision_map;
+	int **collision_map;
 	int **map;
 	//int **collision_map;
 	
@@ -140,7 +140,7 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 	if ((map = (int**)malloc(sizeof(int*) * width)) == NULL) {
 		printf("malloc failed\n");
 	}
-	if ((collision_map = (uint32_t**)malloc(sizeof(uint32_t*) * width)) == NULL) {
+	if ((collision_map = (int**)malloc(sizeof(int*) * width)) == NULL) {
 		printf("malloc failed\n");
 	}
 	
@@ -148,7 +148,7 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 		if ((map[i] = (int*)malloc(sizeof(int) * height)) == NULL) {
 			printf("malloc failed\n");
 		}
-		if ((collision_map[i] = (uint32_t*)malloc(sizeof(uint32_t) * height)) == NULL) {
+		if ((collision_map[i] = (int*)malloc(sizeof(int) * height)) == NULL) {
 			printf("malloc failed\n");
 		}
 	}
@@ -198,7 +198,7 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 				printf("Loading object [%s] %s\n", animation_name, animation_filename);
 				
 				
-				entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION);
+				entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION | COMPONENT_COLLISION);
 				
 				world->position[entity].x = TILE_WIDTH * x;
 				world->position[entity].y = TILE_HEIGHT * y;
@@ -208,6 +208,10 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 				
 				world->renderPlayer[entity].width = TILE_WIDTH;
 				world->renderPlayer[entity].height = TILE_HEIGHT;
+				
+				world->collision[entity].type = COLLISION_SOLID;
+				world->collision[entity].active = true;
+				world->collision[entity].radius = 1;
 				
 				load_animation(animation_filename, world, entity);
 				play_animation(&(world->animation[entity]), animation_name);
@@ -279,7 +283,7 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 	
 	
 	
-	create_level(world, collision_map, width, height, TILE_WIDTH);
+	//create_level(world, collision_map, width, height, TILE_WIDTH);
 	
 	for (i = 0; i < width; i++) {
 		free(map[i]);
@@ -308,10 +312,6 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 	
 	create_level(world, collision_map, width, height, TILE_WIDTH);
 	
-	for (int i = 0; i < width; i++) {
-		free(map[i]);
-	}
-	free(map);
 	//free(tileTypes);
 	//free(collisionTypes);
 
@@ -353,7 +353,7 @@ void map_render(SDL_Surface *surface, World *world, unsigned int player_entity) 
 	}
 	
 	SDL_FillRect(surface, NULL, 0xFF33FF);
-		
+	
 	map_rect.x = (WIDTH/2) -( playerXPosition + playerWidth / 2 );
 	map_rect.y = (HEIGHT/2) - ( playerYPosition + playerHeight / 2 );
 	
