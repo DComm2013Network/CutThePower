@@ -65,7 +65,7 @@ int main(int argc, char* argv[]) {
 		//INPUT
 		KeyInputSystem(world, &running);
 		MouseInputSystem(world, &entity);
-		movement_system(world);
+		movement_system(world, send_router_fd[WRITE_END]);
 		if (entity < MAX_ENTITIES) {
 			map_render(surface, world, entity);
 			//send_system(world, send_router_fd[WRITE_END]);

@@ -1,6 +1,6 @@
 CC=g++
-FLAGS=-Wall -std=c++11
-LIBS=-lSDL2 -lSDL2_image -lSDL2_net -lSDL2_mixer -lpthread
+FLAGS=-Wall -std=c++11 -fpermissive `sdl2-config --cflags`
+LIBS=-`sdl2-config --libs` -lSDL2 -lSDL2_image -lSDL2_net -lSDL2_mixer -lpthread
 
 BINDIR=bin
 OBJDIR=obj
