@@ -137,11 +137,11 @@ void render_player_system(World& world, SDL_Surface* surface) {
 void init_render_player_system() {
 	
 	int i;
-	const int pos = strlen("assets/Graphics/menu/keymap/keymap_");
+	const int pos = strlen("assets/Graphics/screen/menu/keymap/keymap_");
 	//char filename[64];
 	char *filename = (char*)malloc(sizeof(char) * 128);
 	
-	strcpy(filename, "assets/Graphics/menu/keymap/keymap_");
+	strcpy(filename, "assets/Graphics/screen/menu/keymap/keymap_");
 	
 	
 	for(i = 0; i < strlen(character_map); i++) {
@@ -156,6 +156,6 @@ void init_render_player_system() {
 		}
 	}
 	
-	ibeam = IMG_Load("assets/Graphics/menu/keymap/keymap_ibeam.png");
+	ibeam = IMG_Load("assets/Graphics/screen/menu/keymap/keymap_ibeam.png");
 	free(filename);
 }

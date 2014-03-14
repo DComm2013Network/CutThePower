@@ -174,9 +174,9 @@ void KeyInputSystem(World *world, bool *running)
 				world->renderPlayer[mainframe].width = TILE_WIDTH;
 				world->renderPlayer[mainframe].height = TILE_HEIGHT;
 				
-				world->collision[mainframe].type = COLLISION_SOLID;
-				world->collision[mainframe].active = true;
-				world->collision[mainframe].radius = 1;
+				//world->collision[mainframe].type = COLLISION_SOLID;
+				//world->collision[mainframe].active = true;
+				//world->collision[mainframe].radius = 1;
 				
 				load_animation("assets/Graphics/objects/computers/mainframe_5_animation.txt", world, mainframe);
 				play_animation(&(world->animation[mainframe]), "mainframe");
