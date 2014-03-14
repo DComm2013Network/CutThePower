@@ -47,8 +47,16 @@ int main(int argc, char* argv[]) {
 	init_render_player_system();
 	//unsigned int entity = create_player(world, 600, 600, true);
 	
-	create_main_menu(world);
+	//create_main_menu(world);
 	//create_bsod_menu(world);
+	
+	map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/map01_tiles.txt");
+	entity = create_player(world, 600, 600, true);
+						
+	world->mask[entity] |= COMPONENT_ANIMATION;
+	
+	load_animation("assets/Graphics/player/robber/rob_animation.txt", world, entity);
+						
 	
 	while (running)
 	{

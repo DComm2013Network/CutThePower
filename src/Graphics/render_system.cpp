@@ -138,7 +138,8 @@ void init_render_player_system() {
 	
 	int i;
 	const int pos = strlen("assets/Graphics/menu/keymap/keymap_");
-	char filename[64];
+	//char filename[64];
+	char *filename = (char*)malloc(sizeof(char) * 128);
 	
 	strcpy(filename, "assets/Graphics/menu/keymap/keymap_");
 	
@@ -156,5 +157,5 @@ void init_render_player_system() {
 	}
 	
 	ibeam = IMG_Load("assets/Graphics/menu/keymap/keymap_ibeam.png");
-	
+	free(filename);
 }

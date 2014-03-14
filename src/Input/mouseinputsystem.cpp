@@ -226,7 +226,6 @@ void MouseInputSystem(World *world, unsigned int *player_entity, bool *running)
 						
 						load_animation("assets/Graphics/player/robber/rob_animation.txt", world, *player_entity);
 						
-						
 						/*unsigned int mainframe = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION);
 						
 						world->position[mainframe].x = 200;
