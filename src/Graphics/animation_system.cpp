@@ -38,7 +38,6 @@ void animation_system(World *world) {
 	RenderPlayerComponent 	*renderPlayer;
 	
 	Animation *animation;
-	
 	for(entity = 0; entity < MAX_ENTITIES; entity++){
 		
 		if (IN_THIS_COMPONENT(world->mask[entity], SYSTEM_MASK)){

@@ -57,7 +57,7 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 	int width, height;
 	int x, y, i, a;
 	//uint8_t** map;
-	uint8_t **collision_map;
+	uint32_t **collision_map;
 	int **map;
 	//int **collision_map;
 	
@@ -140,7 +140,7 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 	if ((map = (int**)malloc(sizeof(int*) * width)) == NULL) {
 		printf("malloc failed\n");
 	}
-	if ((collision_map = (uint8_t**)malloc(sizeof(uint8_t*) * width)) == NULL) {
+	if ((collision_map = (uint32_t**)malloc(sizeof(uint32_t*) * width)) == NULL) {
 		printf("malloc failed\n");
 	}
 	
@@ -148,7 +148,7 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 		if ((map[i] = (int*)malloc(sizeof(int) * height)) == NULL) {
 			printf("malloc failed\n");
 		}
-		if ((collision_map[i] = (uint8_t*)malloc(sizeof(uint8_t) * height)) == NULL) {
+		if ((collision_map[i] = (uint32_t*)malloc(sizeof(uint32_t) * height)) == NULL) {
 			printf("malloc failed\n");
 		}
 	}
@@ -261,11 +261,6 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 			tile_rect.x = x * TILE_WIDTH;
 			tile_rect.y = y * TILE_HEIGHT;
 			
-			//already do this check.
-			//if (map[x][y] >= num_tiles) {
-			//	printf("Using tile %u that is bigger than %d\n", map[x][y], num_tiles);
-			//}
-			
 			SDL_BlitSurface(tiles[map[x][y]], NULL, map_surface, &tile_rect);
 			
 		}
@@ -300,6 +295,26 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 	free(entity_type);
 	free(tile_filename);
 	
+	/*for (int x = 0; x < width; x++) {
+		for (int y = 0; y < height; y++) {
+			for (int n = 0; n < num_tiles; n++) {
+				if (tileTypes[n] == map[x][y]) {
+					map[x][y] = collisionTypes[n];
+					break;
+				}
+			}
+		}
+	}*/
+	
+	create_level(world, collision_map, width, height, TILE_WIDTH);
+	
+	for (int i = 0; i < width; i++) {
+		free(map[i]);
+	}
+	free(map);
+	//free(tileTypes);
+	//free(collisionTypes);
+
 	return 0;
 }
 

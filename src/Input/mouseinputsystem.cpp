@@ -141,6 +141,7 @@ void MouseInputSystem(World *world, unsigned int *player_entity, bool *running)
 					}
 					else if (strcmp(button->label, "mainmenu_exit") == 0) {
 						destroy_world(world);
+
 						*running = false;
 						return;
 					}
@@ -220,7 +221,7 @@ void MouseInputSystem(World *world, unsigned int *player_entity, bool *running)
 						//map_init(world, "assets/Graphics/lobby/lobby.txt", "assets/Graphics/lobby/lobby_tiles.txt");
 						//map_init(world, "assets/Graphics/SampleFloor.txt", "assets/Graphics/tiles_lobby.txt");
 						
-						*player_entity = create_player(world, 600, 600, true);
+						*player_entity = create_player(world, 600, 600, true, COLLISION_HACKER);
 						
 						world->mask[*player_entity] |= COMPONENT_ANIMATION;
 						
@@ -248,6 +249,7 @@ void MouseInputSystem(World *world, unsigned int *player_entity, bool *running)
 						
 						
 						/*world->animation[*player_entity].triggered = false;
+
 						world->animation[*player_entity].index = 0;
 						world->animation[*player_entity].frames_to_skip = 30;
 						world->animation[*player_entity].frame_count = 0;
@@ -260,8 +262,8 @@ void MouseInputSystem(World *world, unsigned int *player_entity, bool *running)
 						world->animation[*player_entity].surfaces[2] = IMG_Load("assets/Graphics/player/rob_down3.png");
 						
 						world->animation[*player_entity].surface_count = 3;
+<<<<<<< HEAD
 						world->animation[*player_entity].triggered = true;*/
-						
 						
 						return;
 					}

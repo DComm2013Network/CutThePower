@@ -81,7 +81,7 @@ void KeyInputSystem(World *world, bool *running)
 		memcpy(prevKeyboardState, p, sizeof(Uint8) * numKeys);
         return;
 	}
-	
+
     //If a textfield is focused
     if (textField != -1) {
 		
@@ -156,8 +156,8 @@ void KeyInputSystem(World *world, bool *running)
 			
 			command->commands[C_ACTION] = (currentKeyboardState[command_keys[C_ACTION]] != 0) && (prevKeyboardState[command_keys[C_ACTION]] == 0);
 			
-			
-			
+			//THIS IS VENDING MACHINE SIMULIATOR CODE
+			//DELETE IF YOU DO NOT WANT TO PLACE VENDING MACHINES!!!!!
 			if (command->commands[C_ACTION]) {
 				
 				unsigned int mainframe = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION);
@@ -178,6 +178,7 @@ void KeyInputSystem(World *world, bool *running)
 				play_animation(&(world->animation[mainframe]), "mainframe");
 				
 			}
+			//END DELETE
 			
         }
     }

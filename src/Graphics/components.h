@@ -26,7 +26,6 @@ typedef struct{
 	int height;                 /**< The player's width in pixels. */
 } RenderPlayerComponent;
 
-
 typedef struct {
 	
 	char *name;
