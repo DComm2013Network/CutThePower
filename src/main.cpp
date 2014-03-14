@@ -1,13 +1,11 @@
 #include <SDL2/SDL.h>
-
 #include "systems.h"
+#include "sound.h"
 #include "world.h"
-//#define NETWORKOFF
-/*
-===============================================
-	DEFINE NETWORKOFF TO DISABLE NETWORKING
-===============================================
-*/
+#include "Input/menu.h"
+#include <stdlib.h>
+#include <time.h>
+#define NETWORKOFF
 
 int game_net_signalfd, game_net_lockfd;
 int network_ready = 0;
@@ -17,6 +15,7 @@ int main(int argc, char* argv[]) {
 	SDL_Surface *surface;
 	int send_router_fd[2];
 	int rcv_router_fd[2];
+	unsigned int entity = -1;
 
 	create_pipe(send_router_fd);
 	create_pipe(rcv_router_fd);
@@ -25,7 +24,8 @@ int main(int argc, char* argv[]) {
 	printf("Current World size: %i\n", sizeof(World));
 	bool running = true;
 	
-	SDL_Init(SDL_INIT_VIDEO);
+	//SDL_Init(SDL_INIT_VIDEO);
+	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
 	
 	window = SDL_CreateWindow("Cut The Power", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_OPENGL);
 	surface = SDL_GetWindowSurface(window);
@@ -35,12 +35,22 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 	
-	init_world(world);
+	init_sound();
 	
-	map_init(world, "assets/Graphics/SampleFloor.txt", "assets/Graphics/tiles.txt");
-		
-	create_player(world, 50, 50, true);
+	init_world(world);
+	srand(time(NULL));//random initializer
+	
+	//map_init(world, "assets/Graphics/lobby/lobby.txt", "assets/Graphics/lobby/lobby_tiles.txt");
+	//map_init(world, "assets/Graphics/lobby.txt", "assets/Graphics/tiles_lobby.txt");
+	
 
+	KeyMapInit("assets/Input/keymap.txt");
+	init_render_player_system();
+	//unsigned int entity = create_player(world, 600, 600, true);
+	
+	create_main_menu(world);
+	//create_bsod_menu(world);
+	
 	#ifndef NETWORKOFF
 		game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
 		game_net_lockfd     = eventfd(0, EFD_SEMAPHORE);
@@ -48,14 +58,21 @@ int main(int argc, char* argv[]) {
 		init_client_network(send_router_fd, rcv_router_fd);
 		send_intialization(world, send_router_fd[WRITE_END]);
 	#endif
-	
-	while (running) {
-		KeyInputSystem(world, &running);
-		MouseInputSystem(world);
-		movement_system(world, send_router_fd[WRITE_END]);
-		map_render(surface);
-		render_player_system(*world, surface);
 
+	while (running)
+	{
+		
+		//INPUT
+		KeyInputSystem(world, &running);
+		MouseInputSystem(world, &entity);
+		movement_system(world);
+		if (entity < MAX_ENTITIES) {
+			map_render(surface, world, entity);
+			//send_system(world, send_router_fd[WRITE_END]);
+		}
+		animation_system(world);
+		render_player_system(*world, surface);
+		
 		#ifndef NETWORKOFF
 			client_update_system(world, rcv_router_fd[READ_END]);
 		#endif

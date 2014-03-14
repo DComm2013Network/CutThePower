@@ -4,9 +4,18 @@
  * @file world.cpp
  */
 
+#define ANIMATION_AMOUNT 6
+
 #include "world.h"
 
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_keycode.h>
+#include <SDL2/SDL_scancode.h>
+
 #include <stdlib.h>
+
+void create_label(World *world, char *image, int x, int y, int w, int h);
+void create_button(World *world, char *image, char *name, int x, int y);
 
 /**
  * This function initializes every mask to be 0, so that there are no components.
@@ -128,9 +137,10 @@ unsigned int create_player(World* world, int x, int y, bool controllable) {
 	//MovementComponent movement;
 	//CollisionComponent collision;
 	
-	render.width = 20;
-	render.height = 20;
-	render.playerSurface = SDL_LoadBMP("assets/Graphics/dot.bmp");
+	render.width = 40;
+	render.height = 40;
+	//render.playerSurface = IMG_Load("assets/Graphics/player_80px.png");
+	render.playerSurface = IMG_Load("assets/Graphics/hacker_down.png");
 	if (!render.playerSurface) {
 		printf("mat is a doof\n");
 	}
@@ -145,8 +155,8 @@ unsigned int create_player(World* world, int x, int y, bool controllable) {
 	
 	movement.id = 0;
 	movement.lastDirection = 0;
-	movement.acceleration = 0.001;
-	movement.maxSpeed = 0.15;
+	movement.acceleration = 0.3;
+	movement.maxSpeed = 1.8;
 	movement.movX = 0;
 	movement.movY = 0;
 	
@@ -202,6 +212,8 @@ unsigned int create_player(World* world, int x, int y, bool controllable) {
  * Clean up is easy.
  *
  * [Detailed description (if necessary)]
+ * 
+ * TODO: free all memory on heap. Memory leaks suck.
  *
  * @param world
  * @param entity
@@ -212,3 +224,23 @@ unsigned int create_player(World* world, int x, int y, bool controllable) {
 void destroy_entity(World* world, const unsigned int entity) {
 	world->mask[entity] = COMPONENT_EMPTY;
 }
+
+/**
+ * Deletes all entities in the world.
+ *
+ * @param world The world struct
+ *
+ * @designer Jordan Marling
+ *
+ * @author Jordan Marling
+ */
+void destroy_world(World *world) {
+	unsigned int entity;
+	
+	for(entity = 0; entity < MAX_ENTITIES; entity++) {
+		destroy_entity(world, entity);
+	}
+}
+
+
+
