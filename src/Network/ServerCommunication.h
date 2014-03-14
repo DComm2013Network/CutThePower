@@ -24,9 +24,12 @@
 #define ERR_CORRUPTED     7  /**< A packet contains corrupted data. */
 #define ERR_NO_HOST       8  /**< The host couldn't be resolved. */
 #define ERR_NO_MEM        9  /**< malloc failed. */
-#define ERR_IPC_FAIL      10 /**< Writing to a pipe or other form of IPC failed. */
+#define ERR_IPC_FAIL      10 /**< Writing or creating IPC failed. */
 #define ERR_NO_SEM        11 /**< Couldn't acquire a semaphore. */
 #define ERR_SOCK_RM       12 /**< Couldn't remove the socket from an SDL socket set. */
+#define ERR_NO_SOCK_SET   13 /**< Couldn't make an SDL socket set. */
+#define ERR_ROUTER_INIT   14 /**< The network router couldn't start for some reason. */
+
 /* Thread functions */
 void *recv_thread_func(void *ndata);
 void *send_thread_func(void *ndata);
@@ -58,7 +61,7 @@ SDLNet_SocketSet make_socket_set(int num_sockets, ...);
 int check_sockets(SDLNet_SocketSet set);
 
 /* Error reporting functions */
-void write_error(int error);
+void set_error(int error);
 const char *get_error_string();
 
 #endif

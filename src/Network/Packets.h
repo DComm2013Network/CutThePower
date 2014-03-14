@@ -48,13 +48,12 @@
 #define P_OBJCTV_LOC     6
 #define P_UNDEF          7 // NOT DEFINED
 #define P_OBJSTATUS      8
-#define P_UNDEF2         9 // NOT DEFINED
+#define P_KEEPALIVE      9 /**< Sent from client to server or vice versa if there has been no activity for @a TIMEOUT ms. */
 #define P_POSUPDATE      10
 #define G_ALLPOSUPDATE   11
 #define P_FLOOR_MOVE_REQ 12
 #define P_FLOOR_MOVE     13
 #define P_TAGGING        14
-#define P_KEEPALIVE      4294967295 /**< Sent from client to server or vice versa if there has been no activity for @a TIMEOUT ms. */
 
 #define NUM_PACKETS  14
 

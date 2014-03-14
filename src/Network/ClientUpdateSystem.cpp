@@ -51,12 +51,11 @@ void client_update_system(World *world, int net_pipe) {
 
 	write(game_net_signalfd, &signal, sizeof(uint64_t));
 	num_packets = read_type(net_pipe); // the function just reads a 32 bit value, so this works; semantically, not ideal
-	read(game_net_lockfd, &sem_buf, sizeof(uint64_t));
 
 	for(i = 0; i < num_packets; ++i)
 	{
 
-			packet = read_data(net_pipe, &type);
+		packet = read_data(net_pipe, &type);
 		
 		printf("Updating with packet type %u\n", type);
 		switch (type) { // the cached packets minuses one from the value 
@@ -91,7 +90,7 @@ void client_update_system(World *world, int net_pipe) {
 			default:
 				break;
 		}
-		//free(packet);
+		free(packet);
 	}
 }
 void client_update_chat(World *world, void *packet)
@@ -102,10 +101,13 @@ void client_update_obj_loc(World *world, void *packet)
 {
 	PKT_OBJ_LOC *obj_loc = (PKT_OBJ_LOC*) packet;
 }
+
 void client_update_obj_status(World *world, void *packet)
 {
-	PKT_OBJECTIVE_STATUS *obj_status =  (PKT_OBJECTIVE_STATUS*)packet;
+	PKT_OBJ_LOC *obj_loc = (PKT_OBJ_LOC*) packet;
 }
+
+
 void client_update_floor(World *world, void *packet)
 {
 	PKT_FLOOR_MOVE* floor_move = (PKT_FLOOR_MOVE*)packet;
@@ -128,16 +130,20 @@ void client_update_pos(World *world, void *packet)
 	PKT_ALL_POS_UPDATE *pos_update = (PKT_ALL_POS_UPDATE *)packet;
 	for (int i = 0; i < MAX_PLAYERS; i++)
 	{
-		if (!pos_update->players_on_floor[i] || player_table[i] == CLIENT_PLAYER) // If they're not on this floor or it's our player
+		if (!pos_update->players_on_floor[i]) // If they're not on this floor
 		{
-			if(!pos_update->players_on_floor[i])
-			{
-				destroy_entity(world, i);
-				player_table[i] = UNASSIGNED;
-			}
-
-			continue;
+            if(player_table[i] != UNASSIGNED) // If they previously existed but aren't on this floor
+            {
+			    destroy_entity(world, player_table[i]);
+			    player_table[i] = UNASSIGNED;
+            }
+            continue;
 		}
+        else if(player_table[i] == CLIENT_PLAYER)
+			continue;
+
+        else if(player_table[i] == UNASSIGNED) // They're on the floor but haven't yet been created
+            player_table[i] = create_player(world, pos_update->xPos[i], pos_update->yPos[i], false);
 
 		world->movement[player_table[i]].movX	= pos_update->xVel[i];
 		world->movement[player_table[i]].movY 	= pos_update->yVel[i];
