@@ -230,7 +230,8 @@ void MouseInputSystem(World *world, unsigned int *player_entity, bool *running)
 						
 						load_animation("assets/Graphics/player/robber/rob_animation.txt", world, *player_entity);
 						#else
-						create_intro(world);
+						create_load_screen(world);
+						//create_intro(world);
 						#endif
 						
 						return;

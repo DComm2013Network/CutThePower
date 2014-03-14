@@ -26,5 +26,6 @@ void create_play_menu(World *world);
 void create_setup_menu(World *world);
 void create_bsod_menu(World *world);
 void create_intro(World *world);
+void create_load_screen(World *world);
 
 #endif

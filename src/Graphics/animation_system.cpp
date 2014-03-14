@@ -9,6 +9,7 @@
 #include "../components.h"
 #include "../systems.h"
 #include "../sound.h"
+#include "../Input/menu.h"
 
 #include <stdlib.h>
 
@@ -89,7 +90,14 @@ void animation_system(World *world, unsigned int *player_entity) {
 								
 								return;
 							}
-							
+							else if (animationComponent->id == 1) { //1 is the loading screen!
+								
+								destroy_world(world);
+								
+								create_intro(world);
+								
+								return;
+							}
 							
 							animationComponent->current_animation = -1;
 							renderPlayer->playerSurface = animation->surfaces[0];

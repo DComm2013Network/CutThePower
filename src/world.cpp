@@ -82,9 +82,6 @@ unsigned int create_level(World* world, int** map, int width, int height, int ti
 	
 	entity = create_entity(world, COMPONENT_LEVEL);
 	
-	printf("Map level entity: %u\n", entity);
-	printf("CREATE LEVEL SIZE: %d %d\n", width, height);
-	
 	lastID++;
 	world->level[entity].map = (int**)malloc(sizeof(int*) * width);
 	for (i = 0; i < width; i++) {
