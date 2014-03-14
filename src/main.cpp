@@ -10,7 +10,6 @@
 #define FPS_MAX 120
 //#define NETWORKOFF
 
-int game_net_signalfd, game_net_lockfd;
 int network_ready = 0;
 
 class FPS {
@@ -63,12 +62,11 @@ public:
 int main(int argc, char* argv[]) {
 	SDL_Window *window;
 	SDL_Surface *surface;
+	unsigned int entity = -1;
 	int send_router_fd[2];
 	int rcv_router_fd[2];
-	unsigned int entity = -1;
-
-	//create_pipe(send_router_fd);
-	//create_pipe(rcv_router_fd);
+	create_pipe(send_router_fd);
+	create_pipe(rcv_router_fd);
 
 	World *world = (World*)malloc(sizeof(World));
 	printf("Current World size: %i\n", sizeof(World));
@@ -110,14 +108,6 @@ int main(int argc, char* argv[]) {
 	FPS fps;
 	fps.init();
 
-	#ifndef NETWORKOFF
-		game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
-		game_net_lockfd     = eventfd(0, EFD_SEMAPHORE);
-
-		init_client_network(send_router_fd, rcv_router_fd);
-		send_intialization(world, send_router_fd[WRITE_END]);
-	#endif
-
 	while (running)
 	{
 		
@@ -128,7 +118,7 @@ int main(int argc, char* argv[]) {
 		if (entity < MAX_ENTITIES) {
 			map_render(surface, world, entity);
 		}
-		animation_system(world, &entity);
+		animation_system(world, &entity, send_router_fd, rcv_router_fd);
 		render_player_system(*world, surface);
 		
 		#ifndef NETWORKOFF

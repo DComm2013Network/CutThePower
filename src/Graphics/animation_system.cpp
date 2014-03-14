@@ -15,7 +15,7 @@
 
 #define SYSTEM_MASK (COMPONENT_RENDER_PLAYER | COMPONENT_ANIMATION) /**< The entity must have a animation and render component */
 
-
+int game_net_signalfd, game_net_lockfd;
 /**
  * Updates animations
  *
@@ -32,11 +32,12 @@
  *
  * @author Jordan Marling
  */
-void animation_system(World *world, unsigned int *player_entity) {
+void animation_system(World *world, unsigned int *player_entity, int send_router_fd[2], int rcv_router_fd[2]) {
 	
 	unsigned int entity;
 	AnimationComponent 		*animationComponent;
 	RenderPlayerComponent 	*renderPlayer;
+
 	
 	Animation *animation;
 	for(entity = 0; entity < MAX_ENTITIES; entity++){
@@ -86,8 +87,15 @@ void animation_system(World *world, unsigned int *player_entity) {
 								world->mask[*player_entity] |= COMPONENT_ANIMATION;
 								
 								load_animation("assets/Graphics/player/robber/rob_animation.txt", world, *player_entity);
-						
 								
+								
+								game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
+								game_net_lockfd     = eventfd(0, EFD_SEMAPHORE);
+
+								init_client_network(send_router_fd, rcv_router_fd);
+								send_intialization(world, send_router_fd[WRITE_END]);
+								
+
 								return;
 							}
 							else if (animationComponent->id == 1) { //1 is the loading screen!
