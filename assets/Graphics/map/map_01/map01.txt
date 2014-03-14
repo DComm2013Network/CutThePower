@@ -40,10 +40,13 @@
 13 01 13 01 01 01 01 01 01 13 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 13 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 13 
 
 
-2
-object 1 1 assets/Graphics/objects/computers/mainframe_5_animation.txt mainframe
-object 4 1 assets/Graphics/objects/computers/mainframe_5_animation.txt mainframe
-
-
+7
+object 01 01 assets/Graphics/objects/computers/mainframe_5_animation.txt mainframe
+object 04 01 assets/Graphics/objects/computers/mainframe_5_animation.txt mainframe
+object 10 12 assets/Graphics/objects/npc/piano_tl_animation.txt play
+object 11 12 assets/Graphics/objects/npc/piano_tr_animation.txt play
+object 10 13 assets/Graphics/objects/npc/piano_bl_animation.txt play
+object 11 13 assets/Graphics/objects/npc/piano_br_animation.txt play
+sound 1
 
 04 09 10 09 09 09 09 09 09 10 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 10 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 05

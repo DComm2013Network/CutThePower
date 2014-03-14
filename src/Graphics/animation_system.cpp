@@ -129,6 +129,8 @@ int load_animation(char *filename, World *world, unsigned int entity) {
 			return -1;
 		}
 		
+		//printf("Loading animation %s\n", animation_name);
+		
 		animationComponent->animations[animation_index].surfaces = (SDL_Surface**)malloc(sizeof(SDL_Surface*) * animation_frames);
 		
 		animationComponent->animations[animation_index].surface_count = animation_frames;
@@ -172,6 +174,23 @@ int load_animation(char *filename, World *world, unsigned int entity) {
 	return 0;
 }
 
+void cancel_animation(World *world, unsigned int entity, char *animation_name) {
+	
+	AnimationComponent *animation = &(world->animation[entity]);
+	RenderPlayerComponent *render = &(world->renderPlayer[entity]);
+	
+	if (animation->current_animation == -1)
+		return;
+	
+	if (strcmp(animation->animations[animation->current_animation].name, animation_name) == 0) {
+		
+		render->playerSurface = animation->animations[animation->current_animation].surfaces[0];
+		
+		animation->current_animation = -1;
+		
+	}
+}
+
 void play_animation(AnimationComponent *animationComponent, char *animation_name) {
 	
 	int i;
@@ -182,7 +201,7 @@ void play_animation(AnimationComponent *animationComponent, char *animation_name
 		
 		if (strcmp(animationComponent->animations[i].name, animation_name) == 0) {
 			
-			if (animationComponent->current_animation == i)
+			if (animationComponent->current_animation != -1)
 				return;
 			
 			animationComponent->current_animation = i;

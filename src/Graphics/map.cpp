@@ -14,6 +14,7 @@
 
 #include "map.h"
 #include "systems.h"
+#include "../sound.h"
 
 SDL_Surface *map_surface; /**< The surface on which to render the map. */
 SDL_Rect map_rect;        /**< The rectangle containing the map. */
@@ -118,6 +119,9 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 					return -1;
 				}
 				
+				printf("Loading object [%s] %s\n", animation_name, animation_filename);
+				
+				
 				entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION);
 				
 				world->position[entity].x = TILE_WIDTH * x;
@@ -134,6 +138,20 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 				
 				free(animation_name);
 				free(animation_filename);
+				
+			}
+			else if (strcmp(entity_type, "sound") == 0) {
+				
+				int sound_id;
+				
+				if (fscanf(fp_map, "%d", &sound_id) != 1) {
+					printf("Error loading sound!\n");
+					return -1;
+				}
+				
+				play_music(sound_id);
+				
+				printf("Playing sound %d\n", sound_id);
 				
 			}
 			else {
