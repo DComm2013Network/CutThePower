@@ -237,8 +237,8 @@ int handle_tcp_in(int router_pipe_fd, TCPsocket tcp_sock)
     
     if((game_packet = recv_tcp_packet(tcp_sock, &packet_type, &timestamp)) == NULL)
     {
-        if(packet_type != P_KEEPALIVE)
-        {
+        // if(packet_type != P_KEEPALIVE)
+        // {
             if(cnt_errno == ERR_TCP_RECV_FAIL)
             {
                 fprintf(stderr, "Failure in TCP receive : %s \n", SDLNet_GetError());
@@ -257,9 +257,9 @@ int handle_tcp_in(int router_pipe_fd, TCPsocket tcp_sock)
 	        {
 	        	return -2;
 	        }
-        }
-        else if(write_pipe(router_pipe_fd, &packet_type, sizeof(packet_type)) == -1)
-            return -1;
+        //}
+        // else if(write_pipe(router_pipe_fd, &packet_type, sizeof(packet_type)) == -1)
+        //     return -1;
     }
     
     printf("Received TCP packet: %u\n", packet_type);
@@ -361,10 +361,7 @@ void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 		printf("recv_tcp_packet: Received Invalid Packet Type!\n");
 		cnt_errno = ERR_CORRUPTED;
 		return NULL; 
-	}
-
-	if(*packet_type == P_KEEPALIVE)
-        return NULL;
+	} 
 
 	packet_size = packet_sizes[(*packet_type) - 1];
 

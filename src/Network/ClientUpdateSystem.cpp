@@ -52,11 +52,14 @@ void client_update_system(World *world, int net_pipe) {
 	write(game_net_signalfd, &signal, sizeof(uint64_t));
 	num_packets = read_type(net_pipe); // the function just reads a 32 bit value, so this works; semantically, not ideal
 	read(game_net_lockfd, &sem_buf, sizeof(uint64_t));
+
 	for(i = 0; i < num_packets; ++i)
 	{
-		packet = read_data(net_pipe, &type);
-		printf("Updating with packet type %u\n", type + 1);
-		switch (type + 1) { // the cached packets minuses one from the value 
+
+			packet = read_data(net_pipe, &type);
+		
+		printf("Updating with packet type %u\n", type);
+		switch (type) { // the cached packets minuses one from the value 
 			case P_CONNECT:
 				if(client_update_info(world, packet) == CONNECT_CODE_DENIED)
 					return; // Pass error up to someone else to deal with
@@ -88,7 +91,7 @@ void client_update_system(World *world, int net_pipe) {
 			default:
 				break;
 		}
-		free(packet);
+		//free(packet);
 	}
 }
 void client_update_chat(World *world, void *packet)
