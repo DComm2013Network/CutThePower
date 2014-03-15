@@ -82,7 +82,7 @@ void animation_system(World *world, unsigned int *player_entity, int send_router
 								//map_init(world, "assets/Graphics/SampleFloor.txt", "assets/Graphics/tiles_lobby.txt");
 								
 								map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/map01_tiles.txt");
-								*player_entity = create_player(world, 600, 600, true, COLLISION_HACKER);
+								*player_entity = create_player(world, 600, 600, true, COLLISION_HACKER, 0);
 													
 								world->mask[*player_entity] |= COMPONENT_ANIMATION;
 								

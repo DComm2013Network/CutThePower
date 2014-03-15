@@ -122,8 +122,11 @@ int main(int argc, char* argv[]) {
 		render_player_system(*world, surface);
 		
 		#ifndef NETWORKOFF
-			client_update_system(world, rcv_router_fd[READ_END]);
-			send_location(world, send_router_fd[WRITE_END]);
+			if(network_ready)
+			{
+				client_update_system(world, rcv_router_fd[READ_END]);
+				send_location(world, send_router_fd[WRITE_END]);
+			}
 		#endif
 
 		SDL_UpdateWindowSurface(window);

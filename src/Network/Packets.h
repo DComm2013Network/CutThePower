@@ -69,10 +69,7 @@
 #define FLOOR_LOBBY 0x000
 
 /**
- * Encapsulates data for easy sending by the send thread.
- *
- * @property protocol The protocol (TCP or UDP) used to send this packet.
- * @property type     The type of packet to send (1 through 14).
+  * @property type     The type of packet to send (1 through 14).
  * @property data     The data contained in the packet.
  *
  * @struct internal_packet

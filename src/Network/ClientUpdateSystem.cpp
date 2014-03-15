@@ -12,6 +12,7 @@
 #include "GameplayCommunication.h"
 #include "PipeUtils.h"
 #include "../world.h"
+#include "../systems.h"
 #include <sys/poll.h>
  
 extern int game_net_signalfd, game_net_lockfd;
@@ -111,6 +112,16 @@ void client_update_obj_status(World *world, void *packet)
 void client_update_floor(World *world, void *packet)
 {
 	PKT_FLOOR_MOVE* floor_move = (PKT_FLOOR_MOVE*)packet;
+	for (int i = 0; i < MAX_ENTITIES; i++)
+	{
+		if (IN_THIS_COMPONENT(world->mask[i], COMPONENT_CONTROLLABLE | COMPONENT_MOVEMENT | COMPONENT_POSITION))
+		{
+			world->position[i].x		= floor_move->xPos;
+			world->position[i].y		= floor_move->yPos;
+			world->position[i].level	= floor_move->new_floor;
+			break;
+		}
+	}
 }
 /**
  * Updates the positions and movement properties of every other player.
@@ -128,29 +139,58 @@ void client_update_floor(World *world, void *packet)
 void client_update_pos(World *world, void *packet)
 {
 	PKT_ALL_POS_UPDATE *pos_update = (PKT_ALL_POS_UPDATE *)packet;
-	for (int i = 0; i < MAX_PLAYERS; i++)
+	bool player_found[MAX_PLAYERS];
+
+	for(int i = 0; i < MAX_PLAYERS; i++)
 	{
-		if (!pos_update->players_on_floor[i]) // If they're not on this floor
-		{
-            if(player_table[i] != UNASSIGNED) // If they previously existed but aren't on this floor
-            {
-			    destroy_entity(world, player_table[i]);
-			    player_table[i] = UNASSIGNED;
-            }
-            continue;
-		}
-        else if(player_table[i] == CLIENT_PLAYER)
-			continue;
-
-        else if(player_table[i] == UNASSIGNED) // They're on the floor but haven't yet been created
-            player_table[i] = create_player(world, pos_update->xPos[i], pos_update->yPos[i], false, COLLISION_HACKER);
-
-		world->movement[player_table[i]].movX	= pos_update->xVel[i];
-		world->movement[player_table[i]].movY 	= pos_update->yVel[i];
-		world->position[player_table[i]].x		= pos_update->xPos[i];
-		world->position[player_table[i]].y		= pos_update->yPos[i];
-		world->position[player_table[i]].level	= pos_update->floor;
+		player_found[i] = false;
 	}
+	
+	for (int i = 0; i < MAX_ENTITIES; i++)
+	{
+		if (IN_THIS_COMPONENT(world->mask[i], COMPONENT_MOVEMENT | COMPONENT_POSITION | COMPONENT_PLAYER) &&
+			!IN_THIS_COMPONENT(world->mask[i], COMPONENT_CONTROLLABLE))
+		{
+			for (playerNo_t j = 0; j < MAX_PLAYERS; j++) {
+				if(world->player[i].playerNo == j+1)
+				{
+					printf("FOUND PLAYER %d\n", j);
+					world->movement[i].movX		= pos_update->xVel[j];
+					world->movement[i].movY 	= pos_update->yVel[j];
+					world->position[i].x		= pos_update->xPos[j];
+					world->position[i].y		= pos_update->yPos[j];
+					world->position[i].level	= pos_update->floor;
+					player_found[j] = true;
+				}
+			}
+		}
+	}
+
+	for(int i = 0; i < MAX_PLAYERS; i++)
+	{
+		if((pos_update->players_on_floor[i] == true) && (player_found[i] == false))
+		{
+			printf("PLAYER CREATED: NUMBER %d\n", i);
+			unsigned int player_entity = create_player(world, pos_update->xPos[i], pos_update->yPos[i], false, COLLISION_HACKER, i);
+			world->mask[player_entity] |= COMPONENT_ANIMATION;
+			printf("CLIENT PLAYER NUM %d\n", player_entity);
+			load_animation("assets/Graphics/player/robber/rob_animation.txt", world, player_entity);
+		}
+	}
+		// if (!pos_update->players_on_floor[i]) // If they're not on this floor
+		// {
+  //           if(player_table[i] != UNASSIGNED) // If they previously existed but aren't on this floor
+  //           {
+		// 	    destroy_entity(world, player_table[i]);
+		// 	    player_table[i] = UNASSIGNED;
+  //           }
+  //           continue;
+		// }
+  //       else if(player_table[i] == CLIENT_PLAYER)
+		// 	continue;
+
+  //       else if(player_table[i] == UNASSIGNED) // They're on the floor but haven't yet been created
+  //           player_table[i] = create_player(world, pos_update->xPos[i], pos_update->yPos[i], false, COLLISION_HACKER);
 }
 
 /**
@@ -208,22 +248,17 @@ void client_update_objectives(World *world, void *packet)
 void client_update_status(World *world, void *packet)
 {
 	PKT_GAME_STATUS *status_update = (PKT_GAME_STATUS *)packet;
-	unsigned int entity;
-	for(int i = 0; i < MAX_PLAYERS; ++i)
+
+	for (int i = 0; i < MAX_ENTITIES; i++)
 	{
-		if(!status_update->player_valid[i] || player_table[i] == CLIENT_PLAYER) // Don't update if they're not valid or it's our player
-			continue;
-		
-		if(player_table[i] == UNASSIGNED)
+		if (IN_THIS_COMPONENT(world->mask[i], COMPONENT_MOVEMENT | COMPONENT_POSITION 
+									| COMPONENT_PLAYER | COMPONENT_CONTROLLABLE))
 		{
-			entity 								= create_player(world, 0, 0, false, COLLISION_HACKER);
-			world->player[entity].teamNo 		= status_update->otherPlayers_teams[i];
-			world->player[entity].playerNo 		= i + 1;
-			player_table[i] 					= entity;
-			strcpy(world->player[entity].name, status_update->otherPlayers_name[i]);
+			world->player[i].teamNo 		= status_update->otherPlayers_teams[i];
+			world->player[i].playerNo 		= i + 1;
+			strcpy(world->player[i].name, status_update->otherPlayers_name[i]);
+			world->player[i].readyStatus = status_update->readystatus[i];
 		}
-		
-		world->player[entity].readyStatus = status_update->readystatus[i];
 	}
 }
 

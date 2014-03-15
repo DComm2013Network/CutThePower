@@ -115,7 +115,7 @@ unsigned int create_level(World* world, int** map, int width, int height, int ti
  * @designer
  * @author
  */
-unsigned int create_player(World* world, int x, int y, bool controllable, int collisiontype) {
+unsigned int create_player(World* world, int x, int y, bool controllable, int collisiontype, playerNo_t pno = NULL) {
 	unsigned int entity;
 	PositionComponent pos;
 	RenderPlayerComponent render;
@@ -123,6 +123,7 @@ unsigned int create_player(World* world, int x, int y, bool controllable, int co
 	ControllableComponent control;
 	CommandComponent command;
 	CollisionComponent collision;
+	PlayerComponent player;
 
 	int lastID = -1;
 	unsigned int tempMask = 0;
@@ -167,6 +168,8 @@ unsigned int create_player(World* world, int x, int y, bool controllable, int co
 	collision.active = true;
 	collision.radius = 0;
 	
+	player.teamNo = pno;
+
 	for(entity = 0; entity < MAX_ENTITIES; ++entity) {
 		tempMask = world->mask[entity] & COMPONENT_POSITION;
 		if (tempMask == COMPONENT_MOVEMENT) {
@@ -182,20 +185,23 @@ unsigned int create_player(World* world, int x, int y, bool controllable, int co
 										COMPONENT_COMMAND | 
 										COMPONENT_MOVEMENT | 
 										COMPONENT_COLLISION |
-										COMPONENT_CONTROLLABLE; //| COMPONENT_MOVEMENT | COMPONENT_COLLISION;
+										COMPONENT_CONTROLLABLE |
+										COMPONENT_PLAYER; //| COMPONENT_MOVEMENT | COMPONENT_COLLISION;
 			} else {
 				world->mask[entity] =	COMPONENT_POSITION | 
 										COMPONENT_RENDER_PLAYER | 
 										COMPONENT_COMMAND | 
 										COMPONENT_COLLISION | 
-										COMPONENT_MOVEMENT;
+										COMPONENT_MOVEMENT |
+										COMPONENT_PLAYER;
 			}
 			world->position[entity] = pos;
 			world->renderPlayer[entity] = render;
 			world->command[entity] = command;
 			world->movement[entity] = movement;
 			world->collision[entity] = collision;
-			
+			world->player[entity] = player;
+
 			if (controllable) {
 				world->controllable[entity] = control;
 			}
