@@ -16,5 +16,6 @@
 int map_init(World* world, char *file_map, char *tilemap);
 void map_render(SDL_Surface *surface, int x, int y);
 void mask_render(SDL_Surface* surrface, int x, int y);
+void remove_fogofwar(int x, int y);
 
 #endif

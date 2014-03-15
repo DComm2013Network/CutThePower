@@ -24,14 +24,10 @@ int main(int argc, char* argv[]) {
 	
 	init_world(world);
 	
-<<<<<<< HEAD
 	map_init(world, "assets/Graphics/SampleFloor3.txt", "assets/Graphics/lobby/lobby_tiles.txt");
 
-	//mask_render(surface, world->position[entity].x, world->position[entity].y);
 
-=======
-	map_init(world, "assets/Graphics/map01/map01.txt", "assets/Graphics/map01/tiles.txt");
->>>>>>> 13e41770c38ee3c57fc7f70c07347ca9ffcc0c8b
+
 	unsigned int entity = create_player(world, 600, 600, true);
 		
 	while (running)
@@ -42,8 +38,10 @@ int main(int argc, char* argv[]) {
 		MouseInputSystem(world);
 		movement_system(world);
 		map_render(surface, world->position[entity].x, world->position[entity].y);
+		//mask_render(surface, 0, 0);	
 		render_player_system(*world, surface);
-		
+		remove_fogofwar(world->position[entity].x, world->position[entity].y);
+
 		SDL_UpdateWindowSurface(window);
 	}
 	return 0;

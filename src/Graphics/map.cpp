@@ -239,3 +239,71 @@ void mask_render(SDL_Surface* surface, int playerXPosition, int playerYPosition)
 	SDL_FillRect(map_fogofwar, &screenRect, 0xFF202020);
     SDL_BlitSurface(map_fogofwar, NULL, surface, &screenRect);
 }
+
+void remove_fogofwar(int playerXPosition, int playerYPosition)
+{
+	const int fogofwar_width = 100;
+	const int fogofwar_height = 100;
+
+    const int half_width = fogofwar_width / 2;
+    const int half_height = fogofwar_height / 2;
+
+    SDL_Rect sourceRect = { 0, 0, fogofwar_width, fogofwar_height };
+    SDL_Rect destRect = { playerXPosition - half_width, playerYPosition - half_height, fogofwar_width, fogofwar_height };
+
+    // Make sure our rects stays within bounds
+    if(destRect.x < 0)
+    {
+        sourceRect.x -= destRect.x; // remove the pixels outside of the surface
+        sourceRect.w -= sourceRect.x; // shrink to the surface, not to offset fog
+        destRect.x = 0;
+        destRect.w -= sourceRect.x; // shrink the width to stay within bounds
+    }
+    if(destRect.y < 0)
+    {
+        sourceRect.y -= destRect.y; // remove the pixels outside
+        sourceRect.h -= sourceRect.y; // shrink to the surface, not to offset fog
+        destRect.y = 0;
+        destRect.h -= sourceRect.y; // shrink the height to stay within bounds
+    }
+
+    int xDistanceFromEdge = (destRect.x + destRect.w) - fogofwar_width;
+    if(xDistanceFromEdge > 0) // we're busting
+    {
+        sourceRect.w -= xDistanceFromEdge;
+        destRect.w -= xDistanceFromEdge;
+    }
+    int yDistanceFromEdge = (destRect.y + destRect.h) - fogofwar_height;
+    if(yDistanceFromEdge > 0) // we're busting
+    {
+        sourceRect.h -= yDistanceFromEdge;
+        destRect.h -= yDistanceFromEdge;
+    }
+
+    SDL_LockSurface(map_fogofwar);
+
+    Uint32* destPixels = (Uint32*)983040;
+    Uint32* srcPixels = (Uint32*)10000;
+
+    static bool keepFogRemoved = false;
+
+    for(int x = 0; x < destRect.w; ++x)
+    {
+        for(int y = 0; y < destRect.h; ++y)
+        {
+            Uint32* destPixel = destPixels + (y + destRect.y) * fogofwar_width + destRect.x + x;
+            Uint32* srcPixel = srcPixels + (y + sourceRect.y) * fogofwar_width + sourceRect.x + x;
+
+            unsigned char* destAlpha = (unsigned char*)destPixel + 3; // fetch alpha channel
+            unsigned char* srcAlpha = (unsigned char*)srcPixel + 3; // fetch alpha channel
+            if(keepFogRemoved == true && *srcAlpha > 0)
+            {
+                continue; // skip this pixel
+            }
+
+            *destAlpha = *srcAlpha;
+        }
+    }
+
+    SDL_UnlockSurface(map_fogofwar);
+}
