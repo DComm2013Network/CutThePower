@@ -8,9 +8,11 @@
 
 #include "../world.h"
 #include "components.h"
+#include "../systems.h"
 #include "menu.h"
 #include "../Graphics/map.h"
 #include "../sound.h"
+#include "../triggered.h"
 
 #define SYSTEM_MASK (COMPONENT_MOUSE) /**< Entities must have a mouse component to be processed by this system. */
 
@@ -29,7 +31,7 @@ int textField = -1;
  *
  * @author Jordan Marling
  */
-void MouseInputSystem(World *world, unsigned int *player_entity)
+void MouseInputSystem(World *world)
 {
     int entity, e, x, y;
     static Uint32 previousState = 0;
@@ -109,149 +111,7 @@ void MouseInputSystem(World *world, unsigned int *player_entity)
 				if (button->currentState == true &&
 					button->prevState == false) {
 					
-					//MAIN MENU
-					if (strcmp(button->label, "mainmenu_play") == 0) {
-						
-						destroy_menu(world);
-						
-						//map_init(world, "assets/Graphics/lobby/lobby.txt", "assets/Graphics/lobby/lobby_tiles.txt");
-						//map_init(world, "assets/Graphics/SampleFloor.txt", "assets/Graphics/tiles_lobby.txt");
-						
-						//*player_entity = create_player(world, 600, 600, true);
-						
-						create_setup_menu(world);
-						
-						return;
-					}
-					else if (strcmp(button->label, "mainmenu_options") == 0) {
-						
-						destroy_menu(world);
-						
-						create_options_menu(world);
-						return;
-					}
-					else if (strcmp(button->label, "mainmenu_credits") == 0) {
-						
-						destroy_menu(world);
-						
-						create_credits_menu(world);
-						
-						return;
-					}
-					else if (strcmp(button->label, "mainmenu_exit") == 0) {
-						destroy_world(world);
-						exit(0);
-					}
-					
-					//OPTIONS
-					else if (strcmp(button->label, "options_back") == 0) {
-						
-						destroy_menu(world);
-						
-						create_main_menu(world);
-						
-						return;
-					}
-					else if (strcmp(button->label, "options_sound_off") == 0) {
-						
-						world->renderPlayer[entity].playerSurface = IMG_Load("assets/Graphics/menu/menu_button_soundon.png");
-						world->button[entity].label = "options_sound_on";
-						
-						enable_sound(true);
-						play_music(SOUND_MUSIC_MENU_RAIN);
-						
-					}
-					else if (strcmp(button->label, "options_sound_on") == 0) {
-						
-						world->renderPlayer[entity].playerSurface = IMG_Load("assets/Graphics/menu/menu_button_soundoff.png");
-						world->button[entity].label = "options_sound_off";
-						
-						enable_sound(false);
-						
-					}
-					else if (strcmp(button->label, "options_keymap") == 0) {
-						
-						destroy_menu(world);
-						
-						create_keymap_menu(world);
-						
-						return;
-					}
-					
-					//KEYMAP
-					else if (strcmp(button->label, "keymap_back") == 0) {
-						
-						destroy_menu(world);
-						
-						create_options_menu(world);
-						
-						return;
-					}
-					
-					//CREDITS
-					else if (strcmp(button->label, "credits_back") == 0) {
-						
-						destroy_menu(world);
-						
-						create_main_menu(world);
-						
-						return;
-					}
-					
-					//SETUP
-					else if (strcmp(button->label, "setup_back") == 0) {
-						
-						destroy_menu(world);
-						
-						create_main_menu(world);
-						
-						return;
-					}
-					else if (strcmp(button->label, "setup_play") == 0) {
-						
-						destroy_world(world);
-						
-						map_init(world, "assets/Graphics/lobby/lobby.txt", "assets/Graphics/lobby/lobby_tiles.txt");
-						//map_init(world, "assets/Graphics/SampleFloor.txt", "assets/Graphics/tiles_lobby.txt");
-						
-						*player_entity = create_player(world, 600, 600, true);
-						
-						world->mask[*player_entity] |= COMPONENT_ANIMATION;
-						
-						world->animation[*player_entity].triggered = false;
-						world->animation[*player_entity].index = 0;
-						world->animation[*player_entity].frames_to_skip = 30;
-						world->animation[*player_entity].frame_count = 0;
-						world->animation[*player_entity].rand_frame = -1;
-						world->animation[*player_entity].sound_effect = -1;
-						
-						world->animation[*player_entity].surfaces = (SDL_Surface**)malloc(sizeof(SDL_Surface*) * 3);
-						world->animation[*player_entity].surfaces[0] = IMG_Load("assets/Graphics/player/rob_down1.png");
-						world->animation[*player_entity].surfaces[1] = IMG_Load("assets/Graphics/player/rob_down2.png");
-						world->animation[*player_entity].surfaces[2] = IMG_Load("assets/Graphics/player/rob_down3.png");
-						
-						world->animation[*player_entity].surface_count = 3;
-						world->animation[*player_entity].triggered = true;
-						
-						
-						return;
-					}
-					
-					//BSOD
-					else if (strcmp(button->label, "bsod_exit") == 0) {
-						
-						destroy_world(world);
-						
-						exit(0);
-					}
-					else if (strcmp(button->label, "bsod_continue") == 0) {
-						
-						destroy_menu(world);
-						
-						create_main_menu(world);
-						return;
-						
-					}
+					menu_click(world, entity);
 					
 				}
 				

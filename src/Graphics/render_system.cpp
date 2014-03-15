@@ -12,7 +12,7 @@
 
 #define SYSTEM_MASK (COMPONENT_RENDER_PLAYER | COMPONENT_POSITION) /**< The entity must have a render player and position component
                                                                     * for processing by this system. */
-#define IMAGE_WIDTH			150
+#define IMAGE_WIDTH			400
                                                                     
 extern SDL_Rect map_rect; /**< The rectangle containing the map. */
 
@@ -51,7 +51,7 @@ void render_player_system(World& world, SDL_Surface* surface) {
 	TextFieldComponent		*text;
 	SDL_Rect playerRect;
 	
-	
+	SDL_Rect clipRect;
 	
 	for(entity = 0; entity < MAX_ENTITIES; entity++){
 		
@@ -76,7 +76,24 @@ void render_player_system(World& world, SDL_Surface* surface) {
 				
 			}
 			
-			SDL_BlitScaled(renderPlayer->playerSurface, NULL, surface, &playerRect);
+			clipRect.x = -playerRect.x;
+			clipRect.y = -playerRect.y;
+			clipRect.w = playerRect.w;
+			clipRect.h = playerRect.h;
+			
+			if (clipRect.x < 0)
+				clipRect.x = 0;
+			
+			if (clipRect.y < 0)
+				clipRect.y = 0;
+			
+			if (clipRect.h > HEIGHT - playerRect.y)
+				clipRect.h = HEIGHT - playerRect.y;
+			
+			if (clipRect.w > WIDTH - playerRect.x)
+				clipRect.w = WIDTH - playerRect.x;
+			
+			SDL_BlitScaled(renderPlayer->playerSurface, &clipRect, surface, &playerRect);
 			
 			//check if a textbox.
 			if (IN_THIS_COMPONENT(world.mask[entity], COMPONENT_TEXTFIELD)) {
@@ -120,10 +137,11 @@ void render_player_system(World& world, SDL_Surface* surface) {
 void init_render_player_system() {
 	
 	int i;
-	const int pos = strlen("assets/Graphics/menu/keymap/keymap_");
-	char filename[64];
+	const int pos = strlen("assets/Graphics/screen/menu/keymap/keymap_");
+	//char filename[64];
+	char *filename = (char*)malloc(sizeof(char) * 128);
 	
-	strcpy(filename, "assets/Graphics/menu/keymap/keymap_");
+	strcpy(filename, "assets/Graphics/screen/menu/keymap/keymap_");
 	
 	
 	for(i = 0; i < strlen(character_map); i++) {
@@ -138,6 +156,6 @@ void init_render_player_system() {
 		}
 	}
 	
-	ibeam = IMG_Load("assets/Graphics/menu/keymap/keymap_ibeam.png");
-	
+	ibeam = IMG_Load("assets/Graphics/screen/menu/keymap/keymap_ibeam.png");
+	free(filename);
 }

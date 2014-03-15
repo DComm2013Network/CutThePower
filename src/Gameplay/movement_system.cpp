@@ -12,6 +12,17 @@
 #define COLLISION_MASK (COMPONENT_COLLISION)
 #define PI 3.14159265
 
+int handle_collision_target(World *world, int entityIndex) {
+	if (world->collision[entityIndex].timer < world->collision[entityIndex].timerMax) {
+		world->collision[entityIndex].timer += 2;
+	} else {
+		world->collision[entityIndex].active = false;
+		world->collision[entityIndex].type = COLLISION_EMPTY;
+		//world->mask[entityIndex] = COMPONENT_EMPTY;
+	}
+	return COLLISION_TARGET;
+}
+
 void add_force(World& world, unsigned int entity, float magnitude, float dir) {
 	if ((world.mask[entity] & STANDARD_MASK) == STANDARD_MASK) {
 		world.movement[entity].movX += cos(dir * PI / 180) * magnitude;
@@ -59,12 +70,120 @@ void remove_forcey(PositionComponent& position, MovementComponent movement) {
 	position.y -= movement.movY;
 }
 
+void apply_deceleration(World* world, unsigned int entity) {
+	world->movement[entity].movX *= 1 - world->movement[entity].friction;
+	world->movement[entity].movY *= 1 - world->movement[entity].friction;
+}
+
+void apply_deceleration_x(MovementComponent &movement) {
+	movement.movX *= 1 - movement.friction;
+}
+
+void apply_deceleration_y(MovementComponent &movement) {
+	movement.movY *= 1 - movement.friction;
+}
+
+/* ------ MANUAL FRICTION X ------ */
+void apply_deceleration_x(MovementComponent &movement, float friction) {
+	movement.movX *= 1 - friction;
+}
+
+/* ------ MANUAL FRICTION Y ------ */
+void apply_deceleration_y(MovementComponent &movement, float friction) {
+	movement.movY *= 1 - friction;
+}
+
+void handle_x_collision(CollisionData data, PositionComponent& position, MovementComponent &movement) {
+	switch(data.entity_code) {
+	case COLLISION_SOLID:
+		remove_forcex(position, movement);
+		movement.movX = 0;
+		break;
+	default:
+		break;
+	}
+
+	switch(data.map_code) {
+	case COLLISION_WALL:
+		remove_forcex(position, movement);
+		movement.movX = 0;
+		break;
+	case COLLISION_BELTRIGHT:
+	    add_force(movement, 0.4, 0);
+	    break;
+	case COLLISION_BELTLEFT:
+	    add_force(movement, 0.4, 180);
+	    break;
+	case COLLISION_ICE:
+	    apply_deceleration_x(movement, 0.01);
+	    break;
+	default:
+		apply_deceleration_x(movement);
+		break;
+	}
+}
+
+void handle_y_collision(CollisionData data, PositionComponent& position, MovementComponent &movement) {
+	switch(data.entity_code) {
+	case COLLISION_SOLID:
+		remove_forcey(position, movement);
+		movement.movY = 0;
+		break;
+	default:
+		break;
+	}
+
+	switch(data.map_code) {
+	case COLLISION_WALL:
+		remove_forcey(position, movement);
+		movement.movY = 0;
+		break;
+	case COLLISION_BELTDOWN:
+	    add_force(movement, 0.4, 90);
+	    break;
+	case COLLISION_BELTUP:
+	    add_force(movement, 0.4, -90);
+	    break;
+	case COLLISION_ICE:
+	    apply_deceleration_y(movement, 0.001);
+	    break;
+	default:
+		apply_deceleration_y(movement);
+		break;
+	}
+}
+
+void handle_entity_collision(CollisionData data, World * world, int curEntityID) {
+	switch(data.entity_code) {
+	case COLLISION_TARGET:
+		if (world->collision[curEntityID].type == COLLISION_HACKER) {
+			handle_collision_target(world, data.entityID);
+		}
+		break;
+	case COLLISION_STAIR:
+		break;
+	case COLLISION_HACKER:
+		if (world->collision[curEntityID].type == COLLISION_GUARD) {
+			//world->mask[data.entityID] = COMPONENT_EMPTY;
+		}
+		break;
+	case COLLISION_GUARD:
+		if (world->collision[curEntityID].type == COLLISION_HACKER) {
+			//world->mask[curEntityID] = COMPONENT_EMPTY;
+		}
+		break;
+	default:
+		break;
+	}
+}
+
 void movement_system(World* world) {
 	unsigned int entity;
 	PositionComponent		*position;
 	CommandComponent		*command;
 	ControllableComponent 	*controllable;
-	MovementComponent	 *movement;
+	MovementComponent		*movement;
+	CollisionComponent		*collision;
 
 	//loop through each entity and see if the system can do work on it.
 	for(entity = 0; entity < MAX_ENTITIES; entity++) {
@@ -74,51 +193,63 @@ void movement_system(World* world) {
 			position = &(world->position[entity]);
 			controllable = &(world->controllable[entity]);
 			movement = &(world->movement[entity]);
+			collision = &(world->collision[entity]);
 			
 			//very simple movement. This needs to be synchronized with the
 			//game loop so there is no jittering on very slow systems.
 			if (controllable->active == true) {
 				PositionComponent temp;
-				temp.x = position->x;
-				temp.y = position->y;
+				int goffsetW = 0;//(position->width);
+				int goffsetH = 0;//(position->height);
+				temp.x = position->x - goffsetW;
+				temp.y = position->y - goffsetH;
 				temp.width = position->width;
 				temp.height = position->height;
-				temp.s = position->s;
 				temp.level = position->level;
 				
 				if (command->commands[C_UP]) {
 					add_force(world, entity, world->movement[entity].acceleration, -90);
+					play_animation(world, entity, "up");
+				}
+				else {
+					cancel_animation(world, entity, "up");
 				}
 				if (command->commands[C_DOWN]) {
 					add_force(world, entity, world->movement[entity].acceleration, 90);
+					play_animation(world, entity, "down");
+				}
+				else {
+					cancel_animation(world, entity, "down");
 				}
 				if (command->commands[C_LEFT]) {
 					add_force(world, entity, world->movement[entity].acceleration, 180);
+					play_animation(world, entity, "left");
+				}
+				else {
+					cancel_animation(world, entity, "left");
 				}
 				if (command->commands[C_RIGHT]) {
 					add_force(world, entity, world->movement[entity].acceleration, 0);
+					play_animation(world, entity, "right");
+				}
+				else {
+					cancel_animation(world, entity, "right");
 				}
 
-				int code = 0;
+				CollisionData data;
 				if (IN_THIS_COMPONENT(world->mask[entity], COLLISION_MASK)) {
+
 					apply_forcex(temp, *movement);
-					if (code = collision_system(*world, temp, entity)) {
-						remove_forcex(temp, *movement);
-						movement->movX = 0;
-					} else {
-						movement->movX *= 1 - 0.1;
-					}
+					data = collision_system(world, temp, entity);
+					handle_x_collision(data, temp, *movement);
 					apply_forcey(temp, *movement);
-					if (code = collision_system(*world, temp, entity)) {
-						remove_forcey(temp, *movement);
-						movement->movY = 0;
-					} else {
-						movement->movY *= 1 - 0.1;
-					}
+					data = collision_system(world, temp, entity);
+					handle_y_collision(data, temp, *movement);
+					handle_entity_collision(data, world, entity);
 
 				}	
-				position->x = temp.x;
-				position->y = temp.y;
+				position->x = temp.x + goffsetW;
+				position->y = temp.y + goffsetH;
 			}
 		}
 	} 

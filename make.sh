@@ -23,8 +23,8 @@ fi
 
 FILE="Makefile"
 
-FLAGS=""
-LIBS=""
+FLAGS="-Wall"
+LIBS="-lSDL2 -lSDL2_net"
 CC="g++"
 
 SRC_FILES=""
