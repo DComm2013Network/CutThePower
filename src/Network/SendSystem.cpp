@@ -34,7 +34,11 @@ void send_location(World *world, int fd) {
 		PKT_TAGGING * pkt14 = (PKT_TAGGING*)malloc(sizeof(PKT_TAGGING));
 
         if(!network_ready)
+        {
+            free(pkt4);
+            free(pkt14);
             return;
+        }
         
 		for (int j = 0; j < MAX_ENTITIES; j++) {
 			if (IN_THIS_COMPONENT(world->mask[j], COMPONENT_POSITION | COMPONENT_CONTROLLABLE))
@@ -49,6 +53,8 @@ void send_location(World *world, int fd) {
 			}
 		}
 		write_packet(fd, P_POSUPDATE, pkt4);
+        free(pkt4);
+        free(pkt14);
 }
 
 /**

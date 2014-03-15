@@ -74,7 +74,7 @@ void client_update_system(World *world, int net_pipe) {
 		packet = read_data(net_pipe, &type);
 		
 		printf("Updating with packet type %u\n", type);
-		switch (type) { // the cached packets minuses one from the value 
+		switch (type) {
 			case P_CONNECT:
 				if(client_update_info(world, packet) == CONNECT_CODE_DENIED)
 					return; // Pass error up to someone else to deal with

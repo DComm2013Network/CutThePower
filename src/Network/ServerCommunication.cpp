@@ -171,13 +171,12 @@ int handle_tcp_in(int router_pipe_fd, TCPsocket tcp_sock)
         return -1;
     }
     
-    fprintf(stderr, "Received TCP packet: %u\n", packet_type);
+    fprintf(stderr, "handle_tcp_in: Received TCP packet: %u\n", packet_type);
     if(write_packet(router_pipe_fd, packet_type, game_packet) == -1 ||
         write_pipe(router_pipe_fd, &timestamp, sizeof(timestamp)) == -1)
     {
-        fprintf(stderr, "TCP>Router: Error in write packet, flushing pipe");
+        fprintf(stderr, "TCP>Router: Error in write packet\n");
         set_error(ERR_IPC_FAIL);
-        fflush((FILE*)&router_pipe_fd);
         free(game_packet);
         return -1;
 	}
@@ -211,13 +210,12 @@ int handle_udp_in(int router_pipe_fd, UDPsocket udp_sock)
     if((game_packet = recv_udp_packet(udp_sock, &packet_type, &timestamp)) == NULL)
         return (packet_type == INVALID_PACKET_TYPE) - 1; // If it's a corrupted packet, that's fine; return 0
 
-    printf("Received UDP packet: %u\n", packet_type);	
+    fprintf(stderr, "handle_udp_in: Received UDP packet: %u\n", packet_type);	
     if(write_packet(router_pipe_fd, packet_type, game_packet) == -1 ||
         write_pipe(router_pipe_fd, &timestamp, sizeof(timestamp)) == -1)
     {
-        fprintf(stderr, "UDP>Router: Error in write packet, flushing pipe");
+        fprintf(stderr, "UDP>Router: Error in write packet\n");
         set_error(ERR_IPC_FAIL);
-        fflush((FILE*)&router_pipe_fd);
         free(game_packet);
         return -1;
     }
@@ -780,20 +778,20 @@ const char *get_error_string()
 {
     int err;
     static const char *error_strings[] = {
-        "Could not open the connection.",
-        "The server closed the connection.",
-        "Failed to receive TCP data.",
-        "Failed to receive a UDP packet.",
-        "Failed to send TCP data.",
-        "Failed to send a UDP packet.",
-        "Received corrupted data.",
-        "The remote host could not be resolved. Ensure the host name or IP address is valid.",
-        "The program could not allocate enough memory.",
-        "Could not create or write to an IPC mechanism.",
-        "Could not acquire a semaphore.",
-        "Could not allocate a socket set.",
-        "Network router thread failed to initialise.",
-        "Error reading the socket set."
+        "Could not open the connection.\n",
+        "The server closed the connection.\n",
+        "Failed to receive TCP data.\n",
+        "Failed to receive a UDP packet.\n",
+        "Failed to send TCP data.\n",
+        "Failed to send a UDP packet.\n",
+        "Received corrupted data.\n",
+        "The remote host could not be resolved. Ensure the host name or IP address is valid.\n",
+        "The program could not allocate enough memory.\n",
+        "IPC failure: could not create or write to IPC, or read invalid data.\n",
+        "Could not acquire a semaphore.\n",
+        "Could not allocate a socket set.\n",
+        "Network router thread failed to initialise.\n",
+        "Error reading the socket set.\n"
     };
 
     if(sem_wait(&err_sem) == -1)

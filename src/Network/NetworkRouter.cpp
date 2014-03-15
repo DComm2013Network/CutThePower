@@ -89,8 +89,12 @@ void *networkRouter(void *args)
         if(FD_ISSET(recvfd[READ_END], &active))
         {
 			packet = read_data(recvfd[READ_END], &type);
+            if(!packet)
+            {
+                set_error(ERR_IPC_FAIL);
+                break;
+            }
 			read(recvfd[READ_END], &timestamp, sizeof(timestamp));
-
             if(timestamps[type - 1] < timestamp)     // If the received packet is more recent, replace the cached one
             {
                 timestamps[type - 1] = timestamp;
@@ -106,6 +110,11 @@ void *networkRouter(void *args)
         if(ret && FD_ISSET(gameplay->read_pipe, &active))
         {
         	packet = read_data(gameplay->read_pipe, &type);
+            if(!packet)
+            {
+                set_error(ERR_IPC_FAIL);
+                break;
+            }
 			write_packet(sendfd[WRITE_END], type, packet);
 			--ret;
         }
@@ -117,7 +126,8 @@ void *networkRouter(void *args)
 
             --ret;
 		}
-    }   
+    }
+    net_cleanup(send_data, receive_data, gameplay, cached_packets);
     return NULL;
 }
 
@@ -254,8 +264,8 @@ int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int send
     *max_fd = recvfd[READ_END] > gameplay->read_pipe ? recvfd[READ_END] : gameplay->read_pipe;
     *max_fd = game_net_signalfd > *max_fd ? game_net_signalfd : *max_fd;
 
-    resolve_host(&ipaddr, TCP_PORT, "192.168.0.49");
-    resolve_host(&udpaddr, UDP_PORT, "192.168.0.49");
+    resolve_host(&ipaddr, TCP_PORT, "192.168.1.76");
+    resolve_host(&udpaddr, UDP_PORT, "192.168.1.76");
     
     tcp_sock = SDLNet_TCP_Open(&ipaddr);
 
