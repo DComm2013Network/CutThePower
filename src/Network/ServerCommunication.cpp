@@ -28,6 +28,7 @@ extern uint32_t packet_sizes[NUM_PACKETS];
 static int cnt_errno = -1;
 extern sem_t err_sem;
 static uint64_t tcp_seq_num = 0;
+extern int send_failure_fd;
 
 /**
  * Monitors sockets to receive data from the server.
@@ -419,11 +420,16 @@ void* send_thread_func(void* ndata){
 	uint32_t type = 0;
 	void * data;
 	int ret = -1;
+    uint64_t problem = 1;
 
 	while(1){	
     	data = grab_send_packet(&type, snd_data->read_pipe, &ret);
-    	if(ret != 1){
-			continue;
+    	if(ret != 1)
+        {
+            if(type == P_KEEPALIVE)
+            
+			write(send_failure_fd, &problem, sizeof(problem));
+            return NULL;
 		}
 		
 		protocol = get_protocol(type);
@@ -783,9 +789,8 @@ const char *get_error_string()
         "Received corrupted data.",
         "The remote host could not be resolved. Ensure the host name or IP address is valid.",
         "The program could not allocate enough memory.",
-        "Could not write to a pipe.",
+        "Could not create or write to an IPC mechanism.",
         "Could not acquire a semaphore.",
-        "Could not remove socket from socket set.",
         "Could not allocate a socket set.",
         "Network router thread failed to initialise.",
         "Error reading the socket set."

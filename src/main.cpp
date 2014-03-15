@@ -52,13 +52,10 @@ int main(int argc, char* argv[]) {
 	while (running) {
 		KeyInputSystem(world, &running);
 		MouseInputSystem(world);
+		client_update_system(world, rcv_router_fd[READ_END]);
 		movement_system(world, send_router_fd[WRITE_END]);
 		map_render(surface);
 		render_player_system(*world, surface);
-
-		#ifndef NETWORKOFF
-			client_update_system(world, rcv_router_fd[READ_END]);
-		#endif
 
 		SDL_UpdateWindowSurface(window);
 	}

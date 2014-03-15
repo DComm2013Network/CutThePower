@@ -11,6 +11,8 @@
 /** @} */
 #include "SendSystem.h"
 
+extern int network_ready;
+
 /**
  * Checks the world for data and sends out data updates to be passed to the server. Currently sends out\
  * only a position update.
@@ -31,6 +33,9 @@ void send_location(World *world, int fd) {
 		PKT_POS_UPDATE * pkt4 = (PKT_POS_UPDATE*)malloc(sizeof(PKT_POS_UPDATE));
 		PKT_TAGGING * pkt14 = (PKT_TAGGING*)malloc(sizeof(PKT_TAGGING));
 
+        if(!network_ready)
+            return;
+        
 		for (int j = 0; j < MAX_ENTITIES; j++) {
 			if (IN_THIS_COMPONENT(world->mask[j], COMPONENT_POSITION | COMPONENT_CONTROLLABLE))
 			{
