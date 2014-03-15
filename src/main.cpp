@@ -12,6 +12,8 @@
 #define FPS_MAX 120
 
 int game_net_signalfd, game_net_lockfd;
+bool running;
+unsigned int player_entity;
 
 class FPS {
 private:
@@ -65,14 +67,12 @@ int main(int argc, char* argv[]) {
 	SDL_Surface *surface;
 	int send_router_fd[2];
 	int rcv_router_fd[2];
-	unsigned int entity = -1;
 
 	//create_pipe(send_router_fd);
 	//create_pipe(rcv_router_fd);
 
 	World *world = (World*)malloc(sizeof(World));
 	printf("Current World size: %i\n", sizeof(World));
-	bool running = true;
 	
 	//SDL_Init(SDL_INIT_VIDEO);
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
@@ -109,18 +109,21 @@ int main(int argc, char* argv[]) {
 	
 	FPS fps;
 	fps.init();
+	running = true;
+	player_entity = -1;
+	
 	while (running)
 	{
 		
 		//INPUT
-		KeyInputSystem(world, &running);
-		MouseInputSystem(world, &entity, &running);
+		KeyInputSystem(world);
+		MouseInputSystem(world);
 		movement_system(world);
-		if (entity < MAX_ENTITIES) {
-			map_render(surface, world, entity);
+		if (player_entity < MAX_ENTITIES) {
+			map_render(surface, world, player_entity);
 			//send_system(world, send_router_fd[WRITE_END]);
 		}
-		animation_system(world, &entity);
+		animation_system(world);
 		render_player_system(*world, surface);
 		
 		SDL_UpdateWindowSurface(window);

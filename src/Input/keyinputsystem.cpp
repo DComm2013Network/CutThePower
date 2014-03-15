@@ -30,6 +30,7 @@ int GetScancode(char *character);
 extern int textField; /**< This references the textField variable in the mouseinputsystem for the currently active textfield. */
 int *command_keys; /**< This is the current keycodes mapped to each command. */
 extern const char *character_map;
+extern bool running;
 
 /**
  * Polls the keyboard for input and performs the appropriate action.
@@ -50,7 +51,7 @@ extern const char *character_map;
  * @author Jordan Marling
  *
  */
-void KeyInputSystem(World *world, bool *running)
+void KeyInputSystem(World *world)
 {
     int entity;
     CommandComponent *command;
@@ -65,7 +66,7 @@ void KeyInputSystem(World *world, bool *running)
 
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_QUIT) {
-            *running = false;
+            running = false;
         }
     }
     
@@ -179,7 +180,7 @@ void KeyInputSystem(World *world, bool *running)
 				//world->collision[mainframe].radius = 1;
 				
 				load_animation("assets/Graphics/objects/computers/mainframe_5_animation.txt", world, mainframe);
-				play_animation(&(world->animation[mainframe]), "mainframe");
+				play_animation(world, mainframe, "mainframe");
 				
 			}
 			//END DELETE

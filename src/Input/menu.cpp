@@ -136,6 +136,8 @@ void create_textfield(World *world, char *name, int x, int y) {
 	world->position[entity].width = TEXT_WIDTH;
 	world->position[entity].height = TEXT_HEIGHT;
 	
+	world->text[entity].name = (char*)calloc(strlen(name) + 1, sizeof(char));
+	strcpy(world->text[entity].name, name);
 	world->text[entity].text = (char*)calloc(MAX_STRING + 1, sizeof(char));
 	world->text[entity].length = 0;
 	world->text[entity].focused = false;
@@ -401,7 +403,7 @@ void create_intro(World *world) {
 	world->position[entity].height = HEIGHT;
 	
 	load_animation("assets/Graphics/screen/intro/intro_animation.txt", world, entity);
-	play_animation(&(world->animation[entity]), "intro");
+	play_animation(world, entity, "intro");
 	
 	world->animation[entity].id = 0;
 	
@@ -423,7 +425,7 @@ void create_load_screen(World *world) {
 	world->position[entity].height = HEIGHT;
 	
 	load_animation("assets/Graphics/screen/loading/load_animation.txt", world, entity);
-	play_animation(&(world->animation[entity]), "load");
+	play_animation(world, entity, "load");
 	
 	world->animation[entity].id = 1;
 	

@@ -1,21 +1,25 @@
 4
 
-down 3 20 -1 -1
+down 4 20 -1 -1
 assets/Graphics/player/robber/rob_down1.png
 assets/Graphics/player/robber/rob_down2.png
+assets/Graphics/player/robber/rob_down1.png
 assets/Graphics/player/robber/rob_down3.png
 
-up 3 20 -1 -1
+up 4 20 -1 -1
 assets/Graphics/player/robber/rob_up1.png
 assets/Graphics/player/robber/rob_up2.png
+assets/Graphics/player/robber/rob_up1.png
 assets/Graphics/player/robber/rob_up3.png
 
-left 3 20 -1 -1
+left 4 20 -1 -1
 assets/Graphics/player/robber/rob_left1.png
 assets/Graphics/player/robber/rob_left2.png
+assets/Graphics/player/robber/rob_left1.png
 assets/Graphics/player/robber/rob_left3.png
 
-right 3 20 -1 -1
+right 4 20 -1 -1
 assets/Graphics/player/robber/rob_right1.png
 assets/Graphics/player/robber/rob_right2.png
+assets/Graphics/player/robber/rob_right1.png
 assets/Graphics/player/robber/rob_right3.png

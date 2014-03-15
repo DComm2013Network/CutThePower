@@ -10,11 +10,11 @@
 #include "../systems.h"
 #include "../sound.h"
 #include "../Input/menu.h"
+#include "../triggered.h"
 
 #include <stdlib.h>
 
 #define SYSTEM_MASK (COMPONENT_RENDER_PLAYER | COMPONENT_ANIMATION) /**< The entity must have a animation and render component */
-
 
 /**
  * Updates animations
@@ -32,7 +32,7 @@
  *
  * @author Jordan Marling
  */
-void animation_system(World *world, unsigned int *player_entity) {
+void animation_system(World *world) {
 	
 	unsigned int entity;
 	AnimationComponent 		*animationComponent;
@@ -51,10 +51,7 @@ void animation_system(World *world, unsigned int *player_entity) {
 				animation = &(animationComponent->animations[animationComponent->current_animation]);
 				
 				if (animation->index == 0 && animation->frame_count == 0 && animation->sound_effect > -1) {
-					
-					if (animation->sound_effect >= 0) {
-						play_effect(animation->sound_effect);
-					}
+					play_effect(animation->sound_effect);
 				}
 				
 				animation->frame_count++;
@@ -63,41 +60,13 @@ void animation_system(World *world, unsigned int *player_entity) {
 					
 					animation->frame_count = 0;
 					
+					animation->index++;
 					if (animation->index >= animation->surface_count) {
 						
 						animation->index = 0;
-						animation->frame_count = 0;
 						if (animation->loop == -1) {
 							
-							if (animationComponent->id == 0) { //0 is the intro screen!
-								
-								destroy_world(world);
-						
-								stop_music();
-								stop_effect();
-								
-								//map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/map01_tiles.txt");
-								//map_init(world, "assets/Graphics/lobby/lobby.txt", "assets/Graphics/lobby/lobby_tiles.txt");
-								//map_init(world, "assets/Graphics/SampleFloor.txt", "assets/Graphics/tiles_lobby.txt");
-								
-								map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/map01_tiles.txt");
-								*player_entity = create_player(world, 600, 600, true, COLLISION_HACKER);
-													
-								world->mask[*player_entity] |= COMPONENT_ANIMATION;
-								
-								load_animation("assets/Graphics/player/robber/rob_animation.txt", world, *player_entity);
-						
-								
-								return;
-							}
-							else if (animationComponent->id == 1) { //1 is the loading screen!
-								
-								destroy_world(world);
-								
-								create_intro(world);
-								
-								return;
-							}
+							animation_end(world, entity, animationComponent->id);
 							
 							animationComponent->current_animation = -1;
 							renderPlayer->playerSurface = animation->surfaces[0];
@@ -107,7 +76,6 @@ void animation_system(World *world, unsigned int *player_entity) {
 					
 					renderPlayer->playerSurface = animation->surfaces[animation->index];
 					
-					animation->index++;
 				}
 			}
 			else { //check if random trigger has triggered
@@ -223,9 +191,10 @@ void cancel_animation(World *world, unsigned int entity, char *animation_name) {
 	}
 }
 
-void play_animation(AnimationComponent *animationComponent, char *animation_name) {
+void play_animation(World *world, unsigned int entity, char *animation_name) {
 	
 	int i;
+	AnimationComponent *animationComponent = &(world->animation[entity]);
 	
 	for(i = 0; i < animationComponent->animation_count; i++) {
 		
@@ -237,6 +206,8 @@ void play_animation(AnimationComponent *animationComponent, char *animation_name
 			animationComponent->current_animation = i;
 			animationComponent->animations[i].frame_count = 0;
 			animationComponent->animations[i].index = 0;
+			
+			//world->renderPlayer[entity].playerSurface = animationComponent->animations[i].surfaces[1];
 			
 			//printf("Playing animation: %s\n", animationComponent->animations[i].name);
 			

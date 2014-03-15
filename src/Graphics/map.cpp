@@ -219,7 +219,7 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 				world->collision[entity].radius = 0;
 				
 				load_animation(animation_filename, world, entity);
-				play_animation(&(world->animation[entity]), animation_name);
+				play_animation(world, entity, animation_name);
 				
 				free(animation_name);
 				free(animation_filename);
