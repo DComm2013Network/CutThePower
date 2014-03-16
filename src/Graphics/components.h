@@ -28,14 +28,14 @@ typedef struct{
 
 typedef struct {
 	
-	char *name;
-	SDL_Surface **surfaces;
-	int index;
-	int surface_count;
-	int frames_to_skip;
-	int frame_count;
-	int sound_effect;
-	int loop;
+	char *name; //name of animation
+	SDL_Surface **surfaces; //surface array
+	int index; //current surface to be drawn
+	int surface_count; //total amount of surfaces
+	int frames_to_skip; //frames in between surface changes
+	int frame_count; //current amount of frames between surface change
+	int sound_effect; //sound effect to be played
+	int loop; //-1 is no loop, 1 is loop
 	
 } Animation;
 
@@ -48,9 +48,9 @@ typedef struct {
  */
 typedef struct {
 	
-	Animation *animations;
-	int animation_count;
-	int current_animation;
+	Animation *animations; //animation array
+	int animation_count; //amount of animations
+	int current_animation; //current animation to be played, -1 is none
 	
 	int rand_animation;
 	int rand_occurance;

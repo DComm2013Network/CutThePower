@@ -333,22 +333,25 @@ unsigned int create_stair(World* world, int targetLevel, int targetX, int target
  */
 void destroy_entity(World* world, const unsigned int entity) {
 
-	/*int i, j;
+	int i, j;
+	
+	world->mask[entity] = COMPONENT_EMPTY;
 	
 	if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_ANIMATION)) {
 		
 		for(i = 0; i < world->animation[entity].animation_count; i++) {
 			
-			//free(world->animation[entity].animations[i].name);
+			free(world->animation[entity].animations[i].name);
 			
-			for(j = 0; j < world->animation[entity].animations[j].surface_count; j++) {
+			for(j = 0; j < world->animation[entity].animations[i].surface_count; j++) {
 				
-				//SDL_FreeSurface(world->animation[entity].animations[j].surfaces[j]);
+				SDL_FreeSurface(world->animation[entity].animations[i].surfaces[j]);
+				
+				//printf("Free frame!\n");
 				
 			}
 		}
-		//free(world->animation[entity].animations);
-		
+		free(world->animation[entity].animations);
 	}
 	else if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_RENDER_PLAYER)) {
 		
@@ -357,9 +360,7 @@ void destroy_entity(World* world, const unsigned int entity) {
 		//if (world->renderPlayer[entity].playerSurface != NULL)
 			//SDL_FreeSurface(world->renderPlayer[entity].playerSurface);
 		
-	}*/
-	
-	world->mask[entity] = COMPONENT_EMPTY;
+	}
 }
 
 /**
