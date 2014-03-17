@@ -8,7 +8,7 @@
 #include <stdio.h>
 
 #define FPS_MAX 120
-#define NETWORKOFF
+//#define NETWORKOFF
 
 int network_ready = 0;
 
