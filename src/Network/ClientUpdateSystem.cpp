@@ -170,8 +170,8 @@ void client_update_pos(World *world, void *packet)
 	{
 		if((pos_update->players_on_floor[i] == true) && (player_found[i] == false))
 		{
-			printf("PLAYER CREATED: NUMBER %d\n", i);
-			unsigned int player_entity = create_player(world, pos_update->xPos[i], pos_update->yPos[i], false, COLLISION_HACKER, i);
+			printf("PLAYER CREATED: NUMBER %d\n", i + 1);
+			unsigned int player_entity = create_player(world, pos_update->xPos[i], pos_update->yPos[i], false, COLLISION_HACKER, i + 1);
 			world->mask[player_entity] |= COMPONENT_ANIMATION;
 			printf("CLIENT PLAYER NUM %d\n", player_entity);
 			load_animation("assets/Graphics/player/robber/rob_animation.txt", world, player_entity);

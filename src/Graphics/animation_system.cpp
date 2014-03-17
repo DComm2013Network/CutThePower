@@ -88,13 +88,13 @@ void animation_system(World *world, unsigned int *player_entity, int send_router
 								
 								load_animation("assets/Graphics/player/robber/rob_animation.txt", world, *player_entity);
 								
-								
-								game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
-								game_net_lockfd     = eventfd(0, EFD_SEMAPHORE);
+								#ifndef NETWORKOFF
+									game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
+									game_net_lockfd     = eventfd(0, EFD_SEMAPHORE);
 
-								init_client_network(send_router_fd, rcv_router_fd);
-								send_intialization(world, send_router_fd[WRITE_END]);
-								
+									init_client_network(send_router_fd, rcv_router_fd);
+									send_intialization(world, send_router_fd[WRITE_END]);
+								#endif
 
 								return;
 							}
