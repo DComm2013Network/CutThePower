@@ -32,7 +32,7 @@ void send_location(World *world, int fd) {
 		PKT_TAGGING * pkt14 = (PKT_TAGGING*)malloc(sizeof(PKT_TAGGING));
 
 		for (int j = 0; j < MAX_ENTITIES; j++) {
-			if (IN_THIS_COMPONENT(world->mask[j], COMPONENT_POSITION | COMPONENT_CONTROLLABLE))
+			if (IN_THIS_COMPONENT(world->mask[j], COMPONENT_PLAYER | COMPONENT_POSITION | COMPONENT_CONTROLLABLE))
 			{
 				pkt4->xPos = world->position[j].x;
 				pkt4->yPos = world->position[j].y;

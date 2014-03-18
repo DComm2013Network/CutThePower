@@ -7,10 +7,11 @@
 #include <time.h>
 #include <stdio.h>
 
+
 #define FPS_MAX 120
 
 int network_ready = 0;
-
+int game_ready = 0;
 class FPS {
 private:
 	float max_frame_ticks;
@@ -124,7 +125,8 @@ int main(int argc, char* argv[]) {
 		if(network_ready)
 		{
 			client_update_system(world, rcv_router_fd[READ_END]);
-			send_location(world, send_router_fd[WRITE_END]);
+			if(game_ready > 2)
+				send_location(world, send_router_fd[WRITE_END]);
 		}
 		////NETWORK CODE
 
