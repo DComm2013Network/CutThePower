@@ -123,6 +123,7 @@ void client_update_floor(World *world, void *packet)
 		}
 	}
 }
+
 /**
  * Updates the positions and movement properties of every other player.
  *
@@ -139,58 +140,31 @@ void client_update_floor(World *world, void *packet)
 void client_update_pos(World *world, void *packet)
 {
 	PKT_ALL_POS_UPDATE *pos_update = (PKT_ALL_POS_UPDATE *)packet;
-	bool player_found[MAX_PLAYERS];
-
-	for(int i = 0; i < MAX_PLAYERS; i++)
+	for (int i = 0; i < MAX_PLAYERS; i++)
 	{
-		player_found[i] = false;
-	}
-	
-	for (int i = 0; i < MAX_ENTITIES; i++)
-	{
-		if (IN_THIS_COMPONENT(world->mask[i], COMPONENT_MOVEMENT | COMPONENT_POSITION | COMPONENT_PLAYER) &&
-			!IN_THIS_COMPONENT(world->mask[i], COMPONENT_CONTROLLABLE))
+		if (!pos_update->players_on_floor[i]) // If they're not on this floor
 		{
-			for (playerNo_t j = 0; j < MAX_PLAYERS; j++) {
-				if(world->player[i].playerNo == j)
-				{
-					printf("FOUND PLAYER %d\n", j);
-					world->movement[i].movX		= pos_update->xVel[j];
-					world->movement[i].movY 	= pos_update->yVel[j];
-					world->position[i].x		= pos_update->xPos[j];
-					world->position[i].y		= pos_update->yPos[j];
-					world->position[i].level	= pos_update->floor;
-					player_found[j] = true;
-				}
-			}
+            if(player_table[i] != UNASSIGNED) // If they previously existed but aren't on this floor
+            {
+			    destroy_entity(world, player_table[i]);
+			    player_table[i] = UNASSIGNED;
+            }
+            continue;
 		}
-	}
+        else if(player_table[i] == CLIENT_PLAYER)
+			continue;
 
-	for(int i = 0; i < MAX_PLAYERS; i++)
-	{
-		if((pos_update->players_on_floor[i] == true) && (player_found[i] == false))
-		{
-			printf("PLAYER CREATED: NUMBER %d\n", i);
-			unsigned int player_entity = create_player(world, pos_update->xPos[i], pos_update->yPos[i], false, COLLISION_HACKER, i);
-			world->mask[player_entity] |= COMPONENT_ANIMATION;
-			load_animation("assets/Graphics/player/robber/rob_animation.txt", world, player_entity);
-		}
-	}
-		// if (!pos_update->players_on_floor[i]) // If they're not on this floor
-		// {
-  //           if(player_table[i] != UNASSIGNED) // If they previously existed but aren't on this floor
-  //           {
-		// 	    destroy_entity(world, player_table[i]);
-		// 	    player_table[i] = UNASSIGNED;
-  //           }
-  //           continue;
-		// }
-  //       else if(player_table[i] == CLIENT_PLAYER)
-		// 	continue;
+        else if(player_table[i] == UNASSIGNED) // They're on the floor but haven't yet been created
+            player_table[i] = create_player(world, pos_update->xPos[i], pos_update->yPos[i], false, i);
 
-  //       else if(player_table[i] == UNASSIGNED) // They're on the floor but haven't yet been created
-  //           player_table[i] = create_player(world, pos_update->xPos[i], pos_update->yPos[i], false, COLLISION_HACKER);
+		world->movement[player_table[i]].movX	= pos_update->xVel[i];
+		world->movement[player_table[i]].movY 	= pos_update->yVel[i];
+		world->position[player_table[i]].x		= pos_update->xPos[i];
+		world->position[player_table[i]].y		= pos_update->yPos[i];
+		world->position[player_table[i]].level	= pos_update->floor;
+	}
 }
+
 
 /**
  * If this function is called, it means the current player got tagged.
