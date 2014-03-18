@@ -148,19 +148,31 @@ void client_update_pos(World *world, void *packet)
 	
 	for (int i = 0; i < MAX_ENTITIES; i++)
 	{
-		if (IN_THIS_COMPONENT(world->mask[i], COMPONENT_MOVEMENT | COMPONENT_POSITION | COMPONENT_PLAYER) &&
-			!IN_THIS_COMPONENT(world->mask[i], COMPONENT_CONTROLLABLE))
+		if (IN_THIS_COMPONENT(world->mask[i], COMPONENT_MOVEMENT | COMPONENT_POSITION | COMPONENT_PLAYER))
 		{
-			for (playerNo_t j = 0; j < MAX_PLAYERS; j++) {
-				if(world->player[i].playerNo == j)
-				{
-					printf("FOUND PLAYER %d\n", j);
-					world->movement[i].movX		= pos_update->xVel[j];
-					world->movement[i].movY 	= pos_update->yVel[j];
-					world->position[i].x		= pos_update->xPos[j];
-					world->position[i].y		= pos_update->yPos[j];
-					world->position[i].level	= pos_update->floor;
-					player_found[j] = true;
+			if(IN_THIS_COMPONENT(world->mask[i], COMPONENT_CONTROLLABLE))
+			{
+				for (playerNo_t j = 0; j < MAX_PLAYERS; j++) {
+					if(world->player[i].playerNo == j)
+					{
+						player_found[j] = true;
+					}
+				}
+			}
+			
+			else
+			{
+				for (playerNo_t j = 0; j < MAX_PLAYERS; j++) {
+					if(world->player[i].playerNo == j)
+					{
+						printf("FOUND PLAYER %d\n", j);
+						world->movement[i].movX		= pos_update->xVel[j];
+						world->movement[i].movY 	= pos_update->yVel[j];
+						world->position[i].x		= pos_update->xPos[j];
+						world->position[i].y		= pos_update->yPos[j];
+						world->position[i].level	= pos_update->floor;
+						player_found[j] = true;
+					}
 				}
 			}
 		}
