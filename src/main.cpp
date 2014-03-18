@@ -8,7 +8,6 @@
 #include <stdio.h>
 
 #define FPS_MAX 120
-//#define NETWORKOFF
 
 int network_ready = 0;
 
@@ -121,13 +120,13 @@ int main(int argc, char* argv[]) {
 		animation_system(world, &entity, send_router_fd, rcv_router_fd);
 		render_player_system(*world, surface);
 		
-		#ifndef NETWORKOFF
-			if(network_ready)
-			{
-				client_update_system(world, rcv_router_fd[READ_END]);
-				send_location(world, send_router_fd[WRITE_END]);
-			}
-		#endif
+		////NETWORK CODE
+		if(network_ready)
+		{
+			client_update_system(world, rcv_router_fd[READ_END]);
+			send_location(world, send_router_fd[WRITE_END]);
+		}
+		////NETWORK CODE
 
 		SDL_UpdateWindowSurface(window);
 		

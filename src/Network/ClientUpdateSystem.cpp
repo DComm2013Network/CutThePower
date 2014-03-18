@@ -152,7 +152,7 @@ void client_update_pos(World *world, void *packet)
 			!IN_THIS_COMPONENT(world->mask[i], COMPONENT_CONTROLLABLE))
 		{
 			for (playerNo_t j = 0; j < MAX_PLAYERS; j++) {
-				if(world->player[i].playerNo == j+1)
+				if(world->player[i].playerNo == j)
 				{
 					printf("FOUND PLAYER %d\n", j);
 					world->movement[i].movX		= pos_update->xVel[j];
@@ -170,8 +170,8 @@ void client_update_pos(World *world, void *packet)
 	{
 		if((pos_update->players_on_floor[i] == true) && (player_found[i] == false))
 		{
-			printf("PLAYER CREATED: NUMBER %d\n", i + 1);
-			unsigned int player_entity = create_player(world, pos_update->xPos[i], pos_update->yPos[i], false, COLLISION_HACKER, i + 1);
+			printf("PLAYER CREATED: NUMBER %d\n", i);
+			unsigned int player_entity = create_player(world, pos_update->xPos[i], pos_update->yPos[i], false, COLLISION_HACKER, i);
 			world->mask[player_entity] |= COMPONENT_ANIMATION;
 			load_animation("assets/Graphics/player/robber/rob_animation.txt", world, player_entity);
 		}
@@ -247,16 +247,45 @@ void client_update_objectives(World *world, void *packet)
 void client_update_status(World *world, void *packet)
 {
 	PKT_GAME_STATUS *status_update = (PKT_GAME_STATUS *)packet;
+	int player_found[MAX_PLAYERS];
 
+	for(int i = 0; i < MAX_PLAYERS; i++)
+	{
+		player_found[i] = false;
+	}
+	
 	for (int i = 0; i < MAX_ENTITIES; i++)
 	{
-		if (IN_THIS_COMPONENT(world->mask[i], COMPONENT_MOVEMENT | COMPONENT_POSITION 
-									| COMPONENT_PLAYER | COMPONENT_CONTROLLABLE))
+		if (IN_THIS_COMPONENT(world->mask[i], COMPONENT_MOVEMENT | COMPONENT_POSITION | COMPONENT_PLAYER | COMPONENT_CONTROLLABLE))
 		{
-			world->player[i].teamNo 		= status_update->otherPlayers_teams[i];
-			world->player[i].playerNo 		= i + 1;
-			strcpy(world->player[i].name, status_update->otherPlayers_name[i]);
-			world->player[i].readyStatus = status_update->readystatus[i];
+			for (playerNo_t j = 0; j < MAX_PLAYERS; j++) {
+				if(world->player[i].playerNo == j)
+				{
+					player_found[j] = true;
+				}
+			}
+		}
+	}
+
+	for(int i = 0; i < MAX_PLAYERS; i++)
+	{
+		if((status_update->player_valid[i] == true) && (player_found[i] == false))
+		{
+			if(status_update->otherPlayers_teams[i] == ROBBERS)
+			{
+				printf("PLAYER CREATED: NUMBER %d\n", i);
+				unsigned int player_entity = create_player(world, -50, -50, false, COLLISION_HACKER, i);
+				world->mask[player_entity] |= COMPONENT_ANIMATION;
+				load_animation("assets/Graphics/player/robber/rob_animation.txt", world, player_entity);
+			}
+
+			if(status_update->otherPlayers_teams[i] == COPS)
+			{
+				printf("PLAYER CREATED: NUMBER %d\n", i);
+				unsigned int player_entity = create_player(world, -50, -50, false, COLLISION_HACKER, i);
+				world->mask[player_entity] |= COMPONENT_ANIMATION;
+				load_animation("assets/Graphics/player/robber/rob_animation.txt", world, player_entity);
+			}
 		}
 	}
 }
@@ -281,10 +310,15 @@ int client_update_info(World *world, void *packet)
 	if(client_info->connect_code == CONNECT_CODE_DENIED)
 		return CONNECT_CODE_DENIED;
 
-	world->player[CLIENT_PLAYER].teamNo					= client_info->clients_team_number;
-	world->player[CLIENT_PLAYER].playerNo				= client_info->clients_player_number;
-	player_table[client_info->clients_player_number]	= CLIENT_PLAYER; // Or whatever the client's player entity is assigned
-	
+	for (int i = 0; i < MAX_ENTITIES; i++)
+	{
+		if (IN_THIS_COMPONENT(world->mask[i], COMPONENT_MOVEMENT | COMPONENT_POSITION | COMPONENT_PLAYER | COMPONENT_CONTROLLABLE))
+		{
+			world->player[i].teamNo					= client_info->clients_team_number;
+			world->player[i].playerNo				= client_info->clients_player_number;
+		}
+	}
+
 	return CONNECT_CODE_ACCEPTED;
 }
 

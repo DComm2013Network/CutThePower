@@ -64,7 +64,8 @@
 #define GAME_STATE_OVER 		0x003
 #define PLAYER_STATE_READY 		0x004
 #define PLAYER_STATE_WAITING 	0x005
-
+#define COPS					1
+#define ROBBERS					2
 // Special floor Definitions
 #define FLOOR_LOBBY 0x000
 

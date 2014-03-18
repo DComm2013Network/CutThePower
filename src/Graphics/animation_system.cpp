@@ -82,19 +82,19 @@ void animation_system(World *world, unsigned int *player_entity, int send_router
 								//map_init(world, "assets/Graphics/SampleFloor.txt", "assets/Graphics/tiles_lobby.txt");
 								
 								map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/map01_tiles.txt");
-								*player_entity = create_player(world, 600, 600, true, COLLISION_HACKER, 13);
+								*player_entity = create_player(world, 600, 600, true, COLLISION_HACKER, 0);
 													
 								world->mask[*player_entity] |= COMPONENT_ANIMATION;
 								
 								load_animation("assets/Graphics/player/robber/rob_animation.txt", world, *player_entity);
 								
-								#ifndef NETWORKOFF
-									game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
-									game_net_lockfd     = eventfd(0, EFD_SEMAPHORE);
+								////NETWORK CODE
+								game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
+								game_net_lockfd     = eventfd(0, EFD_SEMAPHORE);
 
-									init_client_network(send_router_fd, rcv_router_fd);
-									send_intialization(world, send_router_fd[WRITE_END]);
-								#endif
+								init_client_network(send_router_fd, rcv_router_fd);
+								send_intialization(world, send_router_fd[WRITE_END]);
+								////NETWORK CODE
 
 								return;
 							}
