@@ -367,7 +367,6 @@ void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 	}
 
 	packet_size = packet_sizes[(*packet_type) - 1];
-
 	if((packet = malloc(packet_size)) == NULL)
 	{
 		perror("recv_ tcp_packet: malloc");

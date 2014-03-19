@@ -40,7 +40,7 @@ void client_update_system(World *world, int net_pipe) {
 	uint64_t	signal = 1;
 	uint64_t 	sem_buf;
 	unsigned	i;
-	
+
 	if(!player_table)
 	{
 		player_table = (unsigned int *)malloc(sizeof(unsigned int) * MAX_PLAYERS);
@@ -59,6 +59,7 @@ void client_update_system(World *world, int net_pipe) {
 		packet = read_data(net_pipe, &type);
 		
 		printf("Updating with packet type %u\n", type);
+					fprintf(stderr, "Sending a position update at: %lu\n", clock()/CLOCKS_PER_SEC);
 		switch (type) { // the cached packets minuses one from the value 
 			case P_CONNECT:
 				if(client_update_info(world, packet) == CONNECT_CODE_DENIED)
@@ -142,7 +143,6 @@ void client_update_pos(World *world, void *packet)
 	PKT_ALL_POS_UPDATE *pos_update = (PKT_ALL_POS_UPDATE *)packet;
 	for (int i = 0; i < MAX_PLAYERS; i++)
 	{
-<<<<<<< HEAD
 		if (!pos_update->players_on_floor[i]) // If they're not on this floor
 		{
             if(player_table[i] != UNASSIGNED) // If they previously existed but aren't on this floor
@@ -156,7 +156,10 @@ void client_update_pos(World *world, void *packet)
 			continue;
 
         else if(player_table[i] == UNASSIGNED) // They're on the floor but haven't yet been created
+        {
             player_table[i] = create_player(world, pos_update->xPos[i], pos_update->yPos[i], false, i);
+            load_animation("assets/Graphics/player/robber/rob_animation.txt", world, player_table[i]);
+        }
 
 		world->movement[player_table[i]].movX	= pos_update->xVel[i];
 		world->movement[player_table[i]].movY 	= pos_update->yVel[i];
