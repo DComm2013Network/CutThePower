@@ -66,10 +66,12 @@ void animation_system(World *world) {
 						animation->index = 0;
 						if (animation->loop == -1) {
 							
-							animation_end(world, entity, animationComponent->id);
-							
 							animationComponent->current_animation = -1;
 							renderPlayer->playerSurface = animation->surfaces[0];
+							
+							//printf("Animation finished\nEntity: %u\nName: %s\n", entity, animation->name);
+							
+							animation_end(world, entity, animationComponent->id);
 							continue;
 						}
 					}
@@ -103,6 +105,9 @@ int load_animation(char *filename, World *world, unsigned int entity) {
 	char animation_name[64];
 	int animation_frames, frames_to_skip, triggered_sound, loop_animation;
 	int frame_index, animation_index;
+	int optional_features;
+	int i;
+	char feature_type[64];
 	
 	char animation_filename[64];
 	
@@ -122,6 +127,10 @@ int load_animation(char *filename, World *world, unsigned int entity) {
 	animationComponent->current_animation = -1;
 	animationComponent->id = -1;
 	
+	animationComponent->rand_animation = -1;
+	animationComponent->rand_occurance = -1;
+	animationComponent->hover_animation = -1;
+	
 	for(animation_index = 0; animation_index < animationComponent->animation_count; animation_index++) {
 		
 		if (fscanf(fp, "%s %d %d %d %d", animation_name, &animation_frames, &frames_to_skip, &triggered_sound, &loop_animation) != 5) {
@@ -137,6 +146,8 @@ int load_animation(char *filename, World *world, unsigned int entity) {
 		animationComponent->animations[animation_index].frames_to_skip = frames_to_skip;
 		animationComponent->animations[animation_index].sound_effect = triggered_sound;
 		animationComponent->animations[animation_index].loop = loop_animation;
+		animationComponent->animations[animation_index].frame_count = 0;
+		animationComponent->animations[animation_index].index = 0;
 		
 		animationComponent->animations[animation_index].name = (char*)malloc(sizeof(char) * strlen(animation_name) + 1);
 		strcpy(animationComponent->animations[animation_index].name, animation_name);
@@ -144,7 +155,7 @@ int load_animation(char *filename, World *world, unsigned int entity) {
 		for (frame_index = 0; frame_index < animation_frames; frame_index++) {
 			
 			if (fscanf(fp, "%s", animation_filename) != 1) {
-				printf("Error loading animation file: %s\n", animation_filename);
+				printf("Error reading animation file\n");
 				return -1;
 			}
 			
@@ -157,18 +168,42 @@ int load_animation(char *filename, World *world, unsigned int entity) {
 			}
 		}
 		
-		//printf("Loaded animation: %s\n", animationComponent->animations[animation_index].name);
+		//printf("Loaded animation: %s with %d frames\n", animationComponent->animations[animation_index].name, animation_frames);
 		
 	}
 	
 	renderComponent->playerSurface = animationComponent->animations[0].surfaces[0];
 	
-	//load random animation
-	if (fscanf(fp, "%d %d", &(animationComponent->rand_animation), &(animationComponent->rand_occurance)) != 2) {
+	//load optional features
+	if (fscanf(fp, "%d", &optional_features) == 1) {
 		
-		animationComponent->rand_animation = -1;
-		animationComponent->rand_occurance = -1;
-		
+		for(i = 0; i < optional_features; i++) {
+			
+			if (fscanf(fp, "%s", (char*)feature_type) != 1) {
+				printf("Optional Feature type error: %s\n", filename);
+				return -1;
+			}
+			
+			if (strcmp(feature_type, "random") == 0) {
+				if (fscanf(fp, "%d %d", &(animationComponent->rand_animation), &(animationComponent->rand_occurance)) != 2) {
+					
+					animationComponent->rand_animation = -1;
+					animationComponent->rand_occurance = -1;
+					
+				}
+			}
+			else if (strcmp(feature_type, "hover") == 0) {
+				
+				if (fscanf(fp, "%d", &animationComponent->hover_animation) != 1) {
+					animationComponent->hover_animation = -1;
+				}
+				
+			}
+			else {
+				printf("Did not deal with the entity type: %s\n", feature_type);
+				break;
+			}
+		}
 	}
 	
 	return 0;
@@ -207,9 +242,9 @@ void play_animation(World *world, unsigned int entity, char *animation_name) {
 			animationComponent->animations[i].frame_count = 0;
 			animationComponent->animations[i].index = 0;
 			
-			//world->renderPlayer[entity].playerSurface = animationComponent->animations[i].surfaces[1];
+			//printf("Playing animation: %s\n", animation_name);
 			
-			//printf("Playing animation: %s\n", animationComponent->animations[i].name);
+			//world->renderPlayer[entity].playerSurface = animationComponent->animations[i].surfaces[1];
 			
 			return;
 		}

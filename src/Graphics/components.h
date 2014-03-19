@@ -28,14 +28,14 @@ typedef struct{
 
 typedef struct {
 	
-	char *name;
-	SDL_Surface **surfaces;
-	int index;
-	int surface_count;
-	int frames_to_skip;
-	int frame_count;
-	int sound_effect;
-	int loop;
+	char *name; //name of animation
+	SDL_Surface **surfaces; //surface array
+	int index; //current surface to be drawn
+	int surface_count; //total amount of surfaces
+	int frames_to_skip; //frames in between surface changes
+	int frame_count; //current amount of frames between surface change
+	int sound_effect; //sound effect to be played
+	int loop; //-1 is no loop, 1 is loop
 	
 } Animation;
 
@@ -48,13 +48,14 @@ typedef struct {
  */
 typedef struct {
 	
-	Animation *animations;
-	int animation_count;
-	int current_animation;
+	Animation *animations; //animation array
+	int animation_count; //amount of animations
+	int current_animation; //current animation to be played, -1 is none
 	
-	int rand_animation;
-	int rand_occurance;
-	int id;
+	int hover_animation; //id of the animation to be played while hovered over, -1 is none
+	int rand_animation; //id of the animation to be played when triggered. -1 is none
+	int rand_occurance; //has a 1/rand_occurance to happen once a frame. -1 is none
+	int id; //this is used to trigger an event at the end of an animation, -1 is none
 	
 } AnimationComponent;
 

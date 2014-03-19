@@ -395,6 +395,8 @@ void create_intro(World *world) {
 	
 	unsigned int entity;
 	
+	destroy_world(world);
+	
 	entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION);
 	
 	world->position[entity].x = 0;
@@ -403,14 +405,13 @@ void create_intro(World *world) {
 	world->position[entity].height = HEIGHT;
 	
 	load_animation("assets/Graphics/screen/intro/intro_animation.txt", world, entity);
-	play_animation(world, entity, "intro");
 	
 	world->animation[entity].id = 0;
 	
 	world->renderPlayer[entity].width = WIDTH;
 	world->renderPlayer[entity].height = HEIGHT;
 	
-	
+	play_animation(world, entity, "intro");
 }
 
 void create_load_screen(World *world) {
@@ -425,7 +426,6 @@ void create_load_screen(World *world) {
 	world->position[entity].height = HEIGHT;
 	
 	load_animation("assets/Graphics/screen/loading/load_animation.txt", world, entity);
-	play_animation(world, entity, "load");
 	
 	world->animation[entity].id = 1;
 	
@@ -433,5 +433,6 @@ void create_load_screen(World *world) {
 	world->renderPlayer[entity].height = HEIGHT;
 	
 	
+	play_animation(world, entity, "load");
 }
 

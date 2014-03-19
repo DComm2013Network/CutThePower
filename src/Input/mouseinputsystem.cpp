@@ -15,6 +15,7 @@
 #include "../triggered.h"
 
 #define SYSTEM_MASK (COMPONENT_MOUSE) /**< Entities must have a mouse component to be processed by this system. */
+#define ANIMATION_MASK (COMPONENT_ANIMATION | COMPONENT_POSITION)
 
 int textField = -1;
 
@@ -41,6 +42,7 @@ void MouseInputSystem(World *world)
     TextFieldComponent *text;
     ButtonComponent *button;
     PositionComponent *position;
+    AnimationComponent *animation;
 
     previousState = currentState;
     currentState = SDL_GetMouseState(&x, &y);
@@ -102,9 +104,9 @@ void MouseInputSystem(World *world)
 
 				
 				button->hovered =  position->x < mouse->x &&
-										position->y < mouse->y &&
-										position->x + position->width > mouse->x &&
-										position->y + position->height > mouse->y;
+									position->y < mouse->y &&
+									position->x + position->width > mouse->x &&
+									position->y + position->height > mouse->y;
 				
 				button->currentState = button->hovered && lclick;
 				
@@ -118,7 +120,28 @@ void MouseInputSystem(World *world)
 			}
 
         }
-
+		
+		//trigger animations on hover
+		if ((world->mask[entity] & ANIMATION_MASK) == ANIMATION_MASK) {
+			
+			position = &(world->position[entity]);
+			animation = &(world->animation[entity]);
+			
+			if (animation->hover_animation > -1 && animation->current_animation == -1) {
+				
+				if (position->x < x && position->y < y &&
+					position->x + position->width > x &&
+					position->y + position->height > y) {
+					
+					
+					animation->current_animation = animation->hover_animation;
+					
+				}
+			}
+			
+			
+		}
+		
     }
     
     if (lclick &&

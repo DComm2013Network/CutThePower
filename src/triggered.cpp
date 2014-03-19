@@ -8,12 +8,14 @@
 #include "sound.h"
 #include "Input/menu.h"
 
+#define SHOW_MENU_INTRO 1 //1 == load intro, 0 == load straight into map
+
 extern bool running;
 extern unsigned int player_entity;
 
 void menu_click(World *world, unsigned int entity) {
 	
-	printf("Clicked: %s\n", world->button[entity].label);
+	//printf("Clicked: %s\n", world->button[entity].label);
 	
 	//MAIN MENU
 	if (strcmp(world->button[entity].label, "mainmenu_play") == 0) {
@@ -83,6 +85,11 @@ void menu_click(World *world, unsigned int entity) {
 		create_options_menu(world);
 		
 	}
+	else if (strcmp(world->button[entity].label, "keymap_up") == 0) {
+		
+		
+		
+	}
 	
 	//CREDITS
 	else if (strcmp(world->button[entity].label, "credits_back") == 0) {
@@ -129,23 +136,28 @@ void menu_click(World *world, unsigned int entity) {
 			}
 		}
 		
+		printf("Username: %s\n", username);
+		printf("Server IP: %s\n", serverip);
 		
 		destroy_world(world);
 		
 		
-		#if 1//1 == load into map, 0 == load into intro.
+		#if SHOW_MENU_INTRO 
+		
+		create_load_screen(world);
+		//create_intro(world);
+		
+		#else
 		
 		map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/map01_tiles.txt");
 		player_entity = create_player(world, 600, 600, true, COLLISION_HACKER);
 		
 		world->mask[player_entity] |= COMPONENT_ANIMATION;
-		
 		load_animation("assets/Graphics/player/robber/rob_animation.txt", world, player_entity);
 		
+		//printf("Loaded player: %d\n", player_entity);
+		
 		animation_end(world, entity, 0);
-		#else
-		create_load_screen(world);
-		//create_intro(world);
 		#endif
 		
 	}
@@ -164,20 +176,22 @@ void menu_click(World *world, unsigned int entity) {
 		create_main_menu(world);
 	}
 	
+	
+	
 	else {
 		printf("DID NOT HANDLE BUTTON: %s\n", world->button[entity].label);
 	}
 }
 
-void animation_end(World *world, unsigned int entity, int ANIMATION_ID) {
+void animation_end(World *world, unsigned int entity, int animation_id) {
 	
 	AnimationComponent *animationComponent = &(world->animation[entity]);
 	
 	//INTRO SCREEN ENDED
-	if (animationComponent->id == 0) { //0 is the intro screen!
-									
+	if (animationComponent->id == 0) { //0 is the intro screen
+					
 		destroy_world(world);
-
+		
 		stop_music();
 		stop_effect();
 		
@@ -187,19 +201,18 @@ void animation_end(World *world, unsigned int entity, int ANIMATION_ID) {
 		
 		map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/map01_tiles.txt");
 		player_entity = create_player(world, 600, 600, true, COLLISION_HACKER);
-							
+		
 		world->mask[player_entity] |= COMPONENT_ANIMATION;
 		
 		load_animation("assets/Graphics/player/robber/rob_animation.txt", world, player_entity);
-
+		
 		
 		//PUT CLIENT START CODE HERE!!!@!@!!!!
 		
 		
-		
 	}
 	//LOADING SCREEN ENDED
-	else if (animationComponent->id == 1) { //1 is the loading screen!
+	else if (animationComponent->id == 1) { //1 is the loading screen
 		
 		destroy_world(world);
 		
