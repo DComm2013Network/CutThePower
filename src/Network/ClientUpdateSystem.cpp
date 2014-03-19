@@ -142,6 +142,7 @@ void client_update_pos(World *world, void *packet)
 	PKT_ALL_POS_UPDATE *pos_update = (PKT_ALL_POS_UPDATE *)packet;
 	for (int i = 0; i < MAX_PLAYERS; i++)
 	{
+<<<<<<< HEAD
 		if (!pos_update->players_on_floor[i]) // If they're not on this floor
 		{
             if(player_table[i] != UNASSIGNED) // If they previously existed but aren't on this floor
