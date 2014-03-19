@@ -14,7 +14,9 @@
 #include "../world.h"
 #include "../systems.h"
 #include <sys/poll.h>
- 
+
+extern int game_ready;
+static int controllable_playerNo;
 extern int game_net_signalfd, game_net_lockfd;
 extern int network_ready;
 static unsigned int *player_table = NULL; /**< A lookup table mapping server player numbers to client entities. */
@@ -63,10 +65,14 @@ void client_update_system(World *world, int net_pipe) {
 		switch (type) { // the cached packets minuses one from the value 
 			case P_CONNECT:
 				if(client_update_info(world, packet) == CONNECT_CODE_DENIED)
+				{
+					game_ready++;
 					return; // Pass error up to someone else to deal with
+				}
 				break;
 			case G_STATUS:
 				client_update_status(world, packet);
+				game_ready++;
 				break;
 			case P_CHAT:
 				client_update_chat(world, packet);
@@ -85,6 +91,7 @@ void client_update_system(World *world, int net_pipe) {
 				break;
 			case P_FLOOR_MOVE:
 				client_update_floor(world, packet);
+				game_ready++;
 				break;
 			case P_TAGGING:
 				player_tag_packet(world, packet);
@@ -231,23 +238,10 @@ void client_update_status(World *world, void *packet)
 	{
 		player_found[i] = false;
 	}
-	
-	for (int i = 0; i < MAX_ENTITIES; i++)
-	{
-		if (IN_THIS_COMPONENT(world->mask[i], COMPONENT_MOVEMENT | COMPONENT_POSITION | COMPONENT_PLAYER | COMPONENT_CONTROLLABLE))
-		{
-			for (playerNo_t j = 0; j < MAX_PLAYERS; j++) {
-				if(world->player[i].playerNo == j)
-				{
-					player_found[j] = true;
-				}
-			}
-		}
-	}
 
 	for(int i = 0; i < MAX_PLAYERS; i++)
 	{
-		if((status_update->player_valid[i] == true) && (player_found[i] == false))
+		if((status_update->player_valid[i] == true) && (i != controllable_playerNo))
 		{
 			if(status_update->otherPlayers_teams[i] == ROBBERS)
 			{
@@ -257,7 +251,7 @@ void client_update_status(World *world, void *packet)
 				load_animation("assets/Graphics/player/robber/rob_animation.txt", world, player_entity);
 			}
 
-			if(status_update->otherPlayers_teams[i] == COPS)
+			else if(status_update->otherPlayers_teams[i] == COPS)
 			{
 				printf("PLAYER CREATED: NUMBER %d\n", i);
 				unsigned int player_entity = create_player(world, -50, -50, false, COLLISION_HACKER, i);
@@ -294,6 +288,7 @@ int client_update_info(World *world, void *packet)
 		{
 			world->player[i].teamNo					= client_info->clients_team_number;
 			world->player[i].playerNo				= client_info->clients_player_number;
+			controllable_playerNo 					= client_info->clients_player_number;
 		}
 	}
 
