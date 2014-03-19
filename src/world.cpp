@@ -288,7 +288,7 @@ unsigned int create_stair(World* world, int targetLevel, int targetX, int target
     CollisionComponent collision;
 	int lastID = -1;
 	unsigned int tempMask = 0;
-		
+
 	pos.x = x;
 	pos.y = y;
 
@@ -301,7 +301,7 @@ unsigned int create_stair(World* world, int targetLevel, int targetX, int target
     target.targetY = targetY;
 
     collision.type = 0;
-	
+
 	for(entity = 0; entity < MAX_ENTITIES; ++entity) {
 		if (world->mask[entity] == COMPONENT_EMPTY) {
 				world->mask[entity] =	COMPONENT_POSITION | 
@@ -311,7 +311,7 @@ unsigned int create_stair(World* world, int targetLevel, int targetX, int target
 			world->position[entity] = pos;
 			world->wormhole[entity] = target;
 			world->collision[entity] = collision;
-			
+
 			return entity;
 		}
 	}
