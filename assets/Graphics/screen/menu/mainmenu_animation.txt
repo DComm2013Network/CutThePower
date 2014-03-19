@@ -22,4 +22,5 @@ assets/Graphics/screen/menu/MainMenu_17.png
 assets/Graphics/screen/menu/MainMenu_18.png
 assets/Graphics/screen/menu/MainMenu_19.png
 
-0 800
+1
+random 0 300

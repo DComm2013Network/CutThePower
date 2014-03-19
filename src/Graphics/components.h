@@ -52,9 +52,10 @@ typedef struct {
 	int animation_count; //amount of animations
 	int current_animation; //current animation to be played, -1 is none
 	
-	int rand_animation;
-	int rand_occurance;
-	int id;
+	int hover_animation; //id of the animation to be played while hovered over, -1 is none
+	int rand_animation; //id of the animation to be played when triggered. -1 is none
+	int rand_occurance; //has a 1/rand_occurance to happen once a frame. -1 is none
+	int id; //this is used to trigger an event at the end of an animation, -1 is none
 	
 } AnimationComponent;
 

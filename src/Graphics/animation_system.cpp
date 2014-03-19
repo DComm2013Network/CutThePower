@@ -105,6 +105,9 @@ int load_animation(char *filename, World *world, unsigned int entity) {
 	char animation_name[64];
 	int animation_frames, frames_to_skip, triggered_sound, loop_animation;
 	int frame_index, animation_index;
+	int optional_features;
+	int i;
+	char feature_type[64];
 	
 	char animation_filename[64];
 	
@@ -123,6 +126,10 @@ int load_animation(char *filename, World *world, unsigned int entity) {
 	animationComponent->animations = (Animation*)malloc(sizeof(Animation) * animationComponent->animation_count);
 	animationComponent->current_animation = -1;
 	animationComponent->id = -1;
+	
+	animationComponent->rand_animation = -1;
+	animationComponent->rand_occurance = -1;
+	animationComponent->hover_animation = -1;
 	
 	for(animation_index = 0; animation_index < animationComponent->animation_count; animation_index++) {
 		
@@ -167,12 +174,36 @@ int load_animation(char *filename, World *world, unsigned int entity) {
 	
 	renderComponent->playerSurface = animationComponent->animations[0].surfaces[0];
 	
-	//load random animation
-	if (fscanf(fp, "%d %d", &(animationComponent->rand_animation), &(animationComponent->rand_occurance)) != 2) {
+	//load optional features
+	if (fscanf(fp, "%d", &optional_features) == 1) {
 		
-		animationComponent->rand_animation = -1;
-		animationComponent->rand_occurance = -1;
-		
+		for(i = 0; i < optional_features; i++) {
+			
+			if (fscanf(fp, "%s", (char*)feature_type) != 1) {
+				printf("Optional Feature type error: %s\n", filename);
+				return -1;
+			}
+			
+			if (strcmp(feature_type, "random") == 0) {
+				if (fscanf(fp, "%d %d", &(animationComponent->rand_animation), &(animationComponent->rand_occurance)) != 2) {
+					
+					animationComponent->rand_animation = -1;
+					animationComponent->rand_occurance = -1;
+					
+				}
+			}
+			else if (strcmp(feature_type, "hover") == 0) {
+				
+				if (fscanf(fp, "%d", &animationComponent->hover_animation) != 1) {
+					animationComponent->hover_animation = -1;
+				}
+				
+			}
+			else {
+				printf("Did not deal with the entity type: %s\n", feature_type);
+				break;
+			}
+		}
 	}
 	
 	return 0;
