@@ -1,0 +1,27 @@
+21
+
+00	assets/Graphics/map/map_01/00_40px.bmp		0
+01	assets/Graphics/map/map_01/01_40px.bmp		0
+02	assets/Graphics/map/map_01/02_40px.bmp		0
+03	assets/Graphics/map/map_01/03_40px.bmp		1
+04	assets/Graphics/map/map_01/04_40px.bmp		1
+05	assets/Graphics/map/map_01/05_40px.bmp		1
+06	assets/Graphics/map/map_01/06_40px.bmp		1
+07	assets/Graphics/map/map_01/07_40px.bmp		1
+08	assets/Graphics/map/map_01/08_40px.bmp		1
+09	assets/Graphics/map/map_01/09_40px.bmp		1
+10	assets/Graphics/map/map_01/10_40px.bmp		1
+11	assets/Graphics/map/map_01/11_40px.bmp		1
+12	assets/Graphics/map/map_01/12_40px.bmp		1
+13	assets/Graphics/map/map_01/13_40px.bmp		1
+14	assets/Graphics/map/map_01/14_40px.bmp		1
+15	assets/Graphics/map/map_01/15_40px.bmp		1
+16	assets/Graphics/map/map_01/16_40px.bmp		1
+17	assets/Graphics/map/map_01/17_40px.bmp		1
+18	assets/Graphics/map/map_01/18_40px.bmp		1
+19	assets/Graphics/map/map_01/19_40px.bmp		1
+20	assets/Graphics/map/map_01/20_40px.bmp		1
+21	assets/Graphics/map/map_01/stairsdownleft.bmp	2
+22	assets/Graphics/map/map_01/stairsdownright.bmp	2
+23	assets/Graphics/map/map_01/stairsupleft.bmp	2
+24	assets/Graphics/map/map_01/stairsupright.bmp	2
