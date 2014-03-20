@@ -261,11 +261,11 @@ void animation_end(World *world, unsigned int entity, int animation_id) {
 		//map_init(world, "assets/Graphics/lobby/lobby.txt", "assets/Graphics/lobby/lobby_tiles.txt");
 		//map_init(world, "assets/Graphics/SampleFloor.txt", "assets/Graphics/tiles_lobby.txt");
 		
-		map_init(world, (char*)"assets/Graphics/map/map_01/map01.txt", (char*)"assets/Graphics/map/map_01/map01_tiles.txt");
+		map_init(world, (char*)"assets/Graphics/map/map_01/map01.txt", (char*)"assets/Graphics/map/map_01/tiles.txt");
 		player_entity = create_player(world, 600, 600, true, COLLISION_HACKER);
 		
 		world->mask[player_entity] |= COMPONENT_ANIMATION;
-		load_animation((char*)"assets/Graphics/player/robber/rob_animation.txt", world, player_entity);
+		load_animation((char*)"assets/Graphics/player/p0/rob_animation.txt", world, player_entity);
 		
 		
 		
