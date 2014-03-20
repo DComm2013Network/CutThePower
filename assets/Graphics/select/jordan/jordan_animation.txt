@@ -1,0 +1,6 @@
+1
+
+jordan 3 40 -1 1                        
+assets/Graphics/objects/select/jordan/jordan_1.png
+assets/Graphics/objects/select/jordan/jordan_2.png
+assets/Graphics/objects/select/jordan/jordan_3.png

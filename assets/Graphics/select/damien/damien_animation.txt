@@ -1,0 +1,7 @@
+1
+
+damien 4 40 -1 1                        
+assets/Graphics/objects/select/damien/damien_1.png
+assets/Graphics/objects/select/damien/damien_2.png
+assets/Graphics/objects/select/damien/damien_3.png
+assets/Graphics/objects/select/damien/damien_4.png

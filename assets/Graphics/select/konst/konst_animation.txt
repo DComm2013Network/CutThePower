@@ -1,0 +1,6 @@
+1
+
+konst 3 40 -1 1                        
+assets/Graphics/objects/select/konst/konst_1.png
+assets/Graphics/objects/select/konst/konst_2.png
+assets/Graphics/objects/select/konst/konst_3.png
