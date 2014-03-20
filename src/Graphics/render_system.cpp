@@ -64,6 +64,10 @@ void render_player_system(World& world, SDL_Surface* surface) {
 			playerRect.y = position->y + map_rect.y;
 			playerRect.w = renderPlayer->width;
 			playerRect.h = renderPlayer->height;
+			if (IN_THIS_COMPONENT(world.mask[entity], COMPONENT_COLLISION)) {
+				playerRect.x -= renderPlayer->width / 2;
+				playerRect.y -= renderPlayer->height / 2;
+			}
 			
 			if (IN_THIS_COMPONENT(world.mask[entity], COMPONENT_BUTTON)) {
 				

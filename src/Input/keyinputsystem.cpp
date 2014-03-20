@@ -163,11 +163,14 @@ void KeyInputSystem(World *world)
 				
 				unsigned int mainframe = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION | COMPONENT_COLLISION);
 				
-				int x = (int)((world->position[entity].x + world->position[entity].width / 2) / TILE_WIDTH);
+				/*int x = (int)((world->position[entity].x + world->position[entity].width / 2) / TILE_WIDTH);
 				int y = (int)((world->position[entity].y + world->position[entity].height / 2) / TILE_HEIGHT);
 				
 				world->position[mainframe].x = x * TILE_WIDTH;
-				world->position[mainframe].y = y * TILE_HEIGHT;
+				world->position[mainframe].y = y * TILE_HEIGHT;*/
+				
+				world->position[mainframe].x = (world->position[entity].x / TILE_WIDTH) * TILE_WIDTH;
+				world->position[mainframe].y = (world->position[entity].y / TILE_HEIGHT) * TILE_HEIGHT;
 				
 				world->position[mainframe].width = TILE_WIDTH;
 				world->position[mainframe].height = TILE_HEIGHT;

@@ -104,7 +104,6 @@ int main(int argc, char* argv[]) {
 	//entity = create_player(world, 600, 600, true, COLLISION_HACKER);
 						
 	//world->mask[entity] |= COMPONENT_ANIMATION;
-	
 	//load_animation("assets/Graphics/player/robber/rob_animation.txt", world, entity);
 	
 	FPS fps;
