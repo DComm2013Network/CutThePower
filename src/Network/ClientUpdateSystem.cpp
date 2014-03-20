@@ -243,6 +243,14 @@ void client_update_status(World *world, void *packet)
 		  //           load_animation("assets/Graphics/player/robber/rob_animation.txt", world, player_table[i]);
 		  //       }
 			//}
+		} 
+		else 
+		{
+			if(player_table[i] != UNASSIGNED)
+			{
+				destroy_entity(world, player_table[i]);
+				player_table[i] = UNASSIGNED;
+			}
 		}
 	}
 }
