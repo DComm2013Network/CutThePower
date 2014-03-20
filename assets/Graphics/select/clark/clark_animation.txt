@@ -1,6 +1,0 @@
-1
-
-clark 2 40 -1 1
-assets/Graphics/objects/select/clark/clark_1.png
-assets/Graphics/objects/select/clark/clark_2.png
-assets/Graphics/objects/select/clark/clark_3.png

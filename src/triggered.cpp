@@ -22,7 +22,7 @@ bool menu_click(World *world, unsigned int entity) {
 		
 		destroy_menu(world);
 		
-		create_setup_menu(world);
+		create_select_screen(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "mainmenu_options") == 0) {
