@@ -19,23 +19,12 @@
  *
  * @enum Component
  */
-typedef enum {
-	COMPONENT_EMPTY = 0,
-	COMPONENT_POSITION = 1 << 0,
-	COMPONENT_RENDER = 1 << 1,
-	COMPONENT_INPUT = 1 << 2,
-	COMPONENT_CONTROLLABLE = 1 << 3,
-	COMPONENT_COLLISION = 1 << 4,
-	COMPONENT_LEVEL = 1 << 5,
-	COMPONENT_MOVEMENT = 1 << 6
-} Component;
 
 /**
  * Describes an entity's position, dimensions and level.
  *
  * @struct PositionComponent
  */
->>>>>>> 7c92fd17bb8fbf03ee7ca048b7772f1d9f6cfc52
 typedef struct {
 	float x;    /**< The entity's x-coordinate in tile units (may be fractional). */
 	float y;    /**< The entity's y-coordinate in tile units (may be fractional). */
