@@ -1,3 +1,7 @@
+/** @ingroup Gameplay */
+/** @{ */
+/** @file movement_system.cpp */
+/** @} */
 #include "components.h"
 #include "systems.h"
 #include "../world.h"
@@ -5,13 +9,27 @@
 #include "stdio.h"
 #include <math.h>
 
-//This is the mask the system uses to see if it will work on the entity.
-#define STANDARD_MASK (COMPONENT_POSITION | COMPONENT_MOVEMENT)
-#define CONTROLLABLE_MASK (COMPONENT_POSITION | COMPONENT_MOVEMENT)
-#define INPUT_MASK (COMPONENT_INPUT)
-#define COLLISION_MASK (COMPONENT_COLLISION)
-#define PI 3.14159265
+#define STANDARD_MASK (COMPONENT_POSITION | COMPONENT_MOVEMENT)     /**< Mask for all moveable entities. */
+#define CONTROLLABLE_MASK (COMPONENT_POSITION | COMPONENT_MOVEMENT) /**< Mask for moveable entities that may be controlled. */
+#define INPUT_MASK (COMPONENT_INPUT)                                /**< Mask for entities that respond to input. */
+#define COLLISION_MASK (COMPONENT_COLLISION)                        /**< Mask for entities that may collide with other entities. */
+#define PI 3.14159265                                               /**< An approximation of pi for vector calculations. */
 
+
+/**
+ * Adds a vector to the entity's movement vector.
+ *
+ * If the resultant movement vector's magnitude is greater than the entity's maximum
+ * allowable speed, the 
+ *
+ * @param world     A reference to the world structure.
+ * @param entity    The entity to whose movement vector the force is added.
+ * @param magnitude The magnitude of the force vector.
+ * @param dir       The direction of the force vector.
+ *
+ * @designer ?
+ * @author   ?
+ */
 void add_force(World& world, unsigned int entity, float magnitude, float dir) {
 	if ((world.mask[entity] & STANDARD_MASK) == STANDARD_MASK) {
 		world.movement[entity].movX += cos(dir * PI / 180) * magnitude;
@@ -25,11 +43,30 @@ void add_force(World& world, unsigned int entity, float magnitude, float dir) {
 	}
 }
 
+
+/**
+ * Moves the entity one unit along its movement vector.
+ *
+ * @param world  A reference to the world struct.
+ * @param entity The entity to move.
+ *
+ * @designer ?
+ * @author   ?
+ */
 void apply_force(World& world, unsigned int entity) {
 	world.position[entity].x += world.movement[entity].movX;
 	world.position[entity].y += world.movement[entity].movY;
 }
 
+/**
+ * Determines the inputs applied to the entity and adds forces in
+ * the specified directions.
+ *
+ * @param world A reference to the world struct.
+ *
+ * @designer ?
+ * @author   ?
+ */
 void movement_system(World& world) {
 	unsigned int entity;
 	PositionComponent		*position;

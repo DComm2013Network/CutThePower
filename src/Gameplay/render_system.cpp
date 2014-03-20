@@ -1,3 +1,8 @@
+/** @ingroup Gameplay */
+/** @{ */
+/** @file render_system.cpp */
+/** @} */
+
 #include <stdio.h>
 
 #include <SDL2/SDL.h>
@@ -8,9 +13,17 @@
 #include "systems.h"
 #include "../world.h"
 
-//This is the mask the system uses to see if it will work on the entity.
-#define SYSTEM_MASK (COMPONENT_RENDER | COMPONENT_POSITION)
+#define SYSTEM_MASK (COMPONENT_RENDER | COMPONENT_POSITION) /**< The component mask necessary for the entity to be rendered. */
 
+/**
+ * Renders all eligible entities on @surface.
+ *
+ * @param world   A reference to the world structure.
+ * @param surface Pointer to the SDL surface on which to render.
+ *
+ * @designer ?
+ * @author   ?
+ */
 void render_system(World& world, SDL_Surface *surface) {
 	unsigned int entity;
 	PositionComponent	*position;
