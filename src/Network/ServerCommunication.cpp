@@ -133,16 +133,16 @@ void* send_thread_func(void* ndata){
 			continue;
 		}
 		
-		protocol = get_protocol(type);
-		if(protocol == TCP)
-		{
-			send_tcp(&type, snd_data->tcp_sock, sizeof(uint32_t));
-			send_tcp(data, snd_data->tcp_sock, packet_sizes[type - 1]);
-		}
-		else if(protocol == UDP)
-		{
-			send_udp(data, &type, snd_data->udp_sock, packet_sizes[type - 1] + sizeof(uint32_t));
-		}
+		//protocol = get_protocol(type);
+		//if(protocol == TCP)
+		//{
+		send_tcp(&type, snd_data->tcp_sock, sizeof(uint32_t));
+		send_tcp(data, snd_data->tcp_sock, packet_sizes[type - 1]);
+		//}
+		//else if(protocol == UDP)
+		//{
+		//	send_udp(data, &type, snd_data->udp_sock, packet_sizes[type - 1] + sizeof(uint32_t));
+		//}
 	}
 	return NULL;
 }
