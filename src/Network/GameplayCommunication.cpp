@@ -20,24 +20,26 @@
  *
  *----------------------------------------------------------------------------------------*/
 
+#include <cstring>
+#include <pthread.h>
 #include "PipeUtils.h"
 #include "GameplayCommunication.h"
 #include "Packets.h" /* extern packet_sizes[] */
-
-uint32_t packet_sizes[13] = {
-	sizeof(struct pkt01),
-	sizeof(struct pkt02),
-	sizeof(struct pkt03),
-	sizeof(struct pkt04),
+#include "NetworkRouter.h"
+uint32_t packet_sizes[NUM_PACKETS] = {
+	sizeof(PKT_PLAYER_NAME),
+	sizeof(PKT_PLAYER_CONNECT),
+	sizeof(PKT_GAME_STATUS),
+	sizeof(PKT_SND_CHAT),
 	sizeof(struct pkt05),
 	sizeof(struct pkt06),
 	0,
-	sizeof(struct pkt08),
+	sizeof(PKT_OBJECTIVE_STATUS),
 	0,
-	sizeof(struct pkt10),
-	sizeof(struct pkt11),
-	sizeof(struct pkt12),
-	sizeof(struct pkt13)
+    sizeof(PKT_POS_UPDATE),
+    sizeof(PKT_ALL_POS_UPDATE),
+	sizeof(PKT_FLOOR_MOVE_REQUEST),
+	sizeof(PKT_FLOOR_MOVE)
 };
 
 /*------------------------------------------------------------------------------------------
@@ -70,17 +72,18 @@ uint32_t packet_sizes[13] = {
  *----------------------------------------------------------------------------------------*/
 uint32_t read_type(int fd)
 {
+    uint32_t type;
+    int read_bytes;
 
-    uint32_t type, read_bytes;
-
-    if( (read_bytes = read_pipe(fd, &type, sizeof(int))) < 0)
+    if((read_bytes = read_pipe(fd, &type, sizeof(uint32_t))) <= 0)
     {
         if(read_bytes == 0)
         {
-            return 0; //end of file .. nothing in pipe
+            perror("No data on pipe: read_type(int fd)\n");
+            return 99;
         }
-
-        return -1; //error .. check error
+        perror("Error while reading from pipe: read_type(int fd)\n");
+        return 98; //error .. check error
     }
 
     return type;
@@ -115,25 +118,77 @@ uint32_t read_type(int fd)
  *
  * A function for reading the size of the following data struct in the pipe.
  *
- *----------------------------------------------------------------------------------------*/
+ *--------------------------------- -------------------------------------------------------*/
 void* read_packet(int fd, uint32_t size)
 {
-    void* temp = (void*) malloc(size);
+    void *temp = malloc(size);
 	int read_bytes;
 
-    if( (read_bytes = read_pipe(fd, &temp, size)) < 0)
-    {
-        return NULL; /* error .. check error */
+    if((read_bytes = read_pipe(fd, temp, size)) == -1){
+        perror("Error on reading pipe : read_packet(int, uint32_t)\n");
+        return NULL;
     }
 
-    if(read_bytes == 0)
-    {
-        return NULL; /* end of file .. nothing in pipe */
+    if(read_bytes == 0){
+        perror("Nothing on pipe to read: read_packet(int, uint32_t)\n");
+        return NULL;
     }
 
-    return temp; //packet id not found .. can also return the scanned data instead
+    return temp; 
 }
+/*------------------------------------------------------------------------------------------
+ * FUNCTION:    iinit_client_network
+ *
+ * DATE:        March 6, 2014
+ *
+ * REVISIONS:   (Date and Description)
+ *
+ * DESIGNER:    Ramzi Chennafi
+ *
+ * PROGRAMMER:  Ramzi Chennafi
+ *
+ * INTERFACE:  void init_client_network(int send_router_fd[2], int rcv_router_fd[2])
+ *                  send_router_fd : set of pipes created for passing data to the network router
+ *                  rcv_router_fd : set of pipes created for grabing data from the network router
+ *
+ * RETURNS:    nothing
+ *
+ * NOTES:
+ * Called by the main function of the game. Intializes the client network component of the game
+ * Requires 2 pipes as arguments, these will be passed for communication to network router. The 
+ * read descriptor of rcv_router_fd will be passed to the update system by the game, while the 
+ * write descriptor of the send_router_fd will be passed to the send_system.
+ *----------------------------------------------------------------------------------------*/
+  /*
+    INTEGRATION NOTES:
 
+    Integrated into the game. Game simply makes the pipes, calls this function then calls the update_system
+    and send_system on every loop. 
+
+    Changes to be made to makefile to integrate network:
+        Include the following for compiling in the makefile.
+            ClientUpdateSystem.cpp
+            GameplayCommunication.cpp
+            NetworkRouter.cpp
+            PipeUtils.cpp
+            SendSystem.cpp
+            ServerComunication.cpp
+            
+        The pipe switches below are also required
+            -pthread
+            -lSDL2_net
+ */
+void init_client_network(int send_router_fd[2], int rcv_router_fd[2])
+{
+    pthread_t thread;
+    NETWORK_DATA * ndata = (NETWORK_DATA*) malloc(sizeof(NETWORK_DATA));
+    
+    ndata->read_pipe = send_router_fd[READ_END];
+    ndata->write_pipe = rcv_router_fd[WRITE_END];
+
+    pthread_create(&thread, NULL, networkRouter, (void *)ndata);
+    pthread_detach(thread);
+}
 /*------------------------------------------------------------------------------------------
  * FUNCTION:    write_packet
  *
@@ -159,15 +214,17 @@ void* read_packet(int fd, uint32_t size)
  *
  *----------------------------------------------------------------------------------------*/
 int write_packet(int write_fd, uint32_t packet_type, void *packet)
-{
-    if (write_pipe(write_fd, &packet_type, sizeof(packet_type)) == -1)
+{   
+    int temp;
+    if ((temp = write_pipe(write_fd, &packet_type, sizeof(packet_type))) <= 0)
     {
-        perror("write_packet: write");
+        perror("Failed to write packet: write_pipe");
         return -1;
     }
-	if (write_pipe(write_fd, packet, packet_sizes[packet_type]) == -1)
+	
+    if((temp = write_pipe(write_fd, packet, packet_sizes[packet_type - 1])) <= 0)
 	{
-		perror("write_packet: write");
+		perror("Failed to write packet: write_pipe");
 		return -1;
 	}
 
@@ -187,7 +244,6 @@ int write_packet(int write_fd, uint32_t packet_type, void *packet)
  *
  * INTERFACE:   int read_data(void* packet, int fd)
  *
- * RETURNS:     int : -1 on pipe read error
  *                    -2 on packet read error
  *                    0 on empty read pipe
  *                    type of packet on success
@@ -202,15 +258,19 @@ int write_packet(int write_fd, uint32_t packet_type, void *packet)
  *----------------------------------------------------------------------------------------*/
 void *read_data(int fd, uint32_t *type){
 
-	void *packet;
-    
-    if((*type = read_type(fd)) <= 0){
+    int read_bytes;
+    void *packet;
+    *type = read_type(fd);
+    if(*type >= 90){
+        perror("Failed to read packet type from pipe: read_data\n");
         return NULL;
     }
-    
-    if((packet = read_packet(fd, packet_sizes[*type])) == NULL){
-        return (void *)-2;
+
+    if((packet = read_packet(fd, packet_sizes[*type - 1])) == NULL){
+        perror("Failed to read packet : read_data\n");
+        return NULL;
     }
 
     return packet;
 }
+

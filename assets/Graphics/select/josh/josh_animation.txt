@@ -1,0 +1,6 @@
+1
+
+josh 3 40 -1 1                        
+assets/Graphics/objects/select/josh/josh_1.png
+assets/Graphics/objects/select/josh/josh_2.png
+assets/Graphics/objects/select/josh/josh_3.png

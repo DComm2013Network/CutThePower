@@ -1,0 +1,6 @@
+1
+
+robin 3 40 -1 1                        
+assets/Graphics/objects/select/robin/robin_1.png
+assets/Graphics/objects/select/robin/robin_2.png
+assets/Graphics/objects/select/robin/robin_3.png

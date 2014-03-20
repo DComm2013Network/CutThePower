@@ -1,22 +1,19 @@
-/** @ingroup Gameplay */
-
-/** @{ */
-/** @file collision.h */
-/** @} */
-
 #ifndef COLLISION_H
 #define COLLISION_H
 
 #include "../world.h"
 #include "components.h"
 
-#define COLLISION_WALL		10001    /**< A collision between an entity and a wall. */
-#define COLLISION_STAIR		10002    /**< A collision between an entity and a guard. */
-#define COLLISION_HACKER	10003    /**< A collision between an entity and a hacker. */
-#define COLLISION_GUARD		10004    /**< A collision between an entity and a guard. */
+typedef struct {
+	int map_code;
+	int entity_code;
+	int entityID;
+} CollisionData;
 
-int collision_system(World &world, PositionComponent entity, int entityID);
-bool wall_collision(World &world, PositionComponent entity);
-bool entity_collision(World &world, PositionComponent entity, int entityID);
+CollisionData collision_system(World* world, PositionComponent entity, int entityID);
+int wall_collision(World* world, PositionComponent entity);
+int entity_collision(World* world, PositionComponent entity, int entityID);
+int handle_target_collision(World *world, int entityIndex);
+int handle_entity_collision(World *world, int entityIndex);
 
 #endif
