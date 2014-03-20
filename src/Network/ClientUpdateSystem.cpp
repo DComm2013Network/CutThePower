@@ -64,7 +64,7 @@ void client_update_system(World *world, int net_pipe) {
 		printf("Updating with packet type %u\n", type);
 					fprintf(stderr, "Sending a position update at: %lu\n", clock()/CLOCKS_PER_SEC);
 		switch (type) 
-		{ // the cached packets minuses one from the value 
+		{ 
 			case P_CONNECT:
 				if(client_update_info(world, packet) == CONNECT_CODE_DENIED)
 				{
