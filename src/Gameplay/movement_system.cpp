@@ -12,6 +12,7 @@
 #define COLLISION_MASK (COMPONENT_COLLISION)
 #define PI 3.14159265
 
+
 int handle_collision_target(World *world, int entityIndex) {
 	if (world->collision[entityIndex].timer < world->collision[entityIndex].timerMax) {
 		world->collision[entityIndex].timer += 2;
@@ -167,7 +168,7 @@ void handle_entity_collision(CollisionData data, World * world, int curEntityID)
 		if (world->collision[curEntityID].type == COLLISION_GUARD) {
 			//world->mask[data.entityID] = COMPONENT_EMPTY;
 		}
-		break;
+		break; 
 	case COLLISION_GUARD:
 		if (world->collision[curEntityID].type == COLLISION_HACKER) {
 			//world->mask[curEntityID] = COMPONENT_EMPTY;
@@ -207,10 +208,12 @@ void movement_system(World* world, int sendpipe) {
 				temp.width = position->width;
 				temp.height = position->height;
 				temp.level = position->level;
+				bool moved = false;
 				
 				if (command->commands[C_UP]) {
 					add_force(world, entity, world->movement[entity].acceleration, -90);
 					play_animation(&(world->animation[entity]), "up");
+					moved = true;
 				}
 				else {
 					cancel_animation(world, entity, "up");
@@ -218,6 +221,7 @@ void movement_system(World* world, int sendpipe) {
 				if (command->commands[C_DOWN]) {
 					add_force(world, entity, world->movement[entity].acceleration, 90);
 					play_animation(&(world->animation[entity]), "down");
+					moved = true;
 				}
 				else {
 					cancel_animation(world, entity, "down");
@@ -225,6 +229,7 @@ void movement_system(World* world, int sendpipe) {
 				if (command->commands[C_LEFT]) {
 					add_force(world, entity, world->movement[entity].acceleration, 180);
 					play_animation(&(world->animation[entity]), "left");
+					moved = true;
 				}
 				else {
 					cancel_animation(world, entity, "left");
@@ -232,6 +237,7 @@ void movement_system(World* world, int sendpipe) {
 				if (command->commands[C_RIGHT]) {
 					add_force(world, entity, world->movement[entity].acceleration, 0);
 					play_animation(&(world->animation[entity]), "right");
+					moved = true;
 				}
 				else {
 					cancel_animation(world, entity, "right");
@@ -251,6 +257,9 @@ void movement_system(World* world, int sendpipe) {
 				}	
 				position->x = temp.x + goffsetW;
 				position->y = temp.y + goffsetH;
+
+				if(moved)
+					send_location(world, sendpipe);
 			}
 		}
 	} 

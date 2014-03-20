@@ -127,12 +127,6 @@ int main(int argc, char* argv[]) {
 		{
 			client_update_system(world, rcv_router_fd[READ_END]);
 		}
-
-		if(send_ready)
-		{
-			send_location(world, send_router_fd[WRITE_END]);
-			
-		}
 		////NETWORK CODE
 
 		SDL_UpdateWindowSurface(window);

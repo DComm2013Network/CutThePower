@@ -121,6 +121,82 @@ extern int send_failure_fd;
 /**
  * Frees the socket set upon cancellation of the receive thread.
  *
+ * Sends data received from the network router pipe to the server.
+ * 
+ * The thread gets the data from the pipe and determines the protocol (UDP or TCP)
+ * to use, then sends the packet on corresponding socket.
+ *
+ * @param[in] ndata NETWORK_DATA containing a tcp socket, udp socket and a file
+ *                  descriptor to the network router send pipe.
+ *
+ * @return  NULL upon termination
+ *
+ * @designer Ramzi Chennafi
+ * @author   Ramzi Chennafi
+ * 
+ * @date Febuary 13 2014
+ */
+void* send_thread_func(void* ndata){
+
+	NDATA snd_data = (NDATA) ndata;
+
+	int protocol = 0;
+	uint32_t type = 0;
+	void * data;
+	int ret = -1;
+
+	while(1){	
+    	data = grab_send_packet(&type, snd_data->read_pipe, &ret);
+    	if(ret != 1){
+			continue;
+		}
+		
+		//protocol = get_protocol(type);
+		//if(protocol == TCP)
+		//{
+		send_tcp(&type, snd_data->tcp_sock, sizeof(uint32_t));
+		send_tcp(data, snd_data->tcp_sock, packet_sizes[type - 1]);
+		//}
+		//else if(protocol == UDP)
+		//{
+		//	send_udp(data, &type, snd_data->udp_sock, packet_sizes[type - 1] + sizeof(uint32_t));
+		//}
+	}
+	return NULL;
+}
+
+/**
+ * Sends the packet data over the established TCP connection.
+ *
+ * @param[in] data Pointer to the data packet to send over TCP.
+ * @param[in] sock The socket on which to send the data.
+ * @param[in] size The size of the packet being sent.
+ *
+ * @return <ul>
+ *              <li>Returns 0 on success.</li>
+ *				<li>Returns -1 if there's an error on send.</li>
+ *          </ul> 
+ *
+ * @designer Ramzi Chennafi
+ * @author   Ramzi Chennafi
+ *
+ * @date January 20, 2014
+ */
+int send_tcp(void * data, TCPsocket sock, uint32_t size){
+
+	int result=SDLNet_TCP_Send(sock, data, size);
+	if(result <= 0) {
+    	fprintf(stderr, "SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+    	return -1;
+	}
+
+	return 0;
+}
+
+/**
+ * Sends the specified data over a UDP socket.
+>>>>>>> 3235384a105008596ffa8555d691657e86bbe26d
+ *
  * @param[in, out] cleanup_args Contains the socket set to be freed.
  *
  * @designer Shane Spoor
