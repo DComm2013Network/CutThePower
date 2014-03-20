@@ -1,0 +1,4 @@
+1
+
+select 1 40 -1 -1
+assets/Graphics/screen/select/select.png

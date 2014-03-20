@@ -436,3 +436,26 @@ void create_load_screen(World *world) {
 	play_animation(world, entity, "load");
 }
 
+void create_select_screen(World *world) {
+	
+	unsigned int entity;
+	
+	entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION);
+	
+	world->position[entity].x = 0;
+	world->position[entity].y = 0;
+	world->position[entity].width = WIDTH;
+	world->position[entity].height = HEIGHT;
+	
+	load_animation("assets/Graphics/screen/select/select_animation.txt", world, entity);
+	
+	world->animation[entity].id = 1;
+	
+	world->renderPlayer[entity].width = WIDTH;
+	world->renderPlayer[entity].height = HEIGHT;
+	
+	
+	play_animation(world, entity, "select");
+}
+
+
