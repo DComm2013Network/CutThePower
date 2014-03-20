@@ -150,6 +150,147 @@ bool menu_click(World *world, unsigned int entity) {
 		create_keymap_menu(world);
 		
 	}
+	//SELECT SCREEN
+	else if (strcmp(world->button[entity].label, "menu_select_abhishek") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_aman") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_andrew") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_chris") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_clark") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_cory") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_damien") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_german") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_ian") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_jordan") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_josh") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_konst") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_mat") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_ramzi") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_robin") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_sam") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_shane") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_tim") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_vincent") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_random") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
 	
 	//CREDITS
 	else if (strcmp(world->button[entity].label, "credits_back") == 0) {

@@ -166,7 +166,7 @@ void create_textfield(World *world, char *name, int x, int y, const char* text, 
 void create_animated_button(World *world, char* fileName, int x, int y, char* name) {
 	
 	char *new_name;
-	unsigned int entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION);
+	unsigned int entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION | COMPONENT_BUTTON | COMPONENT_MOUSE);
 	world->position[entity].x = x;
 	world->position[entity].y = y;
 	world->position[entity].width = ANIMATED_BUTTON_WIDTH;
