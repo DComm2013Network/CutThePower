@@ -225,25 +225,25 @@ void client_update_status(World *world, void *packet)
 	{
 		if(status_update->player_valid[i] == true)
 		{
-			if(status_update->otherPlayers_teams[i] == ROBBERS)
-			{	
+			// if(status_update->otherPlayers_teams[i] == ROBBERS)
+			// {	
 				if(player_table[i] == UNASSIGNED) // They're on the floor but haven't yet been created
 		        {
 		            player_table[i] = create_player(world, 400, 600, COLLISION_HACKER, false, i);
 		            player_table[i] |= COMPONENT_ANIMATION;
 		            load_animation("assets/Graphics/player/robber/rob_animation.txt", world, player_table[i]);
 		        }
-			}
+			//}
 
-			else if(status_update->otherPlayers_teams[i] == COPS)
-			{
+			// else if(status_update->otherPlayers_teams[i] == COPS)
+			// {
 				if(player_table[i] == UNASSIGNED) // They're on the floor but haven't yet been created
 		        {
 		            player_table[i] = create_player(world, 400, 600, COLLISION_HACKER, false, i);
 		            player_table[i] |= COMPONENT_ANIMATION;
 		            load_animation("assets/Graphics/player/robber/rob_animation.txt", world, player_table[i]);
 		        }
-			}
+			//}
 		}
 	}
 }
