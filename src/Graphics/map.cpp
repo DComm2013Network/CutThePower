@@ -189,7 +189,12 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 					return -1;
 				}
 				
-				//entity = create_stair(world, floor, targetX * TILE_WIDTH, targetY * TILE_HEIGHT, x * TILE_WIDTH, y * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT, level);
+				printf("mx: %d\n", x * TILE_WIDTH);
+				printf("my: %d\n", y * TILE_HEIGHT);
+				printf("mw: %d\n", TILE_WIDTH);
+				printf("mh: %d\n", TILE_HEIGHT);
+				
+				entity = create_stair(world, floor, targetX * TILE_WIDTH, targetY * TILE_HEIGHT, x * TILE_WIDTH, y * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT, level);
 				
 				//printf("Create stair entity %d\n", entity);
 				

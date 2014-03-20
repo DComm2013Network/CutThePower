@@ -54,7 +54,7 @@ void create_button(World *world, char *image, char *name, int x, int y) {
 	world->renderPlayer[entity].height = BUTTON_HEIGHT;
 	world->renderPlayer[entity].playerSurface = IMG_Load(image);
 	if (!world->renderPlayer[entity].playerSurface) {
-		printf("mat is a doof\n");
+		printf("Error loading image in create_button: %s\n", image);
 	}
 	
 	world->position[entity].x = x;
@@ -96,7 +96,7 @@ void create_label(World *world, char *image, int x, int y, int w, int h) {
 	world->renderPlayer[entity].height = h;
 	world->renderPlayer[entity].playerSurface = IMG_Load(image);
 	if (!world->renderPlayer[entity].playerSurface) {
-		printf("mat is a doof\n");
+		printf("Error loading image in create_label: %s\n", image);
 	}
 	
 	world->position[entity].x = x;
@@ -114,21 +114,28 @@ void create_label(World *world, char *image, int x, int y, int w, int h) {
  * @param name The name of the textfield.
  * @param x The x coordinate of the button
  * @param y The y coordinate of the button.
+ * @param text text in the field when loaded
  *
  * @designer Jordan Marling
  * @designer Mat Siwoski
  *
  * @author Jordan Marling
+ * @author Cory Thomas
  */
-void create_textfield(World *world, char *name, int x, int y) {
+void create_textfield(World *world, char *name, int x, int y, const char* text, bool big) {
 	
 	unsigned int entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_TEXTFIELD | COMPONENT_MOUSE);
 	
 	world->renderPlayer[entity].width = TEXT_WIDTH;
 	world->renderPlayer[entity].height = TEXT_HEIGHT;
-	world->renderPlayer[entity].playerSurface = IMG_Load("assets/Graphics/screen/menu/text_field.png");
+	if(big)
+	{
+		world->renderPlayer[entity].playerSurface = IMG_Load("assets/Graphics/screen/menu/text_field.png");
+	} else {
+		world->renderPlayer[entity].playerSurface = IMG_Load("assets/Graphics/screen/menu/small_text_field.png");
+	}
 	if (!world->renderPlayer[entity].playerSurface) {
-		printf("mat is a doof\n");
+		printf("Error loading image in create_textfield.\n");
 	}
 	
 	world->position[entity].x = x;
@@ -139,7 +146,18 @@ void create_textfield(World *world, char *name, int x, int y) {
 	world->text[entity].name = (char*)calloc(strlen(name) + 1, sizeof(char));
 	strcpy(world->text[entity].name, name);
 	world->text[entity].text = (char*)calloc(MAX_STRING + 1, sizeof(char));
-	world->text[entity].length = 0;
+
+	if(text != NULL)
+	{
+		for(int i = 0; text[i]; i++)
+		{
+			world->text[entity].text[i] = toupper(text[i]);
+		}
+		world->text[entity].length = strlen(text);
+	} else {
+		world->text[entity].length = 0;
+	}
+
 	world->text[entity].focused = false;
 	world->text[entity].number = false;
 	
@@ -241,6 +259,7 @@ void create_options_menu(World *world) {
  * @designer Mat Siwoski
  *
  * @author Jordan Marling
+ * @author Cory Thomas
  */
 void create_keymap_menu(World *world) {
 	
@@ -265,27 +284,33 @@ void create_keymap_menu(World *world) {
 	
 	strcpy((char*)(filename + pos), SDL_GetScancodeName((SDL_Scancode)commands[C_UP]));
 	strcpy((char*)(filename + pos + strlen(SDL_GetScancodeName((SDL_Scancode)commands[C_UP]))), ".png");
-	create_button(world, filename, "keymap_up", (WIDTH / 2) + 250, (HEIGHT / 2) - 100 + (0 * 75));
+	//create_button(world, filename, "keymap_up", (WIDTH / 2) + 250, (HEIGHT / 2) - 100 + (0 * 75));
+	create_textfield(world, "keymap_up", (WIDTH / 2) + 250, (HEIGHT / 2) - 100 + (0 * 75), SDL_GetScancodeName((SDL_Scancode)commands[C_UP]), 0);
 	
 	strcpy((char*)(filename + pos), SDL_GetScancodeName((SDL_Scancode)commands[C_DOWN]));
 	strcpy((char*)(filename + pos + strlen(SDL_GetScancodeName((SDL_Scancode)commands[C_DOWN]))), ".png");
-	create_button(world, filename, "keymap_down", (WIDTH / 2) + 250, (HEIGHT / 2) - 100 + (1 * 75));
+	//create_button(world, filename, "keymap_down", (WIDTH / 2) + 250, (HEIGHT / 2) - 100 + (1 * 75));
+	create_textfield(world, "keymap_down", (WIDTH / 2) + 250, (HEIGHT / 2) - 100 + (1 * 75), SDL_GetScancodeName((SDL_Scancode)commands[C_DOWN]), 0);
 	
 	strcpy((char*)(filename + pos), SDL_GetScancodeName((SDL_Scancode)commands[C_LEFT]));
 	strcpy((char*)(filename + pos + strlen(SDL_GetScancodeName((SDL_Scancode)commands[C_LEFT]))), ".png");
-	create_button(world, filename, "keymap_left", (WIDTH / 2) + 250, (HEIGHT / 2) - 100 + (2 * 75));
+	//create_button(world, filename, "keymap_left", (WIDTH / 2) + 250, (HEIGHT / 2) - 100 + (2 * 75));
+	create_textfield(world, "keymap_left", (WIDTH / 2) + 250, (HEIGHT / 2) - 100 + (2 * 75), SDL_GetScancodeName((SDL_Scancode)commands[C_LEFT]), 0);
 	
 	strcpy((char*)(filename + pos), SDL_GetScancodeName((SDL_Scancode)commands[C_RIGHT]));
 	strcpy((char*)(filename + pos + strlen(SDL_GetScancodeName((SDL_Scancode)commands[C_RIGHT]))), ".png");
-	create_button(world, filename, "keymap_right", (WIDTH / 2) + 250, (HEIGHT / 2) - 100 + (3 * 75));
+	//create_button(world, filename, "keymap_right", (WIDTH / 2) + 250, (HEIGHT / 2) - 100 + (3 * 75));
+	create_textfield(world, "keymap_right", (WIDTH / 2) + 250, (HEIGHT / 2) - 100 + (3 * 75), SDL_GetScancodeName((SDL_Scancode)commands[C_RIGHT]), 0);
 	
 	strcpy((char*)(filename + pos), SDL_GetScancodeName((SDL_Scancode)commands[C_ACTION]));
 	strcpy((char*)(filename + pos + strlen(SDL_GetScancodeName((SDL_Scancode)commands[C_ACTION]))), ".png");
-	create_button(world, filename, "keymap_action", (WIDTH / 2) + 250, (HEIGHT / 2) - 100 + (4 * 75));
+	//create_button(world, filename, "keymap_action", (WIDTH / 2) + 250, (HEIGHT / 2) - 100 + (4 * 75));
+	create_textfield(world, "keymap_action", (WIDTH / 2) + 250, (HEIGHT / 2) - 100 + (4 * 75), SDL_GetScancodeName((SDL_Scancode)commands[C_ACTION]), 0);
 	
 	
-	create_button(world, "assets/Graphics/screen/menu/menu_button_back.png", "keymap_back", (WIDTH / 2) - (BUTTON_WIDTH / 2) + 150, (HEIGHT / 2) + 275);
-	create_button(world, "assets/Graphics/screen/menu/menu_button_default.png", "keymap_default", (WIDTH / 2) - (BUTTON_WIDTH / 2) - 150, (HEIGHT / 2) + 275);
+	create_button(world, "assets/Graphics/screen/menu/menu_button_back.png", "keymap_back", (WIDTH / 2) - (BUTTON_WIDTH / 2) + 240, (HEIGHT / 2) + 275);
+	create_button(world, "assets/Graphics/screen/menu/menu_button_default.png", "keymap_default", (WIDTH / 2) - (BUTTON_WIDTH / 2) - 240, (HEIGHT / 2) + 275);
+	create_button(world, "assets/Graphics/screen/menu/menu_button_save.png", "keymap_save", (WIDTH / 2) - (BUTTON_WIDTH / 2), (HEIGHT / 2) + 275);
 }
 
 /**
@@ -345,10 +370,10 @@ void create_setup_menu(World *world) {
 	create_label(world, "assets/Graphics/screen/menu/menu_label_setup.png", (WIDTH / 2) - (TITLE_WIDTH / 2), (HEIGHT / 2) - 250, TITLE_WIDTH, TITLE_HEIGHT);
 	
 	create_label(world, "assets/Graphics/screen/menu/menu_label_username.png", (WIDTH / 2) - 550, (HEIGHT / 2) - 25, BUTTON_WIDTH, BUTTON_HEIGHT);
-	create_textfield(world, "setup_username", (WIDTH / 2) - 55, (HEIGHT / 2) - 30);
+	create_textfield(world, "setup_username", (WIDTH / 2) - 55, (HEIGHT / 2) - 30, NULL, 1);
 	
 	create_label(world, "assets/Graphics/screen/menu/menu_label_serverip.png", (WIDTH / 2) - 550, (HEIGHT / 2) + 50, BUTTON_WIDTH, BUTTON_HEIGHT);
-	create_textfield(world, "setup_serverip", (WIDTH / 2) - 55, (HEIGHT / 2) + 45);
+	create_textfield(world, "setup_serverip", (WIDTH / 2) - 55, (HEIGHT / 2) + 45, NULL, 1);
 	
 	
 	create_button(world, "assets/Graphics/screen/menu/menu_button_back.png", "setup_back", (WIDTH / 2) - (BUTTON_WIDTH / 2) + 150, (HEIGHT / 2) + 275);

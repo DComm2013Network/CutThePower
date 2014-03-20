@@ -113,7 +113,9 @@ void MouseInputSystem(World *world)
 				if (button->currentState == true &&
 					button->prevState == false) {
 					
-					menu_click(world, entity);
+					if (menu_click(world, entity)) {
+						break;
+					}
 					
 				}
 				

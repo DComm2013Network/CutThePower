@@ -134,6 +134,8 @@ int main(int argc, char* argv[]) {
 	
 	cleanup_sound();
 	
+	printf("Exiting The Game\n");
+	
 	return 0;
 }
 
