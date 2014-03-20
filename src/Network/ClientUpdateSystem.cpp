@@ -244,14 +244,6 @@ void client_update_status(World *world, void *packet)
 		  //       }
 			//}
 		} 
-		else 
-		{
-			if(player_table[i] != UNASSIGNED)
-			{
-				destroy_entity(world, player_table[i]);
-				player_table[i] = UNASSIGNED;
-			}
-		}
 		else
 		{
 			if(player_table[i] != UNASSIGNED)
