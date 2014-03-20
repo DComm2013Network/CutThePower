@@ -15,6 +15,8 @@ extern unsigned int player_entity;
 
 bool menu_click(World *world, unsigned int entity) {
 	
+	char* playerFileName;
+	
 	//printf("Clicked: %s\n", world->button[entity].label);
 	
 	//MAIN MENU
