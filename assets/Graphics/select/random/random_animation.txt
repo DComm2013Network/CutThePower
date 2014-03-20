@@ -1,0 +1,7 @@
+1
+
+random 4 40 -1 1                        
+assets/Graphics/objects/select/random/random_1.png
+assets/Graphics/objects/select/random/random_2.png
+assets/Graphics/objects/select/random/random_3.png
+assets/Graphics/objects/select/random/random_2.png
