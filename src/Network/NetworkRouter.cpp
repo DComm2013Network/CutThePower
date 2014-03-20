@@ -214,8 +214,8 @@ int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int send
     *max_fd = recvfd[READ_END] > gameplay->read_pipe ? recvfd[READ_END] : gameplay->read_pipe;
     *max_fd = game_net_signalfd > *max_fd ? game_net_signalfd : *max_fd;
 
-    resolve_host(&ipaddr, TCP_PORT, "192.168.1.227");
-    resolve_host(&udpaddr, UDP_PORT, "192.168.1.227");
+    resolve_host(&ipaddr, TCP_PORT, "192.168.43.116");
+    resolve_host(&udpaddr, UDP_PORT, "192.168.43.116");
     
     tcp_sock = SDLNet_TCP_Open(&ipaddr);
 

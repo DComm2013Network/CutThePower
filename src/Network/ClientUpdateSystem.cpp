@@ -120,13 +120,13 @@ void client_update_obj_status(World *world, void *packet)
 void client_update_floor(World *world, void *packet)
 {
 	PKT_FLOOR_MOVE* floor_move = (PKT_FLOOR_MOVE*)packet;
-	for (int i = 0; i < MAX_ENTITIES; i++)
+	for (int i = 0; i < MAX_PLAYERS; i++)
 	{
-		if (IN_THIS_COMPONENT(world->mask[i], COMPONENT_CONTROLLABLE | COMPONENT_MOVEMENT | COMPONENT_POSITION))
+		if(player_table[i] == CLIENT_PLAYER)
 		{
-			world->position[i].x		= floor_move->xPos;
-			world->position[i].y		= floor_move->yPos;
-			world->position[i].level	= floor_move->new_floor;
+			world->position[player_table[i]].x		= floor_move->xPos;
+			world->position[player_table[i]].y		= floor_move->yPos;
+			world->position[player_table[i]].level	= floor_move->new_floor;
 			break;
 		}
 	}
@@ -150,29 +150,17 @@ void client_update_pos(World *world, void *packet)
 	PKT_ALL_POS_UPDATE *pos_update = (PKT_ALL_POS_UPDATE *)packet;
 	for (int i = 0; i < MAX_PLAYERS; i++)
 	{
-		if (!pos_update->players_on_floor[i]) // If they're not on this floor
-		{
-            if(player_table[i] != UNASSIGNED) // If they previously existed but aren't on this floor
-            {
-			    destroy_entity(world, player_table[i]);
-			    player_table[i] = UNASSIGNED;
-            }
-            continue;
-		}
-        else if(player_table[i] == CLIENT_PLAYER)
+        if(player_table[i] == CLIENT_PLAYER)
 			continue;
-
-        else if(player_table[i] == UNASSIGNED) // They're on the floor but haven't yet been created
-        {
-            player_table[i] = create_player(world, pos_update->xPos[i], pos_update->yPos[i], false, i);
-            load_animation("assets/Graphics/player/robber/rob_animation.txt", world, player_table[i]);
-        }
-
-		world->movement[player_table[i]].movX	= pos_update->xVel[i];
-		world->movement[player_table[i]].movY 	= pos_update->yVel[i];
-		world->position[player_table[i]].x		= pos_update->xPos[i];
-		world->position[player_table[i]].y		= pos_update->yPos[i];
-		world->position[player_table[i]].level	= pos_update->floor;
+		
+		if(player_table[i] != UNASSIGNED)
+		{
+			world->movement[player_table[i]].movX	= pos_update->xVel[i];
+			world->movement[player_table[i]].movY 	= pos_update->yVel[i];
+			world->position[player_table[i]].x		= pos_update->xPos[i];
+			world->position[player_table[i]].y		= pos_update->yPos[i];
+			world->position[player_table[i]].level	= pos_update->floor;
+		}
 	}
 }
 
@@ -241,22 +229,24 @@ void client_update_status(World *world, void *packet)
 
 	for(int i = 0; i < MAX_PLAYERS; i++)
 	{
-		if((status_update->player_valid[i] == true) && (i != controllable_playerNo))
+		if((status_update->player_valid[i] == true))
 		{
 			if(status_update->otherPlayers_teams[i] == ROBBERS)
 			{
-				printf("PLAYER CREATED: NUMBER %d\n", i);
-				unsigned int player_entity = create_player(world, -50, -50, false, COLLISION_HACKER, i);
-				world->mask[player_entity] |= COMPONENT_ANIMATION;
-				load_animation("assets/Graphics/player/robber/rob_animation.txt", world, player_entity);
+				if(player_table[i] == UNASSIGNED) // They're on the floor but haven't yet been created
+		        {
+		            player_table[i] = create_player(world, 400, 600, COLLISION_HACKER, false, i);
+		            load_animation("assets/Graphics/player/robber/rob_animation.txt", world, player_table[i]);
+		        }
 			}
 
 			else if(status_update->otherPlayers_teams[i] == COPS)
 			{
-				printf("PLAYER CREATED: NUMBER %d\n", i);
-				unsigned int player_entity = create_player(world, -50, -50, false, COLLISION_HACKER, i);
-				world->mask[player_entity] |= COMPONENT_ANIMATION;
-				load_animation("assets/Graphics/player/robber/rob_animation.txt", world, player_entity);
+				if(player_table[i] == UNASSIGNED) // They're on the floor but haven't yet been created
+		        {
+		            player_table[i] = create_player(world, 400, 600, COLLISION_HACKER, false, i);
+		            load_animation("assets/Graphics/player/robber/rob_animation.txt", world, player_table[i]);
+		        }
 			}
 		}
 	}
@@ -286,9 +276,10 @@ int client_update_info(World *world, void *packet)
 	{
 		if (IN_THIS_COMPONENT(world->mask[i], COMPONENT_MOVEMENT | COMPONENT_POSITION | COMPONENT_PLAYER | COMPONENT_CONTROLLABLE))
 		{
-			world->player[i].teamNo					= client_info->clients_team_number;
-			world->player[i].playerNo				= client_info->clients_player_number;
-			controllable_playerNo 					= client_info->clients_player_number;
+			world->player[i].teamNo							= client_info->clients_team_number;
+			world->player[i].playerNo						= client_info->clients_player_number;
+			controllable_playerNo 							= client_info->clients_player_number;
+			player_table[client_info->clients_player_number] = i;
 		}
 	}
 

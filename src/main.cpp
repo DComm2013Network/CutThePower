@@ -125,8 +125,7 @@ int main(int argc, char* argv[]) {
 		if(network_ready)
 		{
 			client_update_system(world, rcv_router_fd[READ_END]);
-			if(game_ready > 2)
-				send_location(world, send_router_fd[WRITE_END]);
+			send_location(world, send_router_fd[WRITE_END]);
 		}
 		////NETWORK CODE
 
