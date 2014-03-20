@@ -16,14 +16,12 @@
 #include "systems.h"
 #include "../sound.h"
 
-SDL_Surface *map_surface; /**< The surface on which to render the map. */
+SDL_Surface *map_surface = 0; /**< The surface on which to render the map. */
 SDL_Rect map_rect;        /**< The rectangle containing the map. */
 int w;                    /**< The map's width. */
 int h;                    /**< The map's height. */
 int level;                /**< The current floor. */
 
-
-void load_map_section(int **map, SDL_Surface **tiles, int startX, int startY, int map_width, int map_height, SDL_Surface **map_surface);
 
 /**
  * Initiates the map by loading the tiles and putting it into one large texture.
@@ -33,7 +31,7 @@ void load_map_section(int **map, SDL_Surface **tiles, int startX, int startY, in
  * Revisions:
  *     -# March 10th - Jordan Marling: Implemented reading in the file correctly for the Stairs, 
  *    able to now set the location of the stairs & where the stairs will push the player to.
- *
+ *loading
  * @param[out] world      The world struct in which to store the map.
  * @param[in]  file_map   The pathway for the map.
  * @param[in]  file_tiles Pathway for the tiles.
@@ -56,7 +54,7 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 	//uint8_t** map;
 	int **collision_map;
 	int **map;
-	//int **collision_map;
+	//int **collision_map;loading
 	
 	//char entity_type[64];
 	char *entity_type = (char*)malloc(sizeof(char) * 128);
@@ -70,6 +68,10 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 	char *tile_filename = (char*)malloc(sizeof(char) * 128);
 	
 	SDL_Rect tile_rect;
+	
+	if (map_surface != 0) {
+		SDL_FreeSurface(map_surface);
+	}
 	
 	//load tiles
 	if ((fp_tiles = fopen(file_tiles, "r")) == 0) {
@@ -181,7 +183,6 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 			if (strcmp(entity_type, "stair") == 0) { //stair
 				
 				//stair x y targetX targetY 2
-				unsigned int entity;
 				int x, y, targetX, targetY, floor;
 				
 				if (fscanf(fp_map, "%d %d %d %d %d", &x, &y, &targetX, &targetY, &floor) != 5) {
@@ -194,7 +195,7 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 				printf("mw: %d\n", TILE_WIDTH);
 				printf("mh: %d\n", TILE_HEIGHT);
 				
-				entity = create_stair(world, floor, targetX * TILE_WIDTH, targetY * TILE_HEIGHT, x * TILE_WIDTH, y * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT, level);
+				create_stair(world, floor, targetX * TILE_WIDTH, targetY * TILE_HEIGHT, x * TILE_WIDTH, y * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT, level);
 				
 				//printf("Create stair entity %d\n", entity);
 				
@@ -202,11 +203,12 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 			else if (strcmp(entity_type, "object") == 0) { //animated objects
 				
 				unsigned int entity;
-				int x, y;
+				float x, y;
+				int w, h;
 				char *animation_name = (char*)malloc(sizeof(char) * 64);
 				char *animation_filename = (char*)malloc(sizeof(char) * 64);
 				
-				if (fscanf(fp_map, "%d %d %s %s", &x, &y, animation_filename, animation_name) != 4) {
+				if (fscanf(fp_map, "%f %f %d %d %s %s", &x, &y, &w, &h, animation_filename, animation_name) != 6) {
 					printf("Error loading object!\n");
 					return -1;
 				}
@@ -215,11 +217,11 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 				
 				//printf("Loading object %d [%s] %s\n", entity, animation_name, animation_filename);
 				
-				world->position[entity].x = TILE_WIDTH * x;
-				world->position[entity].y = TILE_HEIGHT * y;
+				world->position[entity].x = x * TILE_WIDTH + TILE_WIDTH / 2;
+				world->position[entity].y = y * TILE_HEIGHT + TILE_HEIGHT / 2;
 				
-				world->position[entity].width = TILE_WIDTH;
-				world->position[entity].height = TILE_HEIGHT;
+				world->position[entity].width = w;
+				world->position[entity].height = h;
 				
 				world->renderPlayer[entity].width = TILE_WIDTH;
 				world->renderPlayer[entity].height = TILE_HEIGHT;

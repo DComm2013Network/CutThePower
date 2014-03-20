@@ -93,7 +93,7 @@ int main(int argc, char* argv[]) {
 	//map_init(world, "assets/Graphics/lobby/lobby.txt", "assets/Graphics/lobby/lobby_tiles.txt");
 	//map_init(world, "assets/Graphics/lobby.txt", "assets/Graphics/tiles_lobby.txt");
 	
-	KeyMapInit("assets/Input/keymap.txt");
+	KeyMapInit((char*)"assets/Input/keymap.txt");
 	init_render_player_system();
 	//unsigned int entity = create_player(world, 600, 600, true);
 	
@@ -104,7 +104,6 @@ int main(int argc, char* argv[]) {
 	//entity = create_player(world, 600, 600, true, COLLISION_HACKER);
 						
 	//world->mask[entity] |= COMPONENT_ANIMATION;
-	
 	//load_animation("assets/Graphics/player/robber/rob_animation.txt", world, entity);
 	
 	FPS fps;

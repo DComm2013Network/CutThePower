@@ -141,8 +141,8 @@ unsigned int create_player(World* world, int x, int y, bool controllable, int co
 	pos.x = x;
 	pos.y = y;
 
-	pos.width = render.width;
-	pos.height = render.height;
+	pos.width = 30;
+	pos.height = 30;
 	pos.level = 0;
 	
 	movement.id = 0;

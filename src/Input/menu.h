@@ -3,11 +3,11 @@
 
 #include "../world.h"
 
-#define BUTTON_WIDTH 		400
-#define BUTTON_HEIGHT 		50
+#define BUTTON_WIDTH 		500
+#define BUTTON_HEIGHT 		100
 #define LABEL_WIDTH			250
 #define LABEL_HEIGHT		52
-#define TITLE_WIDTH			750
+#define TITLE_WIDTH			800
 #define TITLE_HEIGHT		150
 #define KEYMAP_WIDTH		150
 #define KEYMAP_HEIGHT		50

@@ -175,8 +175,6 @@ void create_textfield(World *world, char *name, int x, int y, const char* text, 
  */
 void create_main_menu_background(World *world) {
 	
-	const int menu_animations = 20;
-	
 	if (background < MAX_ENTITIES) {
 		return;
 	}
@@ -188,7 +186,7 @@ void create_main_menu_background(World *world) {
 	world->position[background].width = WIDTH;
 	world->position[background].height = HEIGHT;
 	
-	load_animation("assets/Graphics/screen/menu/mainmenu_animation.txt", world, background);
+	load_animation((char*)"assets/Graphics/screen/menu/mainmenu_animation.txt", world, background);
 	
 	world->renderPlayer[background].width = WIDTH;
 	world->renderPlayer[background].height = HEIGHT;
@@ -215,12 +213,12 @@ void create_main_menu(World* world) {
 	
 	create_main_menu_background(world);
 	
-	create_label(world, "assets/Graphics/screen/menu/menu_label_cutthepower.png", (WIDTH / 2) - (TITLE_WIDTH / 2), (HEIGHT / 2) - 250, TITLE_WIDTH, TITLE_HEIGHT);
+	create_label(world, (char*)"assets/Graphics/screen/menu/menu_label_cutthepower.png", (WIDTH / 2) - (TITLE_WIDTH / 2), (HEIGHT / 2) - 250, TITLE_WIDTH, TITLE_HEIGHT);
 	
-	create_button(world, "assets/Graphics/screen/menu/menu_button_play.png", "mainmenu_play", (WIDTH / 2) - (BUTTON_WIDTH / 2), (HEIGHT / 2) - 25);
-	create_button(world, "assets/Graphics/screen/menu/menu_button_options.png", "mainmenu_options", (WIDTH / 2) - (BUTTON_WIDTH / 2), (HEIGHT / 2) + 50);
-	create_button(world, "assets/Graphics/screen/menu/menu_button_credits.png", "mainmenu_credits", (WIDTH / 2) - (BUTTON_WIDTH / 2), (HEIGHT / 2) + 125);
-	create_button(world, "assets/Graphics/screen/menu/menu_button_exit.png", "mainmenu_exit", (WIDTH / 2) - (BUTTON_WIDTH / 2), (HEIGHT / 2) + 200);
+	create_button(world, (char*)"assets/Graphics/screen/menu/menu_button_play.png", (char*)"mainmenu_play", (WIDTH / 2) - (BUTTON_WIDTH / 2), (HEIGHT / 2) - 25);
+	create_button(world, (char*)"assets/Graphics/screen/menu/menu_button_options.png", (char*)"mainmenu_options", (WIDTH / 2) - (BUTTON_WIDTH / 2), (HEIGHT / 2) + 50);
+	create_button(world, (char*)"assets/Graphics/screen/menu/menu_button_credits.png", (char*)"mainmenu_credits", (WIDTH / 2) - (BUTTON_WIDTH / 2), (HEIGHT / 2) + 125);
+	create_button(world, (char*)"assets/Graphics/screen/menu/menu_button_exit.png", (char*)"mainmenu_exit", (WIDTH / 2) - (BUTTON_WIDTH / 2), (HEIGHT / 2) + 200);
 	
 }
 
@@ -241,11 +239,11 @@ void create_options_menu(World *world) {
 	
 	create_main_menu_background(world);
 	
-	create_label(world, "assets/Graphics/screen/menu/menu_label_options.png", (WIDTH / 2) - (TITLE_WIDTH / 2), (HEIGHT / 2) - 250, TITLE_WIDTH, TITLE_HEIGHT);
+	create_label(world, (char*)"assets/Graphics/screen/menu/menu_label_options.png", (WIDTH / 2) - (TITLE_WIDTH / 2), (HEIGHT / 2) - 250, TITLE_WIDTH, TITLE_HEIGHT);
 	
-	create_button(world, "assets/Graphics/screen/menu/menu_button_soundon.png", "options_sound_on", (WIDTH / 2) - (BUTTON_WIDTH / 2), (HEIGHT / 2) + 50);
-	create_button(world, "assets/Graphics/screen/menu/menu_button_keymap.png", "options_keymap", (WIDTH / 2) - (BUTTON_WIDTH / 2), (HEIGHT / 2) + 125);
-	create_button(world, "assets/Graphics/screen/menu/menu_button_back.png", "options_back", (WIDTH / 2) - (BUTTON_WIDTH / 2), (HEIGHT / 2) + 200);
+	create_button(world, (char*)"assets/Graphics/screen/menu/menu_button_soundon.png", (char*)"options_sound_on", (WIDTH / 2) - (BUTTON_WIDTH / 2), (HEIGHT / 2) + 50);
+	create_button(world, (char*)"assets/Graphics/screen/menu/menu_button_keymap.png", (char*)"options_keymap", (WIDTH / 2) - (BUTTON_WIDTH / 2), (HEIGHT / 2) + 125);
+	create_button(world, (char*)"assets/Graphics/screen/menu/menu_button_back.png", (char*)"options_back", (WIDTH / 2) - (BUTTON_WIDTH / 2), (HEIGHT / 2) + 200);
 }
 
 /**
@@ -265,13 +263,13 @@ void create_keymap_menu(World *world) {
 	
 	create_main_menu_background(world);
 	
-	create_label(world, "assets/Graphics/screen/menu/menu_label_keymap.png", (WIDTH / 2) - (TITLE_WIDTH / 2), (HEIGHT / 2) - 250, TITLE_WIDTH, TITLE_HEIGHT);
+	create_label(world, (char*)"assets/Graphics/screen/menu/menu_label_keymap.png", (WIDTH / 2) - (TITLE_WIDTH / 2), (HEIGHT / 2) - 250, TITLE_WIDTH, TITLE_HEIGHT);
 	
-	create_label(world, "assets/Graphics/screen/menu/menu_label_up.png", (WIDTH / 2) - 550, (HEIGHT / 2) - 100, BUTTON_WIDTH, BUTTON_HEIGHT);
-	create_label(world, "assets/Graphics/screen/menu/menu_label_down.png", (WIDTH / 2) - 550, (HEIGHT / 2) - 25, BUTTON_WIDTH, BUTTON_HEIGHT);
-	create_label(world, "assets/Graphics/screen/menu/menu_label_left.png", (WIDTH / 2) - 550, (HEIGHT / 2) + 50, BUTTON_WIDTH, BUTTON_HEIGHT);
-	create_label(world, "assets/Graphics/screen/menu/menu_label_right.png", (WIDTH / 2) - 550, (HEIGHT / 2) + 125, BUTTON_WIDTH, BUTTON_HEIGHT);
-	create_label(world, "assets/Graphics/screen/menu/menu_label_action.png", (WIDTH / 2) - 550, (HEIGHT / 2) + 200, BUTTON_WIDTH, BUTTON_HEIGHT);
+	create_label(world, (char*)"assets/Graphics/screen/menu/menu_label_up.png", (WIDTH / 2) - 550, (HEIGHT / 2) - 100, BUTTON_WIDTH, BUTTON_HEIGHT);
+	create_label(world, (char*)"assets/Graphics/screen/menu/menu_label_down.png", (WIDTH / 2) - 550, (HEIGHT / 2) - 25, BUTTON_WIDTH, BUTTON_HEIGHT);
+	create_label(world, (char*)"assets/Graphics/screen/menu/menu_label_left.png", (WIDTH / 2) - 550, (HEIGHT / 2) + 50, BUTTON_WIDTH, BUTTON_HEIGHT);
+	create_label(world, (char*)"assets/Graphics/screen/menu/menu_label_right.png", (WIDTH / 2) - 550, (HEIGHT / 2) + 125, BUTTON_WIDTH, BUTTON_HEIGHT);
+	create_label(world, (char*)"assets/Graphics/screen/menu/menu_label_action.png", (WIDTH / 2) - 550, (HEIGHT / 2) + 200, BUTTON_WIDTH, BUTTON_HEIGHT);
 	
 	//load information
 	const int pos = strlen("assets/Graphics/screen/menu/keymap/keymap_");
@@ -279,38 +277,38 @@ void create_keymap_menu(World *world) {
 	char filename[64];
 	strcpy(filename, "assets/Graphics/screen/menu/keymap/keymap_");
 	
-	KeyMapInitArray("assets/Input/keymap.txt", &commands);
+	KeyMapInitArray((char*)"assets/Input/keymap.txt", &commands);
 	
 	
 	strcpy((char*)(filename + pos), SDL_GetScancodeName((SDL_Scancode)commands[C_UP]));
 	strcpy((char*)(filename + pos + strlen(SDL_GetScancodeName((SDL_Scancode)commands[C_UP]))), ".png");
 	//create_button(world, filename, "keymap_up", (WIDTH / 2) + 250, (HEIGHT / 2) - 100 + (0 * 75));
-	create_textfield(world, "keymap_up", (WIDTH / 2) + 250, (HEIGHT / 2) - 100 + (0 * 75), SDL_GetScancodeName((SDL_Scancode)commands[C_UP]), 0);
+	create_textfield(world, (char*)"keymap_up", (WIDTH / 2) + 250, (HEIGHT / 2) - 100 + (0 * 75), SDL_GetScancodeName((SDL_Scancode)commands[C_UP]), 0);
 	
 	strcpy((char*)(filename + pos), SDL_GetScancodeName((SDL_Scancode)commands[C_DOWN]));
 	strcpy((char*)(filename + pos + strlen(SDL_GetScancodeName((SDL_Scancode)commands[C_DOWN]))), ".png");
 	//create_button(world, filename, "keymap_down", (WIDTH / 2) + 250, (HEIGHT / 2) - 100 + (1 * 75));
-	create_textfield(world, "keymap_down", (WIDTH / 2) + 250, (HEIGHT / 2) - 100 + (1 * 75), SDL_GetScancodeName((SDL_Scancode)commands[C_DOWN]), 0);
+	create_textfield(world, (char*)"keymap_down", (WIDTH / 2) + 250, (HEIGHT / 2) - 100 + (1 * 75), SDL_GetScancodeName((SDL_Scancode)commands[C_DOWN]), 0);
 	
 	strcpy((char*)(filename + pos), SDL_GetScancodeName((SDL_Scancode)commands[C_LEFT]));
 	strcpy((char*)(filename + pos + strlen(SDL_GetScancodeName((SDL_Scancode)commands[C_LEFT]))), ".png");
 	//create_button(world, filename, "keymap_left", (WIDTH / 2) + 250, (HEIGHT / 2) - 100 + (2 * 75));
-	create_textfield(world, "keymap_left", (WIDTH / 2) + 250, (HEIGHT / 2) - 100 + (2 * 75), SDL_GetScancodeName((SDL_Scancode)commands[C_LEFT]), 0);
+	create_textfield(world, (char*)"keymap_left", (WIDTH / 2) + 250, (HEIGHT / 2) - 100 + (2 * 75), SDL_GetScancodeName((SDL_Scancode)commands[C_LEFT]), 0);
 	
 	strcpy((char*)(filename + pos), SDL_GetScancodeName((SDL_Scancode)commands[C_RIGHT]));
 	strcpy((char*)(filename + pos + strlen(SDL_GetScancodeName((SDL_Scancode)commands[C_RIGHT]))), ".png");
 	//create_button(world, filename, "keymap_right", (WIDTH / 2) + 250, (HEIGHT / 2) - 100 + (3 * 75));
-	create_textfield(world, "keymap_right", (WIDTH / 2) + 250, (HEIGHT / 2) - 100 + (3 * 75), SDL_GetScancodeName((SDL_Scancode)commands[C_RIGHT]), 0);
+	create_textfield(world, (char*)"keymap_right", (WIDTH / 2) + 250, (HEIGHT / 2) - 100 + (3 * 75), SDL_GetScancodeName((SDL_Scancode)commands[C_RIGHT]), 0);
 	
 	strcpy((char*)(filename + pos), SDL_GetScancodeName((SDL_Scancode)commands[C_ACTION]));
 	strcpy((char*)(filename + pos + strlen(SDL_GetScancodeName((SDL_Scancode)commands[C_ACTION]))), ".png");
 	//create_button(world, filename, "keymap_action", (WIDTH / 2) + 250, (HEIGHT / 2) - 100 + (4 * 75));
-	create_textfield(world, "keymap_action", (WIDTH / 2) + 250, (HEIGHT / 2) - 100 + (4 * 75), SDL_GetScancodeName((SDL_Scancode)commands[C_ACTION]), 0);
+	create_textfield(world, (char*)"keymap_action", (WIDTH / 2) + 250, (HEIGHT / 2) - 100 + (4 * 75), SDL_GetScancodeName((SDL_Scancode)commands[C_ACTION]), 0);
 	
 	
-	create_button(world, "assets/Graphics/screen/menu/menu_button_back.png", "keymap_back", (WIDTH / 2) - (BUTTON_WIDTH / 2) + 240, (HEIGHT / 2) + 275);
-	create_button(world, "assets/Graphics/screen/menu/menu_button_default.png", "keymap_default", (WIDTH / 2) - (BUTTON_WIDTH / 2) - 240, (HEIGHT / 2) + 275);
-	create_button(world, "assets/Graphics/screen/menu/menu_button_save.png", "keymap_save", (WIDTH / 2) - (BUTTON_WIDTH / 2), (HEIGHT / 2) + 275);
+	create_button(world, (char*)"assets/Graphics/screen/menu/menu_button_back.png", (char*)"keymap_back", (WIDTH / 2) - (BUTTON_WIDTH / 2) + 240, (HEIGHT / 2) + 275);
+	create_button(world, (char*)"assets/Graphics/screen/menu/menu_button_default.png", (char*)"keymap_default", (WIDTH / 2) - (BUTTON_WIDTH / 2) - 240, (HEIGHT / 2) + 275);
+	create_button(world, (char*)"assets/Graphics/screen/menu/menu_button_save.png", (char*)"keymap_save", (WIDTH / 2) - (BUTTON_WIDTH / 2), (HEIGHT / 2) + 275);
 }
 
 /**
@@ -348,7 +346,7 @@ void create_credits_menu(World *world) {
 	world->position[entity].height = HEIGHT;
 	
 	
-	create_button(world, "assets/Graphics/screen/menu/menu_button_back.png", "credits_back", (WIDTH / 2) - (BUTTON_WIDTH / 2), (HEIGHT / 2) + 275);
+	create_button(world, (char*)"assets/Graphics/screen/menu/menu_button_back.png", (char*)"credits_back", (WIDTH / 2) - (BUTTON_WIDTH / 2), (HEIGHT / 2) + 275);
 }
 
 /**
@@ -367,17 +365,17 @@ void create_setup_menu(World *world) {
 	
 	create_main_menu_background(world);
 	
-	create_label(world, "assets/Graphics/screen/menu/menu_label_setup.png", (WIDTH / 2) - (TITLE_WIDTH / 2), (HEIGHT / 2) - 250, TITLE_WIDTH, TITLE_HEIGHT);
+	create_label(world, (char*)"assets/Graphics/screen/menu/menu_label_setup.png", (WIDTH / 2) - (TITLE_WIDTH / 2), (HEIGHT / 2) - 250, TITLE_WIDTH, TITLE_HEIGHT);
 	
-	create_label(world, "assets/Graphics/screen/menu/menu_label_username.png", (WIDTH / 2) - 550, (HEIGHT / 2) - 25, BUTTON_WIDTH, BUTTON_HEIGHT);
-	create_textfield(world, "setup_username", (WIDTH / 2) - 55, (HEIGHT / 2) - 30, NULL, 1);
+	create_label(world, (char*)"assets/Graphics/screen/menu/menu_label_username.png", (WIDTH / 2) - 550, (HEIGHT / 2) - 25, BUTTON_WIDTH, BUTTON_HEIGHT);
+	create_textfield(world, (char*)"setup_username", (WIDTH / 2) - 55, (HEIGHT / 2) - 30, NULL, 1);
 	
-	create_label(world, "assets/Graphics/screen/menu/menu_label_serverip.png", (WIDTH / 2) - 550, (HEIGHT / 2) + 50, BUTTON_WIDTH, BUTTON_HEIGHT);
-	create_textfield(world, "setup_serverip", (WIDTH / 2) - 55, (HEIGHT / 2) + 45, NULL, 1);
+	create_label(world, (char*)"assets/Graphics/screen/menu/menu_label_serverip.png", (WIDTH / 2) - 550, (HEIGHT / 2) + 50, BUTTON_WIDTH, BUTTON_HEIGHT);
+	create_textfield(world, (char*)"setup_serverip", (WIDTH / 2) - 55, (HEIGHT / 2) + 45, NULL, 1);
 	
 	
-	create_button(world, "assets/Graphics/screen/menu/menu_button_back.png", "setup_back", (WIDTH / 2) - (BUTTON_WIDTH / 2) + 150, (HEIGHT / 2) + 275);
-	create_button(world, "assets/Graphics/screen/menu/menu_button_play.png", "setup_play", (WIDTH / 2) - (BUTTON_WIDTH / 2) - 150, (HEIGHT / 2) + 275);
+	create_button(world, (char*)"assets/Graphics/screen/menu/menu_button_back.png", (char*)"setup_back", (WIDTH / 2) - (BUTTON_WIDTH / 2) + 150, (HEIGHT / 2) + 275);
+	create_button(world, (char*)"assets/Graphics/screen/menu/menu_button_play.png", (char*)"setup_play", (WIDTH / 2) - (BUTTON_WIDTH / 2) - 150, (HEIGHT / 2) + 275);
 }
 
 /**
@@ -410,8 +408,8 @@ void create_bsod_menu(World *world) {
 	world->position[entity].width = WIDTH;
 	world->position[entity].height = HEIGHT;
 	
-	create_button(world, "assets/Graphics/end/press_x_to_exit.png", "bsod_exit", (WIDTH / 2) - (BUTTON_WIDTH / 2) - 400, (HEIGHT / 2) + 100);
-	create_button(world, "assets/Graphics/end/press_y_to_continue.png", "bsod_continue", (WIDTH / 2) - (BUTTON_WIDTH / 2) - 400, (HEIGHT / 2) + 150);
+	create_button(world, (char*)"assets/Graphics/end/press_x_to_exit.png", (char*)"bsod_exit", (WIDTH / 2) - (BUTTON_WIDTH / 2) - 400, (HEIGHT / 2) + 100);
+	create_button(world, (char*)"assets/Graphics/end/press_y_to_continue.png", (char*)"bsod_continue", (WIDTH / 2) - (BUTTON_WIDTH / 2) - 400, (HEIGHT / 2) + 150);
 }
 
 
@@ -429,14 +427,14 @@ void create_intro(World *world) {
 	world->position[entity].width = WIDTH;
 	world->position[entity].height = HEIGHT;
 	
-	load_animation("assets/Graphics/screen/intro/intro_animation.txt", world, entity);
+	load_animation((char*)"assets/Graphics/screen/intro/intro_animation.txt", world, entity);
 	
 	world->animation[entity].id = 0;
 	
 	world->renderPlayer[entity].width = WIDTH;
 	world->renderPlayer[entity].height = HEIGHT;
 	
-	play_animation(world, entity, "intro");
+	play_animation(world, entity, (char*)"intro");
 }
 
 void create_load_screen(World *world) {
@@ -450,7 +448,7 @@ void create_load_screen(World *world) {
 	world->position[entity].width = WIDTH;
 	world->position[entity].height = HEIGHT;
 	
-	load_animation("assets/Graphics/screen/loading/load_animation.txt", world, entity);
+	load_animation((char*)"assets/Graphics/screen/loading/load_animation.txt", world, entity);
 	
 	world->animation[entity].id = 1;
 	
@@ -458,6 +456,6 @@ void create_load_screen(World *world) {
 	world->renderPlayer[entity].height = HEIGHT;
 	
 	
-	play_animation(world, entity, "load");
+	play_animation(world, entity, (char*)"load");
 }
 

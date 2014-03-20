@@ -55,7 +55,7 @@ bool menu_click(World *world, unsigned int entity) {
 	else if (strcmp(world->button[entity].label, "options_sound_off") == 0) {
 		
 		world->renderPlayer[entity].playerSurface = IMG_Load("assets/Graphics/screen/menu/menu_button_soundon.png");
-		world->button[entity].label = "options_sound_on";
+		world->button[entity].label = (char*)"options_sound_on";
 		
 		enable_sound(true);
 		play_music(SOUND_MUSIC_MENU_RAIN);
@@ -64,7 +64,7 @@ bool menu_click(World *world, unsigned int entity) {
 	else if (strcmp(world->button[entity].label, "options_sound_on") == 0) {
 		
 		world->renderPlayer[entity].playerSurface = IMG_Load("assets/Graphics/screen/menu/menu_button_soundoff.png");
-		world->button[entity].label = "options_sound_off";
+		world->button[entity].label = (char*)"options_sound_off";
 		
 		enable_sound(false);
 		
@@ -261,11 +261,11 @@ void animation_end(World *world, unsigned int entity, int animation_id) {
 		//map_init(world, "assets/Graphics/lobby/lobby.txt", "assets/Graphics/lobby/lobby_tiles.txt");
 		//map_init(world, "assets/Graphics/SampleFloor.txt", "assets/Graphics/tiles_lobby.txt");
 		
-		map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/map01_tiles.txt");
+		map_init(world, (char*)"assets/Graphics/map/map_01/map01.txt", (char*)"assets/Graphics/map/map_01/map01_tiles.txt");
 		player_entity = create_player(world, 600, 600, true, COLLISION_HACKER);
 		
 		world->mask[player_entity] |= COMPONENT_ANIMATION;
-		load_animation("assets/Graphics/player/robber/rob_animation.txt", world, player_entity);
+		load_animation((char*)"assets/Graphics/player/robber/rob_animation.txt", world, player_entity);
 		
 		
 		
