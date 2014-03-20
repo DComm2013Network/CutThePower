@@ -15,6 +15,7 @@
 #include "../systems.h"
 #include <sys/poll.h>
 
+extern int send_ready;
 extern int game_ready;
 static int controllable_playerNo;
 extern int game_net_signalfd, game_net_lockfd;
@@ -62,11 +63,11 @@ void client_update_system(World *world, int net_pipe) {
 		
 		printf("Updating with packet type %u\n", type);
 					fprintf(stderr, "Sending a position update at: %lu\n", clock()/CLOCKS_PER_SEC);
-		switch (type) { // the cached packets minuses one from the value 
+		switch (type) 
+		{ // the cached packets minuses one from the value 
 			case P_CONNECT:
 				if(client_update_info(world, packet) == CONNECT_CODE_DENIED)
 				{
-					game_ready++;
 					return; // Pass error up to someone else to deal with
 				}
 				break;
@@ -273,9 +274,11 @@ int client_update_info(World *world, void *packet)
 			world->player[i].teamNo							= client_info->clients_team_number;
 			world->player[i].playerNo						= client_info->clients_player_number;
 			controllable_playerNo 							= client_info->clients_player_number;
-			player_table[client_info->clients_player_number] = i;
+			player_table[client_info->clients_player_number] = i;	
 		}
 	}
+
+	send_ready = 1;
 
 	return CONNECT_CODE_ACCEPTED;
 }
