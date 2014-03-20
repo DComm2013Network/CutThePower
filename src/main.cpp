@@ -11,6 +11,7 @@
 #define FPS_MAX 120
 
 int network_ready = 0;
+int send_ready = 0;
 int game_ready = 0;
 class FPS {
 private:
@@ -125,7 +126,12 @@ int main(int argc, char* argv[]) {
 		if(network_ready)
 		{
 			client_update_system(world, rcv_router_fd[READ_END]);
+		}
+
+		if(send_ready)
+		{
 			send_location(world, send_router_fd[WRITE_END]);
+			
 		}
 		////NETWORK CODE
 

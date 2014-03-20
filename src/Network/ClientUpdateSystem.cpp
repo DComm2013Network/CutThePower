@@ -15,6 +15,7 @@
 #include "../systems.h"
 #include <sys/poll.h>
 
+extern int send_ready;
 extern int game_ready;
 static int controllable_playerNo;
 extern int game_net_signalfd, game_net_lockfd;
@@ -76,14 +77,13 @@ void client_update_system(World *world, int net_pipe) {
 
 		packet = read_data(net_pipe, &type);
 		
-		fprintf(stderr, "Updating with packet type %u\n", type);
-
-		switch (type) {
-			fprintf(stderr, "Sending a position update at: %lu\n", clock()/CLOCKS_PER_SEC);
+		printf("Updating with packet type %u\n", type);
+					fprintf(stderr, "Sending a position update at: %lu\n", clock()/CLOCKS_PER_SEC);
+		switch (type) 
+		{ 
 			case P_CONNECT:
 				if(client_update_info(world, packet) == CONNECT_CODE_DENIED)
 				{
-					game_ready++;
 					return; // Pass error up to someone else to deal with
 				}
 				break;
@@ -167,7 +167,7 @@ void client_update_pos(World *world, void *packet)
 	PKT_ALL_POS_UPDATE *pos_update = (PKT_ALL_POS_UPDATE *)packet;
 	for (int i = 0; i < MAX_PLAYERS; i++)
 	{
-        if(player_table[i] == CLIENT_PLAYER)
+        if(i == controllable_playerNo)
 			continue;
 
 		if(player_table[i] != UNASSIGNED)
@@ -242,25 +242,23 @@ void client_update_status(World *world, void *packet)
 	{
 		if(status_update->player_valid[i] == true)
 		{
-			if(status_update->otherPlayers_teams[i] == ROBBERS)
-			{	
+			// if(status_update->otherPlayers_teams[i] == ROBBERS)
+			// {	
 				if(player_table[i] == UNASSIGNED) // They're on the floor but haven't yet been created
 		        {
-		            player_table[i] = create_player(world, 400, 600, COLLISION_HACKER, false, i);
-		            player_table[i] |= COMPONENT_ANIMATION;
+		            player_table[i] = create_player(world, 400, 600, false, COLLISION_HACKER, i);
 		            load_animation("assets/Graphics/player/robber/rob_animation.txt", world, player_table[i]);
 		        }
-			}
+			//}
 
-			else if(status_update->otherPlayers_teams[i] == COPS)
-			{
-				if(player_table[i] == UNASSIGNED) // They're on the floor but haven't yet been created
-		        {
-		            player_table[i] = create_player(world, 400, 600, COLLISION_HACKER, false, i);
-		            player_table[i] |= COMPONENT_ANIMATION;
-		            load_animation("assets/Graphics/player/robber/rob_animation.txt", world, player_table[i]);
-		        }
-			}
+			// else if(status_update->otherPlayers_teams[i] == COPS)
+			// {
+				// if(player_table[i] == UNASSIGNED) // They're on the floor but haven't yet been created
+		  //       {
+		  //           player_table[i] = create_player(world, 400, 600, COLLISION_HACKER, false, i);
+		  //           load_animation("assets/Graphics/player/robber/rob_animation.txt", world, player_table[i]);
+		  //       }
+			//}
 		}
 	}
 }
@@ -292,9 +290,11 @@ int client_update_info(World *world, void *packet)
 			world->player[i].teamNo							= client_info->clients_team_number;
 			world->player[i].playerNo						= client_info->clients_player_number;
 			controllable_playerNo 							= client_info->clients_player_number;
-			player_table[client_info->clients_player_number] = i;
+			player_table[client_info->clients_player_number] = i;	
 		}
 	}
+
+	send_ready = 1;
 
 	return CONNECT_CODE_ACCEPTED;
 }

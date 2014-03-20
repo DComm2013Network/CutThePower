@@ -27,7 +27,7 @@
 extern uint32_t packet_sizes[NUM_PACKETS];
 static int cnt_errno = -1;
 extern sem_t err_sem;
-static uint64_t tcp_seq_num = 0;
+static uint64_t tcp_seq_num = 1;
 extern int send_failure_fd;
 
 /**
