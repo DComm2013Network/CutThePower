@@ -23,8 +23,6 @@ int h;                    /**< The map's height. */
 int level;                /**< The current floor. */
 
 
-void load_map_section(int **map, SDL_Surface **tiles, int startX, int startY, int map_width, int map_height, SDL_Surface **map_surface);
-
 /**
  * Initiates the map by loading the tiles and putting it into one large texture.
  * 
@@ -189,7 +187,7 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 					return -1;
 				}
 				
-				//entity = create_stair(world, floor, targetX * TILE_WIDTH, targetY * TILE_HEIGHT, x * TILE_WIDTH, y * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT, level);
+				entity = create_stair(world, floor, targetX * TILE_WIDTH + TILE_WIDTH / 2, targetY * TILE_HEIGHT + TILE_WIDTH / 2, x * TILE_WIDTH + TILE_WIDTH / 2, y * TILE_HEIGHT + TILE_HEIGHT / 2, TILE_WIDTH, TILE_HEIGHT, level);
 				
 				//printf("Create stair entity %d\n", entity);
 				

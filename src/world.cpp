@@ -284,34 +284,58 @@ unsigned int create_target(World* world, int x, int y, int collisiontype) {
 unsigned int create_stair(World* world, int targetLevel, int targetX, int targetY, int x, int y, int width, int height, int level) {
 	unsigned int entity;
 	PositionComponent pos;
-    WormholeComponent target;
-    CollisionComponent collision;
+	WormholeComponent target;
+	RenderPlayerComponent render;
+	CollisionComponent collision;
+
 	int lastID = -1;
 	unsigned int tempMask = 0;
-
+	
+	render.width = 40;
+	render.height = 40;
+	render.playerSurface = SDL_LoadBMP("assets/Graphics/lobby/stair.bmp");
+	if (!render.playerSurface) {
+		printf("mat is a doof\n");
+	}
+	
 	pos.x = x;
 	pos.y = y;
 
-	pos.width = width;
-	pos.height = height;
-	pos.level = level;
-
-    target.targetLevel = targetLevel;
+	pos.width = render.width;
+	pos.height = render.height;
+	pos.level = 0;
+	
+	target.targetLevel = targetLevel;
     target.targetX = targetX;
     target.targetY = targetY;
-
-    collision.type = 0;
-
+    
+	collision.id = 0;
+	collision.type = COLLISION_STAIR;
+	collision.timer = 0;
+	collision.timerMax = 600;
+	collision.active = true;
+	collision.radius = 0;
+	
 	for(entity = 0; entity < MAX_ENTITIES; ++entity) {
+		tempMask = world->mask[entity] & COMPONENT_POSITION;
+		if (tempMask == COMPONENT_MOVEMENT) {
+			lastID = world->collision[entity].id;
+		}
+		
 		if (world->mask[entity] == COMPONENT_EMPTY) {
-				world->mask[entity] =	COMPONENT_POSITION | 
-                                        COMPONENT_COLLISION |
-                                        COMPONENT_WORMHOLE;
+			lastID += 1;
+			collision.id = lastID;
+
+			world->mask[entity] =	COMPONENT_POSITION | 
+									COMPONENT_COLLISION | 
+									COMPONENT_RENDER_PLAYER | 
+									COMPONENT_WORMHOLE;
 
 			world->position[entity] = pos;
+			world->renderPlayer[entity] = render;
 			world->wormhole[entity] = target;
 			world->collision[entity] = collision;
-
+			
 			return entity;
 		}
 	}
@@ -360,6 +384,12 @@ void destroy_entity(World* world, const unsigned int entity) {
 		//if (world->renderPlayer[entity].playerSurface != NULL)
 			//SDL_FreeSurface(world->renderPlayer[entity].playerSurface);
 		
+	}
+	else if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_LEVEL)) {
+		for (unsigned int i = 0; i < world->level[entity].width; i++) {
+			free(world->level[entity].map[i]);
+		}
+		free(world->level[entity].map);
 	}
 }
 

@@ -12,6 +12,8 @@
 #define COLLISION_MASK (COMPONENT_COLLISION)
 #define PI 3.14159265
 
+extern unsigned int player_entity;
+
 int handle_collision_target(World *world, int entityIndex) {
 	if (world->collision[entityIndex].timer < world->collision[entityIndex].timerMax) {
 		world->collision[entityIndex].timer += 2;
@@ -161,6 +163,23 @@ void handle_entity_collision(CollisionData data, World * world, int curEntityID)
 		}
 		break;
 	case COLLISION_STAIR:
+		if (world->collision[curEntityID].type == COLLISION_HACKER || world->collision[curEntityID].type == COLLISION_GUARD) {
+			destroy_world(world);
+			player_entity = create_player(world, world->wormhole[data.entityID].targetX, world->wormhole[data.entityID].targetY, true, COLLISION_HACKER);
+			load_animation("assets/Graphics/player/robber/rob_animation.txt", world, player_entity);
+	        world->position[curEntityID].level = world->wormhole[data.entityID].targetLevel;
+	        switch (world->position[curEntityID].level) {
+				case 0:
+					map_init(world, "assets/Graphics/map/map_00/map00.txt", "assets/Graphics/map/map_00/map00_tiles.txt");
+					break;
+				case 1:
+					map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/map01_tiles.txt");
+					break;
+				case 2:
+					map_init(world, "assets/Graphics/map/map_02/map02.txt", "assets/Graphics/map/map_02/map02_tiles.txt");
+					break;
+			}
+		}
 		break;
 	case COLLISION_HACKER:
 		if (world->collision[curEntityID].type == COLLISION_GUARD) {

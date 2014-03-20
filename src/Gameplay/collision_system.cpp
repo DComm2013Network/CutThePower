@@ -140,6 +140,8 @@ int wall_collision(World *world, PositionComponent entity) {
 --Checks for collisions with stairs on the map.
 --------------------------------------------------------------------------------------------------------*/
 bool stair_collision(World &world, PositionComponent entity) {
+	
+	
 	return false;
 }
 

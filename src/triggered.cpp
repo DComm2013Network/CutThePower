@@ -8,7 +8,7 @@
 #include "sound.h"
 #include "Input/menu.h"
 
-#define SHOW_MENU_INTRO 1 //1 == load intro, 0 == load straight into map
+#define SHOW_MENU_INTRO 0 //1 == load intro, 0 == load straight into map
 
 extern bool running;
 extern unsigned int player_entity;
