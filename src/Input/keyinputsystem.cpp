@@ -182,8 +182,8 @@ void KeyInputSystem(World *world)
 				//world->collision[mainframe].active = true;
 				//world->collision[mainframe].radius = 1;
 				
-				load_animation("assets/Graphics/objects/computers/mainframe_5_animation.txt", world, mainframe);
-				play_animation(world, mainframe, "mainframe");
+				load_animation((char*)"assets/Graphics/objects/computers/mainframe_5_animation.txt", world, mainframe);
+				play_animation(world, mainframe, (char*)"mainframe");
 				
 			}
 			//END DELETE
