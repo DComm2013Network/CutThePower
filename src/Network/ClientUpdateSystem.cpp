@@ -56,13 +56,29 @@ void client_update_system(World *world, int net_pipe) {
 	write(game_net_signalfd, &signal, sizeof(uint64_t));
 	num_packets = read_type(net_pipe); // the function just reads a 32 bit value, so this works; semantically, not ideal
 
+    if(num_packets == NET_SHUTDOWN) // network is shutting down; this is the only packet
+    {
+        char err_buf[128];
+        uint32_t str_size;
+        read_pipe(net_pipe, &str_size, sizeof(str_size));
+        if(str_size)
+        {
+            read_pipe(net_pipe, err_buf, str_size);
+            err_buf[str_size] = 0; // null terminate the string
+            fprintf(stderr, "%s", err_buf);
+        }
+        memset(player_table, 255, MAX_PLAYERS * sizeof(uint32_t));
+        network_ready = 0;
+        return;
+    }
+
 	for(i = 0; i < num_packets; ++i)
 	{
 
 		packet = read_data(net_pipe, &type);
 		
-		printf("Updating with packet type %u\n", type);
-					fprintf(stderr, "Sending a position update at: %lu\n", clock()/CLOCKS_PER_SEC);
+		//printf("Updating with packet type %u\n", type);
+		//fprintf(stderr, "Sending a position update at: %lu\n", clock()/CLOCKS_PER_SEC);
 		switch (type) 
 		{ 
 			case P_CONNECT:

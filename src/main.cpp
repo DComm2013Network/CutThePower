@@ -8,7 +8,7 @@
 #include <stdio.h>
 
 
-#define FPS_MAX 120
+#define FPS_MAX 60
 
 int network_ready = 0;
 int send_ready = 0;
@@ -121,7 +121,7 @@ int main(int argc, char* argv[]) {
 		}
 		animation_system(world, &entity, send_router_fd, rcv_router_fd);
 		render_player_system(*world, surface);
-		
+
 		////NETWORK CODE
 		if(network_ready)
 		{
