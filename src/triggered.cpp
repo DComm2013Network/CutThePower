@@ -199,10 +199,8 @@ void animation_end(World *world, unsigned int entity, int animation_id) {
 		//map_init(world, "assets/Graphics/lobby/lobby.txt", "assets/Graphics/lobby/lobby_tiles.txt");
 		//map_init(world, "assets/Graphics/SampleFloor.txt", "assets/Graphics/tiles_lobby.txt");
 		
-		map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/map01_tiles.txt");
-		player_entity = create_player(world, 600, 600, true, COLLISION_HACKER);
-		
-		world->mask[player_entity] |= COMPONENT_ANIMATION;
+		map_init(world, "assets/Graphics/map/map_00/map00.txt", "assets/Graphics/map/map_00/map00_tiles.txt");
+		player_entity = create_player(world, 620, 420, true, COLLISION_HACKER);
 		
 		load_animation("assets/Graphics/player/robber/rob_animation.txt", world, player_entity);
 		

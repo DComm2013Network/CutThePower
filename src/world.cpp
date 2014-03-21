@@ -73,16 +73,14 @@ unsigned int create_entity(World* world, unsigned int attributes) {
  * @designer
  * @author
  */
-unsigned int create_level(World* world, int** map, int width, int height, int tileSize) {
+unsigned int create_level(World* world, int** map, int width, int height, int tileSize, int floor) {
 	
 	unsigned int entity = 0;
-	int lastID = -1;
 	int i = 0;
 	int n = 0;
 	
 	entity = create_entity(world, COMPONENT_LEVEL);
 	
-	lastID++;
 	world->level[entity].map = (int**)malloc(sizeof(int*) * width);
 	for (i = 0; i < width; i++) {
 		world->level[entity].map[i] = (int*)malloc(sizeof(int) * height);
@@ -92,7 +90,7 @@ unsigned int create_level(World* world, int** map, int width, int height, int ti
 			
 		}
 	}
-	world->level[entity].levelID = lastID;
+	world->level[entity].levelID = floor;
 	world->level[entity].width = width;
 	world->level[entity].height = height;
 	world->level[entity].tileSize = tileSize;
@@ -147,11 +145,11 @@ unsigned int create_player(World* world, int x, int y, bool controllable, int co
 	
 	movement.id = 0;
 	movement.lastDirection = 0;
-	movement.acceleration = 0.5;
-	movement.maxSpeed = 2.0;
+	movement.acceleration = 1;
+	movement.maxSpeed = 4.0;
 	movement.movX = 0;
 	movement.movY = 0;
-	movement.friction = 0.1;
+	movement.friction = 0.2;
 	
 	command.commands[C_UP] = false;
 	command.commands[C_DOWN] = false;
@@ -168,25 +166,20 @@ unsigned int create_player(World* world, int x, int y, bool controllable, int co
 	collision.radius = 0;
 	
 	for(entity = 0; entity < MAX_ENTITIES; ++entity) {
-		tempMask = world->mask[entity] & COMPONENT_POSITION;
-		if (tempMask == COMPONENT_MOVEMENT) {
-			lastID = world->movement[entity].id;
-		}
-		
 		if (world->mask[entity] == COMPONENT_EMPTY) {
-			lastID += 1;
-			movement.id = lastID;
 			if (controllable) {
 				world->mask[entity] =	COMPONENT_POSITION | 
 										COMPONENT_RENDER_PLAYER | 
 										COMPONENT_COMMAND | 
 										COMPONENT_MOVEMENT | 
 										COMPONENT_COLLISION |
+										COMPONENT_ANIMATION |
 										COMPONENT_CONTROLLABLE; //| COMPONENT_MOVEMENT | COMPONENT_COLLISION;
 			} else {
 				world->mask[entity] =	COMPONENT_POSITION | 
 										COMPONENT_RENDER_PLAYER | 
 										COMPONENT_COMMAND | 
+										COMPONENT_ANIMATION |
 										COMPONENT_COLLISION | 
 										COMPONENT_MOVEMENT;
 			}
@@ -285,24 +278,16 @@ unsigned int create_stair(World* world, int targetLevel, int targetX, int target
 	unsigned int entity;
 	PositionComponent pos;
 	WormholeComponent target;
-	RenderPlayerComponent render;
 	CollisionComponent collision;
 
 	int lastID = -1;
 	unsigned int tempMask = 0;
 	
-	render.width = 40;
-	render.height = 40;
-	render.playerSurface = SDL_LoadBMP("assets/Graphics/lobby/stair.bmp");
-	if (!render.playerSurface) {
-		printf("mat is a doof\n");
-	}
-	
 	pos.x = x;
 	pos.y = y;
 
-	pos.width = render.width;
-	pos.height = render.height;
+	pos.width = 2;
+	pos.height = 2;
 	pos.level = 0;
 	
 	target.targetLevel = targetLevel;
@@ -317,22 +302,12 @@ unsigned int create_stair(World* world, int targetLevel, int targetX, int target
 	collision.radius = 0;
 	
 	for(entity = 0; entity < MAX_ENTITIES; ++entity) {
-		tempMask = world->mask[entity] & COMPONENT_POSITION;
-		if (tempMask == COMPONENT_MOVEMENT) {
-			lastID = world->collision[entity].id;
-		}
-		
 		if (world->mask[entity] == COMPONENT_EMPTY) {
-			lastID += 1;
-			collision.id = lastID;
-
 			world->mask[entity] =	COMPONENT_POSITION | 
 									COMPONENT_COLLISION | 
-									COMPONENT_RENDER_PLAYER | 
 									COMPONENT_WORMHOLE;
 
 			world->position[entity] = pos;
-			world->renderPlayer[entity] = render;
 			world->wormhole[entity] = target;
 			world->collision[entity] = collision;
 			
@@ -360,7 +335,9 @@ void destroy_entity(World* world, const unsigned int entity) {
 	int i, j;
 	
 	world->mask[entity] = COMPONENT_EMPTY;
-	
+	if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_POSITION)) {
+		memset(world->position, 0, sizeof(PositionComponent));
+	}
 	if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_ANIMATION)) {
 		
 		for(i = 0; i < world->animation[entity].animation_count; i++) {
@@ -408,6 +385,7 @@ void destroy_world(World *world) {
 	for(entity = 0; entity < MAX_ENTITIES; entity++) {
 		destroy_entity(world, entity);
 	}
+	memset(world, 0, sizeof(World));
 }
 
 

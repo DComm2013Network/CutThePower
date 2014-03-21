@@ -180,15 +180,17 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 				
 				//stair x y targetX targetY 2
 				unsigned int entity;
-				int x, y, targetX, targetY, floor;
+				int x, y, floor;
+				float targetX, targetY;
 				
-				if (fscanf(fp_map, "%d %d %d %d %d", &x, &y, &targetX, &targetY, &floor) != 5) {
+				if (fscanf(fp_map, "%d %d %f %f %d", &x, &y, &targetX, &targetY, &floor) != 5) {
 					printf("Error loading stair\n");
 					return -1;
 				}
 				
 				entity = create_stair(world, floor, targetX * TILE_WIDTH + TILE_WIDTH / 2, targetY * TILE_HEIGHT + TILE_WIDTH / 2, x * TILE_WIDTH + TILE_WIDTH / 2, y * TILE_HEIGHT + TILE_HEIGHT / 2, TILE_WIDTH, TILE_HEIGHT, level);
 				
+				//printf("tx: %i, ty: %i\n", targetX, targetY);
 				//printf("Create stair entity %d\n", entity);
 				
 			}
@@ -294,7 +296,7 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 	
 	
 	
-	create_level(world, collision_map, width, height, TILE_WIDTH);
+	create_level(world, collision_map, width, height, TILE_WIDTH, level);
 	
 	for (i = 0; i < width; i++) {
 		free(map[i]);
@@ -332,7 +334,7 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 /**
  * Add the surface to the main surface of the window.
  * 
- * Fills the remaining space with a pink color to ensure that
+ * Fills the remaining space with a pink (black) color to ensure that
  * there are no errors in tiles. If so, pink background will show.
  * 
  * Revisions:
@@ -363,7 +365,7 @@ void map_render(SDL_Surface *surface, World *world, unsigned int player_entity) 
 		return;
 	}
 	
-	SDL_FillRect(surface, NULL, 0xFF33FF);
+	SDL_FillRect(surface, NULL, 0x000000);
 	
 	map_rect.x = (WIDTH/2) -( playerXPosition + playerWidth / 2 );
 	map_rect.y = (HEIGHT/2) - ( playerYPosition + playerHeight / 2 );

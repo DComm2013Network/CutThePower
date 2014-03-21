@@ -164,11 +164,13 @@ void handle_entity_collision(CollisionData data, World * world, int curEntityID)
 		break;
 	case COLLISION_STAIR:
 		if (world->collision[curEntityID].type == COLLISION_HACKER || world->collision[curEntityID].type == COLLISION_GUARD) {
+			int targx = world->wormhole[data.entityID].targetX, targy = world->wormhole[data.entityID].targetY, targl = world->wormhole[data.entityID].targetLevel;
 			destroy_world(world);
-			player_entity = create_player(world, world->wormhole[data.entityID].targetX, world->wormhole[data.entityID].targetY, true, COLLISION_HACKER);
-			load_animation("assets/Graphics/player/robber/rob_animation.txt", world, player_entity);
-	        world->position[curEntityID].level = world->wormhole[data.entityID].targetLevel;
-	        switch (world->position[curEntityID].level) {
+			unsigned int e = create_player(world, targx, targy, true, COLLISION_HACKER);
+			load_animation("assets/Graphics/player/robber/rob_animation.txt", world, e);
+	        world->position[e].level = targl;
+	        player_entity = e;
+	        switch (targl) {
 				case 0:
 					map_init(world, "assets/Graphics/map/map_00/map00.txt", "assets/Graphics/map/map_00/map00_tiles.txt");
 					break;
@@ -179,6 +181,13 @@ void handle_entity_collision(CollisionData data, World * world, int curEntityID)
 					map_init(world, "assets/Graphics/map/map_02/map02.txt", "assets/Graphics/map/map_02/map02_tiles.txt");
 					break;
 			}
+			for (unsigned int i = 0; i < MAX_ENTITIES; i++) {
+				if (IN_THIS_COMPONENT(world->mask[i], COMPONENT_LEVEL)) {
+					world->level[i].levelID = targl;
+					break;
+				}
+			}
+			//printf("t: %i\n", world->position[player_entity].level);
 		}
 		break;
 	case COLLISION_HACKER:
@@ -226,6 +235,12 @@ void movement_system(World* world) {
 				temp.height = position->height;
 				temp.level = position->level;
 				
+				if (command->commands[C_ACTION]) {
+					movement->maxSpeed = 6.0;
+				}
+				else {
+					movement->maxSpeed = 4.0;
+				}
 				if (command->commands[C_UP]) {
 					add_force(world, entity, world->movement[entity].acceleration, -90);
 					play_animation(world, entity, "up");
@@ -264,11 +279,14 @@ void movement_system(World* world) {
 					apply_forcey(temp, *movement);
 					data = collision_system(world, temp, entity);
 					handle_y_collision(data, temp, *movement);
+					position->x = temp.x + goffsetW;
+					position->y = temp.y + goffsetH;
 					handle_entity_collision(data, world, entity);
-
-				}	
-				position->x = temp.x + goffsetW;
-				position->y = temp.y + goffsetH;
+				}
+				else {
+					position->x = temp.x + goffsetW;
+					position->y = temp.y + goffsetH;
+				}
 			}
 		}
 	} 

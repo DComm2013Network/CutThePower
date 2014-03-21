@@ -9,7 +9,7 @@
 #include <time.h>
 #include <stdio.h>
 
-#define FPS_MAX 120
+#define FPS_MAX 60
 
 int game_net_signalfd, game_net_lockfd;
 bool running;
