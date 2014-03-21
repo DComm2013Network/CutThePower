@@ -263,7 +263,7 @@ int handle_tcp_in(int router_pipe_fd, TCPsocket tcp_sock)
         //     return -1;
     }
     
-    printf("Received TCP packet: %u\n", packet_type);
+    //printf("Received TCP packet: %u\n", packet_type);
     if(write_packet(router_pipe_fd, packet_type, game_packet) == -1 ||
         write_pipe(router_pipe_fd, &timestamp, sizeof(timestamp)) == -1)
     {
@@ -310,7 +310,7 @@ int handle_udp_in(int router_pipe_fd, UDPsocket udp_sock)
         	return -2;
         }
     }
-    printf("Received UDP packet: %u\n", packet_type);	
+    //printf("Received UDP packet: %u\n", packet_type);	
     if(write_packet(router_pipe_fd, packet_type, game_packet) == -1 ||
         write_pipe(router_pipe_fd, &timestamp, sizeof(timestamp)) == -1)
     {

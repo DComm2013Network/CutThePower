@@ -8,7 +8,7 @@
 #include <stdio.h>
 
 
-#define FPS_MAX 120
+#define FPS_MAX 60
 
 int network_ready = 0;
 int send_ready = 0;

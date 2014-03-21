@@ -61,8 +61,8 @@ void client_update_system(World *world, int net_pipe) {
 
 		packet = read_data(net_pipe, &type);
 		
-		printf("Updating with packet type %u\n", type);
-					fprintf(stderr, "Sending a position update at: %lu\n", clock()/CLOCKS_PER_SEC);
+		//printf("Updating with packet type %u\n", type);
+		//fprintf(stderr, "Sending a position update at: %lu\n", clock()/CLOCKS_PER_SEC);
 		switch (type) 
 		{ 
 			case P_CONNECT:
