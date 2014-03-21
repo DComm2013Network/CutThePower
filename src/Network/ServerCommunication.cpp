@@ -133,16 +133,16 @@ void* send_thread_func(void* ndata){
 			continue;
 		}
 		
-		//protocol = get_protocol(type);
-		//if(protocol == TCP)
-		//{
-		send_tcp(&type, snd_data->tcp_sock, sizeof(uint32_t));
-		send_tcp(data, snd_data->tcp_sock, packet_sizes[type - 1]);
-		//}
-		//else if(protocol == UDP)
-		//{
-		//	send_udp(data, &type, snd_data->udp_sock, packet_sizes[type - 1] + sizeof(uint32_t));
-		//}
+		protocol = get_protocol(type);
+		if(protocol == TCP)
+		{
+    		send_tcp(&type, snd_data->tcp_sock, sizeof(uint32_t));
+    		send_tcp(data, snd_data->tcp_sock, packet_sizes[type - 1]);
+		}
+		else if(protocol == UDP)
+		{
+			send_udp(data, &type, snd_data->udp_sock, packet_sizes[type - 1] + sizeof(uint32_t));
+		}
 	}
 	return NULL;
 }
@@ -203,6 +203,7 @@ int send_udp(void * data, uint32_t * type, UDPsocket sock, uint32_t size){
 	memcpy(pktdata->data, type, sizeof(uint32_t));
 	memcpy(pktdata->data + sizeof(uint32_t), data, size - sizeof(uint32_t));
 	pktdata->len = size;
+    pktdata->channel = 0;
 
 	numsent=SDLNet_UDP_Send(sock, pktdata->channel, pktdata);
 	if(numsent < 0) {

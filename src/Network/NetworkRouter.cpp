@@ -221,8 +221,8 @@ int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int send
         return -1;
     }
 
-    resolve_host(&ipaddr, TCP_PORT, "192.168.43.116");
-    resolve_host(&udpaddr, UDP_PORT, "192.168.43.116");
+    resolve_host(&ipaddr, TCP_PORT, "192.168.0.24");
+    resolve_host(&udpaddr, UDP_PORT, "192.168.0.24");
     
     tcp_sock = SDLNet_TCP_Open(&ipaddr);
 
@@ -239,7 +239,7 @@ int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int send
         return -1;
     }
 
-    channel = SDLNet_UDP_Bind(udp_sock, -1, &udpaddr);
+    channel = SDLNet_UDP_Bind(udp_sock, 0, &udpaddr);
     if(channel ==   -1) {
         fprintf(stderr, "SDLNet_UDP_Bind: %s\n", SDLNet_GetError());
         set_error(ERR_ROUTER_INIT);
