@@ -118,7 +118,6 @@ extern int send_failure_fd;
     return NULL;
 }
 
-
 /**
  * Cleans up the receive thread.
  *
@@ -491,20 +490,21 @@ int send_tcp(void * data, TCPsocket sock, uint32_t size){
  */
 int send_udp(void * data, uint32_t * type, UDPsocket sock, uint32_t size){
 
-	int numsent;
-	UDPpacket *pktdata = alloc_packet(size);
-	memcpy(pktdata->data, type, sizeof(uint32_t));
-	memcpy(pktdata->data + sizeof(uint32_t), data, size - sizeof(uint32_t));
-	pktdata->len = size;
+    int numsent;
+    UDPpacket *pktdata = alloc_packet(size);
+    memcpy(pktdata->data, type, sizeof(uint32_t));
+    memcpy(pktdata->data + sizeof(uint32_t), data, size - sizeof(uint32_t));
+    pktdata->len = size;
+    pktdata->channel = 0;
 
-	numsent=SDLNet_UDP_Send(sock, pktdata->channel, pktdata);
-	if(numsent < 0) {
-    	fprintf(stderr,"SDLNet_UDP_Send: %s\n", SDLNet_GetError());
-    	return -1;
-	}
+    numsent=SDLNet_UDP_Send(sock, pktdata->channel, pktdata);
+    if(numsent < 0) {
+        fprintf(stderr,"SDLNet_UDP_Send: %s\n", SDLNet_GetError());
+        return -1;
+    }
 
-	SDLNet_FreePacket(pktdata);
-	return 0;
+    SDLNet_FreePacket(pktdata);
+    return 0;
 }
 
 
