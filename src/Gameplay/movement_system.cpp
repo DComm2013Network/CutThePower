@@ -12,6 +12,7 @@
 #define COLLISION_MASK (COMPONENT_COLLISION)
 #define PI 3.14159265
 
+int loc_ready = 30;
 
 int handle_collision_target(World *world, int entityIndex) {
 	if (world->collision[entityIndex].timer < world->collision[entityIndex].timerMax) {
