@@ -5,7 +5,7 @@
  * all network related functions and will basically grab game data from the Gameplay module, dispatch 
  * it to the server and vice-versa.
  *
- * @todo Make a cleanup function
+ * @todo Change name of send (don't really want to use the name of a function)
  *
  * @file NetworkRouter.cpp
  */
@@ -49,20 +49,20 @@ void *networkRouter(void *args)
     fd_set		active;
     int 		max_fd;
     uint32_t 	type;
-    uint64_t	timestamps[NUM_PACKETS] = {0}, timestamp, signal = 1;
+    uint64_t	timestamps[NUM_PACKETS] = {0}, timestamp;
     void 		*packet, *cached_packets[NUM_PACKETS] = {0};
-    int         cached_types[NUM_PACKETS];
     pthread_t 	thread_send;
     pthread_t 	thread_receive;
     PDATA 		gameplay = (PDATA)args;
     
-    NDATA 		send = (NDATA) malloc(sizeof(WNETWORK_DATA));
-    NDATA 		receive = (NDATA) malloc(sizeof(WNETWORK_DATA));
+    NDATA 		send_data = (NDATA) malloc(sizeof(WNETWORK_DATA));
+    NDATA 		receive_data = (NDATA) malloc(sizeof(WNETWORK_DATA));
 
-    if(init_router(&max_fd, send, receive, gameplay, sendfd, recvfd, &thread_receive, &thread_send) == -1)
-    {
-        set_error(ERR_ROUTER_INIT);        
-        net_cleanup(send, receive, gameplay, cached_packets);
+    sem_init(&err_sem, 0, 1);
+
+    if(init_router(&max_fd, send_data, receive_data, gameplay, sendfd, recvfd, &thread_receive, &thread_send) == -1)
+    {     
+        net_cleanup(send_data, receive_data, gameplay, cached_packets);
     	return NULL;
     }
 
@@ -79,11 +79,22 @@ void *networkRouter(void *args)
         active = listen_fds;
         ret = select(max_fd + 1, &active, NULL, NULL, NULL);
 
-        if(ret && FD_ISSET(recvfd[READ_END], &active))
+        if(FD_ISSET(send_failure_fd, &active))
+        {
+            pthread_cancel(thread_receive);
+            net_cleanup(send_data, receive_data, gameplay, cached_packets);
+            return NULL;
+        }
+
+        if(FD_ISSET(recvfd[READ_END], &active))
         {
 			packet = read_data(recvfd[READ_END], &type);
+            if(!packet)
+            {
+                set_error(ERR_IPC_FAIL);
+                break;
+            }
 			read(recvfd[READ_END], &timestamp, sizeof(timestamp));
-
             if(timestamps[type - 1] < timestamp)     // If the received packet is more recent, replace the cached one
             {
                 timestamps[type - 1] = timestamp;
@@ -99,6 +110,11 @@ void *networkRouter(void *args)
         if(ret && FD_ISSET(gameplay->read_pipe, &active))
         {
         	packet = read_data(gameplay->read_pipe, &type);
+            if(!packet)
+            {
+                set_error(ERR_IPC_FAIL);
+                break;
+            }
 			write_packet(sendfd[WRITE_END], type, packet);
 			--ret;
         }
@@ -110,7 +126,8 @@ void *networkRouter(void *args)
 
             --ret;
 		}
-    }   
+    }
+    net_cleanup(send_data, receive_data, gameplay, cached_packets);
     return NULL;
 }
 
@@ -174,6 +191,37 @@ uint32_t determine_changed(void **packets, unsigned *changed)
 	return nchanged;
 }
 
+/**
+ * Tells the gameplay module that network is shutting down, possibly with an error message.
+ *
+ * Writes the network shutdown code to 
+ *
+ * @param[in] gameplay_pipe The write end of the pipe to gameplay.
+ * @param[in] err_str       The error string; may be null.
+ *
+ * @designer Shane Spoor
+ * @author   Shane Spoor
+ *
+ * @date March 14, 2014
+ */
+void write_shutdown(int gameplay_pipe, const char *err_str)
+{
+    uint32_t shutdown = (uint32_t)NET_SHUTDOWN;
+
+    /* Tell gameplay we're shutting down */
+    write_pipe(gameplay_pipe, &shutdown, sizeof(shutdown));
+    shutdown = 0;
+    if(err_str) // if there was an error, write the error string to the pipe
+    {
+        shutdown = strlen(err_str);
+        write_pipe(gameplay_pipe, &shutdown, sizeof(shutdown));
+        write_pipe(gameplay_pipe, err_str, shutdown);
+    }
+    else
+        write_pipe(gameplay_pipe, &shutdown, sizeof(shutdown)); // write 0 instead (no string)
+    
+    return;
+}
 
 /**
  * Initialises the variables used in the router thread or the send/receive threads.
@@ -203,7 +251,9 @@ int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int send
 	TCPsocket tcp_sock;
 	UDPsocket udp_sock;
     int channel;
-	               
+	
+    send_failure_fd = eventfd(0, 0);
+
 	if(create_pipe(sendfd) == -1 ||
 	   create_pipe(recvfd) == -1)
     {
@@ -229,7 +279,7 @@ int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int send
     if(!tcp_sock) {
         fprintf(stderr, "SDLNet_TCP_Open: %s\n", SDLNet_GetError());
         set_error(ERR_NO_CONN);
-        return -1; //should actually return here, but we need a function to clean up first
+        return -1;
     }
 
     udp_sock = SDLNet_UDP_Open(UDP_PORT);
@@ -289,7 +339,6 @@ int update_gameplay(int gameplay_write_fd, void **packets, uint64_t *timestamps)
 {
     uint32_t num_changed;
     uint64_t sem_buf;
-    uint64_t signal = 1;
     unsigned changed_mask = 0;
 
     read(game_net_signalfd, &sem_buf, sizeof(uint64_t)); /* Receive the signal */
@@ -340,43 +389,27 @@ int update_gameplay(int gameplay_write_fd, void **packets, uint64_t *timestamps)
  *
  * @date March 14, 2014
  */
-void net_cleanup(NDATA send, NDATA receive, PDATA gameplay, void **cached_packets)
+void net_cleanup(NDATA send_data, NDATA receive_data, PDATA gameplay, void **cached_packets)
 {
-    const char   *errstr;
-    uint32_t     shutdown      = (uint32_t)NET_SHUTDOWN;
-    unsigned int changed_mask  = 0;
-    
-    /* Close sockets */
-    SDLNet_TCP_Close(send->tcp_sock);
-    SDLNet_UDP_Close(send->udp_sock);
+    unsigned int changed_mask = 0;
     
     /* Close pipes for thread communication, checking that they're valid first */
-    if(fcntl(send->read_pipe, F_GETFD) != -1 || errno != EBADF)
+    if(fcntl(send_data->read_pipe, F_GETFD) != -1 || errno != EBADF)
     {
-        close(send->read_pipe);
-        close(send->write_pipe);
+        close(send_data->read_pipe);
+        close(send_data->write_pipe);
     }
-    if(fcntl(receive->read_pipe, F_GETFD) != -1 || errno != EBADF)
+    if(fcntl(receive_data->read_pipe, F_GETFD) != -1 || errno != EBADF)
     {
-        close(receive->read_pipe);
-        close(receive->write_pipe);
+        close(receive_data->read_pipe);
+        close(receive_data->write_pipe);
     }
     
     /* Free NDATA */
-    free(send);
-    free(receive);
-    
-    /* Tell gameplay we're shutting down */
-    write_pipe(gameplay->write_pipe, &shutdown, sizeof(shutdown));
-    shutdown = 0;
-    if(errstr = get_error_string()) // if there was an error, write the error string to the pipe
-    {
-        shutdown = strlen(errstr);
-        write_pipe(gameplay->write_pipe, &shutdown, sizeof(shutdown));
-        write_pipe(gameplay->write_pipe, errstr, shutdown);
-    }
-    else
-        write_pipe(gameplay->write_pipe, &shutdown, sizeof(shutdown)); // write 0 instead (no string)
+    free(send_data);
+    free(receive_data);
+
+    write_shutdown(gameplay->write_pipe, get_error_string());
 
     /* Free any remaining packets */
     determine_changed(cached_packets, &changed_mask);
@@ -391,6 +424,7 @@ void net_cleanup(NDATA send, NDATA receive, PDATA gameplay, void **cached_packet
 
     /* Close send thread's eventfd */
     close(send_failure_fd);
+    network_ready = 1; /* Tell the client update system to read the network error */
 }
 
 /*

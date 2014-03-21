@@ -35,7 +35,7 @@ int create_pipe(int pipe_ends[2])
 	int flags[2];
 	if(ret < 0)
     {
-        perror("create_pipe");
+        fprintf(stderr, "create_pipe (pipe_ends[0] = %d, pipe_ends[1] = %d): %s\n", pipe_ends[0], pipe_ends[1], strerror(errno));
 		return ret;
     }
 
@@ -70,7 +70,7 @@ int write_pipe(int fd, const void *buf, size_t count)
     int ret = write(fd, buf, count);
     
     if(ret == -1)
-        perror("write_pipe");        
+        fprintf(stderr, "write_pipe (fd = %d, buf = %p, count = %u): %s\n", fd, buf, (unsigned)count, strerror(errno));        
 
     return ret;
 }
@@ -105,7 +105,7 @@ int read_pipe(int fd, void *buf, size_t count)
     int ret = read(fd, buf, count);
     
     if(ret == -1)
-        perror("read_pipe");        
+        fprintf(stderr, "read_pipe (fd = %d, buf = %p, count = %u): %s\n", fd, buf, (unsigned)count, strerror(errno));        
 
     return ret;
 }

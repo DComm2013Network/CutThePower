@@ -9,6 +9,8 @@
 
 #include <cstdio>
 #include <unistd.h>
+#include <cerrno>
+#include <cstring>
 
 // Function prototypes
 int create_pipe(int pipe_ends[2]);

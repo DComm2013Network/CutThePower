@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <fcntl.h>
+#include <sys/eventfd.h>
 #include "GameplayCommunication.h"
 #include "ServerCommunication.h"
 #include "PipeUtils.h"
@@ -51,7 +52,8 @@ int update_gameplay(int gameplay_write_fd, void **packets, uint64_t *timestamps)
 uint32_t determine_changed(void **packets, unsigned *changed);
 int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int sendfd[2],
 				int recvfd[2], pthread_t *thread_receive, pthread_t *thread_send);
-void net_cleanup(NDATA send, NDATA receive, PDATA gameplay, void **cached_packets);
+void net_cleanup(NDATA send_data, NDATA receive_data, PDATA gameplay, void **cached_packets);
+void write_shutdown(int gameplay_pipe, const char *err_str, int err_size);
 
 #endif
 
