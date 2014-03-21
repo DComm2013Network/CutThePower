@@ -163,6 +163,31 @@ void create_textfield(World *world, char *name, int x, int y, const char* text, 
 	
 }
 
+void create_animated_button(World *world, char* fileName, int x, int y, char* name) {
+	
+	char *new_name;
+	unsigned int entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION | COMPONENT_BUTTON | COMPONENT_MOUSE);
+	world->position[entity].x = x;
+	world->position[entity].y = y;
+	world->position[entity].width = ANIMATED_BUTTON_WIDTH;
+	world->position[entity].height = ANIMATED_BUTTON_HEIGHT;
+	
+	world->renderPlayer[entity].width = ANIMATED_BUTTON_WIDTH;
+	world->renderPlayer[entity].height = ANIMATED_BUTTON_HEIGHT;
+	
+	load_animation(fileName, world, entity);
+	
+	world->button[entity].prevState = false;
+	world->button[entity].currentState = false;
+	world->button[entity].hovered = false;
+	
+	new_name = (char*)malloc(sizeof(char) * strlen(name) + 1);
+	
+	strcpy(new_name, name);
+	
+	world->button[entity].label = new_name;
+}
+
 /**
  * Creates an entity that serves as the background image on the menus.
  *
@@ -458,4 +483,46 @@ void create_load_screen(World *world) {
 	
 	play_animation(world, entity, (char*)"load");
 }
+
+void create_select_screen(World *world) {
+	
+	unsigned int entity;
+	
+	entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
+	
+	world->position[entity].x = 0;
+	world->position[entity].y = 0;
+	world->position[entity].width = WIDTH;
+	world->position[entity].height = HEIGHT;
+	if ((world->renderPlayer[entity].playerSurface = IMG_Load("assets/Graphics/screen/menu/select/select.png")) == NULL){
+		printf("Unable to find select image\n");
+	}
+
+	create_animated_button(world, (char*)"assets/Graphics/screen/menu/select/abhishek/abhishek_animation.txt", 150, 94, (char*)"menu_select_abhishek");	
+	create_animated_button(world, (char*)"assets/Graphics/screen/menu/select/aman/aman_animation.txt", 350, 94, (char*)"menu_select_aman");	
+	create_animated_button(world, (char*)"assets/Graphics/screen/menu/select/andrew/andrew_animation.txt", 550, 94, (char*)"menu_select_andrew");	
+	create_animated_button(world, (char*)"assets/Graphics/screen/menu/select/chris/chris_animation.txt", 750, 94, (char*)"menu_select_chris");	
+	create_animated_button(world, (char*)"assets/Graphics/screen/menu/select/clark/clark_animation.txt", 950, 94, (char*)"menu_select_clark");	
+	create_animated_button(world, (char*)"assets/Graphics/screen/menu/select/cory/cory_animation.txt", 150, 244, (char*)"menu_select_cory");	
+	create_animated_button(world, (char*)"assets/Graphics/screen/menu/select/damien/damien_animation.txt", 350, 244, (char*)"menu_select_damien");	
+	create_animated_button(world, (char*)"assets/Graphics/screen/menu/select/german/german_animation.txt", 550, 244, (char*)"menu_select_german");	
+	create_animated_button(world, (char*)"assets/Graphics/screen/menu/select/ian/ian_animation.txt", 750, 244, (char*)"menu_select_ian");	
+	create_animated_button(world, (char*)"assets/Graphics/screen/menu/select/jordan/jordan_animation.txt", 950, 244, (char*)"menu_select_jordan");	
+	create_animated_button(world, (char*)"assets/Graphics/screen/menu/select/josh/josh_animation.txt", 150, 394, (char*)"menu_select_josh");	
+	create_animated_button(world, (char*)"assets/Graphics/screen/menu/select/konst/konst_animation.txt", 350, 394, (char*)"menu_select_konst");	
+	create_animated_button(world, (char*)"assets/Graphics/screen/menu/select/mat/mat_animation.txt", 550, 394, (char*)"menu_select_mat");	
+	create_animated_button(world, (char*)"assets/Graphics/screen/menu/select/ramzi/ramzi_animation.txt", 750, 394, (char*)"menu_select_ramzi");	
+	create_animated_button(world, (char*)"assets/Graphics/screen/menu/select/robin/robin_animation.txt", 950, 394, (char*)"menu_select_robin");	
+	create_animated_button(world, (char*)"assets/Graphics/screen/menu/select/sam/sam_animation.txt", 150, 544, (char*)"menu_select_sam");	
+	create_animated_button(world, (char*)"assets/Graphics/screen/menu/select/shane/shane_animation.txt", 350, 544, (char*)"menu_select_shane");	
+	create_animated_button(world, (char*)"assets/Graphics/screen/menu/select/tim/tim_animation.txt", 550, 544, (char*)"menu_select_tim");	
+	create_animated_button(world, (char*)"assets/Graphics/screen/menu/select/vincent/vincent_animation.txt", 750, 544, (char*)"menu_select_vincent");	
+	create_animated_button(world, (char*)"assets/Graphics/screen/menu/select/random/random_animation.txt", 950, 544, (char*)"menu_select_random");	
+	
+	
+	
+	world->renderPlayer[entity].width = WIDTH;
+	world->renderPlayer[entity].height = HEIGHT;
+}
+
 

@@ -1,7 +1,0 @@
-1
-
-german 4 40 -1 1                        
-assets/Graphics/objects/select/german/german_1.png
-assets/Graphics/objects/select/german/german_2.png
-assets/Graphics/objects/select/german/german_3.png
-assets/Graphics/objects/select/german/german_4.png

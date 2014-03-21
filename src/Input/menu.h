@@ -15,6 +15,8 @@
 #define TEXT_HEIGHT			60
 #define CHARACTER_WIDTH		35
 #define CHARACTER_HEIGHT 	50
+#define ANIMATED_BUTTON_WIDTH	180
+#define ANIMATED_BUTTON_HEIGHT	130
 
 void destroy_menu(World *world);
 
@@ -27,5 +29,7 @@ void create_setup_menu(World *world);
 void create_bsod_menu(World *world);
 void create_intro(World *world);
 void create_load_screen(World *world);
+void create_select_screen(World *world);
+
 
 #endif

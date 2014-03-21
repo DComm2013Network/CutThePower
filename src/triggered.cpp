@@ -15,6 +15,8 @@ extern unsigned int player_entity;
 
 bool menu_click(World *world, unsigned int entity) {
 	
+	char* playerFileName;
+	
 	//printf("Clicked: %s\n", world->button[entity].label);
 	
 	//MAIN MENU
@@ -22,7 +24,7 @@ bool menu_click(World *world, unsigned int entity) {
 		
 		destroy_menu(world);
 		
-		create_setup_menu(world);
+		create_select_screen(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "mainmenu_options") == 0) {
@@ -150,6 +152,147 @@ bool menu_click(World *world, unsigned int entity) {
 		create_keymap_menu(world);
 		
 	}
+	//SELECT SCREEN
+	else if (strcmp(world->button[entity].label, "menu_select_abhishek") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_aman") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_andrew") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_chris") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_clark") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_cory") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_damien") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_german") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_ian") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_jordan") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_josh") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_konst") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_mat") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_ramzi") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_robin") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_sam") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_shane") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_tim") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_vincent") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
+	else if (strcmp(world->button[entity].label, "menu_select_random") == 0) {
+		
+		destroy_menu(world);
+		
+		create_setup_menu(world);
+		
+	}
 	
 	//CREDITS
 	else if (strcmp(world->button[entity].label, "credits_back") == 0) {
@@ -261,11 +404,11 @@ void animation_end(World *world, unsigned int entity, int animation_id) {
 		//map_init(world, "assets/Graphics/lobby/lobby.txt", "assets/Graphics/lobby/lobby_tiles.txt");
 		//map_init(world, "assets/Graphics/SampleFloor.txt", "assets/Graphics/tiles_lobby.txt");
 		
-		map_init(world, (char*)"assets/Graphics/map/map_01/map01.txt", (char*)"assets/Graphics/map/map_01/map01_tiles.txt");
+		map_init(world, (char*)"assets/Graphics/map/map_01/map01.txt", (char*)"assets/Graphics/map/map_01/tiles.txt");
 		player_entity = create_player(world, 600, 600, true, COLLISION_HACKER);
 		
 		world->mask[player_entity] |= COMPONENT_ANIMATION;
-		load_animation((char*)"assets/Graphics/player/robber/rob_animation.txt", world, player_entity);
+		load_animation((char*)"assets/Graphics/player/p0/rob_animation.txt", world, player_entity);
 		
 		
 		

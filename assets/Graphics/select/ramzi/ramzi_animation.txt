@@ -1,8 +1,0 @@
-1
-
-ramzi 5 40 -1 1                        
-assets/Graphics/objects/select/ramzi/ramzi_1.png
-assets/Graphics/objects/select/ramzi/ramzi_2.png
-assets/Graphics/objects/select/ramzi/ramzi_3.png
-assets/Graphics/objects/select/ramzi/ramzi_4.png
-assets/Graphics/objects/select/ramzi/ramzi_5.png
