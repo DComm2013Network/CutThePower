@@ -1,4 +1,4 @@
-34
+38
 
 00	assets/Graphics/map/map_02/00_40px.bmp		1
 01	assets/Graphics/map/map_02/01_40px.bmp		1
@@ -34,3 +34,7 @@
 31	assets/Graphics/map/map_02/computer_desk_bottom_left.bmp	2
 32	assets/Graphics/map/map_02/computer_desk_bottom_right.bmp	2
 33	assets/Graphics/map/map_02/chair_up.bmp		1
+34  assets/Graphics/map/map_02/cabinet_top.bmp   2
+35  assets/Graphics/map/map_02/cabinet_bottom.bmp   2
+36  assets/Graphics/map/map_02/glass_table_left.bmp   2
+37  assets/Graphics/map/map_02/glass_table_right.bmp   2
