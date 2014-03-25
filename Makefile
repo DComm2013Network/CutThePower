@@ -7,7 +7,7 @@ OBJDIR=obj
 SRCDIR=src
 
 BIN_DEFAULT=$(BINDIR)/CutThePower
-OBJ_DEFAULT=$(OBJDIR)/Gameplay/collision_system.o $(OBJDIR)/Gameplay/movement_system.o $(OBJDIR)/Graphics/render_system.o $(OBJDIR)/Graphics/animation_system.o $(OBJDIR)/Graphics/map.o $(OBJDIR)/Input/keyinputsystem.o $(OBJDIR)/Input/mouseinputsystem.o $(OBJDIR)/Input/menu.o $(OBJDIR)/main.o $(OBJDIR)/sound.o $(OBJDIR)/world.o $(OBJDIR)/Network/GameplayCommunication.o $(OBJDIR)/Network/ServerCommunication.o $(OBJDIR)/Network/SendSystem.o $(OBJDIR)/Network/PipeUtils.o $(OBJDIR)/Network/ClientUpdateSystem.o $(OBJDIR)/Network/NetworkRouter.o 
+OBJ_DEFAULT=$(OBJDIR)/Gameplay/collision_system.o $(OBJDIR)/Gameplay/movement_system.o $(OBJDIR)/Graphics/render_system.o $(OBJDIR)/Graphics/animation_system.o $(OBJDIR)/Graphics/map.o $(OBJDIR)/Input/keyinputsystem.o $(OBJDIR)/Input/mouseinputsystem.o $(OBJDIR)/Input/menu.o $(OBJDIR)/main.o $(OBJDIR)/sound.o $(OBJDIR)/world.o $(OBJDIR)/Network/GameplayCommunication.o $(OBJDIR)/Network/ServerCommunication.o $(OBJDIR)/Network/SendSystem.o $(OBJDIR)/Network/PipeUtils.o $(OBJDIR)/Network/ClientUpdateSystem.o $(OBJDIR)/Network/NetworkRouter.o $(OBJDIR)/Network/packet_converter.o 
 
 CutThePower: $(OBJ_DEFAULT)
 	test -d $(BINDIR) || mkdir -p $(BINDIR)
@@ -88,6 +88,10 @@ $(OBJDIR)/Network/ClientUpdateSystem.o: $(SRCDIR)/Network/ClientUpdateSystem.cpp
 $(OBJDIR)/Network/SendSystem.o: $(SRCDIR)/Network/SendSystem.cpp
 	test -d $(OBJDIR)/Network || mkdir -p $(OBJDIR)/Network
 	$(CC) $(FLAGS) -c -o $(OBJDIR)/Network/SendSystem.o $(SRCDIR)/Network/SendSystem.cpp
+	
+$(OBJDIR)/Network/packet_converter.o: $(SRCDIR)/Network/packet_converter.cpp
+	test -d $(OBJDIR)/Network || mkdir -p $(OBJDIR)/Network
+	$(CC) $(FLAGS) -c -o $(OBJDIR)/Network/packet_converter.o $(SRCDIR)/Network/packet_converter.cpp
 
 $(OBJDIR)/world.o: $(SRCDIR)/world.cpp
 	test -d $(OBJDIR) || mkdir -p $(OBJDIR)

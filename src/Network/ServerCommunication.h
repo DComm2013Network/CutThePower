@@ -11,6 +11,8 @@
 #include <cerrno>
 #include <ctime>
 
+#include "Packets.h"
+
 #define INFINITE_TIMEOUT -1   /**< Tells SDL to wait for an "infinite" (49 day) timeout */
 #define MAX_TCP_RECV     2944 /**< Max TCP "packet" size from server to client (PKT_GAME_STATUS)*/
 #define MAX_UDP_RECV     644  /**< Max UDP packet size from server to client (PKT_ALL_POS_UPDATE)*/	
@@ -63,5 +65,11 @@ int check_sockets(SDLNet_SocketSet set);
 /* Error reporting functions */
 void set_error(int error);
 const char *get_error_string();
+
+/* Packet conversion functions */
+PKT_NEW_POS_UPDATE *encapsulate_pos_update(PKT_POS_UPDATE *old_pkt);
+PKT_POS_UPDATE *decapsulate_pos_update(PKT_NEW_POS_UPDATE *pkt);
+PKT_NEW_ALL_POS_UPDATE *encapsulate_all_pos_update(PKT_ALL_POS_UPDATE *old_pkt);
+PKT_ALL_POS_UPDATE *decapsulate_all_pos_update(PKT_NEW_ALL_POS_UPDATE *pkt);
 
 #endif

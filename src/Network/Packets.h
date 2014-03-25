@@ -145,6 +145,11 @@ typedef struct pkt10{
 	vel_t		yVel;
 } PKT_POS_UPDATE;
 
+typedef struct pktn10 {
+	uint32_t data;
+	uint8_t vel;
+} PKT_NEW_POS_UPDATE;
+
 typedef struct pkt11{
 	floorNo_t 	floor;
 	int	players_on_floor[MAX_PLAYERS];
@@ -153,6 +158,13 @@ typedef struct pkt11{
 	vel_t		xVel[MAX_PLAYERS];
 	vel_t		yVel[MAX_PLAYERS];
 } PKT_ALL_POS_UPDATE;
+
+typedef struct pktn11 {
+	uint32_t players_on_floor;
+	uint32_t xPos[11];
+	uint32_t yPos[11];
+	uint8_t vel[32];
+} PKT_NEW_ALL_POS_UPDATE;
 
 typedef struct pkt12{
 	playerNo_t 	player_number;

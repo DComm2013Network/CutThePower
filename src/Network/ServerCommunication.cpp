@@ -141,6 +141,12 @@ void* send_thread_func(void* ndata){
 		}
 		else if(protocol == UDP)
 		{
+			if (type == 10) {
+				data = (void*)encapsulate_pos_update((PKT_POS_UPDATE*)data);
+			}
+			else if (type == 11) {
+				data = (void*)encapsulate_all_pos_update((PKT_ALL_POS_UPDATE*)data);
+			}
 			send_udp(data, &type, snd_data->udp_sock, packet_sizes[type - 1] + sizeof(uint32_t));
 		}
 	}
