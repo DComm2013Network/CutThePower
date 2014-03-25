@@ -164,7 +164,7 @@ int load_animation(char *filename, World *world, unsigned int entity) {
 			animationComponent->animations[animation_index].surfaces[frame_index] = IMG_Load(animation_filename);
 			
 			if (animationComponent->animations[animation_index].surfaces[frame_index] == 0) {
-				printf("Error loading file: %s\n", animation_filename);
+				printf("Error loading file: %s, %s\n", animation_filename, IMG_GetError());
 			}
 		}
 		

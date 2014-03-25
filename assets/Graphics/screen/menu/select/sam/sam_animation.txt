@@ -1,0 +1,9 @@
+1
+
+sam 3 1 -1 -1                        
+assets/Graphics/screen/menu/select/sam/sam_1.png
+assets/Graphics/screen/menu/select/sam/sam_2.png
+assets/Graphics/screen/menu/select/sam/sam_3.png
+
+1 
+hover 0

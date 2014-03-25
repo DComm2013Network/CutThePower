@@ -53,9 +53,9 @@ CollisionData collision_system(World *world, PositionComponent entity, int entit
 /*--------------------------------------------------------------------------------------------------------
 --FUNCTION: wall_collision
 --
---DESIGNER: Joshua Campbell
+--DESIGNER: Joshua Campbell & Clark Allenby
 --
---PROGRAMMERS: Joshua Campbell
+--PROGRAMMERS: Joshua Campbell & Clark Allenby
 --
 --REVISIONS: none
 --
@@ -73,7 +73,8 @@ CollisionData collision_system(World *world, PositionComponent entity, int entit
 int wall_collision(World *world, PositionComponent entity) {
 	int i = 0;
 	int curlevel = -1;
-	int eposx = 0, eposy = 0;
+	int xl, xr, yt, yb;
+	int xdts, ydts;
 	for (i = 0; i < MAX_ENTITIES; i++) {
 		if (((world->mask[i] & LEVEL_MASK) != 0) && world->level[i].levelID == entity.level) {
 			curlevel = i;
@@ -84,33 +85,30 @@ int wall_collision(World *world, PositionComponent entity) {
 	if (curlevel == -1) {
 		return false;
 	}
-
-	eposx = (entity.x) / world->level[curlevel].tileSize;
-	eposy = (entity.y) / world->level[curlevel].tileSize;
-	int tsize = world->level[curlevel].tileSize;
-	int tiletoplayerfactor = entity.width / tsize;
-	if (tiletoplayerfactor < 0) {
-		tiletoplayerfactor = 1;
+	
+	xl = (entity.x - entity.width / 2) / world->level[curlevel].tileSize;
+	xr = (entity.x + entity.width / 2) / world->level[curlevel].tileSize;
+	yt = (entity.y - entity.height / 2) / world->level[curlevel].tileSize;
+	yb = (entity.y + entity.height / 2) / world->level[curlevel].tileSize;
+	
+	xdts = ceil((float)entity.width / (float)world->level[curlevel].tileSize);
+	ydts = ceil((float)entity.height / (float)world->level[curlevel].tileSize);
+	
+	// debug statement: printf("xl: %i, xr: %i, yt: %i, yb: %i, xdts: %i, ydts: %i\n", xl, xr, yt, yb, xdts, ydts);
+	for (int i = 0; i < xdts; i++) {
+		if (world->level[curlevel].map[xl + i * world->level[curlevel].tileSize][yt] == L_WALL) {
+			return COLLISION_WALL;
+		}
+		if (world->level[curlevel].map[xr - i * world->level[curlevel].tileSize][yb] == L_WALL) {
+			return COLLISION_WALL;
+		}
 	}
-	for (int x = eposx - 2 * tiletoplayerfactor; x <= eposx + 2 * tiletoplayerfactor && x < world->level[curlevel].width; x++) {
-		if (x < 0) {
-			x = 0;
-		} 
-		for (int y = eposy - 2 * tiletoplayerfactor; y <= eposy + 2 * tiletoplayerfactor && y < world->level[curlevel].height; y++) {
-			if (y < 0) {
-				y = 0;
-			}
-		
-			int mapx = x;
-			int mapy = y;
-			if (world->level[curlevel].map[mapx][mapy] == L_WALL) {
-				if (entity.x + entity.width - 1 > tsize * mapx + 1 &&
-					entity.x + 1 < mapx * tsize + tsize - 1 &&
-					entity.y + entity.height - 1 > mapy * tsize + 1 &&
-					entity.y + 1 < mapy * tsize + tsize - 1) {
-					return COLLISION_WALL;
-				}
-			}
+	for (int i = 0; i < ydts; i++) {
+		if (world->level[curlevel].map[xr][yt + i * world->level[curlevel].tileSize] == L_WALL) {
+			return COLLISION_WALL;
+		}
+		if (world->level[curlevel].map[xl][yb - i * world->level[curlevel].tileSize] == L_WALL) {
+			return COLLISION_WALL;
 		}
 	}
 
