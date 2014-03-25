@@ -122,7 +122,6 @@ int main(int argc, char* argv[]) {
 	
 	/*SAM********************************/
 	SDL_Surface ***fogOfWar;
-	int     **revealedTiles;
 
 	struct fogOfWarStruct fow;
 	

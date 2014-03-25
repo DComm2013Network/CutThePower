@@ -43,7 +43,7 @@ void render_fog_of_war(SDL_Surface ***fogOfWar, SDL_Surface *surface, struct fog
 
 	for(int y = 0; y < fogOfWarHeight; y++)
 	{
-		for(int x = 0; x < 4; x++)
+		for(int x = 0; x < fogOfWarWidth; x++)
 		{
 			tile_rect.x = (float)x * (double)TILE_WIDTH;
 			tile_rect.y = (float)y * (double)TILE_HEIGHT;
