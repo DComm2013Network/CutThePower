@@ -122,6 +122,7 @@ void client_update_system(World *world, int net_pipe) {
 void client_update_chat(World *world, void *packet)
 {
 	PKT_SND_CHAT *snd_chat = (PKT_SND_CHAT*)packet;
+	printf("%s", snd_chat->message);
 }
 void client_update_obj_loc(World *world, void *packet)
 {
