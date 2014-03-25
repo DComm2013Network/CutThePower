@@ -48,7 +48,7 @@ void *send_thread_func(void *ndata);
 int send_tcp(void * data, TCPsocket sock, uint32_t type);
 int send_udp(void * data, uint32_t * type, UDPsocket sock, uint32_t size);
 
-void* grab_send_packet(uint32_t *type, int fd, int * ret);
+void* grab_send_packet(uint32_t *type, int fd);
 
 /* Socket receive functions */
 int recv_udp (UDPsocket sock, UDPpacket *udp_packet);

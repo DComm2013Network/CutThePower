@@ -417,25 +417,43 @@ void* send_thread_func(void* ndata){
 	int protocol = 0;
 	uint32_t type = 0;
 	void * data;
-	int ret = -1;
+	uint64_t error = 1;
 
 	while(1){	
-    	data = grab_send_packet(&type, snd_data->read_pipe, &ret);
-    	if(ret != 1){
-			continue;
+    	data = grab_send_packet(&type, snd_data->read_pipe);
+    	if(data == NULL){
+            write(send_failure_fd, &error, sizeof(uint64_t));
+            break;
 		}
 		
 		protocol = get_protocol(type);
 		if(protocol == TCP)
 		{
-			send_tcp(&type, snd_data->tcp_sock, sizeof(uint32_t));
-			send_tcp(data, snd_data->tcp_sock, packet_sizes[type - 1]);
+			if(send_tcp(&type, snd_data->tcp_sock, sizeof(uint32_t)) == -1)
+            {
+                fprintf(stderr, "Failed to send packet type over TCP.\n");
+                write(send_failure_fd, &error, sizeof(uint64_t));
+                break;
+            }
+			if(send_tcp(data, snd_data->tcp_sock, packet_sizes[type - 1]) == -1)
+            {
+                fprintf(stderr, "Failed to send packet over TCP.\n");
+                write(send_failure_fd, &error, sizeof(uint64_t));
+                break;
+            }
 		}
 		else if(protocol == UDP)
 		{
-			send_udp(data, &type, snd_data->udp_sock, packet_sizes[type - 1] + sizeof(uint32_t));
+			if(send_udp(data, &type, snd_data->udp_sock, packet_sizes[type - 1] + sizeof(uint32_t)) == -1)
+            {
+                fprintf(stderr, "Failed to send packet over UDP.\n");
+                write(send_failure_fd, &error, sizeof(uint64_t));
+                break;
+            }
 		}
 	}
+
+    free(data);
 	return NULL;
 }
 
@@ -461,6 +479,7 @@ int send_tcp(void * data, TCPsocket sock, uint32_t size){
 	int result=SDLNet_TCP_Send(sock, data, size);
 	if(result <= 0) {
     	fprintf(stderr, "SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+        set_error(ERR_TCP_SEND_FAIL);
     	return -1;
 	}
 
@@ -522,21 +541,30 @@ int send_udp(void * data, uint32_t * type, UDPsocket sock, uint32_t size){
  *
  * @date Febuary 20 2014
  */
-void *grab_send_packet(uint32_t *type, int fd, int *ret){
+void *grab_send_packet(uint32_t *type, int fd){
 
 	*type = read_type(fd);
-	if(*type >= 90){
-		*ret = -1;
+	if(*type >= 90)
+    {
+        set_error(ERR_IPC_FAIL);
 		return NULL;
 	}
 
 	uint32_t size = packet_sizes[*type - 1];
 
 	void * data = (void*) malloc(sizeof(size));
+    if(data == NULL)
+    {
+        set_error(ERR_NO_MEM);
+        return NULL;
+    }
 
 	data = read_packet(fd, size); // reads data
-
-	*ret = 1;
+    if(data == NULL)
+    {
+        set_error(ERR_IPC_FAIL);
+        return NULL;
+    }
 
 	return data;
 }
