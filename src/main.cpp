@@ -4,6 +4,7 @@
 #include "sound.h"
 #include "world.h"
 #include "Input/menu.h"
+#include "Graphics/text.h"
 
 #include <stdlib.h>
 #include <time.h>
@@ -86,6 +87,7 @@ int main(int argc, char* argv[]) {
 	}
 	
 	init_sound();
+	init_fonts();
 	
 	init_world(world);
 	srand(time(NULL));//random initializer
