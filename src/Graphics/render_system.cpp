@@ -20,6 +20,9 @@ const char *character_map = ".01234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 SDL_Surface *text_chars[38]; /**< we have 37 different characters. */
 SDL_Surface *ibeam;
 
+int subOne(int n);
+int addOne(int n);
+
 /**
  * Render a player onto the map. 
  *
@@ -42,7 +45,7 @@ SDL_Surface *ibeam;
  *
  * @author Mat Siwoski
  */
-void render_player_system(World& world, SDL_Surface* surface) {
+void render_player_system(World& world, SDL_Surface* surface, struct fogOfWarStruct *fow) {
 	
 	unsigned int entity;
 	unsigned int i, j;
@@ -135,7 +138,47 @@ void render_player_system(World& world, SDL_Surface* surface) {
 			}
 		}
 	}
+
+	
+	/*SAM*********************************/
+	fow -> topXCorner = -map_rect.x / TILE_WIDTH;
+	fow -> topYCorner = -map_rect.y / TILE_HEIGHT;
+	
+	int xPos = (double)position->x / TILE_WIDTH;
+	int yPos = (double)position->y / TILE_HEIGHT;
+	
+	fow -> xOffset = TILE_WIDTH * ((position->x / TILE_WIDTH) - (int)xPos);
+	fow -> yOffset = TILE_HEIGHT * ((position->y / TILE_HEIGHT) - (int)yPos);
+	
+
+	fow -> revealedTiles[addOne(yPos)][xPos] = 1;
+	fow -> revealedTiles[subOne(yPos)][xPos] = 1;
+	
+	fow -> revealedTiles[addOne(yPos)][addOne(xPos)] = 1;
+	fow -> revealedTiles[subOne(yPos)][subOne(xPos)] = 1;
+	
+	fow -> revealedTiles[addOne(yPos)][subOne(xPos)] = 1;
+	fow -> revealedTiles[subOne(yPos)][addOne(xPos)] = 1;
+	
+	fow -> revealedTiles[yPos][addOne(xPos)] = 1;
+	fow -> revealedTiles[yPos][subOne(xPos)] = 1;
+			
+	/*************************************/
 }
+
+/*SAM******************************/
+int addOne(int n)
+{
+	return ++n;
+}
+
+int subOne(int n)
+{
+	if (n == 0) return n;
+	else
+	return --n;
+}
+/**********************************/
 
 
 void init_render_player_system() {

@@ -15,6 +15,13 @@ int game_net_signalfd, game_net_lockfd;
 bool running;
 unsigned int player_entity;
 
+
+/*SAM**************************/
+void render_fog_of_war(SDL_Surface ***fogOfWar, SDL_Surface  *surface, struct fogOfWarStruct *fow);
+void init_fog_of_war(SDL_Surface ****fogOfWar, struct fogOfWarStruct *fow);
+/******************************/
+
+
 class FPS {
 private:
 	float max_frame_ticks;
@@ -111,6 +118,19 @@ int main(int argc, char* argv[]) {
 	running = true;
 	player_entity = -1;
 	
+	
+	
+	/*SAM********************************/
+	SDL_Surface ***fogOfWar;
+	int     **revealedTiles;
+
+	struct fogOfWarStruct fow;
+	
+	init_fog_of_war(&fogOfWar, &fow);
+	/************************************/
+	
+
+
 	while (running)
 	{
 		
@@ -123,7 +143,14 @@ int main(int argc, char* argv[]) {
 			//send_system(world, send_router_fd[WRITE_END]);
 		}
 		animation_system(world);
-		render_player_system(*world, surface);
+
+				
+		/*SAM****************/
+		render_fog_of_war(fogOfWar, surface, &fow);
+		/*****************/
+
+
+		render_player_system(*world, surface, &fow);
 		
 		SDL_UpdateWindowSurface(window);
 		
