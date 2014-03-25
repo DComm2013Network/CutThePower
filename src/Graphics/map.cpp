@@ -87,7 +87,6 @@ void render_fog_of_war(SDL_Surface ***fogOfWar, SDL_Surface *surface, struct fog
 				SDL_BlitSurface(fogOfWar[y][x], NULL, surface, &tile_rect);
 			}
 		}
-		
 	}
 }
 

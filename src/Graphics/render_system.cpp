@@ -134,7 +134,6 @@ void render_player_system(World& world, SDL_Surface* surface, struct fogOfWarStr
 					
 					SDL_BlitSurface(ibeam, NULL, surface, &playerRect);
 				}
-				
 			}
 		}
 	}
@@ -144,11 +143,13 @@ void render_player_system(World& world, SDL_Surface* surface, struct fogOfWarStr
 	fow -> topXCorner = -map_rect.x / TILE_WIDTH;
 	fow -> topYCorner = -map_rect.y / TILE_HEIGHT;
 	
+
 	int xPos = (double)position->x / TILE_WIDTH;
 	int yPos = (double)position->y / TILE_HEIGHT;
+
 	
-	fow -> xOffset = TILE_WIDTH * ((position->x / TILE_WIDTH) - (int)xPos);
-	fow -> yOffset = TILE_HEIGHT * ((position->y / TILE_HEIGHT) - (int)yPos);
+	fow -> xOffset = TILE_WIDTH * (1 - ((position->x / TILE_WIDTH) - (int)xPos));
+	fow -> yOffset = TILE_HEIGHT * (1 - ((position->y / TILE_HEIGHT) - (int)yPos));
 	
 
 	fow -> revealedTiles[addOne(yPos)][xPos] = 1;
