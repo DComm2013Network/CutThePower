@@ -46,6 +46,13 @@ typedef struct NETWORK_DATA
     UDPsocket   udp_sock;       /**< UDP socket for server communication */
 } WNETWORK_DATA, *NDATA;
 
+typedef struct CHAT_LIST
+{
+	CHAT_LIST * head;
+	PKT_SND_CHAT * chat_pkt;
+	CHAT_LIST * next;
+} CHAT_LIST;
+
 void *networkRouter(void *args);
 int dispatch_thread(void *(*function)(void *), void *params, pthread_t *handle);
 int update_gameplay(int gameplay_write_fd, void **packets, uint64_t *timestamps);
@@ -54,6 +61,8 @@ int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int send
 				int recvfd[2], pthread_t *thread_receive, pthread_t *thread_send);
 void net_cleanup(NDATA send_data, NDATA receive_data, PDATA gameplay, void **cached_packets);
 void write_shutdown(int gameplay_pipe, const char *err_str, int err_size);
+int cache_chat(PKT_SND_CHAT * packet);
+int send_cached_chat();
 
 #endif
 

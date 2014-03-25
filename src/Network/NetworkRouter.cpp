@@ -16,6 +16,8 @@
 extern int game_net_signalfd;
 extern int network_ready;
 extern uint32_t packet_sizes[NUM_PACKETS];
+int chat_packets_rcv = 0;
+CHAT_LIST * cached_chat = (CHAT_LIST*)malloc(sizeof(CHAT_LIST));
 sem_t err_sem;
 int send_failure_fd;
 
@@ -72,6 +74,12 @@ void *networkRouter(void *args)
     FD_SET(game_net_signalfd, &listen_fds);
 
     network_ready = 1;
+    cached_chat->head = cached_chat;
+    if(cached_chat == NULL)
+    {
+        fprintf(stderr, "Failed to intialize chat cache.\n");
+        return NULL;
+    }
 
     while(1)
     {
@@ -94,16 +102,23 @@ void *networkRouter(void *args)
                 set_error(ERR_IPC_FAIL);
                 break;
             }
-			read(recvfd[READ_END], &timestamp, sizeof(timestamp));
-            if(timestamps[type - 1] < timestamp)     // If the received packet is more recent, replace the cached one
+            
+            if(type == P_CHAT)
             {
-                timestamps[type - 1] = timestamp;
-                free(cached_packets[type - 1]);
-                cached_packets[type - 1] = packet;
+                cache_chat((PKT_SND_CHAT*)packet);
             }
-            else                                    // Otherwise discard it
-                free(packet);
-
+            else
+            {
+    			read(recvfd[READ_END], &timestamp, sizeof(timestamp));
+                if(timestamps[type - 1] < timestamp)     // If the received packet is more recent, replace the cached one
+                {
+                    timestamps[type - 1] = timestamp;
+                    free(cached_packets[type - 1]);
+                    cached_packets[type - 1] = packet;
+                }
+                else                                    // Otherwise discard it
+                    free(packet);
+            }
 			--ret;
         }
 
@@ -130,7 +145,66 @@ void *networkRouter(void *args)
     net_cleanup(send_data, receive_data, gameplay, cached_packets);
     return NULL;
 }
+/**
+ * Caches a recieved packet to the cache_chat link list.
+ *
+ * @param[in]   packet Chat packet recieved from the server.
+ *
+ * @return  <ul>
+ *              <li>0 on success, or -1 on failure.</li>
+ *          </ul>
+ *
+ * @designer Ramzi Chennafi
+ * @author   Ramzi Chennafi
+ */
+int cache_chat(PKT_SND_CHAT * packet)
+{
+    chat_packets_rcv++;
 
+    cached_chat->chat_pkt = packet;
+    cached_chat->next = (CHAT_LIST*) malloc(sizeof(CHAT_LIST));
+    if(cached_chat->next == NULL)
+    {
+        return -1;
+    }
+    cached_chat->next->head = cached_chat->head;
+    cached_chat = cached_chat->next;
+
+    return 0;
+}
+/**
+ * Sends all cached chat packets down the gameplay pipe.
+ *
+ * Takes the linked CHAT_LIST and sends all its chat packets to gameplay for processing.
+ *
+ * @return  <ul>
+ *              <li>0 on success, or -1 on failure.</li>
+ *          </ul>
+ *
+ * @designer Ramzi Chennafi
+ * @author   Ramzi Chennafi
+ */
+int send_cached_chat(int gameplay_write_fd)
+{
+    uint32_t type = P_CHAT;
+    CHAT_LIST * current = cached_chat;
+    CHAT_LIST * next = cached_chat;
+
+    for(int i = 0; i < chat_packets_rcv; i++)
+    {
+        if(write(gameplay_write_fd, &type, sizeof(type)) == -1 ||
+           write(gameplay_write_fd, next->chat_pkt, packet_sizes[P_CHAT]) == -1)
+        {
+            perror("update_gameplay: write");
+            return -1;
+        }
+        next = current->next;
+        free(current);
+    }
+
+    cached_chat = (CHAT_LIST*) malloc(sizeof(CHAT_LIST));
+    return 0;
+}
 /**
  * Creates and dispatches a new thread.
  *
@@ -188,7 +262,7 @@ uint32_t determine_changed(void **packets, unsigned *changed)
 		}
 	}
 	
-	return nchanged;
+	return nchanged + chat_packets_rcv;
 }
 
 /**
@@ -368,6 +442,11 @@ int update_gameplay(int gameplay_write_fd, void **packets, uint64_t *timestamps)
             free(packets[idx]);
             packets[idx] = NULL;
         }
+    }
+
+    if(send_cached_chat(gameplay_write_fd) == -1)
+    {
+        return -1;
     }
 
     return 0;
