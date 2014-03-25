@@ -54,8 +54,8 @@ void render_fog_of_war(SDL_Surface ***fogOfWar, SDL_Surface *surface, struct fog
 			if(fow->revealedTiles[topYCorner + y][topXCorner + x] == 0)
 			{			
 				
-				//tile_rect.x -= (x > 0) ? fow -> xOffset : 0;
-				//tile_rect.y -= (y > 0) ? fow -> yOffset : 0;
+				tile_rect.x -= (x > 0) ? fow -> xOffset : 0;
+				tile_rect.y -= (y > 0) ? fow -> yOffset : 0;
 			
 			
 				//tile_rect.w -= (x > 0) ? 0 : fow -> xOffset;
@@ -65,28 +65,6 @@ void render_fog_of_war(SDL_Surface ***fogOfWar, SDL_Surface *surface, struct fog
 			}
 		}
 		
-		
-		for(int x = 15; x < 19; x++)
-		{
-			tile_rect.x = (float)x * (double)TILE_WIDTH;
-			tile_rect.y = (float)y * (double)TILE_HEIGHT;
-											
-			tile_rect.w = TILE_WIDTH;
-			tile_rect.h = TILE_HEIGHT;
-					
-			if(fow->revealedTiles[topYCorner + y][topXCorner + x] == 0)
-			{			
-				
-				//tile_rect.x -= (x > 0) ? fow -> xOffset : 0;
-				//tile_rect.y -= (y > 0) ? fow -> yOffset : 0;
-			
-			
-				//tile_rect.w -= (x > 0) ? 0 : fow -> xOffset;
-				//tile_rect.h -= (y > 0) ? 0 : fow -> yOffset;
-			
-				SDL_BlitSurface(fogOfWar[y][x], NULL, surface, &tile_rect);
-			}
-		}
 	}
 }
 
