@@ -296,7 +296,7 @@ void movement_system(World* world, int sendpipe) {
 					position->y = temp.y + goffsetH;
 				}
 
-				if(moved)
+				if(moved && !floor_change_flag)
 					send_location(world, sendpipe);
 			}
 		}
