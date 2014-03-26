@@ -1,0 +1,23 @@
+21
+
+00	assets/Graphics/lobby/lobby_floor_1.bmp					0
+01	assets/Graphics/lobby/lobby_floor_1.bmp					0
+02	assets/Graphics/lobby/lobby_wall.bmp					1
+03	assets/Graphics/lobby/lobby_wall_bottom.bmp				1
+04	assets/Graphics/lobby/lobby_wall_left.bmp				1
+05	assets/Graphics/lobby/lobby_wall_bottom_left.bmp		1
+06	assets/Graphics/lobby/lobby_wall_top.bmp				1
+07	assets/Graphics/lobby/lobby_wall_bottom_right.bmp		1
+08	assets/Graphics/lobby/lobby_chair.bmp					0
+09	assets/Graphics/lobby/lobby_table_right_coffee.BMP		1
+10	assets/Graphics/lobby/lobby_table_right.BMP				1
+11	assets/Graphics/lobby/lobby_table_middle_cake.BMP		1
+12	assets/Graphics/lobby/lobby_table_middle.BMP			1
+13	assets/Graphics/lobby/lobby_table_left_orange.BMP		1
+14	assets/Graphics/lobby/lobby_table_left.BMP				1
+15	assets/Graphics/lobby/lobby_floor_plant.bmp				0
+16	assets/Graphics/lobby/lobby_wall_right.bmp				1
+17	assets/Graphics/lobby/lobby_table_Security.bmp			1
+18	assets/Graphics/lobby/lobby_table_Hacker.bmp			1
+19	assets/Graphics/lobby/lobby_table_Hacker_bottom.bmp		1
+20	assets/Graphics/lobby/lobby_concrete_floor.BMP			0

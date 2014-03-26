@@ -1,0 +1,160 @@
+shane@ubuntu:~/Documents/Major_Project/CutThePower$ make
+test -d obj || mkdir -p obj
+g++ -Wall -std=c++11 -O0 -g -fpermissive  -c -o obj/sound.o src/sound.cpp
+test -d bin || mkdir -p bin
+g++ -Wall -std=c++11 -O0 -g -fpermissive  -o bin/CutThePower obj/Gameplay/collision_system.o obj/Gameplay/movement_system.o obj/Graphics/render_system.o obj/Graphics/animation_system.o obj/Graphics/map.o obj/Input/keyinputsystem.o obj/Input/mouseinputsystem.o obj/Input/menu.o obj/main.o obj/sound.o obj/world.o obj/Network/GameplayCommunication.o obj/Network/ServerCommunication.o obj/Network/SendSystem.o obj/Network/PipeUtils.o obj/Network/ClientUpdateSystem.o obj/Network/NetworkRouter.o  -lSDL2 -lSDL2_image -lSDL2_net -lSDL2_mixer -lpthread
+shane@ubuntu:~/Documents/Major_Project/CutThePower$ bin/CutThePower 
+Current World size: 68096
+Map load size 64 38
+Loading object [mainframe] assets/Graphics/objects/computers/mainframe_5_animation.txt
+Loading object [mainframe] assets/Graphics/objects/computers/mainframe_5_animation.txt
+Loading object [play] assets/Graphics/objects/npc/piano/piano_tl_animation.txt
+Loading object [play] assets/Graphics/objects/npc/piano/piano_tr_animation.txt
+Loading object [play] assets/Graphics/objects/npc/piano/piano_bl_animation.txt
+Loading object [play] assets/Graphics/objects/npc/piano/piano_br_animation.txt
+Loading object [drum] assets/Graphics/objects/npc/drums/drum_tl_animation.txt
+Loading object [drum] assets/Graphics/objects/npc/drums/drum_tr_animation.txt
+Loading object [drum] assets/Graphics/objects/npc/drums/drum_bl_animation.txt
+Loading object [drum] assets/Graphics/objects/npc/drums/drum_br_animation.txt
+Loading object [guitar] assets/Graphics/objects/npc/guitar/guitar_animation.txt
+Playing sound 1
+Received TCP packet: 2
+Received TCP packet: 13
+Received UDP packet: 11
+Received TCP packet: 3
+Received UDP packet: 8
+Updating with packet type 3
+Updating with packet type 8
+Updating with packet type 11
+Updating with packet type 13
+Received UDP packet: 11
+Updating with packet type 11
+Received UDP packet: 11
+Updating with packet type 11
+Received UDP packet: 11
+Updating with packet type 11
+Received UDP packet: 11
+Updating with packet type 11
+Received UDP packet: 11
+Updating with packet type 11
+Received UDP packet: 11
+Updating with packet type 11
+Received TCP packet: 3
+Received TCP packet: 3
+Received UDP packet: 8
+Received UDP packet: 11
+Received UDP packet: 11
+Updating with packet type 3
+Updating with packet type 8
+Updating with packet type 11
+Segmentation fault (core dumped)
+shane@ubuntu:~/Documents/Major_Project/CutThePower$ valgrind bin/CutThePower
+==8619== Memcheck, a memory error detector
+==8619== Copyright (C) 2002-2012, and GNU GPL'd, by Julian Seward et al.
+==8619== Using Valgrind-3.8.1 and LibVEX; rerun with -h for copyright info
+==8619== Command: bin/CutThePower
+==8619== 
+Current World size: 68096
+Map load size 64 38
+Loading object [mainframe] assets/Graphics/objects/computers/mainframe_5_animation.txt
+Loading object [mainframe] assets/Graphics/objects/computers/mainframe_5_animation.txt
+Loading object [play] assets/Graphics/objects/npc/piano/piano_tl_animation.txt
+Loading object [play] assets/Graphics/objects/npc/piano/piano_tr_animation.txt
+Loading object [play] assets/Graphics/objects/npc/piano/piano_bl_animation.txt
+Loading object [play] assets/Graphics/objects/npc/piano/piano_br_animation.txt
+Loading object [drum] assets/Graphics/objects/npc/drums/drum_tl_animation.txt
+Loading object [drum] assets/Graphics/objects/npc/drums/drum_tr_animation.txt
+Loading object [drum] assets/Graphics/objects/npc/drums/drum_bl_animation.txt
+Loading object [drum] assets/Graphics/objects/npc/drums/drum_br_animation.txt
+Loading object [guitar] assets/Graphics/objects/npc/guitar/guitar_animation.txt
+Playing sound 1
+==8619== Syscall param write(buf) points to uninitialised byte(s)
+==8619==    at 0x57A6C5D: ??? (syscall-template.S:81)
+==8619==    by 0x40A794: write_pipe(int, void const*, unsigned long) (PipeUtils.cpp:70)
+==8619==    by 0x4095D6: write_packet(int, unsigned int, void*) (GameplayCommunication.cpp:172)
+==8619==    by 0x40A727: send_intialization(World*, int) (SendSystem.cpp:74)
+==8619==    by 0x404715: animation_system(World*, unsigned int*, int*, int*) (animation_system.cpp:96)
+==8619==    by 0x4086BE: main (main.cpp:120)
+==8619==  Address 0x69f6d40 is 0 bytes inside a block of size 15 alloc'd
+==8619==    at 0x4C2CD7B: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==8619==    by 0x40A6A0: send_intialization(World*, int) (SendSystem.cpp:66)
+==8619==    by 0x404715: animation_system(World*, unsigned int*, int*, int*) (animation_system.cpp:96)
+==8619==    by 0x4086BE: main (main.cpp:120)
+==8619== 
+==8619== Syscall param write(buf) points to uninitialised byte(s)
+==8619==    at 0x57A6C5D: ??? (syscall-template.S:81)
+==8619==    by 0x40A794: write_pipe(int, void const*, unsigned long) (PipeUtils.cpp:70)
+==8619==    by 0x4095D6: write_packet(int, unsigned int, void*) (GameplayCommunication.cpp:172)
+==8619==    by 0x40A685: send_location(World*, int) (SendSystem.cpp:46)
+==8619==    by 0x4086FD: main (main.cpp:127)
+==8619==  Address 0x6d3d7f4 is 4 bytes inside a block of size 24 alloc'd
+==8619==    at 0x4C2CD7B: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==8619==    by 0x40A520: send_location(World*, int) (SendSystem.cpp:31)
+==8619==    by 0x4086FD: main (main.cpp:127)
+==8619== 
+Received TCP packet: 2
+==8619== Thread 3:
+==8619== Conditional jump or move depends on uninitialised value(s)
+==8619==    at 0x534B628: SDLNet_UDP_SendV (SDLnetUDP.c:356)
+==8619==    by 0x534B7C9: SDLNet_UDP_Send (SDLnetUDP.c:403)
+==8619==    by 0x409A01: send_udp(void*, unsigned int*, _UDPsocket*, unsigned int) (ServerCommunication.cpp:207)
+==8619==    by 0x409908: send_thread_func(void*) (ServerCommunication.cpp:144)
+==8619==    by 0x579FF8D: start_thread (pthread_create.c:311)
+==8619==    by 0x62CDA0C: clone (clone.S:113)
+==8619== 
+==8619== Use of uninitialised value of size 8
+==8619==    at 0x534B637: SDLNet_UDP_SendV (SDLnetUDP.c:379)
+==8619==    by 0x534B7C9: SDLNet_UDP_Send (SDLnetUDP.c:403)
+==8619==    by 0x409A01: send_udp(void*, unsigned int*, _UDPsocket*, unsigned int) (ServerCommunication.cpp:207)
+==8619==    by 0x409908: send_thread_func(void*) (ServerCommunication.cpp:144)
+==8619==    by 0x579FF8D: start_thread (pthread_create.c:311)
+==8619==    by 0x62CDA0C: clone (clone.S:113)
+==8619== 
+==8619== Use of uninitialised value of size 8
+==8619==    at 0x534B64A: SDLNet_UDP_SendV (SDLnetUDP.c:381)
+==8619==    by 0x534B7C9: SDLNet_UDP_Send (SDLnetUDP.c:403)
+==8619==    by 0x409A01: send_udp(void*, unsigned int*, _UDPsocket*, unsigned int) (ServerCommunication.cpp:207)
+==8619==    by 0x409908: send_thread_func(void*) (ServerCommunication.cpp:144)
+==8619==    by 0x579FF8D: start_thread (pthread_create.c:311)
+==8619==    by 0x62CDA0C: clone (clone.S:113)
+==8619== 
+==8619== Invalid read of size 4
+==8619==    at 0x534B64A: SDLNet_UDP_SendV (SDLnetUDP.c:381)
+==8619==    by 0x534B7C9: SDLNet_UDP_Send (SDLnetUDP.c:403)
+==8619==    by 0x409A01: send_udp(void*, unsigned int*, _UDPsocket*, unsigned int) (ServerCommunication.cpp:207)
+==8619==    by 0x409908: send_thread_func(void*) (ServerCommunication.cpp:144)
+==8619==    by 0x579FF8D: start_thread (pthread_create.c:311)
+==8619==    by 0x62CDA0C: clone (clone.S:113)
+==8619==  Address 0x1fb8ca7f4 is not stack'd, malloc'd or (recently) free'd
+==8619== 
+==8619== 
+==8619== Process terminating with default action of signal 11 (SIGSEGV)
+==8619==  Access not within mapped region at address 0x1FB8CA7F4
+==8619==    at 0x534B64A: SDLNet_UDP_SendV (SDLnetUDP.c:381)
+==8619==    by 0x534B7C9: SDLNet_UDP_Send (SDLnetUDP.c:403)
+==8619==    by 0x409A01: send_udp(void*, unsigned int*, _UDPsocket*, unsigned int) (ServerCommunication.cpp:207)
+==8619==    by 0x409908: send_thread_func(void*) (ServerCommunication.cpp:144)
+==8619==    by 0x579FF8D: start_thread (pthread_create.c:311)
+==8619==    by 0x62CDA0C: clone (clone.S:113)
+==8619==  If you believe this happened as a result of a stack
+==8619==  overflow in your program's main thread (unlikely but
+==8619==  possible), you can try to increase the size of the
+==8619==  main thread stack using the --main-stacksize= flag.
+==8619==  The main thread stack size used in this run was 8388608.
+eceived TCP packet: 2
+==8619== 
+==8619== HEAP SUMMARY:
+==8619==     in use at exit: 320,989,411 bytes in 1,751 blocks
+==8619==   total heap usage: 28,577 allocs, 26,826 frees, 390,110,651 bytes allocated
+==8619== 
+==8619== LEAK SUMMARY:
+==8619==    definitely lost: 1,893 bytes in 25 blocks
+==8619==    indirectly lost: 158,129,036 bytes in 270 blocks
+==8619==      possibly lost: 143,589,169 bytes in 167 blocks
+==8619==    still reachable: 19,269,313 bytes in 1,289 blocks
+==8619==         suppressed: 0 bytes in 0 blocks
+==8619== Rerun with --leak-check=full to see details of leaked memory
+==8619== 
+==8619== For counts of detected and suppressed errors, rerun with: -v
+==8619== Use --track-origins=yes to see where uninitialised values come from
+==8619== ERROR SUMMARY: 6 errors from 6 contexts (suppressed: 10 from 3)

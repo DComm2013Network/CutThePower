@@ -71,9 +71,16 @@ do
 	cpp=$f
 	SRC_FILES="$SRC_FILES \$(OBJDIR)/${obj}"
 	
+	path=$(dirname "$obj")
+	
+	if [ "$path" == "." ]
+	then
+		path=""
+	fi
+	
 	COMPILE="$COMPILE
 \$(OBJDIR)/${obj}: \$(SRCDIR)/${cpp}
-	test -d \$(OBJDIR)/${obj%/*} || mkdir -p \$(OBJDIR)/${obj%/*}
+	test -d \$(OBJDIR)/$path || mkdir -p \$(OBJDIR)/$path
 	\$(CC) \$(FLAGS) -c -o \$(OBJDIR)/${obj} \$(SRCDIR)/${cpp}
 "
 	

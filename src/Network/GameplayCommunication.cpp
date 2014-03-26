@@ -16,20 +16,20 @@
 #include "NetworkRouter.h"
 
 uint32_t packet_sizes[NUM_PACKETS] = {
-	sizeof(PKT_PLAYER_NAME), //0
-	sizeof(PKT_PLAYER_CONNECT), //1
-	sizeof(PKT_GAME_STATUS), //2
-	sizeof(PKT_SND_CHAT), //3
-	sizeof(struct pkt05), //4
-	sizeof(struct pkt06), //5
-	0, //6
-	sizeof(PKT_OBJECTIVE_STATUS), //7
-	0, //8
-    sizeof(PKT_POS_UPDATE), //9
-    sizeof(PKT_ALL_POS_UPDATE), //10
-	sizeof(PKT_FLOOR_MOVE_REQUEST), //11
-	sizeof(PKT_FLOOR_MOVE), //12
-    sizeof(PKT_TAGGING)
+	sizeof(PKT_PLAYER_NAME),         //0
+	sizeof(PKT_PLAYER_CONNECT),      //1
+	sizeof(PKT_GAME_STATUS),         //2
+	sizeof(PKT_SND_CHAT),            //3
+	sizeof(pkt05),                   //4
+	sizeof(PKT_OBJ_LOC),             //5
+	0,                               //6
+	sizeof(PKT_OBJECTIVE_STATUS),    //7
+	0,                               //8
+    sizeof(PKT_POS_UPDATE),          //9
+    sizeof(PKT_ALL_POS_UPDATE),      //10
+	sizeof(PKT_FLOOR_MOVE_REQUEST),  //11
+	sizeof(PKT_FLOOR_MOVE),          //12
+    sizeof(PKT_TAGGING)              //13
 };
 
 /**
@@ -55,10 +55,10 @@ uint32_t read_type(int fd)
     {
         if(read_bytes == 0)
         {
-            perror("No data on pipe: read_type(int fd)\n");
+            perror("read_type: No data on pipe");
             return 99;
         }
-        perror("Error while reading from pipe: read_type(int fd)\n");
+        perror("read_type: Error while reading from pipe");
         return 98; //error .. check error
     }
 
@@ -85,15 +85,16 @@ void* read_packet(int fd, uint32_t size)
 	int read_bytes;
 
     if((read_bytes = read_pipe(fd, temp, size)) == -1){
-        perror("Error on reading pipe : read_packet(int, uint32_t)\n");
+        perror("Error on reading pipe : read_packet(int, uint32_t)");
         return NULL;
     }
 
     if(read_bytes == 0){
-        perror("Nothing on pipe to read: read_packet(int, uint32_t)\n");
+        perror("Nothing on pipe to read: read_packet(int, uint32_t)");
         return NULL;
     }
 
+	fprintf(stderr, "read_packet: size: %u\n", size);
     return temp; 
 }
 
@@ -165,13 +166,13 @@ int write_packet(int write_fd, uint32_t packet_type, void *packet)
     int temp;
     if ((temp = write_pipe(write_fd, &packet_type, sizeof(packet_type))) <= 0)
     {
-        perror("Failed to write packet: write_pipe");
+        perror("write_packet: Failed to write packet");
         return -1;
     }
 	
     if((temp = write_pipe(write_fd, packet, packet_sizes[packet_type - 1])) <= 0)
 	{
-		perror("Failed to write packet: write_pipe");
+		perror("write_packet: Failed to write packet");
 		return -1;
 	}
 
@@ -197,13 +198,14 @@ void *read_data(int fd, uint32_t *type){
     int read_bytes;
     void *packet;
     *type = read_type(fd);
+	fprintf(stderr, "Type: %u\n", *type);
     if(*type <= 0 || *type > 14){
-        perror("Failed to read packet type from pipe: read_data\n");
+        perror("read_data: Failed to read packet type from pipe");
         return NULL;
     }
 
     if((packet = read_packet(fd, packet_sizes[*type - 1])) == NULL){
-        perror("Failed to read packet : read_data\n");
+        perror("read_data: Failed to read packet");
         return NULL;
     }
 

@@ -12,8 +12,12 @@
 #include "GameplayCommunication.h"
 #include "PipeUtils.h"
 #include "../world.h"
+#include "../systems.h"
 #include <sys/poll.h>
- 
+
+extern int send_ready;
+extern int game_ready;
+static int controllable_playerNo;
 extern int game_net_signalfd, game_net_lockfd;
 extern int network_ready;
 static unsigned int *player_table = NULL; /**< A lookup table mapping server player numbers to client entities. */
@@ -39,7 +43,7 @@ void client_update_system(World *world, int net_pipe) {
 	uint64_t	signal = 1;
 	uint64_t 	sem_buf;
 	unsigned	i;
-	
+
 	if(!player_table)
 	{
 		player_table = (unsigned int *)malloc(sizeof(unsigned int) * MAX_PLAYERS);
@@ -52,19 +56,40 @@ void client_update_system(World *world, int net_pipe) {
 	write(game_net_signalfd, &signal, sizeof(uint64_t));
 	num_packets = read_type(net_pipe); // the function just reads a 32 bit value, so this works; semantically, not ideal
 
+    if(num_packets == NET_SHUTDOWN) // network is shutting down; this is the only packet
+    {
+        char err_buf[128];
+        uint32_t str_size;
+        read_pipe(net_pipe, &str_size, sizeof(str_size));
+        if(str_size)
+        {
+            read_pipe(net_pipe, err_buf, str_size);
+            err_buf[str_size] = 0; // null terminate the string
+            fprintf(stderr, "%s", err_buf);
+        }
+        memset(player_table, 255, MAX_PLAYERS * sizeof(uint32_t));
+        network_ready = 0;
+        return;
+    }
+
 	for(i = 0; i < num_packets; ++i)
 	{
 
 		packet = read_data(net_pipe, &type);
 		
-		printf("Updating with packet type %u\n", type);
-		switch (type) { // the cached packets minuses one from the value 
+		//printf("Updating with packet type %u\n", type);
+		//fprintf(stderr, "Sending a position update at: %lu\n", clock()/CLOCKS_PER_SEC);
+		switch (type) 
+		{ 
 			case P_CONNECT:
 				if(client_update_info(world, packet) == CONNECT_CODE_DENIED)
+				{
 					return; // Pass error up to someone else to deal with
+				}
 				break;
 			case G_STATUS:
 				client_update_status(world, packet);
+				game_ready++;
 				break;
 			case P_CHAT:
 				client_update_chat(world, packet);
@@ -83,6 +108,7 @@ void client_update_system(World *world, int net_pipe) {
 				break;
 			case P_FLOOR_MOVE:
 				client_update_floor(world, packet);
+				game_ready++;
 				break;
 			case P_TAGGING:
 				player_tag_packet(world, packet);
@@ -96,6 +122,7 @@ void client_update_system(World *world, int net_pipe) {
 void client_update_chat(World *world, void *packet)
 {
 	PKT_SND_CHAT *snd_chat = (PKT_SND_CHAT*)packet;
+	printf("%s", snd_chat->message);
 }
 void client_update_obj_loc(World *world, void *packet)
 {
@@ -111,7 +138,18 @@ void client_update_obj_status(World *world, void *packet)
 void client_update_floor(World *world, void *packet)
 {
 	PKT_FLOOR_MOVE* floor_move = (PKT_FLOOR_MOVE*)packet;
+	for (int i = 0; i < MAX_PLAYERS; i++)
+	{
+		if(player_table[i] == CLIENT_PLAYER)
+		{
+			world->position[player_table[i]].x		= floor_move->xPos;
+			world->position[player_table[i]].y		= floor_move->yPos;
+			world->position[player_table[i]].level	= floor_move->new_floor;
+			break;
+		}
+	}
 }
+
 /**
  * Updates the positions and movement properties of every other player.
  *
@@ -130,28 +168,20 @@ void client_update_pos(World *world, void *packet)
 	PKT_ALL_POS_UPDATE *pos_update = (PKT_ALL_POS_UPDATE *)packet;
 	for (int i = 0; i < MAX_PLAYERS; i++)
 	{
-		if (!pos_update->players_on_floor[i]) // If they're not on this floor
-		{
-            if(player_table[i] != UNASSIGNED) // If they previously existed but aren't on this floor
-            {
-			    destroy_entity(world, player_table[i]);
-			    player_table[i] = UNASSIGNED;
-            }
-            continue;
-		}
-        else if(player_table[i] == CLIENT_PLAYER)
+        if(i == controllable_playerNo)
 			continue;
 
-        else if(player_table[i] == UNASSIGNED) // They're on the floor but haven't yet been created
-            player_table[i] = create_player(world, pos_update->xPos[i], pos_update->yPos[i], false);
-
-		world->movement[player_table[i]].movX	= pos_update->xVel[i];
-		world->movement[player_table[i]].movY 	= pos_update->yVel[i];
-		world->position[player_table[i]].x		= pos_update->xPos[i];
-		world->position[player_table[i]].y		= pos_update->yPos[i];
-		world->position[player_table[i]].level	= pos_update->floor;
+		if(player_table[i] != UNASSIGNED)
+		{
+			world->movement[player_table[i]].movX	= pos_update->xVel[i];
+			world->movement[player_table[i]].movY 	= pos_update->yVel[i];
+			world->position[player_table[i]].x		= pos_update->xPos[i];
+			world->position[player_table[i]].y		= pos_update->yPos[i];
+			world->position[player_table[i]].level	= pos_update->floor;
+		}
 	}
 }
+
 
 /**
  * If this function is called, it means the current player got tagged.
@@ -208,22 +238,37 @@ void client_update_objectives(World *world, void *packet)
 void client_update_status(World *world, void *packet)
 {
 	PKT_GAME_STATUS *status_update = (PKT_GAME_STATUS *)packet;
-	unsigned int entity;
-	for(int i = 0; i < MAX_PLAYERS; ++i)
+
+	for(int i = 0; i < MAX_PLAYERS; i++)
 	{
-		if(!status_update->player_valid[i] || player_table[i] == CLIENT_PLAYER) // Don't update if they're not valid or it's our player
-			continue;
-		
-		if(player_table[i] == UNASSIGNED)
+		if(status_update->player_valid[i] == true)
 		{
-			entity 								= create_player(world, 0, 0, false);
-			world->player[entity].teamNo 		= status_update->otherPlayers_teams[i];
-			world->player[entity].playerNo 		= i + 1;
-			player_table[i] 					= entity;
-			strcpy(world->player[entity].name, status_update->otherPlayers_name[i]);
+			// if(status_update->otherPlayers_teams[i] == ROBBERS)
+			// {	
+				if(player_table[i] == UNASSIGNED) // They're on the floor but haven't yet been created
+		        {
+		            player_table[i] = create_player(world, 400, 600, false, COLLISION_HACKER, i);
+		            load_animation("assets/Graphics/player/robber/rob_animation.txt", world, player_table[i]);
+		        }
+			//}
+
+			// else if(status_update->otherPlayers_teams[i] == COPS)
+			// {
+				// if(player_table[i] == UNASSIGNED) // They're on the floor but haven't yet been created
+		  //       {
+		  //           player_table[i] = create_player(world, 400, 600, COLLISION_HACKER, false, i);
+		  //           load_animation("assets/Graphics/player/robber/rob_animation.txt", world, player_table[i]);
+		  //       }
+			//}
+		} 
+		else
+		{
+			if(player_table[i] != UNASSIGNED)
+			{
+				destroy_entity(world, player_table[i]);
+				player_table[i] = UNASSIGNED;
+			}
 		}
-		
-		world->player[entity].readyStatus = status_update->readystatus[i];
 	}
 }
 
@@ -247,10 +292,19 @@ int client_update_info(World *world, void *packet)
 	if(client_info->connect_code == CONNECT_CODE_DENIED)
 		return CONNECT_CODE_DENIED;
 
-	world->player[CLIENT_PLAYER].teamNo					= client_info->clients_team_number;
-	world->player[CLIENT_PLAYER].playerNo				= client_info->clients_player_number;
-	player_table[client_info->clients_player_number]	= CLIENT_PLAYER; // Or whatever the client's player entity is assigned
-	
+	for (int i = 0; i < MAX_ENTITIES; i++)
+	{
+		if (IN_THIS_COMPONENT(world->mask[i], COMPONENT_MOVEMENT | COMPONENT_POSITION | COMPONENT_PLAYER | COMPONENT_CONTROLLABLE))
+		{
+			world->player[i].teamNo							= client_info->clients_team_number;
+			world->player[i].playerNo						= client_info->clients_player_number;
+			controllable_playerNo 							= client_info->clients_player_number;
+			player_table[client_info->clients_player_number] = i;	
+		}
+	}
+
+	send_ready = 1;
+
 	return CONNECT_CODE_ACCEPTED;
 }
 

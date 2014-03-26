@@ -1,0 +1,43 @@
+=================Chat Server Design====================
+
+___Initiliasation___
+*	Create an epoll fd
+	[]	On fail, print error message and exit
+
+*	Create a listening socket
+	[]	On fail, close epoll fd and exit
+
+*	Put listening socket in epoll set using epoll_ctl
+
+*	Call epoll_wait
+
+___When epoll_wait returns___
+*	Check the socket (need to read about the epoll way of doing it)
+	[]	If it's accept socket, attempt to accept
+		(+)	if it succeeds, add the socket fd to the epoll fd
+		(+)	if it fails, print an error message but continue running
+	[]	Else, read the message
+		(+)	if it's invalid, print and send back an error message
+		(+)	else, send it to every other connected client
+			__	if one of these sends fails, print an error message and disconnect the client
+
+*	Call epoll_wait again
+
+=================Chat Client Design====================
+
+___Initialisation___
+
+
+We need at least two threads:
+*	One to listen for client input
+*	One to listen for network data
+
+=================Wrapper Functions=====================
+*	Create socket
+*	Resolve host name
+*	Add watched fd to epoll
+*	Cleanup (client and server)
+*	
+
+Design considerations:
+

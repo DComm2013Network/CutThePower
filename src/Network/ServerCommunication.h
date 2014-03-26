@@ -26,19 +26,29 @@
 #define ERR_NO_MEM        9  /**< malloc failed. */
 #define ERR_IPC_FAIL      10 /**< Writing or creating IPC failed. */
 #define ERR_NO_SEM        11 /**< Couldn't acquire a semaphore. */
-#define ERR_SOCK_RM       12 /**< Couldn't remove the socket from an SDL socket set. */
-#define ERR_NO_SOCK_SET   13 /**< Couldn't make an SDL socket set. */
-#define ERR_ROUTER_INIT   14 /**< The network router couldn't start for some reason. */
+#define ERR_NO_SOCK_SET   12 /**< Couldn't make an SDL socket set. */
+#define ERR_ROUTER_INIT   13 /**< The network router couldn't start for some reason. */
+#define ERR_SOCKSET_READ  14 /**< Something went wrong when checking an SDL socket set (should perror too). */ 
+
+#define INVALID_PACKET_TYPE    (uint32_t)-1 /**< The maximum int value. Indicates that a corrupted packet was received. */
+
+typedef struct cleanup_args
+{
+    SDLNet_SocketSet set;
+    TCPsocket tcp_sock;
+    UDPsocket udp_sock;
+} recv_cleanup_args;
 
 /* Thread functions */
 void *recv_thread_func(void *ndata);
+void recv_thread_clean(void *cleanup_args);
 void *send_thread_func(void *ndata);
 
 /* Socket send functions */
 int send_tcp(void * data, TCPsocket sock, uint32_t type);
 int send_udp(void * data, uint32_t * type, UDPsocket sock, uint32_t size);
 
-void* grab_send_packet(uint32_t *type, int fd, int * ret);
+void* grab_send_packet(uint32_t *type, int fd);
 
 /* Socket receive functions */
 int recv_udp (UDPsocket sock, UDPpacket *udp_packet);
@@ -50,7 +60,7 @@ int handle_udp_in(int router_pipe_fd, UDPsocket udp_sock);
 
 int get_protocol(uint32_t type);
 /* Socket creation and utilities */
-void close_connections(SDLNet_SocketSet set, TCPsocket tcpsock, UDPsocket udpsock);
+void free_sockset(SDLNet_SocketSet set, TCPsocket tcpsock, UDPsocket udpsock);
 TCPsocket initiate_tcp();
 UDPsocket initiate_udp(uint16_t port);
 UDPpacket *alloc_packet(uint32_t size);

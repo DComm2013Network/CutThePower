@@ -1,4 +1,0 @@
-2
-
-0	assets/floor2.bmp
-1	assets/wall2.bmp

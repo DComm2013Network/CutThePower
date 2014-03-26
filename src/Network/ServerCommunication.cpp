@@ -27,7 +27,8 @@
 extern uint32_t packet_sizes[NUM_PACKETS];
 static int cnt_errno = -1;
 extern sem_t err_sem;
-static uint64_t tcp_seq_num = 0;
+static uint64_t tcp_seq_num = 1;
+extern int send_failure_fd;
 
 /**
  * Monitors sockets to receive data from the server.
@@ -46,7 +47,6 @@ static uint64_t tcp_seq_num = 0;
  * @author   Shane Spoor
  *
  * @date February 16, 2014
- *
  */
  void *recv_thread_func(void *ndata)
  {
@@ -54,164 +54,90 @@ static uint64_t tcp_seq_num = 0;
  	int 				numready;
  	SDLNet_SocketSet 	set = make_socket_set(2, recv_data->tcp_sock, recv_data->udp_sock);
 	int 				res = 0;
- 	if(!set)
+    recv_cleanup_args   *clean_args;
+
+    if(!set)
+    {
+        uint32_t err = NUM_PACKETS + 1;
+        write_pipe(recv_data->write_pipe, &err, sizeof(err));
  		return NULL;
- 	
+    }
+
+ 	clean_args = (recv_cleanup_args *)malloc(sizeof(recv_cleanup_args));
+    if(!clean_args)
+    {
+        uint32_t err = NUM_PACKETS + 1;
+        set_error(ERR_NO_MEM);
+        write_pipe(recv_data->write_pipe, &err, sizeof(err));
+        free_sockset(set, recv_data->tcp_sock, recv_data->udp_sock);
+ 		return NULL;
+    }
+    clean_args->set = set;
+    clean_args->tcp_sock = recv_data->tcp_sock;
+    clean_args->udp_sock = recv_data->udp_sock;
+    pthread_cleanup_push(&recv_thread_clean, clean_args);
+
  	while(1)
  	{
- 		if((numready = check_sockets(set)) == -1)
+ 		if((numready = check_sockets(set)) == -1) // write error message to router
         {
-            // write error message to the network router
+            uint32_t err = NUM_PACKETS + 1;
+            write_pipe(recv_data->write_pipe, &err, sizeof(err));
      	    break;
         }
  
         else if(numready == 0) // Timed out; tell network router to check if server is down
         {
-            
+            int oldstate;
+            uint32_t type = P_KEEPALIVE;
+            pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &oldstate);
+            write_pipe(recv_data->write_pipe, &type, sizeof(uint32_t));
+            pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, &oldstate);
         }
 
 		else
 		{
+            int oldstate;
+            pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &oldstate);
+
 			if(SDLNet_SocketReady(recv_data->tcp_sock))
 			{
 				if((res = handle_tcp_in(recv_data->write_pipe, recv_data->tcp_sock)) == -1)
-				{
                     break;
-                }
-                if(res == -2)
-                {
-                	continue;
-            	}	
             }
 
     		if(SDLNet_SocketReady(recv_data->udp_sock))
     		{
 				if((res = handle_udp_in(recv_data->write_pipe, recv_data->udp_sock)) == -1)
-				{
                     break;
-                }
-                if(res == -2)
-                {
-                	continue;
-				}
-			}
+            }
+            pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, &oldstate);
     	}
  	}
-
-    SDLNet_FreeSocketSet(set);
+    pthread_cleanup_pop(1); // Calls the cleanup handler
     return NULL;
 }
 
 /**
- * Sends data received from the network router pipe to the server.
- * 
- * The thread gets the data from the pipe and determines the protocol (UDP or TCP)
- * to use, then sends the packet on corresponding socket.
+ * Cleans up the receive thread.
  *
- * @param[in] ndata NETWORK_DATA containing a tcp socket, udp socket and a file
- *                  descriptor to the network router send pipe.
+ * @param[in, out] cleanup_args Contains the socket set to be freed.
  *
- * @return  NULL upon termination
+ * @designer Shane Spoor
+ * @author   Shane Spoor
  *
- * @designer Ramzi Chennafi
- * @author   Ramzi Chennafi
- * 
- * @date Febuary 13 2014
+ * @date March 14th
  */
-void* send_thread_func(void* ndata){
-
-	NDATA snd_data = (NDATA) ndata;
-
-	int protocol = 0;
-	uint32_t type = 0;
-	void * data;
-	int ret = -1;
-
-	while(1){	
-    	data = grab_send_packet(&type, snd_data->read_pipe, &ret);
-    	if(ret != 1){
-			continue;
-		}
-		
-		protocol = get_protocol(type);
-		if(protocol == TCP)
-		{
-			send_tcp(&type, snd_data->tcp_sock, sizeof(uint32_t));
-			send_tcp(data, snd_data->tcp_sock, packet_sizes[type - 1]);
-		}
-		else if(protocol == UDP)
-		{
-			send_udp(data, &type, snd_data->udp_sock, packet_sizes[type - 1] + sizeof(uint32_t));
-		}
-	}
-	return NULL;
-}
-
-/**
- * Sends the packet data over the established TCP connection.
- *
- * @param[in] data Pointer to the data packet to send over TCP.
- * @param[in] sock The socket on which to send the data.
- * @param[in] size The size of the packet being sent.
- *
- * @return <ul>
- *              <li>Returns 0 on success.</li>
- *				<li>Returns -1 if there's an error on send.</li>
- *          </ul> 
- *
- * @designer Ramzi Chennafi
- * @author   Ramzi Chennafi
- *
- * @date January 20, 2014
- */
-int send_tcp(void * data, TCPsocket sock, uint32_t size){
-
-	int result=SDLNet_TCP_Send(sock, data, size);
-	if(result <= 0) {
-    	fprintf(stderr, "SDLNet_TCP_Send: %s\n", SDLNet_GetError());
-    	return -1;
-	}
-
-	return 0;
-}
-
-/**
- * Sends the specified data over a UDP socket.
- *
- * Allocates the UDP packet, sends it, and frees the packet upon completion.
- * If sending the packet was unsuccessful, the function prints an error message.
- *
- * @param[in] data Pointer to the data packet to send over UDP.
- * @param[in] type The type of packet to send.
- * @param[in] sock The socket on which to send the data.
- * @param[in] size The size of the packet.
- *
- * @return <ul>
- *              <li>Returns 0 on success.</li>
- *				<li>Returns -1 if there's an error on send.</li>
- *         </ul>
- *
- * @designer Ramzi Chennafi
- * @author   Ramzi Chennafi
- *
- * @date Febuary 15, 2014
- */
-int send_udp(void * data, uint32_t * type, UDPsocket sock, uint32_t size){
-
-	int numsent;
-	UDPpacket *pktdata = alloc_packet(size);
-	memcpy(pktdata->data, type, sizeof(uint32_t));
-	memcpy(pktdata->data + sizeof(uint32_t), data, size - sizeof(uint32_t));
-	pktdata->len = size;
-
-	numsent=SDLNet_UDP_Send(sock, pktdata->channel, pktdata);
-	if(numsent < 0) {
-    	fprintf(stderr,"SDLNet_UDP_Send: %s\n", SDLNet_GetError());
-    	return -1;
-	}
-
-	SDLNet_FreePacket(pktdata);
-	return 0;
+void recv_thread_clean(void *cleanup_args)
+{
+    recv_cleanup_args *args = (recv_cleanup_args *)cleanup_args;
+ 
+    free_sockset(args->set, args->tcp_sock, args->udp_sock);
+    if(args->tcp_sock)
+        SDLNet_TCP_Close(args->tcp_sock);
+    if(args->udp_sock);
+        SDLNet_UDP_Close(args->udp_sock);
+    free(cleanup_args);
 }
 
 /**
@@ -237,39 +163,17 @@ int handle_tcp_in(int router_pipe_fd, TCPsocket tcp_sock)
     uint64_t timestamp;
     
     if((game_packet = recv_tcp_packet(tcp_sock, &packet_type, &timestamp)) == NULL)
-    {
-        // if(packet_type != P_KEEPALIVE)
-        // {
-            if(cnt_errno == ERR_TCP_RECV_FAIL)
-            {
-                fprintf(stderr, "Failure in TCP receive : %s \n", SDLNet_GetError());
-                return -1;
-            }
+        return (packet_type == P_KEEPALIVE) - 1; // If it's a keep alive, ignore and return 0. 
 
-            if(cnt_errno == ERR_CONN_CLOSED)
-            {
-                fprintf(stderr, "Server closed the connection.\n");
-                //close_connections(set, recv_data->tcp_sock, recv_data->udp_sock);
-                return -1;
-            }
-
-
-	        if(cnt_errno == ERR_CORRUPTED)
-	        {
-	        	return -2;
-	        }
-        //}
-        // else if(write_pipe(router_pipe_fd, &packet_type, sizeof(packet_type)) == -1)
-        //     return -1;
-    }
-    
-    printf("Received TCP packet: %u\n", packet_type);
     if(write_packet(router_pipe_fd, packet_type, game_packet) == -1 ||
         write_pipe(router_pipe_fd, &timestamp, sizeof(timestamp)) == -1)
     {
-        fprintf(stderr, "TCP>Router: Error in write packet, flushing pipe");
-        fflush((FILE*)&router_pipe_fd);
+        fprintf(stderr, "handle_tcp_in: Error in write packet\n");
+        set_error(ERR_IPC_FAIL);
+        free(game_packet);
+        return -1;
 	}
+
     free(game_packet);
     return 0;
 }
@@ -289,7 +193,6 @@ int handle_tcp_in(int router_pipe_fd, TCPsocket tcp_sock)
  * @author   Shane Spoor
  *
  * @date March 12, 2014
- *
  */
 int handle_udp_in(int router_pipe_fd, UDPsocket udp_sock)
 {
@@ -298,24 +201,15 @@ int handle_udp_in(int router_pipe_fd, UDPsocket udp_sock)
     uint64_t timestamp;
 
     if((game_packet = recv_udp_packet(udp_sock, &packet_type, &timestamp)) == NULL)
-    {
-        if(cnt_errno == ERR_UDP_RECV_FAIL)
-        {
-            fprintf(stderr, "Failure in UDP receive: %s ", SDLNet_GetError());
-            return -1;
-        }
+        return (packet_type == INVALID_PACKET_TYPE) - 1; // If it's a corrupted packet, that's fine; return 0
 
-        if(cnt_errno == ERR_CORRUPTED)
-        {
-        	return -2;
-        }
-    }
-    printf("Received UDP packet: %u\n", packet_type);	
     if(write_packet(router_pipe_fd, packet_type, game_packet) == -1 ||
         write_pipe(router_pipe_fd, &timestamp, sizeof(timestamp)) == -1)
     {
-        fprintf(stderr, "UDP>Router: Error in write packet, flushing pipe");
-        fflush((FILE*)&router_pipe_fd);
+        fprintf(stderr, "handle_udp_in: Error in write packet\n");
+        set_error(ERR_IPC_FAIL);
+        free(game_packet);
+        return -1;
     }
     free(game_packet);
     return 0;
@@ -342,20 +236,11 @@ int handle_udp_in(int router_pipe_fd, UDPsocket udp_sock)
 void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp)
 {
 	void     *packet;
-	int      numread;
     uint32_t packet_size;
 
-	numread = recv_tcp(sock, packet_type, sizeof(uint32_t));
-	if(numread < 0){
-		set_error(ERR_TCP_RECV_FAIL);
-		return NULL;
-	}
-
-	if(numread == 0){
-		set_error(ERR_CONN_CLOSED);
-		return NULL;
-	}
-
+	if(recv_tcp(sock, packet_type, sizeof(uint32_t)) == -1)
+        return NULL;
+	
     if(*packet_type == P_KEEPALIVE)
         return NULL;
 
@@ -363,11 +248,11 @@ void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 	{
 		fprintf(stderr, "recv_tcp_packet: Received Invalid Packet Type!\n");
 		set_error(ERR_CORRUPTED);
+        *packet_type = INVALID_PACKET_TYPE; // set this to a known invalid value
 		return NULL; 
 	}
 
 	packet_size = packet_sizes[(*packet_type) - 1];
-
 	if((packet = malloc(packet_size)) == NULL)
 	{
 		perror("recv_ tcp_packet: malloc");
@@ -375,7 +260,7 @@ void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 		return NULL;
 	}
 
-	numread = recv_tcp(sock, packet, packet_size);
+	recv_tcp(sock, packet, packet_size);
 	*timestamp = tcp_seq_num++;
 	return packet;
 }
@@ -411,8 +296,6 @@ void *recv_udp_packet(UDPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 	uint32_t  packet_size;
     UDPpacket *pktdata = SDLNet_AllocPacket(MAX_UDP_RECV + sizeof(*packet_type) + sizeof(*timestamp));
 
-	*packet_type = 1;
-
 	if(recv_udp(sock, pktdata) == -1)
 		return NULL;
 
@@ -420,7 +303,8 @@ void *recv_udp_packet(UDPsocket sock, uint32_t *packet_type, uint64_t *timestamp
     if(*packet_type < 1 || *packet_type > NUM_PACKETS) // Impossible packet type; packet is corrupted
     {
 		fprintf(stderr, "recv_udp_packet: Received Invalid Packet Type!\n");
-        cnt_errno = ERR_CORRUPTED;
+        set_error(ERR_CORRUPTED);
+        *packet_type = INVALID_PACKET_TYPE; // set this to a known invalid value
         return NULL;
     }
 
@@ -429,7 +313,8 @@ void *recv_udp_packet(UDPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 
 	if(!packet)
 	{
-		cnt_errno = errno; // For printing later
+        perror("recv_udp_packet: malloc");
+		set_error(ERR_NO_MEM); 
 		return NULL;
 	}
 	
@@ -463,14 +348,16 @@ int recv_tcp(TCPsocket sock, void *buf, size_t bufsize)
 	if(numread == -1)
 	{
     	fprintf(stderr, "SDLNet_TCP_Recv: %s\n", SDLNet_GetError());
-    	return cnt_errno = ERR_TCP_RECV_FAIL;
+        set_error(ERR_TCP_RECV_FAIL);
+    	return -1;
 	}
 	else if(numread == 0){
         fprintf(stderr, "recv_tcp: Connection closed or reset.\n");
-		return cnt_errno = ERR_CONN_CLOSED;
+        set_error(ERR_CONN_CLOSED);
+		return -1;
 	}
 	
-	return numread;
+	return 0;
 }
 
 /**
@@ -491,12 +378,148 @@ int recv_udp (UDPsocket sock, UDPpacket *udp_packet)
 	if(SDLNet_UDP_Recv(sock, udp_packet) == -1)
 	{
 		fprintf(stderr, "SDLNet_UDP_Recv: %s\n", SDLNet_GetError());
-        cnt_errno = ERR_UDP_RECV_FAIL;
+        set_error(ERR_UDP_RECV_FAIL);
 		return -1;
 	}
 	
 	return 0;
 }
+
+
+/**
+ * Frees the socket set upon cancellation of the receive thread.
+ *
+ * Sends data received from the network router pipe to the server.
+ * 
+ * The thread gets the data from the pipe and determines the protocol (UDP or TCP)
+ * to use, then sends the packet on corresponding socket.
+ *
+ * @param[in] ndata NETWORK_DATA containing a tcp socket, udp socket and a file
+ *                  descriptor to the network router send pipe.
+ *
+ * @return  NULL upon termination
+ *
+ * @designer Ramzi Chennafi
+ * @author   Ramzi Chennafi
+ * 
+ * @date Febuary 13 2014
+ */
+void* send_thread_func(void* ndata){
+
+	NDATA snd_data = (NDATA) ndata;
+
+	int protocol = 0;
+	uint32_t type = 0;
+	void * data;
+	uint64_t error = 1;
+
+	while(1){	
+    	data = grab_send_packet(&type, snd_data->read_pipe);
+    	if(data == NULL){
+            write(send_failure_fd, &error, sizeof(uint64_t));
+            break;
+		}
+		
+		protocol = get_protocol(type);
+		if(protocol == TCP)
+		{
+			if(send_tcp(&type, snd_data->tcp_sock, sizeof(uint32_t)) == -1)
+            {
+                fprintf(stderr, "Failed to send packet type over TCP.\n");
+                write(send_failure_fd, &error, sizeof(uint64_t));
+                break;
+            }
+			if(send_tcp(data, snd_data->tcp_sock, packet_sizes[type - 1]) == -1)
+            {
+                fprintf(stderr, "Failed to send packet over TCP.\n");
+                write(send_failure_fd, &error, sizeof(uint64_t));
+                break;
+            }
+		}
+		else if(protocol == UDP)
+		{
+			if(send_udp(data, &type, snd_data->udp_sock, packet_sizes[type - 1] + sizeof(uint32_t)) == -1)
+            {
+                fprintf(stderr, "Failed to send packet over UDP.\n");
+                write(send_failure_fd, &error, sizeof(uint64_t));
+                break;
+            }
+		}
+	}
+
+    free(data);
+	return NULL;
+}
+
+/**
+ * Sends the packet data over the established TCP connection.
+ *
+ * @param[in] data Pointer to the data packet to send over TCP.
+ * @param[in] sock The socket on which to send the data.
+ * @param[in] size The size of the packet being sent.
+ *
+ * @return <ul>
+ *              <li>Returns 0 on success.</li>
+ *				<li>Returns -1 if there's an error on send.</li>
+ *          </ul> 
+ *
+ * @designer Ramzi Chennafi
+ * @author   Ramzi Chennafi
+ *
+ * @date January 20, 2014
+ */
+int send_tcp(void * data, TCPsocket sock, uint32_t size){
+
+	int result=SDLNet_TCP_Send(sock, data, size);
+	if(result <= 0) {
+    	fprintf(stderr, "SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+        set_error(ERR_TCP_SEND_FAIL);
+    	return -1;
+	}
+
+	return 0;
+}
+
+/**
+ * Sends the specified data over a UDP socket.
+ *
+ * Allocates the UDP packet, sends it, and frees the packet upon completion.
+ * If sending the packet was unsuccessful, the function prints an error message.
+ *
+ * @param[in] data Pointer to the data packet to send over UDP.
+ * @param[in] type The type of packet to send.
+ * @param[in] sock The socket on which to send the data.
+ * @param[in] size The size of the packet.
+ *
+ * @return <ul>
+ *              <li>Returns 0 on success.</li>
+ *				<li>Returns -1 if there's an error on send.</li>
+ *         </ul>
+ *
+ * @designer Ramzi Chennafi
+ * @author   Ramzi Chennafi
+ *
+ * @date Febuary 15, 2014
+ */
+int send_udp(void * data, uint32_t * type, UDPsocket sock, uint32_t size){
+
+    int numsent;
+    UDPpacket *pktdata = alloc_packet(size);
+    memcpy(pktdata->data, type, sizeof(uint32_t));
+    memcpy(pktdata->data + sizeof(uint32_t), data, size - sizeof(uint32_t));
+    pktdata->len = size;
+    pktdata->channel = 0;
+
+    numsent=SDLNet_UDP_Send(sock, pktdata->channel, pktdata);
+    if(numsent < 0) {
+        fprintf(stderr,"SDLNet_UDP_Send: %s\n", SDLNet_GetError());
+        return -1;
+    }
+
+    SDLNet_FreePacket(pktdata);
+    return 0;
+}
+
 
 /**
  * Grabs the first packet on the pipe to be sent by the send thread.
@@ -512,21 +535,30 @@ int recv_udp (UDPsocket sock, UDPpacket *udp_packet)
  *
  * @date Febuary 20 2014
  */
-void *grab_send_packet(uint32_t *type, int fd, int *ret){
+void *grab_send_packet(uint32_t *type, int fd){
 
 	*type = read_type(fd);
-	if(*type >= 90){
-		*ret = -1;
+	if(*type >= 90)
+    {
+        set_error(ERR_IPC_FAIL);
 		return NULL;
 	}
 
 	uint32_t size = packet_sizes[*type - 1];
 
 	void * data = (void*) malloc(sizeof(size));
+    if(data == NULL)
+    {
+        set_error(ERR_NO_MEM);
+        return NULL;
+    }
 
 	data = read_packet(fd, size); // reads data
-
-	*ret = 1;
+    if(data == NULL)
+    {
+        set_error(ERR_IPC_FAIL);
+        return NULL;
+    }
 
 	return data;
 }
@@ -691,6 +723,9 @@ int get_protocol(uint32_t type)
  * If removing either or both of the sockets fails, the function prints
  * an error message.
  *
+ * Revisions:
+ *   -# Shane Spoor - March 14th - Function does not close sockets, just deletes set
+ *
  * @param[in] set     The set to free.
  * @param[in] tcpsock The TCP socket to close.
  * @param[in] udpsock The UDP socket to close.
@@ -700,21 +735,18 @@ int get_protocol(uint32_t type)
  *
  * @date Febuary 21, 2014
  */
-void close_connections(SDLNet_SocketSet set, TCPsocket tcpsock, UDPsocket udpsock)
+void free_sockset(SDLNet_SocketSet set, TCPsocket tcpsock, UDPsocket udpsock)
 {
 	int numused;
 
 	numused=SDLNet_UDP_DelSocket(set,udpsock);
 	if(numused==-1) {
-	    printf("SDLNet_DelSocket: %s\n", SDLNet_GetError());
+	    fprintf(stderr, "SDLNet_DelSocket: %s\n", SDLNet_GetError());
 	}
 	numused=SDLNet_TCP_DelSocket(set,tcpsock);
 	if(numused==-1) {
-	    printf("SDLNet_DelSocket: %s\n", SDLNet_GetError());
+	    fprintf(stderr, "SDLNet_DelSocket: %s\n", SDLNet_GetError());
 	}
-
-	SDLNet_TCP_Close(tcpsock);
-	SDLNet_UDP_Close(udpsock);
 }
 
 /**
@@ -764,24 +796,24 @@ const char *get_error_string()
 {
     int err;
     static const char *error_strings[] = {
-        "Could not open the connection.",
-        "The server closed the connection.",
-        "Failed to receive TCP data.",
-        "Failed to receive a UDP packet.",
-        "Failed to send TCP data.",
-        "Failed to send a UDP packet.",
-        "Received corrupted data.",
-        "The remote host could not be resolved. Ensure the host name or IP address is valid.",
-        "The program could not allocate enough memory.",
-        "Could not write to a pipe.",
-        "Could not acquire a semaphore.",
-        "Could not remove socket from socket set.",
-        "Could not allocate a socket set.",
-        "Network router thread failed to initialise."  
+        "Could not open the connection.\n",
+        "The server closed the connection.\n",
+        "Failed to receive TCP data.\n",
+        "Failed to receive a UDP packet.\n",
+        "Failed to send TCP data.\n",
+        "Failed to send a UDP packet.\n",
+        "Received corrupted data.\n",
+        "The remote host could not be resolved. Ensure the host name or IP address is valid.\n",
+        "The program could not allocate enough memory.\n",
+        "IPC failure: could not create or write to IPC, or read invalid data.\n",
+        "Could not acquire a semaphore.\n",
+        "Could not allocate a socket set.\n",
+        "Network router thread failed to initialise.\n",
+        "Error reading the socket set.\n"
     };
 
     if(sem_wait(&err_sem) == -1)
-        return error_strings[(ERR_NO_SEM * -1) - 1];
+        return error_strings[ERR_NO_SEM - 1];
     else
     {
         err = cnt_errno;
@@ -789,8 +821,8 @@ const char *get_error_string()
         if(!err)
             return NULL;
 
-        err *= -1;
         err -= 1;
         return error_strings[err];
     }
-}    
+}
+
