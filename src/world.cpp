@@ -302,6 +302,11 @@ unsigned int create_stair(World* world, int targetLevel, int targetX, int target
 	collision.radius = 0;
 	
 	for(entity = 0; entity < MAX_ENTITIES; ++entity) {
+		tempMask = world->mask[entity] & COMPONENT_POSITION;
+		if (tempMask == COMPONENT_MOVEMENT) {
+			lastID = world->collision[entity].id;
+		}
+		
 		if (world->mask[entity] == COMPONENT_EMPTY) {
 			world->mask[entity] =	COMPONENT_POSITION | 
 									COMPONENT_COLLISION | 
@@ -315,6 +320,23 @@ unsigned int create_stair(World* world, int targetLevel, int targetX, int target
 		}
 	}
 	return MAX_ENTITIES;
+}
+
+unsigned int create_block(World* world, int x, int y, int width, int height, int level) {
+	unsigned int entity = create_entity(world, COMPONENT_POSITION | COMPONENT_COLLISION);
+	world->position[entity].x = x;
+	world->position[entity].y = y;
+	world->position[entity].width = width;
+	world->position[entity].height = height;
+	world->position[entity].level = level;
+	
+	world->collision[entity].id = 0;
+	world->collision[entity].type = COLLISION_WALL;
+	world->collision[entity].timer = 0;
+	world->collision[entity].timerMax = 0;
+	world->collision[entity].active = true;
+	world->collision[entity].radius = 0;
+	return entity;
 }
 
 /**

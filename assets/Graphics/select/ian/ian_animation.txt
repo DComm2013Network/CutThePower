@@ -1,6 +1,0 @@
-1
-
-ian 3 40 -1 1                        
-assets/Graphics/objects/select/ian/ian_1.png
-assets/Graphics/objects/select/ian/ian_2.png
-assets/Graphics/objects/select/ian/ian_3.png

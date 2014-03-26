@@ -16,7 +16,7 @@
 #include "systems.h"
 #include "../sound.h"
 
-SDL_Surface *map_surface; /**< The surface on which to render the map. */
+SDL_Surface *map_surface = 0; /**< The surface on which to render the map. */
 SDL_Rect map_rect;        /**< The rectangle containing the map. */
 int w;                    /**< The map's width. */
 int h;                    /**< The map's height. */
@@ -68,6 +68,10 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 	char *tile_filename = (char*)malloc(sizeof(char) * 128);
 	
 	SDL_Rect tile_rect;
+	
+	if (map_surface != 0) {
+		SDL_FreeSurface(map_surface);
+	}
 	
 	//load tiles
 	if ((fp_tiles = fopen(file_tiles, "r")) == 0) {
@@ -188,7 +192,13 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 					return -1;
 				}
 				
-				entity = create_stair(world, floor, targetX * TILE_WIDTH + TILE_WIDTH / 2, targetY * TILE_HEIGHT + TILE_WIDTH / 2, x * TILE_WIDTH + TILE_WIDTH / 2, y * TILE_HEIGHT + TILE_HEIGHT / 2, TILE_WIDTH, TILE_HEIGHT, level);
+				create_stair(world, floor, targetX * TILE_WIDTH + TILE_WIDTH / 2, targetY * TILE_HEIGHT + TILE_HEIGHT / 2, x * TILE_WIDTH + TILE_WIDTH / 2, y * TILE_HEIGHT + TILE_HEIGHT / 2, TILE_WIDTH, TILE_HEIGHT, level);
+				
+				printf("mx: %d\n", x * TILE_WIDTH);
+				printf("my: %d\n", y * TILE_HEIGHT);
+				printf("mw: %d\n", TILE_WIDTH);
+				printf("mh: %d\n", TILE_HEIGHT);
+				
 				
 				//printf("tx: %i, ty: %i\n", targetX, targetY);
 				//printf("Create stair entity %d\n", entity);
@@ -197,11 +207,12 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 			else if (strcmp(entity_type, "object") == 0) { //animated objects
 				
 				unsigned int entity;
-				int x, y, w, h;
+				float x, y;
+				int w, h;
 				char *animation_name = (char*)malloc(sizeof(char) * 64);
 				char *animation_filename = (char*)malloc(sizeof(char) * 64);
 				
-				if (fscanf(fp_map, "%d %d %d %d %s %s", &x, &y, &w, &h, animation_filename, animation_name) != 6) {
+				if (fscanf(fp_map, "%f %f %d %d %s %s", &x, &y, &w, &h, animation_filename, animation_name) != 6) {
 					printf("Error loading object!\n");
 					return -1;
 				}

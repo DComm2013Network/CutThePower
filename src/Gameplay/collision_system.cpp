@@ -186,6 +186,26 @@ int entity_collision(World *world, PositionComponent entity, int entityID) {
 	return -1;
 }
 
+int tag_entity_collision(World *world, PositionComponent entity, int entityID) {
+	int i = 0;
+	int range = 5;
+	//entity.x += entity.width / 2;
+	//entity.y += entity.height / 2;
+	for (i = 0; i < MAX_ENTITIES; i++) {
+		if (i != entityID && IN_THIS_COMPONENT(world->mask[i], COLLISION_MASK)) {
+			if (entity.x + entity.width / 2 - (1 + range) > world->position[i].x - world->position[i].width / 2 + (1 + range) &&
+				entity.x - entity.width / 2 + (1 + range) < world->position[i].x + world->position[i].width / 2 - (1 + range) &&
+				entity.y + entity.height / 2 - (1 + range) > world->position[i].y - world->position[i].height / 2 + (1 + range) &&
+				entity.y - entity.height / 2 + (1 + range) < world->position[i].y + world->position[i].height / 2 + (1 + range)
+				&& world->collision[i].active) {
+				return i;
+			}
+		}
+	}
+
+	return -1;
+}
+
 int handle_entity_collision(World *world, int entityIndex) {
 	if (world->collision[entityIndex].active) {
 		return world->collision[entityIndex].type;

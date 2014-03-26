@@ -1,0 +1,31 @@
+29
+
+00	assets/Graphics/map/map_00/00_40px.bmp		0
+01	assets/Graphics/map/map_00/01_40px.bmp		0
+02	assets/Graphics/map/map_00/02_40px.bmp		0
+03	assets/Graphics/map/map_00/03_40px.bmp		2
+04	assets/Graphics/map/map_00/04_40px.bmp		2
+05	assets/Graphics/map/map_00/05_40px.bmp		2
+06	assets/Graphics/map/map_00/06_40px.bmp		2
+07	assets/Graphics/map/map_00/07_40px.bmp		2
+08	assets/Graphics/map/map_00/08_40px.bmp		2
+09	assets/Graphics/map/map_00/09_40px.bmp		2
+10	assets/Graphics/map/map_00/10_40px.bmp		2
+11	assets/Graphics/map/map_00/11_40px.bmp		2
+12	assets/Graphics/map/map_00/12_40px.bmp		2
+13	assets/Graphics/map/map_00/13_40px.bmp		2
+14	assets/Graphics/map/map_00/14_40px.bmp		2
+15	assets/Graphics/map/map_00/15_40px.bmp		2
+16	assets/Graphics/map/map_00/16_40px.bmp		2
+17	assets/Graphics/map/map_00/17_40px.bmp		2
+18	assets/Graphics/map/map_00/18_40px.bmp		2
+19	assets/Graphics/map/map_00/19_40px.bmp		2
+20	assets/Graphics/map/map_00/20_40px.bmp		2
+21	assets/Graphics/map/map_00/wood_topleft.bmp	1
+22	assets/Graphics/map/map_00/wood_midleft.bmp	1
+23	assets/Graphics/map/map_00/wood_botleft.bmp	1
+24	assets/Graphics/map/map_00/wood_mid1.bmp	1
+25	assets/Graphics/map/map_00/wood_mid2.bmp	1
+26	assets/Graphics/map/map_00/wood_mid3.bmp	1
+27	assets/Graphics/map/map_00/00_40px.bmp		1
+28	assets/Graphics/map/map_00/stairsupleft.bmp	1
