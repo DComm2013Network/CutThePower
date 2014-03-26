@@ -36,14 +36,14 @@ static unsigned int *player_table = NULL; /**< A lookup table mapping server pla
  * @designer Clark Allenby
  * @author Shane Spoor
  */
-void client_update_system(World *world, int net_pipe) {
+int client_update_system(World *world, int net_pipe) {
 	void* 		packet;
 	uint32_t 	type;
 	uint32_t 	num_packets;
 	uint64_t	signal = 1;
 	uint64_t 	sem_buf;
 	unsigned	i;
-
+	int 		floor_changed = 0;
 	if(!player_table)
 	{
 		player_table = (unsigned int *)malloc(sizeof(unsigned int) * MAX_PLAYERS);
@@ -51,7 +51,7 @@ void client_update_system(World *world, int net_pipe) {
 	}
 
     if(!network_ready) // Don't try to read the pipe until the network module has been initialised
-        return;
+        return -3;
 
 	write(game_net_signalfd, &signal, sizeof(uint64_t));
 	num_packets = read_type(net_pipe); // the function just reads a 32 bit value, so this works; semantically, not ideal
@@ -69,7 +69,7 @@ void client_update_system(World *world, int net_pipe) {
         }
         memset(player_table, 255, MAX_PLAYERS * sizeof(uint32_t));
         network_ready = 0;
-        return;
+        return - 2;
     }
 
 	for(i = 0; i < num_packets; ++i)
@@ -84,7 +84,7 @@ void client_update_system(World *world, int net_pipe) {
 			case P_CONNECT:
 				if(client_update_info(world, packet) == CONNECT_CODE_DENIED)
 				{
-					return; // Pass error up to someone else to deal with
+					return -1; // Pass error up to someone else to deal with
 				}
 				break;
 			case G_STATUS:
@@ -108,6 +108,7 @@ void client_update_system(World *world, int net_pipe) {
 				break;
 			case P_FLOOR_MOVE:
 				client_update_floor(world, packet);
+				floor_changed = 1;
 				game_ready++;
 				break;
 			case P_TAGGING:
@@ -118,6 +119,8 @@ void client_update_system(World *world, int net_pipe) {
 		}
 		free(packet);
 	}
+
+	return floor_changed;
 }
 void client_update_chat(World *world, void *packet)
 {
