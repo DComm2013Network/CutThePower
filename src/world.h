@@ -44,5 +44,6 @@ unsigned int create_target(World* world, int x, int y, int collisiontype);
 unsigned int create_block(World* world, int x, int y, int width, int height, int level);
 void destroy_entity(World* world, const unsigned int entity);
 void destroy_world(World *world);
+void destroy_world_not_player(World *world);
 
 #endif

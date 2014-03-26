@@ -417,5 +417,14 @@ void destroy_world(World *world) {
 	memset(world, 0, sizeof(World));
 }
 
+void destroy_world_not_player(World *world) {
+	unsigned int entity;
+	
+	for(entity = 0; entity < MAX_ENTITIES; entity++) {
+		if(!IN_THIS_COMPONENT(world->mask[entity], COMPONENT_PLAYER))
+			destroy_entity(world, entity);
+	}
+	memset(world, 0, sizeof(World));
+}
 
 
