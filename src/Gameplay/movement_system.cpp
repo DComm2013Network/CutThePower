@@ -168,8 +168,6 @@ void handle_entity_collision(CollisionData data, World * world, int curEntityID)
 	case COLLISION_STAIR:
 		if (world->collision[curEntityID].type == COLLISION_HACKER || world->collision[curEntityID].type == COLLISION_GUARD) {
 			int targx = world->wormhole[data.entityID].targetX, targy = world->wormhole[data.entityID].targetY, targl = world->wormhole[data.entityID].targetLevel;
-			character_t character = world->player[curEntityID].character;
-			
 			
 			move_request(world, send_router_fd[WRITE_END], targl, targx, targy);
 			//COMMENT THIS OUT IF YOU WANT TO CHANGE FLOORS ON SINGLEPLAYER

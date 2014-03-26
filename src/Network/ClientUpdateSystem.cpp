@@ -21,6 +21,7 @@ static int controllable_playerNo;
 extern int game_net_signalfd;
 extern int network_ready;
 static unsigned int *player_table = NULL; /**< A lookup table mapping server player numbers to client entities. */
+//extern floor_move_flag;
 
 /**
  * Receives all updates from the server and applies them to the world.
@@ -145,7 +146,7 @@ void client_update_floor(World *world, void *packet)
 	PKT_FLOOR_MOVE* floor_move = (PKT_FLOOR_MOVE*)packet;
 	for (int i = 0; i < MAX_PLAYERS; i++)
 	{
-		if(player_table[i] == CLIENT_PLAYER)
+		if(i == controllable_playerNo)
 		{
 			world->position[player_table[i]].x		= floor_move->xPos;
 			world->position[player_table[i]].y		= floor_move->yPos;

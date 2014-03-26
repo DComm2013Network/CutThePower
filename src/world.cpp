@@ -424,7 +424,6 @@ void destroy_world_not_player(World *world) {
 		if(!IN_THIS_COMPONENT(world->mask[entity], COMPONENT_PLAYER))
 			destroy_entity(world, entity);
 	}
-	memset(world, 0, sizeof(World));
 }
 
 

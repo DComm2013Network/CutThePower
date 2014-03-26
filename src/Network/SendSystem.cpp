@@ -98,6 +98,9 @@ void move_request(World * world, int fd, floorNo_t floor, pos_t xpos, pos_t ypos
 			pkt->desired_floor = floor;
 			pkt->desired_xPos = xpos;
 			pkt->desired_yPos = ypos;
+			// world->player[j].xPos = xpos;
+			// world->player[j].yPos = ypos;
+			// world->position[j].level = floor;
 			break;
 		}
 	}	
