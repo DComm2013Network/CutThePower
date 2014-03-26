@@ -190,7 +190,7 @@ void client_update_pos(World *world, void *packet)
 				world->mask[player_table[i]] &= ~(COMPONENT_RENDER_PLAYER | COMPONENT_COLLISION); // If the player is no longer on the floor, turn off render and collision
 				continue;
 			}
-			world->mask[player_table[i]] &= COMPONENT_RENDER_PLAYER | COMPONENT_COLLISION;
+			world->mask[player_table[i]] |= COMPONENT_RENDER_PLAYER | COMPONENT_COLLISION;
 			world->movement[player_table[i]].movX	= pos_update->xVel[i];
 			world->movement[player_table[i]].movY 	= pos_update->yVel[i];
 			world->position[player_table[i]].x		= pos_update->xPos[i];
