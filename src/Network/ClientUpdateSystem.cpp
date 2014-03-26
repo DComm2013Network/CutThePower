@@ -118,9 +118,11 @@ int client_update_system(World *world, int net_pipe) {
 				break;
 		}
 		free(packet);
+		// if(floor_changed == 1)
+		// 	return 1;
 	}
 
-	return floor_changed;
+	return 0;
 }
 void client_update_chat(World *world, void *packet)
 {

@@ -170,9 +170,23 @@ void handle_entity_collision(CollisionData data, World * world, int curEntityID)
 			int targx = world->wormhole[data.entityID].targetX, targy = world->wormhole[data.entityID].targetY, targl = world->wormhole[data.entityID].targetLevel;
 			character_t character = world->player[curEntityID].character;
 			
-			move_request(world, send_router_fd[WRITE_END], targl, targx, targy);
-			while(client_update_system(world, rcv_router_fd[READ_END]) != 1){}
 			
+			// move_request(world, send_router_fd[WRITE_END], targl, targx, targy);
+			// //COMMENT THIS OUT IF YOU WANT TO CHANGE FLOORS ON SINGLEPLAYER
+			// //COMMENT THIS OUT IF YOU WANT TO CHANGE FLOORS ON SINGLEPLAYER
+			// //COMMENT THIS OUT IF YOU WANT TO CHANGE FLOORS ON SINGLEPLAYER
+			// //COMMENT THIS OUT IF YOU WANT TO CHANGE FLOORS ON SINGLEPLAYER
+			// //COMMENT THIS OUT IF YOU WANT TO CHANGE FLOORS ON SINGLEPLAYER
+			// //COMMENT THIS OUT IF YOU WANT TO CHANGE FLOORS ON SINGLEPLAYER
+			// //COMMENT THIS OUT IF YOU WANT TO CHANGE FLOORS ON SINGLEPLAYER
+			// while(client_update_system(world, rcv_router_fd[READ_END]) != 1){}
+			//COMMENT THIS OUT IF YOU WANT TO CHANGE FLOORS ON SINGLEPLAYER	
+			//COMMENT THIS OUT IF YOU WANT TO CHANGE FLOORS ON SINGLEPLAYER
+			//COMMENT THIS OUT IF YOU WANT TO CHANGE FLOORS ON SINGLEPLAYER
+			//COMMENT THIS OUT IF YOU WANT TO CHANGE FLOORS ON SINGLEPLAYER
+			//COMMENT THIS OUT IF YOU WANT TO CHANGE FLOORS ON SINGLEPLAYER
+			//COMMENT THIS OUT IF YOU WANT TO CHANGE FLOORS ON SINGLEPLAYER
+			//COMMENT THIS OUT IF YOU WANT TO CHANGE FLOORS ON SINGLEPLAYER
 			destroy_world(world);
 			unsigned int e = create_player(world, targx, targy, true, COLLISION_HACKER, 0, character);
 			load_animation("assets/Graphics/player/p0/rob_animation.txt", world, e);
