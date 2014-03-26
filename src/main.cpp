@@ -19,6 +19,7 @@ unsigned int player_entity;
 /*SAM**************************/
 void render_fog_of_war( SDL_Surface *surface, struct fogOfWarStruct *fow );
 void init_fog_of_war  ( struct fogOfWarStruct **fow );
+void cleanup_fog_of_war( struct fogOfWarStruct *fow );
 /******************************/
 
 
@@ -156,6 +157,7 @@ int main(int argc, char* argv[]) {
 	}
 	
 	cleanup_sound();
+	cleanup_fog_of_war(fow);
 	
 	printf("Exiting The Game\n");
 	

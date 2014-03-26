@@ -61,7 +61,7 @@ void render_fog_of_war(SDL_Surface *surface, struct fogOfWarStruct *fow)
 			else if(visible == 1)
 			{
 			
-				SDL_BlitSurface(fow -> alphaFog[count++], NULL, surface, &tempRect);
+				//SDL_BlitSurface(fow -> alphaFog[count++], NULL, surface, &tempRect);
 				
 			}
 		}
@@ -131,6 +131,15 @@ void init_fog_of_war(struct fogOfWarStruct **fow)
 		  	
 		  }
 		}
+}
+
+void cleanup_fog_of_war(struct fogOfWarStruct *fow)
+{
+	for(int i = 0; i < (fogOfWarHeight * fogOfWarWidth); i++)
+	{
+		SDL_FreeSurface(fow -> fogOfWar[i]);
+		SDL_FreeSurface(fow -> alphaFog[i]);
+	}
 }
 /**************************************************************************/
 
