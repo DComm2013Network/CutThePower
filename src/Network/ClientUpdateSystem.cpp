@@ -22,7 +22,6 @@ extern int game_net_signalfd;
 extern int network_ready;
 int floor_change_flag = 0;
 static unsigned int *player_table = NULL; /**< A lookup table mapping server player numbers to client entities. */
-//extern floor_move_flag;
 
 /**
  * Receives all updates from the server and applies them to the world.
@@ -78,6 +77,7 @@ int client_update_system(World *world, int net_pipe) {
 
 		packet = read_data(net_pipe, &type);
 		
+<<<<<<< HEAD
 		//printf("Updating with packet type %u\n", type);
 		//fprintf(stderr, "Sending a position update at: %lu\n", clock()/CLOCKS_PER_SEC);
 		if(floor_change_flag == 1)
@@ -164,6 +164,7 @@ void client_update_floor(World *world, void *packet)
 			break;
 		}
 	}
+	floor_changed = 1;
 }
 
 /**
@@ -186,9 +187,14 @@ void client_update_pos(World *world, void *packet)
 	{
         if(i == controllable_playerNo)
 			continue;
-
+		
 		if(player_table[i] != UNASSIGNED)
 		{
+			if(world->movement[player_table[i]].level != pos_update->floor)
+			{
+				world->mask[player_table[i]] &= ~(COMPONENT_RENDER_PLAYER | COMPONENT_COLLISION); // If the player is no longer on the floor, turn off render and collision
+				continue;
+			}
 			world->movement[player_table[i]].movX	= pos_update->xVel[i];
 			world->movement[player_table[i]].movY 	= pos_update->yVel[i];
 			world->position[player_table[i]].x		= pos_update->xPos[i];

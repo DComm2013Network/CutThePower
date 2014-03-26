@@ -18,18 +18,18 @@ bool soundon = true;
  */
 void init_sound() {
 	
-	//initialize audio mixer.
-	if(Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) == -1) {
-        return;    
-    }
+//	//initialize audio mixer.
+//	if(Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) == -1) {
+//        return;    
+//    }
 	
-	music = (Mix_Music**)malloc(sizeof(Mix_Music*) * SOUND_MUSIC_NUM);
-	effects = (Mix_Chunk**)malloc(sizeof(Mix_Chunk*) * SOUND_EFFECT_NUM);
+//	music = (Mix_Music**)malloc(sizeof(Mix_Music*) * SOUND_MUSIC_NUM);
+//	effects = (Mix_Chunk**)malloc(sizeof(Mix_Chunk*) * SOUND_EFFECT_NUM);
+//	
+//	music[0] = Mix_LoadMUS("assets/Sound/menu/sound_menu_bg.wav");
+//	music[1] = Mix_LoadMUS("assets/Sound/maps/lobby_bg.wav");
 	
-	music[0] = Mix_LoadMUS("assets/Sound/menu/sound_menu_bg.wav");
-	music[1] = Mix_LoadMUS("assets/Sound/maps/lobby_bg.wav");
-	
-	effects[0] = Mix_LoadWAV("assets/Sound/menu/sound_menu_thunder.wav");
+//	effects[0] = Mix_LoadWAV("assets/Sound/menu/sound_menu_thunder.wav");
 	
 }
 
@@ -43,15 +43,15 @@ void init_sound() {
  */
 void cleanup_sound() {
 	
-	int i;
+//	int i;
 	
-	for(i = 0; i < SOUND_MUSIC_NUM; i++) {
-		Mix_FreeMusic(music[i]);
-	}
+//	for(i = 0; i < SOUND_MUSIC_NUM; i++) {
+//		Mix_FreeMusic(music[i]);
+//	}
 	
-	for(i = 0; i < SOUND_EFFECT_NUM; i++) {
-		Mix_FreeChunk(effects[i]);
-	}
+//	for(i = 0; i < SOUND_EFFECT_NUM; i++) {
+//		Mix_FreeChunk(effects[i]);
+//	}
 }
 
 /**
@@ -65,11 +65,11 @@ void cleanup_sound() {
  * @author Jordan Marling
  */
 void enable_sound(bool enabled) {
-	soundon = enabled;
-	if (!soundon) {
-		stop_music();
-		stop_effect();
-	}
+//	soundon = enabled;
+//	if (!soundon) {
+//		stop_music();
+//		stop_effect();
+//	}
 }
 
 /**
@@ -84,14 +84,14 @@ void enable_sound(bool enabled) {
  */
 void play_music(int sound) {
 	
-	if (!soundon)
-		return;
+//	if (!soundon)
+//		return;
 	
-	if (Mix_PlayingMusic() == 1) {
-		stop_music();
-	}
+//	if (Mix_PlayingMusic() == 1) {
+//		stop_music();
+//	}
 	
-	Mix_PlayMusic(music[sound], -1);
+//	Mix_PlayMusic(music[sound], -1);
 	
 }
 
@@ -104,7 +104,7 @@ void play_music(int sound) {
  * @author Jordan Marling
  */
 void stop_music() {
-	Mix_HaltMusic();
+//	Mix_HaltMusic();
 }
 
 /**
@@ -116,8 +116,8 @@ void stop_music() {
  * @author Jordan Marling
  */
 void stop_effect() {
-	Mix_HaltChannel(0);
-	Mix_HaltChannel(1);
+//	Mix_HaltChannel(0);
+//	Mix_HaltChannel(1);
 }
 
 /**
@@ -132,9 +132,9 @@ void stop_effect() {
  */
 void play_effect(int sound) {
 	
-	if (!soundon)
-		return;
+//	if (!soundon)
+//		return;
 	
-	Mix_PlayChannel(-1, effects[sound], 0);
+//	Mix_PlayChannel(-1, effects[sound], 0);
 	
 }
