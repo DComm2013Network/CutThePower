@@ -31,79 +31,71 @@ int level;                /**< The current floor. */
 
 
 /*SAM*************************************************************************/
-void render_fog_of_war(SDL_Surface ***fogOfWar, SDL_Surface *surface, struct fogOfWarStruct *fow)
+void render_fog_of_war(SDL_Surface **fogOfWar, SDL_Surface *surface, struct fogOfWarStruct *fow)
 {
-	SDL_Rect tile_rect;
+	int xOffset = fow -> xOffset;
+	int yOffset = fow -> yOffset;
 
-	tile_rect.w = TILE_WIDTH;
-	tile_rect.h = TILE_HEIGHT;
-
-	int topXCorner = fow -> topXCorner;
-	int topYCorner = fow -> topYCorner;
-
+	
+	int count = 0;
+	
 	for(int y = 0; y < fogOfWarHeight; y++)
 	{
 		for(int x = 0; x < fogOfWarWidth; x++)
 		{
-			tile_rect.x = (float)x * (double)TILE_WIDTH;
-			tile_rect.y = (float)y * (double)TILE_HEIGHT;
-											
-			tile_rect.w = TILE_WIDTH;
-			tile_rect.h = TILE_HEIGHT;
+			if(fow -> tiles[y][x].visible == 0)
+			{
+				SDL_Rect tempRect;
+				tempRect.x = fow -> tiles[y][x].rect.x - xOffset;
+				tempRect.y = fow -> tiles[y][x].rect.y - yOffset;
 					
-			if(fow->revealedTiles[topYCorner + y][topXCorner + x] == 0)
-			{			
-				
-				tile_rect.x -= (x > 0) ? fow -> xOffset : 0;
-				tile_rect.y -= (y > 0) ? fow -> yOffset : 0;
+				tempRect.w = TILE_WIDTH;
+				tempRect.h = TILE_HEIGHT;
 			
-			
-				//tile_rect.w -= (x > 0) ? 0 : fow -> xOffset;
-				//tile_rect.h -= (y > 0) ? 0 : fow -> yOffset;
-			
-				SDL_BlitSurface(fogOfWar[y][x], NULL, surface, &tile_rect);
+				SDL_BlitSurface(fogOfWar[count++], NULL, surface, &tempRect); 
 			}
 		}
-		
 	}
 }
 
 
-void init_fog_of_war(SDL_Surface ****fogOfWar, struct fogOfWarStruct *fow)
+void init_fog_of_war(SDL_Surface ***fogOfWar, struct fogOfWarStruct **fow)
 {
 		fogOfWarWidth = 64;  // screen width (tiles/screen)
 		fogOfWarHeight = 38; // screen height (tiles/screen)
 
-	int const totalTilesX = 2560;
-	int const totalTilesY = 1520;
+		int const totalTilesX = 2560;
+		int const totalTilesY = 1520;
 
-	// fog of war tile map
-	fow -> revealedTiles = (int**)malloc(sizeof(int*) * totalTilesY);
-	
-	for(int y = 0; y < totalTilesY; y++)
-	{
-		fow -> revealedTiles[y] = (int*)malloc(sizeof(int) * totalTilesX);
+		(*fow) = (struct fogOfWarStruct*)malloc(sizeof(struct fogOfWarStruct));
 
-		for(int x = 0; x < totalTilesX; x++)
+
+		// fog of war tile map
+		(*fow) -> tiles = (struct fowtile**)malloc(sizeof(struct fowtile*) * totalTilesY);
+
+		for(int y = 0; y < totalTilesY; y++)
 		{
-			fow -> revealedTiles[y][x] = 0;
-		}	
-	}
+			(*fow) -> tiles[y] = (struct fowtile*)malloc(sizeof(struct fowtile) * totalTilesX);
+
+			for(int x = 0; x < totalTilesX; x++)
+			{
+				(*fow) -> tiles[y][x].visible = 0;
+				(*fow) -> tiles[y][x].rect.x = (x * TILE_WIDTH );
+				(*fow) -> tiles[y][x].rect.y = (y * TILE_HEIGHT);
+				(*fow) -> tiles[y][x].rect.w = ( TILE_WIDTH  );
+				(*fow) -> tiles[y][x].rect.h = ( TILE_HEIGHT );				
+			}	
+		}
 	
 	
-	// array of surfaces
-	(*fogOfWar) = (SDL_Surface***)malloc(sizeof(SDL_Surface**) * fogOfWarHeight);	
+		// array of surfaces
+		(*fogOfWar) = (SDL_Surface**)malloc(sizeof(SDL_Surface*) * fogOfWarWidth * fogOfWarHeight);
 	
-	for(int y = 0; y < fogOfWarHeight; y++)
-	{
-		(*fogOfWar)[y] = (SDL_Surface **)malloc(sizeof(SDL_Surface*) * fogOfWarWidth);
-		
-		for(int x = 0; x < fogOfWarWidth; x++)
+		for(int i = 0; i < (fogOfWarHeight * fogOfWarWidth); i++)
 		{
-			(*fogOfWar)[y][x] = SDL_CreateRGBSurface(0, TILE_WIDTH, TILE_HEIGHT, 32, 0, 0, 0, 0);
-			SDL_FillRect((*fogOfWar)[y][x],0,0x221122);
-		}	
-	}
+			(*fogOfWar)[ i ] = SDL_CreateRGBSurface(0, TILE_WIDTH, TILE_HEIGHT, 32, 0, 0, 0, 0);
+			SDL_FillRect((*fogOfWar)[ i ],0,0x221122);
+		}
 }
 /**************************************************************************/
 

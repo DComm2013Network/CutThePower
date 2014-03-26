@@ -6,7 +6,7 @@
 Mix_Music **music;
 Mix_Chunk **effects;
 
-bool soundon = true;
+bool soundon = false;
 
 /**
  * Loads all sound files into memory.

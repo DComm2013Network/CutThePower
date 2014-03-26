@@ -13,12 +13,16 @@
 #define TILE_WIDTH	40 /**< The width of a tile in pixels. */
 #define TILE_HEIGHT	40 /**< The height of a tile in pixels. */
 
+struct fowtile
+{
+	SDL_Rect rect;
+	int visible;
+};
+
 struct fogOfWarStruct
 {
-	int topXCorner;
-	int topYCorner;
-	int **revealedTiles;
-
+	struct fowtile **tiles;
+	
 	int xOffset;
 	int yOffset;
 };

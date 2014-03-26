@@ -17,8 +17,8 @@ unsigned int player_entity;
 
 
 /*SAM**************************/
-void render_fog_of_war(SDL_Surface ***fogOfWar, SDL_Surface  *surface, struct fogOfWarStruct *fow);
-void init_fog_of_war(SDL_Surface ****fogOfWar, struct fogOfWarStruct *fow);
+void render_fog_of_war(SDL_Surface **fogOfWar, SDL_Surface  *surface, struct fogOfWarStruct *fow);
+void init_fog_of_war(SDL_Surface ***fogOfWar, struct fogOfWarStruct **fow);
 /******************************/
 
 
@@ -121,9 +121,9 @@ int main(int argc, char* argv[]) {
 	
 	
 	/*SAM********************************/
-	SDL_Surface ***fogOfWar;
+	SDL_Surface **fogOfWar;
 
-	struct fogOfWarStruct fow;
+	struct fogOfWarStruct *fow;
 	
 	init_fog_of_war(&fogOfWar, &fow);
 	/************************************/
@@ -145,11 +145,11 @@ int main(int argc, char* argv[]) {
 
 				
 		/*SAM****************/
-		render_fog_of_war(fogOfWar, surface, &fow);
+		render_fog_of_war(fogOfWar, surface, fow);
 		/*****************/
 
 
-		render_player_system(*world, surface, &fow);
+		render_player_system(*world, surface, fow);
 		
 		SDL_UpdateWindowSurface(window);
 		

@@ -140,31 +140,30 @@ void render_player_system(World& world, SDL_Surface* surface, struct fogOfWarStr
 
 	
 	/*SAM*********************************/
-	fow -> topXCorner = -map_rect.x / TILE_WIDTH;
-	fow -> topYCorner = -map_rect.y / TILE_HEIGHT;
+	//fow -> topXCorner = -map_rect.x / TILE_WIDTH;
+	//fow -> topYCorner = -map_rect.y / TILE_HEIGHT;
 	
 
 	int xPos = (double)position->x / TILE_WIDTH;
 	int yPos = (double)position->y / TILE_HEIGHT;
 
 	
-	fow -> xOffset = TILE_WIDTH * (1 - ((position->x / TILE_WIDTH) - (int)xPos));
-	fow -> yOffset = TILE_HEIGHT * (1 - ((position->y / TILE_HEIGHT) - (int)yPos));
+	fow -> xOffset = -map_rect.x;//TILE_WIDTH * (1 - ((position->x / TILE_WIDTH) - (int)xPos));
+	fow -> yOffset = -map_rect.y;//TILE_HEIGHT * (1 - ((position->y / TILE_HEIGHT) - (int)yPos));
 	
 
-	fow -> revealedTiles[addOne(yPos)][xPos] = 1;
-	fow -> revealedTiles[subOne(yPos)][xPos] = 1;
+	fow -> tiles[addOne(yPos)] [xPos].visible = 1;
+	fow -> tiles[subOne(yPos)] [xPos].visible = 1;
 	
-	fow -> revealedTiles[addOne(yPos)][addOne(xPos)] = 1;
-	fow -> revealedTiles[subOne(yPos)][subOne(xPos)] = 1;
+	fow -> tiles[addOne(yPos)] [addOne(xPos)].visible = 1;
+	fow -> tiles[subOne(yPos)] [subOne(xPos)].visible = 1;
 	
-	fow -> revealedTiles[addOne(yPos)][subOne(xPos)] = 1;
-	fow -> revealedTiles[subOne(yPos)][addOne(xPos)] = 1;
+	fow -> tiles[addOne(yPos)] [subOne(xPos)].visible = 1;
+	fow -> tiles[subOne(yPos)] [addOne(xPos)].visible = 1;
 	
-	fow -> revealedTiles[yPos][addOne(xPos)] = 1;
-	fow -> revealedTiles[yPos][subOne(xPos)] = 1;
+	fow -> tiles[yPos] [addOne(xPos)].visible = 1;
+	fow -> tiles[yPos] [subOne(xPos)].visible = 1;
 			
-	/*************************************/
 }
 
 /*SAM******************************/
