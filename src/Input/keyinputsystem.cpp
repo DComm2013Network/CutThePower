@@ -92,12 +92,27 @@ void KeyInputSystem(World *world)
 		if (currentKeyboardState[SDL_SCANCODE_BACKSPACE] &&
 			!prevKeyboardState[SDL_SCANCODE_BACKSPACE]) {
 			text->length--;
+			text->text[text->length] = '\0';
 			if (text->length < 0) {
 				text->length = 0;
 			}
 		}
-		
-		if (text->length < MAX_STRING) {
+		else if (text->length < MAX_STRING) {
+			for(int i = 0; i <= 512; i++) {
+				
+				code = SDL_GetScancodeFromName((char*)&i);
+				
+				if (currentKeyboardState[code] &&
+					!prevKeyboardState[code]) {
+					
+					text->text[text->length] = (char)i;
+					text->length++;
+					
+					break;
+				}
+			}
+		}
+		/*if (text->length < MAX_STRING) {
 			
 			if (currentKeyboardState[SDL_SCANCODE_SPACE] &&
 				!prevKeyboardState[SDL_SCANCODE_SPACE]) {
@@ -140,7 +155,7 @@ void KeyInputSystem(World *world)
 					
 				}
 			}
-		}
+		}*/
     }
 
     for(entity = 0; entity < MAX_ENTITIES; entity++) {

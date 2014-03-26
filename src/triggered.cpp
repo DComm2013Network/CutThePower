@@ -7,6 +7,7 @@
 #include "components.h"
 #include "sound.h"
 #include "Input/menu.h"
+#include "Graphics/text.h"
 
 #define SHOW_MENU_INTRO 1 //1 == load intro, 0 == load straight into map
 
@@ -56,7 +57,10 @@ bool menu_click(World *world, unsigned int entity) {
 	}
 	else if (strcmp(world->button[entity].label, "options_sound_off") == 0) {
 		
-		world->renderPlayer[entity].playerSurface = IMG_Load("assets/Graphics/screen/menu/menu_button_soundon.png");
+		//world->renderPlayer[entity].playerSurface = IMG_Load("assets/Graphics/screen/menu/menu_button_soundon.png");
+		world->position[entity].x = (WIDTH / 2);
+		render_small_text(world, entity, "SOUND ON");
+		
 		world->button[entity].label = (char*)"options_sound_on";
 		
 		enable_sound(true);
@@ -65,7 +69,10 @@ bool menu_click(World *world, unsigned int entity) {
 	}
 	else if (strcmp(world->button[entity].label, "options_sound_on") == 0) {
 		
-		world->renderPlayer[entity].playerSurface = IMG_Load("assets/Graphics/screen/menu/menu_button_soundoff.png");
+		//world->renderPlayer[entity].playerSurface = IMG_Load("assets/Graphics/screen/menu/menu_button_soundoff.png");
+		world->position[entity].x = (WIDTH / 2);
+		render_small_text(world, entity, "SOUND OFF");
+		
 		world->button[entity].label = (char*)"options_sound_off";
 		
 		enable_sound(false);
