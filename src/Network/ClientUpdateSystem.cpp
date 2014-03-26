@@ -21,7 +21,7 @@ static int controllable_playerNo;
 extern int game_net_signalfd;
 extern int network_ready;
 static unsigned int *player_table = NULL; /**< A lookup table mapping server player numbers to client entities. */
-//extern floor_move_flag;
+static int changed_floors = 1; /**< Indicates that a player has changed floors */
 
 /**
  * Receives all updates from the server and applies them to the world.
@@ -78,8 +78,6 @@ int client_update_system(World *world, int net_pipe) {
 
 		packet = read_data(net_pipe, &type);
 		
-		//printf("Updating with packet type %u\n", type);
-		//fprintf(stderr, "Sending a position update at: %lu\n", clock()/CLOCKS_PER_SEC);
 		switch (type) 
 		{ 
 			case P_CONNECT:
