@@ -76,10 +76,7 @@ int client_update_system(World *world, int net_pipe) {
 	{
 
 		packet = read_data(net_pipe, &type);
-		
-<<<<<<< HEAD
-		//printf("Updating with packet type %u\n", type);
-		//fprintf(stderr, "Sending a position update at: %lu\n", clock()/CLOCKS_PER_SEC);
+
 		if(floor_change_flag == 1)
 		{
 			switch(type)
@@ -164,7 +161,6 @@ void client_update_floor(World *world, void *packet)
 			break;
 		}
 	}
-	floor_changed = 1;
 }
 
 /**
@@ -190,7 +186,7 @@ void client_update_pos(World *world, void *packet)
 		
 		if(player_table[i] != UNASSIGNED)
 		{
-			if(world->movement[player_table[i]].level != pos_update->floor)
+			if(world->position[player_table[i]].level != pos_update->floor)
 			{
 				world->mask[player_table[i]] &= ~(COMPONENT_RENDER_PLAYER | COMPONENT_COLLISION); // If the player is no longer on the floor, turn off render and collision
 				continue;
