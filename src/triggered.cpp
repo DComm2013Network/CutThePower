@@ -15,6 +15,9 @@ extern unsigned int player_entity;
 extern int send_router_fd[];
 extern int rcv_router_fd[];
 extern int game_net_signalfd;
+int character;
+char *username;
+char *serverip;
 
 bool menu_click(World *world, unsigned int entity) {
 	
@@ -159,140 +162,140 @@ bool menu_click(World *world, unsigned int entity) {
 	else if (strcmp(world->button[entity].label, "menu_select_abhishek") == 0) {
 		
 		destroy_menu(world);
-		
+		character = ABHISHEK;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_aman") == 0) {
 		
 		destroy_menu(world);
-		
+		character = AMAN;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_andrew") == 0) {
 		
 		destroy_menu(world);
-		
+		character = ANDREW;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_chris") == 0) {
 		
 		destroy_menu(world);
-		
+		character = CHRIS;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_clark") == 0) {
 		
 		destroy_menu(world);
-		
+		character = CLARK;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_cory") == 0) {
 		
 		destroy_menu(world);
-		
+		character = CORY;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_damien") == 0) {
 		
 		destroy_menu(world);
-		
+		character = DAMIEN;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_german") == 0) {
 		
 		destroy_menu(world);
-		
+		character = GERMAN;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_ian") == 0) {
 		
 		destroy_menu(world);
-		
+		character = IAN;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_jordan") == 0) {
 		
 		destroy_menu(world);
-		
+		character = JORDAN;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_josh") == 0) {
 		
 		destroy_menu(world);
-		
+		character = JOSH;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_konst") == 0) {
 		
 		destroy_menu(world);
-		
+		character = KONST;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_mat") == 0) {
 		
 		destroy_menu(world);
-		
+		character = MAT;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_ramzi") == 0) {
 		
 		destroy_menu(world);
-		
+		character = RAMZI;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_robin") == 0) {
 		
 		destroy_menu(world);
-		
+		character = ROBIN;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_sam") == 0) {
 		
 		destroy_menu(world);
-		
+		character = SAM;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_shane") == 0) {
 		
 		destroy_menu(world);
-		
+		character = SHANE;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_tim") == 0) {
 		
 		destroy_menu(world);
-		
+		character = TIM;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_vincent") == 0) {
 		
 		destroy_menu(world);
-		
+		character = VINCENT;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_random") == 0) {
 		
 		destroy_menu(world);
-		
+		character = rand()%18;
 		create_setup_menu(world);
 		
 	}
@@ -319,9 +322,6 @@ bool menu_click(World *world, unsigned int entity) {
 		//map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/map01_tiles.txt");
 		//map_init(world, "assets/Graphics/lobby/lobby.txt", "assets/Graphics/lobby/lobby_tiles.txt");
 		//map_init(world, "assets/Graphics/SampleFloor.txt", "assets/Graphics/tiles_lobby.txt");
-		
-		char *username;
-		char *serverip;
 		
 		unsigned int i;
 		
@@ -408,7 +408,7 @@ void animation_end(World *world, unsigned int entity, int animation_id) {
 		//map_init(world, "assets/Graphics/SampleFloor.txt", "assets/Graphics/tiles_lobby.txt");
 		
 		map_init(world, (char*)"assets/Graphics/map/map_00/map00.txt", (char*)"assets/Graphics/map/map_00/tiles.txt");
-		player_entity = create_player(world, 620, 420, true, COLLISION_HACKER, 0);
+		player_entity = create_player(world, 620, 420, true, COLLISION_HACKER, 0, character);
 		
 		load_animation((char*)"assets/Graphics/player/p0/rob_animation.txt", world, player_entity);
 		
@@ -416,7 +416,7 @@ void animation_end(World *world, unsigned int entity, int animation_id) {
 		game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
 
 		init_client_network(send_router_fd, rcv_router_fd);
-		send_intialization(world, send_router_fd[WRITE_END]);
+		send_intialization(world, send_router_fd[WRITE_END], username, serverip);
 		//PUT CLIENT START CODE HERE!!!@!@!!!!
 	}
 	//LOADING SCREEN ENDED

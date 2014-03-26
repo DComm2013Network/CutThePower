@@ -247,8 +247,8 @@ void client_update_status(World *world, void *packet)
 			// {	
 				if(player_table[i] == UNASSIGNED) // They're on the floor but haven't yet been created
 		        {
-		            player_table[i] = create_player(world, 400, 600, false, COLLISION_HACKER, i);
-		            load_animation("assets/Graphics/player/robber/rob_animation.txt", world, player_table[i]);
+		            player_table[i] = create_player(world, 400, 600, false, COLLISION_HACKER, i, status_update->characters[i]);
+		            load_animation("assets/Graphics/player/p0/rob_animation.txt", world, player_table[i]);
 		        }
 			//}
 

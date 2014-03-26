@@ -57,6 +57,25 @@
 
 #define NUM_PACKETS  14
 
+#define ABHISHEK 	0
+#define AMAN		1
+#define ANDREW 		2
+#define CHRIS		3
+#define CLARK		4
+#define CORY		5
+#define DAMIEN		6
+#define GERMAN		7
+#define IAN			8
+#define JORDAN		9
+#define JOSH		10
+#define KONST		11
+#define MAT 		12
+#define RAMZI 		13
+#define ROBIN		14
+#define SAM 		15
+#define SHANE		16
+#define TIM 		17
+#define VINCENT		18
 // Game Status Definitions
 
 #define GAME_STATE_WAITING 		0x001
@@ -86,13 +105,15 @@ typedef uint32_t floorNo_t;
 typedef uint32_t playerNo_t;
 typedef uint32_t teamNo_t;
 typedef uint32_t status_t;
+typedef uint32_t character_t;
 typedef uint32_t pos_t;
 typedef float	 vel_t;
 
 // Packet Definitions
 
 typedef struct pkt01{
-	char client_player_name[MAX_NAME];
+	char 		client_player_name[MAX_NAME];
+	character_t selectedCharacter;
 } PKT_PLAYER_NAME;
 
 typedef struct pkt02{
@@ -102,9 +123,10 @@ typedef struct pkt02{
 } PKT_PLAYER_CONNECT;
 
 typedef struct pkt03{
-	int	player_valid[MAX_PLAYERS];
+	int			player_valid[MAX_PLAYERS];
 	char 		otherPlayers_name[MAX_PLAYERS][MAX_NAME];
 	teamNo_t 	otherPlayers_teams[MAX_PLAYERS];
+	character_t characters[MAX_PLAYERS];
 	status_t	readystatus[MAX_PLAYERS];
 } PKT_GAME_STATUS;
 

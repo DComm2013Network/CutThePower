@@ -166,8 +166,9 @@ void handle_entity_collision(CollisionData data, World * world, int curEntityID)
 	case COLLISION_STAIR:
 		if (world->collision[curEntityID].type == COLLISION_HACKER || world->collision[curEntityID].type == COLLISION_GUARD) {
 			int targx = world->wormhole[data.entityID].targetX, targy = world->wormhole[data.entityID].targetY, targl = world->wormhole[data.entityID].targetLevel;
+			character_t character = world->player[curEntityID].character;
 			destroy_world(world);
-			unsigned int e = create_player(world, targx, targy, true, COLLISION_HACKER, 0);
+			unsigned int e = create_player(world, targx, targy, true, COLLISION_HACKER, 0, character);
 			load_animation("assets/Graphics/player/p0/rob_animation.txt", world, e);
 	        world->position[e].level = targl;
 	        player_entity = e;

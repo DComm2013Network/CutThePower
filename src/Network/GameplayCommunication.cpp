@@ -94,7 +94,6 @@ void* read_packet(int fd, uint32_t size)
         return NULL;
     }
 
-	fprintf(stderr, "read_packet: size: %u\n", size);
     return temp; 
 }
 
@@ -114,26 +113,6 @@ void* read_packet(int fd, uint32_t size)
  */
 void init_client_network(int send_router_fd[2], int rcv_router_fd[2])
 {
-    /*
-    INTEGRATION NOTES:
-
-    Integrated into the game. Game simply makes the pipes, calls this function then calls the update_system
-    and send_system on every loop. 
-
-    Changes to be made to makefile to integrate network:
-        Include the following for compiling in the makefile.
-            ClientUpdateSystem.cpp
-            GameplayCommunication.cpp
-            NetworkRouter.cpp
-            PipeUtils.cpp
-            SendSystem.cpp
-            ServerComunication.cpp
-            
-        The pipe switches below are also required
-            -pthread
-            -lSDL2_net
-    */
-
     pthread_t thread;
     NETWORK_DATA * ndata = (NETWORK_DATA*) malloc(sizeof(NETWORK_DATA));
     
@@ -198,7 +177,6 @@ void *read_data(int fd, uint32_t *type){
     int read_bytes;
     void *packet;
     *type = read_type(fd);
-	fprintf(stderr, "Type: %u\n", *type);
     if(*type <= 0 || *type > 14){
         perror("read_data: Failed to read packet type from pipe");
         return NULL;

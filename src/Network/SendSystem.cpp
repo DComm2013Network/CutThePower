@@ -72,13 +72,14 @@ void send_location(World *world, int fd) {
  * @designer    Ramzi Chennafi
  * @author      Ramzi Chennafi
  */
-void send_intialization(World *world, int fd)
+void send_intialization(World *world, int fd, char * username, char * serverip)
 {
 	PKT_PLAYER_NAME * pkt1 = (PKT_PLAYER_NAME *)malloc(sizeof(PKT_PLAYER_NAME));
 		for (int j = 0; j < MAX_ENTITIES; j++) {
 			if (IN_THIS_COMPONENT(world->mask[j], COMPONENT_PLAYER | COMPONENT_CONTROLLABLE))
 			{
 				memcpy(pkt1->client_player_name, world->player[j].name, sizeof(world->player[j].name));
+				pkt1->selectedCharacter = world->player[j].character;
 				break;
 			}
 		}	
