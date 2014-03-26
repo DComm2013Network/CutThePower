@@ -239,7 +239,6 @@ void movement_system(World* world) {
 				temp.level = position->level;
 				
 				if (command->commands[C_ACTION]) {
-					
 				}
 				if (command->commands[C_UP]) {
 					add_force(world, entity, world->movement[entity].acceleration, -90);
@@ -286,6 +285,17 @@ void movement_system(World* world) {
 				else {
 					position->x = temp.x + goffsetW;
 					position->y = temp.y + goffsetH;
+				}
+				if (position->level == 0) {
+					if (position->x < 240) {
+						world->player[entity].teamNo = 1;
+					}
+					else if (position->x > 1000) {
+						world->player[entity].teamNo = 2;
+					}
+					else if (world->player[entity].teamNo != 0) {
+						world->player[entity].teamNo = 0;
+					}
 				}
 			}
 		}
