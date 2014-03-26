@@ -55,9 +55,7 @@ void render_fog_of_war(SDL_Surface *surface, struct fogOfWarStruct *fow)
 
 			if(visible == 0)
 			{		
-				
 				SDL_BlitSurface(fow -> fogOfWar[count++], NULL, surface, &tempRect);
-				
 			}
 			else if(visible == 1)
 			{
@@ -67,7 +65,6 @@ void render_fog_of_war(SDL_Surface *surface, struct fogOfWarStruct *fow)
 			{
 			
 				SDL_BlitSurface(fow -> alphaFog[count++], NULL, surface, &tempRect);
-				
 			}
 		}
 	}
@@ -110,10 +107,15 @@ void init_fog_of_war(struct fogOfWarStruct **fow)
 			
 		for(int i = 0; i < (fogOfWarHeight * fogOfWarWidth); i++)
 		{	//libpng-devel-1.5.13-2
-			(*fow) -> alphaFog[ i ] = IMG_Load("assets/Graphics/tiles/fow_visited.png"); 
+			(*fow) -> alphaFog[ i ] = SDL_CreateRGBSurface(0, TILE_WIDTH, TILE_HEIGHT, 32, 0, 0, 0, 0);
+			SDL_FillRect((*fow) -> alphaFog[ i ],0,0x221122);
+			SDL_SetSurfaceBlendMode((*fow)->alphaFog[ i ], SDL_BLENDMODE_BLEND);
+			SDL_SetSurfaceAlphaMod ((*fow)->alphaFog[ i ] , 100);
+
 
 			(*fow) -> fogOfWar[ i ] = SDL_CreateRGBSurface(0, TILE_WIDTH, TILE_HEIGHT, 32, 0, 0, 0, 0);
 			SDL_FillRect((*fow) -> fogOfWar[ i ],0,0x221122);
+
 		}
 		
 		
