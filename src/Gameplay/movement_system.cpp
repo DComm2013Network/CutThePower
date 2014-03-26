@@ -12,6 +12,7 @@
 #define COLLISION_MASK (COMPONENT_COLLISION)
 #define PI 3.14159265
 
+extern int floor_change_flag;
 extern int send_router_fd[];
 extern int rcv_router_fd[];
 extern unsigned int player_entity;
@@ -170,21 +171,7 @@ void handle_entity_collision(CollisionData data, World * world, int curEntityID)
 			int targx = world->wormhole[data.entityID].targetX, targy = world->wormhole[data.entityID].targetY, targl = world->wormhole[data.entityID].targetLevel;
 			
 			move_request(world, send_router_fd[WRITE_END], targl, targx, targy);
-			//COMMENT THIS OUT IF YOU WANT TO CHANGE FLOORS ON SINGLEPLAYER
-			//COMMENT THIS OUT IF YOU WANT TO CHANGE FLOORS ON SINGLEPLAYER
-			//COMMENT THIS OUT IF YOU WANT TO CHANGE FLOORS ON SINGLEPLAYER
-			//COMMENT THIS OUT IF YOU WANT TO CHANGE FLOORS ON SINGLEPLAYER
-			//COMMENT THIS OUT IF YOU WANT TO CHANGE FLOORS ON SINGLEPLAYER
-			//COMMENT THIS OUT IF YOU WANT TO CHANGE FLOORS ON SINGLEPLAYER
-			//COMMENT THIS OUT IF YOU WANT TO CHANGE FLOORS ON SINGLEPLAYER
-			while(client_update_system(world, rcv_router_fd[READ_END]) != 1){}
-			//COMMENT THIS OUT IF YOU WANT TO CHANGE FLOORS ON SINGLEPLAYER	
-			//COMMENT THIS OUT IF YOU WANT TO CHANGE FLOORS ON SINGLEPLAYER
-			//COMMENT THIS OUT IF YOU WANT TO CHANGE FLOORS ON SINGLEPLAYER
-			//COMMENT THIS OUT IF YOU WANT TO CHANGE FLOORS ON SINGLEPLAYER
-			//COMMENT THIS OUT IF YOU WANT TO CHANGE FLOORS ON SINGLEPLAYER
-			//COMMENT THIS OUT IF YOU WANT TO CHANGE FLOORS ON SINGLEPLAYER
-			//COMMENT THIS OUT IF YOU WANT TO CHANGE FLOORS ON SINGLEPLAYER
+		 	floor_change_flag = 1;
 			destroy_world_not_player(world);
 	        switch (targl) {
 				case 0:

@@ -20,6 +20,7 @@ extern int game_ready;
 static int controllable_playerNo;
 extern int game_net_signalfd;
 extern int network_ready;
+int floor_change_flag = 0;
 static unsigned int *player_table = NULL; /**< A lookup table mapping server player numbers to client entities. */
 //extern floor_move_flag;
 
@@ -44,7 +45,6 @@ int client_update_system(World *world, int net_pipe) {
 	uint64_t	signal = 1;
 	uint64_t 	sem_buf;
 	unsigned	i;
-	int 		floor_changed = 0;
 	if(!player_table)
 	{
 		player_table = (unsigned int *)malloc(sizeof(unsigned int) * MAX_PLAYERS);
@@ -80,47 +80,57 @@ int client_update_system(World *world, int net_pipe) {
 		
 		//printf("Updating with packet type %u\n", type);
 		//fprintf(stderr, "Sending a position update at: %lu\n", clock()/CLOCKS_PER_SEC);
-		switch (type) 
-		{ 
-			case P_CONNECT:
-				if(client_update_info(world, packet) == CONNECT_CODE_DENIED)
-				{
-					return -1; // Pass error up to someone else to deal with
-				}
-				break;
-			case G_STATUS:
-				client_update_status(world, packet);
-				game_ready++;
-				break;
-			case P_CHAT:
-				client_update_chat(world, packet);
-				break;
-			case P_OBJCTV_LOC:
-				client_update_obj_loc(world, packet);
-				break;
-			case 7: // undefined
-				// Floor stuff
-				break;
-			case P_OBJSTATUS:
-				client_update_obj_status(world, packet);
-				break;
-			case G_ALLPOSUPDATE:
-				client_update_pos(world, packet);
-				break;
-			case P_FLOOR_MOVE:
+		if(floor_change_flag == 1)
+		{
+			switch(type)
+			{
+				case P_FLOOR_MOVE:
 				client_update_floor(world, packet);
-				floor_changed = 1;
+				floor_change_flag = 0;
 				game_ready++;
 				break;
-			case P_TAGGING:
-				player_tag_packet(world, packet);
-				break;
-			default:
-				break;
+			}
+		}
+		else {
+			switch (type) 
+			{ 
+				case P_CONNECT:
+					if(client_update_info(world, packet) == CONNECT_CODE_DENIED)
+					{
+						return -1; // Pass error up to someone else to deal with
+					}
+					break;
+				case G_STATUS:
+					client_update_status(world, packet);
+					game_ready++;
+					break;
+				case P_CHAT:
+					client_update_chat(world, packet);
+					break;
+				case P_OBJCTV_LOC:
+					client_update_obj_loc(world, packet);
+					break;
+				case 7: // undefined
+					// Floor stuff
+					break;
+				case P_OBJSTATUS:
+					client_update_obj_status(world, packet);
+					break;
+				case G_ALLPOSUPDATE:
+					client_update_pos(world, packet);
+					break;
+				case P_FLOOR_MOVE:
+					client_update_floor(world, packet);
+					game_ready++;
+					break;
+				case P_TAGGING:
+					player_tag_packet(world, packet);
+					break;
+				default:
+					break;
+			}
 		}
 		free(packet);
-		if(floor_changed == 1)
-			return 1;
 	}
 
 	return 0;
