@@ -1,0 +1,7 @@
+1
+
+mainframe 4 20 -1 1
+assets/Graphics/objects/computers/mainframe_5_1.png
+assets/Graphics/objects/computers/mainframe_5_2.png
+assets/Graphics/objects/computers/mainframe_5_3.png
+assets/Graphics/objects/computers/mainframe_5_4.png

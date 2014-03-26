@@ -1,9 +1,10 @@
-#include "components.h"
-#include "systems.h"
+#include "../components.h"
+#include "../systems.h"
 #include "../world.h"
 #include "level.h"
 #include "collision.h"
 #include <stdio.h>
+#include <math.h>
 
 #define COLLISION_MASK (COMPONENT_COLLISION)
 #define LEVEL_MASK (COMPONENT_LEVEL)
@@ -19,73 +20,101 @@
 --REVISIONS: none
 --
 --PARAMATERS:
---				World &world - the world structure
---				PositionComponent entity - the temporary position entity used for checking for collisions
---				int entityID - the current entity being checked based on its position in the world struct
+--	 World &world - the world structure
+--	 PositionComponent entity - the temporary position entity used for checking for collisions
+--	 int entityID - the current entity being checked based on its position in the world struct
 --
 --RETURNS:
---				Returns 0 for no collision
---				Returns COLLISION_WALL for a collision with a wall
---				Returns COLLISION_HACKER for a collision with a hacker
---				Returns COLLISION_GUARD for a collision with a guard
---				Returns COLLISION_STAIR for a collision with a stair
+--	 Returns 0 for no collision
+--	 Returns COLLISION_WALL for a collision with a wall
+--	 Returns COLLISION_HACKER for a collision with a hacker
+--	 Returns COLLISION_GUARD for a collision with a guard
+--	 Returns COLLISION_STAIR for a collision with a stair
 --
 --NOTES:
 --This is the main wrapper function for all other collision checking functions.
 --------------------------------------------------------------------------------------------------------*/
-int collision_system(World* world, PositionComponent entity, int entityID) {
-	if (wall_collision(world, entity)) {
-		return COLLISION_WALL;
+CollisionData collision_system(World *world, PositionComponent entity, int entityID) {
+	int entityIndex = -1;
+	CollisionData data;
+	data.map_code = COLLISION_EMPTY;
+	data.entity_code = COLLISION_EMPTY;
+	data.entityID = entityIndex;
+
+	data.map_code = wall_collision(world, entity);
+
+	if ((entityIndex = entity_collision(world, entity, entityID)) != -1) {
+		data.entity_code = handle_entity_collision(world, entityIndex);
+		data.entityID = entityIndex;
 	}
-	if (entity_collision(world, entity, entityID)) {
-		return COLLISION_HACKER;
-	}
-	return 0;
+	return data;
 }
 
 /*--------------------------------------------------------------------------------------------------------
 --FUNCTION: wall_collision
 --
---DESIGNER: Joshua Campbell
+--DESIGNER: Joshua Campbell & Clark Allenby
 --
---PROGRAMMERS: Joshua Campbell
+--PROGRAMMERS: Joshua Campbell & Clark Allenby
 --
 --REVISIONS: none
 --
 --PARAMATERS:
---				World &world - the world structure
---				PositionComponent entity - the temporary position entity used for checking for collisions
+--	 World &world - the world structure
+--	 PositionComponent entity - the temporary position entity used for checking for collisions
 --
 --RETURNS:
---				Returns true if a collision occurred
---				Returns false if there was no collision
+--	 Returns true if a collision occurred
+--	 Returns false if there was no collision
 --
 --NOTES:
 --Checks for collisions with walls on the map.
 --------------------------------------------------------------------------------------------------------*/
-bool wall_collision(World* world, PositionComponent entity) {
+int wall_collision(World *world, PositionComponent entity) {
 	int i = 0;
 	int curlevel = -1;
-	int eposx = 0, eposy = 0;
+	int xl, xr, yt, yb;
+	int xdts, ydts;
 	for (i = 0; i < MAX_ENTITIES; i++) {
-		if ((IN_THIS_COMPONENT(world->mask[i], LEVEL_MASK)) && world->level[i].levelID == entity.level) {
+		if (((world->mask[i] & LEVEL_MASK) != 0) && world->level[i].levelID == entity.level) {
 			curlevel = i;
 			break;
 		}
 	}
-	
+
 	if (curlevel == -1) {
-		//printf("No Level found\n");
 		return false;
 	}
 	
-	eposx = entity.x / world->level[curlevel].tileSize;
-	eposy = entity.y / world->level[curlevel].tileSize;
-	if (world->level[curlevel].map[eposx][eposy] == L_WALL) {
-		return true;
+	xl = (entity.x - entity.width / 2) / world->level[curlevel].tileSize;
+	xr = (entity.x + entity.width / 2) / world->level[curlevel].tileSize;
+	yt = (entity.y - entity.height / 2) / world->level[curlevel].tileSize;
+	yb = (entity.y + entity.height / 2) / world->level[curlevel].tileSize;
+	
+	xdts = ceil((float)entity.width / (float)world->level[curlevel].tileSize);
+	ydts = ceil((float)entity.height / (float)world->level[curlevel].tileSize);
+	
+	// debug statement: printf("xl: %i, xr: %i, yt: %i, yb: %i, xdts: %i, ydts: %i\n", xl, xr, yt, yb, xdts, ydts);
+	for (int i = 0; i < xdts; i++) {
+		if (world->level[curlevel].map[xl + i * world->level[curlevel].tileSize][yt] == L_WALL) {
+			return COLLISION_WALL;
+		}
+		if (world->level[curlevel].map[xr - i * world->level[curlevel].tileSize][yb] == L_WALL) {
+			return COLLISION_WALL;
+		}
 	}
-	return false;
+	for (int i = 0; i < ydts; i++) {
+		if (world->level[curlevel].map[xr][yt + i * world->level[curlevel].tileSize] == L_WALL) {
+			return COLLISION_WALL;
+		}
+		if (world->level[curlevel].map[xl][yb - i * world->level[curlevel].tileSize] == L_WALL) {
+			return COLLISION_WALL;
+		}
+	}
+
+	return COLLISION_EMPTY;
 }
+
 
 /*--------------------------------------------------------------------------------------------------------
 --FUNCTION: stair_collision
@@ -97,20 +126,22 @@ bool wall_collision(World* world, PositionComponent entity) {
 --REVISIONS: none
 --
 --PARAMATERS:
---				World &world - the world structure
---				PositionComponent entity - the temporary position entity used for checking for collisions
+--	 World &world - the world structure
+--	 PositionComponent entity - the temporary position entity used for checking for collisions
 --
 --RETURNS:
---				Returns 0 for no collision
---				Returns COLLISION_WALL for a collision with a wall
---				Returns COLLISION_HACKER for a collision with a hacker
---				Returns COLLISION_GUARD for a collision with a guard
---				Returns COLLISION_STAIR for a collision with a stair
+--	 Returns 0 for no collision
+--	 Returns COLLISION_WALL for a collision with a wall
+--	 Returns COLLISION_HACKER for a collision with a hacker
+--	 Returns COLLISION_GUARD for a collision with a guard
+--	 Returns COLLISION_STAIR for a collision with a stair
 --
 --NOTES:
 --Checks for collisions with stairs on the map.
 --------------------------------------------------------------------------------------------------------*/
-bool stair_collision(World* world, PositionComponent entity) {
+bool stair_collision(World &world, PositionComponent entity) {
+	
+	
 	return false;
 }
 
@@ -124,31 +155,41 @@ bool stair_collision(World* world, PositionComponent entity) {
 --REVISIONS: none
 --
 --PARAMATERS:
---				World &world - the world structure
---				PositionComponent entity - the temporary position entity used for checking for collisions
---				int entityID - the current entity being checked based on its position in the world struct
+--	 World &world - the world structure
+--	 PositionComponent entity - the temporary position entity used for checking for collisions
+--	 int entityID - the current entity being checked based on its position in the world struct
 --
 --RETURNS:
---				Returns true if a collision occurred
---				Returns false if there was no collision
+--	 Returns true if a collision occurred
+--	 Returns false if there was no collision
 --
 --NOTES:
 --This checks if there is a collision between two entities on the map.
 --------------------------------------------------------------------------------------------------------*/
-bool entity_collision(World* world, PositionComponent entity, int entityID) {
+int entity_collision(World *world, PositionComponent entity, int entityID) {
 	int i = 0;
-	
+
+	//entity.x += entity.width / 2;
+	//entity.y += entity.height / 2;
 	for (i = 0; i < MAX_ENTITIES; i++) {
 		if (i != entityID && (world->mask[i] & COLLISION_MASK) != 0) {
-			if (entity.x + entity.width > world->position[i].x &&
-				entity.x < world->position[i].x + world->position[i].width &&
-				entity.y + entity.height > world->position[i].y &&
-				entity.y < world->position[i].y + world->position[i].height) {
-				return true;
+			if (entity.x + entity.width / 2 - 1 > world->position[i].x - world->position[i].width / 2 + 1 &&
+				entity.x - entity.width / 2 + 1 < world->position[i].x + world->position[i].width / 2 - 1 &&
+				entity.y + entity.height / 2 - 1 > world->position[i].y - world->position[i].height / 2 + 1 &&
+				entity.y - entity.height / 2 + 1 < world->position[i].y + world->position[i].height / 2 + 1
+				&& world->collision[i].active) {
+				return i;
 			}
 		}
 	}
-	
 
-	return false;
+	return -1;
+}
+
+int handle_entity_collision(World *world, int entityIndex) {
+	if (world->collision[entityIndex].active) {
+		return world->collision[entityIndex].type;
+	} else {
+		return COLLISION_UNKNOWN;
+	}
 }

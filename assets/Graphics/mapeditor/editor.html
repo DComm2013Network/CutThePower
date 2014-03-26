@@ -1,0 +1,374 @@
+<html>
+	<head>
+		<link rel="stylesheet" href="jquery-ui/themes/base/jquery-ui.css">
+		<script src="jquery/jquery-1.11.0.min.js"></script>
+        <script src="jquery-ui/ui/jquery-ui.js"></script>
+	</head>
+	<body>
+		<style>
+			#maptable tr td {
+				border: 1px solid black;
+			}
+			
+			#toolbox tools tr td {
+				border: 1px solid black;
+			}
+			
+			body {
+				background-color: Grey;
+			}
+		</style>
+		<script>
+			$(document).ready(function() {
+				$("#MapControllerDialog").show();
+				$("#MapControllerDialog").dialog({ 
+					width: 320, 
+					height: 520,
+					position: [0,0],
+					closeOnEscape: false,
+				    open: function() { $(".ui-dialog-titlebar-close").hide(); }
+				});
+			});
+			
+			/*This function generates the map*/
+			function GenerateMap() {
+				var mapwidth = $("#map_width").val();
+				var mapheight = $("#map_height").val();
+				
+				var curwidth = $("#hidden-width").val();
+				var curheight = $("#hidden-height").val();
+				
+				/* If there is no previous map data, generate a blank map */
+				if (curwidth == 0 && curheight == 0) {
+					var map = "";
+					for (var y = 0; y < mapheight; y++) {
+						map += "<tr>";
+						for (var x = 0; x < mapwidth; x++) {
+							map += "<td id=\"tile-" + x + "-" + y + "\"><a href=\"javascript:void()\" onclick=\"ChangeTile('" + x + "-" + y + "')\">";
+							map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/tile_blank.bmp\" />";
+							map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"00\"></a></td>";
+						}
+						map += "</tr>";
+					}
+				} else {
+					var mapdata = new Array();
+					var y = 0;
+					
+					/* Storing the old map data for copying into the new map */
+					$("#maptable tr").each(function() {
+						mapdata[y] = new Array();
+						var x = 0;
+						$(this).find('td').each(function() {
+							mapdata[y][x] = $(this).find('input').val();
+							x++;
+						});
+						y++;
+					});
+					
+					var map = "";
+					
+					/* Generating the new map */
+					for (var y = 0; y < mapheight; y++) {
+						map += "<tr>";
+						for (var x = 0; x < mapwidth; x++) {
+							map += "<td id=\"tile-" + x + "-" + y + "\"><a href=\"javascript:void()\" onclick=\"ChangeTile('" + x + "-" + y + "')\">";
+							if (x < curwidth && y < curheight) {
+								switch(mapdata[y][x]) {
+									case '00':
+										map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/tile_blank.bmp\" />";
+										map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"00\"></a></td>";
+									break;
+									case '01':
+										map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/lobby_floor_1.bmp\" />";
+										map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"01\"></a></td>";
+									break;
+									case '02':
+										map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/lobby_wall.bmp\" />";
+										map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"02\"></a></td>";
+									break;
+									default:
+										map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/tile_blank.bmp\" />";
+										map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"00\"></a></td>";
+									break;
+								}
+							} else {
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/tile_blank.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"00\"></a></td>";
+							}
+						}
+						map += "</tr>";
+					}
+				}
+				
+				$("#maptable").html(map);
+				$("#hidden-width").val(mapwidth);
+				$("#hidden-height").val(mapheight);
+			}
+			
+			/*Fills the map with the currently selected tile*/
+			function FillMap() {
+				var mapwidth = $("#hidden-width").val();
+				var mapheight = $("#hidden-height").val();
+				var tool = parseInt($("#current-tool").val());
+				
+				var map = "";
+				
+				for (var y = 0; y < mapheight; y++) {
+					map += "<tr>";
+					for (var x = 0; x < mapwidth; x++) {
+						map += "<td id=\"tile-" + x + "-" + y + "\"><a href=\"javascript:void()\" onclick=\"ChangeTile('" + x + "-" + y + "')\">";
+						
+						switch(tool) {
+							case 0:
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/tile_blank.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"00\"></a></td>";
+							break;
+							case 1:
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/lobby_floor_1.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"01\"></a></td>";
+							break;
+							case 2:
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/lobby_wall.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"02\"></a></td>";
+							break;
+							default:
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/tile_blank.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"00\"></a></td>";
+							break;
+						}
+						
+					}
+					map += "</tr>";
+				}
+				
+				$("#maptable").html(map);
+			}
+			
+			/*changes a tile on the map to the new tile when clicked*/
+			function ChangeTile(id) {
+				var image = '#img-' + id;
+				var tiletype = '#tiletype-' + id;
+				var tool = parseInt($("#current-tool").val());
+				
+				switch(tool) {
+					case 0:
+						$(image).attr("src", "tiles/tile_blank.bmp");
+						$(tiletype).val('00');
+					break;
+					case 1:
+						$(image).attr("src", "tiles/lobby_floor_1.bmp");
+						$(tiletype).val('01');
+					break;
+					case 2:
+						$(image).attr("src", "tiles/lobby_wall.bmp");
+						$(tiletype).val('02');
+					break;
+					default:
+						$(image).attr("src", "tiles/tile_blank.bmp");
+						$(tiletype).val('00');
+					break;
+				}
+				
+			}
+			
+			/*opens the tile tool box dialog*/
+			function OpenToolbox() {
+				$("#toolbox").show();
+				$("#toolbox").dialog({
+					width: 320,
+					position: [0,550]
+				});
+			}
+			
+			/*Sets the current tool to the last tile clicked in the tool box*/
+			function SetTool(tool) {
+				switch(tool) {
+					case '00':
+						$("#selected-tool").attr("src", "tiles/tile_blank.bmp");
+						$("#current-tool").val(tool);
+					break;
+					case '01':
+						$("#selected-tool").attr("src", "tiles/lobby_floor_1.bmp");
+						$("#current-tool").val(tool);
+					break;
+					case '02':
+						$("#selected-tool").attr("src", "tiles/lobby_wall.bmp");
+						$("#current-tool").val(tool);
+					break;
+				}
+			}
+			
+			/*Gets the map and formats it for copying and pasting into a text file*/
+			function GetMap() {
+				var levelID = $("#level_id").val();
+				var mapwidth = $("#map_width").val();
+				var mapheight = $("#map_height").val();
+				
+				var mapdata = levelID + "\n" + mapwidth + " " + mapheight + "\n\n";
+				
+				for (var y = 0; y < mapheight; y++) {
+					for (var x = 0; x < mapwidth; x++) {
+						var tiletype = '#tiletype-' + x + '-' + y;
+						mapdata += $(tiletype).val() + ' ';
+					}
+					mapdata += '\n';
+				}
+				$("#mapdata textarea").html(mapdata);
+				$("#mapdata").show();
+				$("#mapdata").dialog({ modal: true, width: 800, height: 600 });
+			}
+			
+			function LoadMapDialog() {
+				$("#loadmap").show();
+				$("#loadmap").dialog({ 
+					modal: true, 
+					width: 800, 
+					height: 520,
+					position: [440,80]
+				});
+			}
+			
+			function LoadMapData() {
+				var mapstring = $("#load-map-data").val();
+				var mapdata = new Array();
+				mapdata = mapstring.split("\n");
+				var levelID = mapdata[0];
+				var sizeline = new Array();
+				sizeline = mapdata[1].split(" ");
+				var mapwidth = parseInt(sizeline[0]);
+				var mapheight = parseInt(sizeline[1]);
+				
+				var map = "";
+				
+				for (var y = 0; y < mapheight; y++) {
+					var line = mapdata[y + 3].split(" ");
+					map += "<tr>";
+					for (var x = 0; x < mapwidth; x++) {
+						map += "<td id=\"tile-" + x + "-" + y + "\"><a href=\"javascript:void()\" onclick=\"ChangeTile('" + x + "-" + y + "')\">";
+						var tile = line[x];
+						switch(tile) {
+							case '00':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/tile_blank.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"00\"></a></td>";
+							break;
+							case '01':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/lobby_floor_1.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"01\"></a></td>";
+							break;
+							case '02':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/lobby_wall.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"02\"></a></td>";
+							break;
+							default:
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/tile_blank.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"00\"></a></td>";
+							break;
+						}
+						
+					}
+					map += "</tr>";
+				}
+				
+				$("#maptable").html(map);
+				$("#level_id").val(levelID);
+				$("#map_width").val(mapwidth);
+				$("#map_height").val(mapheight);
+			}
+		</script>
+		
+		<!-- The left column -->
+		<!--<div style="width: 250px; padding-left: 20px; height: 300px;">
+			
+		</div>-->
+		
+		<!-- Where the map is loaded -->
+		<div style="width: 1000; 
+					height: 700; 
+					margin-top: 10px; 
+					margin-left: 340px; 
+					margin-bottom: 100px; 
+					margin-right: 50px; 
+					overflow:scroll; 
+					background-color: White;">
+			<div id="map">
+				<table id="maptable" cellspacing="0" style="margin: 20px;">
+					
+				</table>
+			</div>
+		</div>
+		<div style="min-width: 50px; float: right; margin-left: 100px;"></div>
+		<br/>
+		<br/>
+		<input type="hidden" id="hidden-width" value="0" />
+		<input type="hidden" id="hidden-height" value="0" />
+		
+		<!-- Tile tool box dialog -->
+		<div id="toolbox" title="Tool Box" style="display: none;">
+			<table>
+				<tr>
+					<td style="width: 40px"></td>
+					<td style="width: 40px"></td>
+					<td style="border: 1px solid Black;"><img id="selected-tool" src="tiles/tile_blank.bmp" /></td>
+					<td style="width: 40px"></td>
+					<td style="width: 40px"></td>
+				</tr>
+			</table>
+			<table id="tools">
+				<tr>
+					<td><a href="javascript:void()" onclick="SetTool('00')"><img src="tiles/tile_blank.bmp" /></a></td>
+					<td><a href="javascript:void()" onclick="SetTool('01')"><img src="tiles/lobby_floor_1.bmp" /></a></td>
+					<td><a href="javascript:void()" onclick="SetTool('02')"><img src="tiles/lobby_wall.bmp" /></a></td>
+					<td><a href="javascript:void()" onclick="SetTool('03')"><img src="tiles/place_holder.bmp" /></a></td>
+					<td><a href="javascript:void()" onclick="SetTool('04')"><img src="tiles/place_holder.bmp" /></a></td>
+				</tr>
+				<!--<tr>
+					<td><a href="javascript:void()" onclick="SetTool('05')"><img src="" /></a></td>
+					<td><a href="javascript:void()" onclick="SetTool('06')"><img src="" /></a></td>
+					<td><a href="javascript:void()" onclick="SetTool('07')"><img src="" /></a></td>
+					<td><a href="javascript:void()" onclick="SetTool('08')"><img src="" /></a></td>
+					<td><a href="javascript:void()" onclick="SetTool('09')"><img src="" /></a></td>
+				</tr>-->
+			</table>
+			<br/>
+			<input type="button" value="Fill Map" onclick="FillMap()" />
+		</div>
+		
+		<div id="MapControllerDialog" title="Map Editor" style="display: none;">
+			<table>
+				<tr>
+					<td><label>Level ID: </label></td>
+					<td><input type="text" id="level_id" /></td>
+				</tr>
+				<tr>
+					<td><label>Width: </label></td>
+					<td><input type="text" id="map_width" /></td>
+				</tr>
+				<tr>
+					<td><label>Height: </label></td>
+					<td><input type="text" id="map_height" /></td>
+				</tr>
+			</table>
+			<br/>
+			<input type="button" value="CreateMap" onclick="GenerateMap()" />&nbsp;<input type="button" value="Get Map Code" onclick="GetMap();" />
+			<br/><br/>
+			<input type="button" value="Load Map" onclick="LoadMapDialog()" />
+			<br/><br/>
+			<input type="button" value="Tool Box" onclick="OpenToolbox()" />
+			<input type="hidden" id="current-tool" value="00" />
+		</div>
+		
+		<!-- Map Data Dialog -->
+		<div id="mapdata" title="Map Data" style="display: none;">
+			<textarea style="width: 750px; height: 520px;">
+			</textarea>
+		</div>
+		
+		<!-- Load Map Dialog -->
+		<div id="loadmap" title="Load Map" style="display: none;">
+			<textarea id="load-map-data" style="width: 750px; height: 400px;">
+			</textarea>
+			<br/>
+			<input type="button" value="Load" onclick="LoadMapData()" style="float: right; margin-right: 14px;" />
+		</div>
+	</body>
+</html>

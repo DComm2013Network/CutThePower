@@ -1,0 +1,6 @@
+1
+
+andrew 2 40 -1 1
+assets/Graphics/objects/select/andrew/andrew_1.png
+assets/Graphics/objects/select/andrew/andrew_2.png
+assets/Graphics/objects/select/andrew/andrew_3.png
