@@ -12,6 +12,8 @@
 #define COLLISION_MASK (COMPONENT_COLLISION)
 #define PI 3.14159265
 
+extern int send_router_fd[];
+extern int rcv_router_fd[];
 extern unsigned int player_entity;
 
 int handle_collision_target(World *world, int entityIndex) {
@@ -167,6 +169,7 @@ void handle_entity_collision(CollisionData data, World * world, int curEntityID)
 		if (world->collision[curEntityID].type == COLLISION_HACKER || world->collision[curEntityID].type == COLLISION_GUARD) {
 			int targx = world->wormhole[data.entityID].targetX, targy = world->wormhole[data.entityID].targetY, targl = world->wormhole[data.entityID].targetLevel;
 			character_t character = world->player[curEntityID].character;
+			move_request(world, send_router_fd[WRITE_END], targl, targx, targy);
 			destroy_world(world);
 			unsigned int e = create_player(world, targx, targy, true, COLLISION_HACKER, 0, character);
 			load_animation("assets/Graphics/player/p0/rob_animation.txt", world, e);

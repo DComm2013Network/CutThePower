@@ -308,4 +308,3 @@ int client_update_info(World *world, void *packet)
 	return CONNECT_CODE_ACCEPTED;
 }
 
-

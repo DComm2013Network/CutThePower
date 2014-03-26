@@ -11,4 +11,5 @@
 
 void send_location(World *world, int fd);
 void send_intialization(World *world, int fd, char * username, char * serverip);
+void move_request(World * world, int fd, floorNo_t floor, pos_t xpos, pos_t ypos);
 #endif

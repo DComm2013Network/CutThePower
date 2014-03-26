@@ -75,14 +75,31 @@ void send_location(World *world, int fd) {
 void send_intialization(World *world, int fd, char * username, char * serverip)
 {
 	PKT_PLAYER_NAME * pkt1 = (PKT_PLAYER_NAME *)malloc(sizeof(PKT_PLAYER_NAME));
-		for (int j = 0; j < MAX_ENTITIES; j++) {
-			if (IN_THIS_COMPONENT(world->mask[j], COMPONENT_PLAYER | COMPONENT_CONTROLLABLE))
-			{
-				memcpy(pkt1->client_player_name, world->player[j].name, sizeof(world->player[j].name));
-				pkt1->selectedCharacter = world->player[j].character;
-				break;
-			}
-		}	
-		write_packet(fd, P_NAME, pkt1);
+	for (int j = 0; j < MAX_ENTITIES; j++) {
+		if (IN_THIS_COMPONENT(world->mask[j], COMPONENT_PLAYER | COMPONENT_CONTROLLABLE))
+		{
+			memcpy(pkt1->client_player_name, world->player[j].name, sizeof(world->player[j].name));
+			pkt1->selectedCharacter = world->player[j].character;
+			break;
+		}
+	}	
+	write_packet(fd, P_NAME, pkt1);
 
+}
+
+void move_request(World * world, int fd, floorNo_t floor, pos_t xpos, pos_t ypos)
+{
+	PKT_FLOOR_MOVE_REQUEST * pkt = (PKT_FLOOR_MOVE_REQUEST*)malloc(sizeof(PKT_FLOOR_MOVE_REQUEST));
+	for (int j = 0; j < MAX_ENTITIES; j++) {
+		if (IN_THIS_COMPONENT(world->mask[j], COMPONENT_PLAYER | COMPONENT_CONTROLLABLE))
+		{
+			pkt->player_number = world->player[j].playerNo;
+			pkt->current_floor = world->position[j].level;
+			pkt->desired_floor = floor;
+			pkt->desired_xPos = xpos;
+			pkt->desired_yPos = ypos;
+			break;
+		}
+	}	
+	write_packet(fd, P_FLOOR_MOVE_REQ, pkt);
 }
