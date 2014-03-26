@@ -25,6 +25,8 @@ struct fogOfWarStruct
 	
 	int xOffset;
 	int yOffset;
+	
+	SDL_Surface **fogOfWar;
 };
 
 int map_init(World* world, char *file_map, char *tilemap);

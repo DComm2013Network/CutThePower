@@ -31,7 +31,7 @@ int level;                /**< The current floor. */
 
 
 /*SAM*************************************************************************/
-void render_fog_of_war(SDL_Surface **fogOfWar, SDL_Surface *surface, struct fogOfWarStruct *fow)
+void render_fog_of_war(SDL_Surface *surface, struct fogOfWarStruct *fow)
 {
 	int xOffset = fow -> xOffset;
 	int yOffset = fow -> yOffset;
@@ -52,14 +52,14 @@ void render_fog_of_war(SDL_Surface **fogOfWar, SDL_Surface *surface, struct fogO
 				tempRect.w = TILE_WIDTH;
 				tempRect.h = TILE_HEIGHT;
 			
-				SDL_BlitSurface(fogOfWar[count++], NULL, surface, &tempRect); 
+				SDL_BlitSurface(fow -> fogOfWar[count++], NULL, surface, &tempRect); 
 			}
 		}
 	}
 }
 
 
-void init_fog_of_war(SDL_Surface ***fogOfWar, struct fogOfWarStruct **fow)
+void init_fog_of_war(struct fogOfWarStruct **fow)
 {
 		fogOfWarWidth = 64;  // screen width (tiles/screen)
 		fogOfWarHeight = 38; // screen height (tiles/screen)
@@ -89,12 +89,12 @@ void init_fog_of_war(SDL_Surface ***fogOfWar, struct fogOfWarStruct **fow)
 	
 	
 		// array of surfaces
-		(*fogOfWar) = (SDL_Surface**)malloc(sizeof(SDL_Surface*) * fogOfWarWidth * fogOfWarHeight);
+		(*fow) -> fogOfWar = (SDL_Surface**)malloc(sizeof(SDL_Surface*) * fogOfWarWidth * fogOfWarHeight);
 	
 		for(int i = 0; i < (fogOfWarHeight * fogOfWarWidth); i++)
 		{
-			(*fogOfWar)[ i ] = SDL_CreateRGBSurface(0, TILE_WIDTH, TILE_HEIGHT, 32, 0, 0, 0, 0);
-			SDL_FillRect((*fogOfWar)[ i ],0,0x221122);
+			(*fow) -> fogOfWar[ i ] = SDL_CreateRGBSurface(0, TILE_WIDTH, TILE_HEIGHT, 32, 0, 0, 0, 0);
+			SDL_FillRect((*fow) -> fogOfWar[ i ],0,0x221122);
 		}
 }
 /**************************************************************************/
