@@ -10,12 +10,16 @@
 #include "../systems.h"
 #include "../sound.h"
 #include "../Input/menu.h"
+#include "../triggered.h"
 
 #include <stdlib.h>
 
 #define SYSTEM_MASK (COMPONENT_RENDER_PLAYER | COMPONENT_ANIMATION) /**< The entity must have a animation and render component */
 
+<<<<<<< HEAD
 int game_net_signalfd, game_net_lockfd;
+=======
+>>>>>>> origin/Development
 /**
  * Updates animations
  *
@@ -32,7 +36,11 @@ int game_net_signalfd, game_net_lockfd;
  *
  * @author Jordan Marling
  */
+<<<<<<< HEAD
 void animation_system(World *world, unsigned int *player_entity, int send_router_fd[2], int rcv_router_fd[2]) {
+=======
+void animation_system(World *world) {
+>>>>>>> origin/Development
 	
 	unsigned int entity;
 	AnimationComponent 		*animationComponent;
@@ -52,10 +60,7 @@ void animation_system(World *world, unsigned int *player_entity, int send_router
 				animation = &(animationComponent->animations[animationComponent->current_animation]);
 				
 				if (animation->index == 0 && animation->frame_count == 0 && animation->sound_effect > -1) {
-					
-					if (animation->sound_effect >= 0) {
-						play_effect(animation->sound_effect);
-					}
+					play_effect(animation->sound_effect);
 				}
 				
 				animation->frame_count++;
@@ -64,12 +69,13 @@ void animation_system(World *world, unsigned int *player_entity, int send_router
 					
 					animation->frame_count = 0;
 					
+					animation->index++;
 					if (animation->index >= animation->surface_count) {
 						
 						animation->index = 0;
-						animation->frame_count = 0;
 						if (animation->loop == -1) {
 							
+<<<<<<< HEAD
 							if (animationComponent->id == 0) { //0 is the intro screen!
 								
 								destroy_world(world);
@@ -107,15 +113,20 @@ void animation_system(World *world, unsigned int *player_entity, int send_router
 								return;
 							}
 							
+=======
+>>>>>>> origin/Development
 							animationComponent->current_animation = -1;
 							renderPlayer->playerSurface = animation->surfaces[0];
+							
+							//printf("Animation finished\nEntity: %u\nName: %s\n", entity, animation->name);
+							
+							animation_end(world, entity, animationComponent->id);
 							continue;
 						}
 					}
 					
 					renderPlayer->playerSurface = animation->surfaces[animation->index];
 					
-					animation->index++;
 				}
 			}
 			else { //check if random trigger has triggered
@@ -143,6 +154,9 @@ int load_animation(char *filename, World *world, unsigned int entity) {
 	char animation_name[64];
 	int animation_frames, frames_to_skip, triggered_sound, loop_animation;
 	int frame_index, animation_index;
+	int optional_features;
+	int i;
+	char feature_type[64];
 	
 	char animation_filename[64];
 	
@@ -162,6 +176,10 @@ int load_animation(char *filename, World *world, unsigned int entity) {
 	animationComponent->current_animation = -1;
 	animationComponent->id = -1;
 	
+	animationComponent->rand_animation = -1;
+	animationComponent->rand_occurance = -1;
+	animationComponent->hover_animation = -1;
+	
 	for(animation_index = 0; animation_index < animationComponent->animation_count; animation_index++) {
 		
 		if (fscanf(fp, "%s %d %d %d %d", animation_name, &animation_frames, &frames_to_skip, &triggered_sound, &loop_animation) != 5) {
@@ -177,6 +195,8 @@ int load_animation(char *filename, World *world, unsigned int entity) {
 		animationComponent->animations[animation_index].frames_to_skip = frames_to_skip;
 		animationComponent->animations[animation_index].sound_effect = triggered_sound;
 		animationComponent->animations[animation_index].loop = loop_animation;
+		animationComponent->animations[animation_index].frame_count = 0;
+		animationComponent->animations[animation_index].index = 0;
 		
 		animationComponent->animations[animation_index].name = (char*)malloc(sizeof(char) * strlen(animation_name) + 1);
 		strcpy(animationComponent->animations[animation_index].name, animation_name);
@@ -184,7 +204,7 @@ int load_animation(char *filename, World *world, unsigned int entity) {
 		for (frame_index = 0; frame_index < animation_frames; frame_index++) {
 			
 			if (fscanf(fp, "%s", animation_filename) != 1) {
-				printf("Error loading animation file: %s\n", animation_filename);
+				printf("Error reading animation file\n");
 				return -1;
 			}
 			
@@ -193,22 +213,46 @@ int load_animation(char *filename, World *world, unsigned int entity) {
 			animationComponent->animations[animation_index].surfaces[frame_index] = IMG_Load(animation_filename);
 			
 			if (animationComponent->animations[animation_index].surfaces[frame_index] == 0) {
-				printf("Error loading file: %s\n", animation_filename);
+				printf("Error loading file: %s, %s\n", animation_filename, IMG_GetError());
 			}
 		}
 		
-		//printf("Loaded animation: %s\n", animationComponent->animations[animation_index].name);
+		//printf("Loaded animation: %s with %d frames\n", animationComponent->animations[animation_index].name, animation_frames);
 		
 	}
 	
 	renderComponent->playerSurface = animationComponent->animations[0].surfaces[0];
 	
-	//load random animation
-	if (fscanf(fp, "%d %d", &(animationComponent->rand_animation), &(animationComponent->rand_occurance)) != 2) {
+	//load optional features
+	if (fscanf(fp, "%d", &optional_features) == 1) {
 		
-		animationComponent->rand_animation = -1;
-		animationComponent->rand_occurance = -1;
-		
+		for(i = 0; i < optional_features; i++) {
+			
+			if (fscanf(fp, "%s", (char*)feature_type) != 1) {
+				printf("Optional Feature type error: %s\n", filename);
+				return -1;
+			}
+			
+			if (strcmp(feature_type, "random") == 0) {
+				if (fscanf(fp, "%d %d", &(animationComponent->rand_animation), &(animationComponent->rand_occurance)) != 2) {
+					
+					animationComponent->rand_animation = -1;
+					animationComponent->rand_occurance = -1;
+					
+				}
+			}
+			else if (strcmp(feature_type, "hover") == 0) {
+				
+				if (fscanf(fp, "%d", &animationComponent->hover_animation) != 1) {
+					animationComponent->hover_animation = -1;
+				}
+				
+			}
+			else {
+				printf("Did not deal with the entity type: %s\n", feature_type);
+				break;
+			}
+		}
 	}
 	
 	return 0;
@@ -231,9 +275,10 @@ void cancel_animation(World *world, unsigned int entity, char *animation_name) {
 	}
 }
 
-void play_animation(AnimationComponent *animationComponent, char *animation_name) {
+void play_animation(World *world, unsigned int entity, char *animation_name) {
 	
 	int i;
+	AnimationComponent *animationComponent = &(world->animation[entity]);
 	
 	for(i = 0; i < animationComponent->animation_count; i++) {
 		
@@ -246,7 +291,9 @@ void play_animation(AnimationComponent *animationComponent, char *animation_name
 			animationComponent->animations[i].frame_count = 0;
 			animationComponent->animations[i].index = 0;
 			
-			//printf("Playing animation: %s\n", animationComponent->animations[i].name);
+			//printf("Playing animation: %s\n", animation_name);
+			
+			//world->renderPlayer[entity].playerSurface = animationComponent->animations[i].surfaces[1];
 			
 			return;
 		}

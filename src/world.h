@@ -37,10 +37,16 @@ typedef struct {
 
 void init_world(World* world);
 unsigned int create_entity(World* world, unsigned int attributes);
+<<<<<<< HEAD
 unsigned int create_player(World* world, int x, int y, bool controllable, int collisiontype, playerNo_t pno = NULL);
 unsigned int create_level(World* world, int** map, int width, int height, int tileSize);
+=======
+unsigned int create_player(World* world, int x, int y, bool controllable, int collisiontype);
+unsigned int create_level(World* world, int** map, int width, int height, int tileSize, int floor);
+>>>>>>> origin/Development
 unsigned int create_stair(World* world, int targetLevel, int targetX, int targetY, int x, int y, int width, int height, int level);
 unsigned int create_target(World* world, int x, int y, int collisiontype);
+unsigned int create_block(World* world, int x, int y, int width, int height, int level);
 void destroy_entity(World* world, const unsigned int entity);
 void destroy_world(World *world);
 

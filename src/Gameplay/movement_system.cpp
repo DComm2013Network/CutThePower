@@ -12,7 +12,11 @@
 #define COLLISION_MASK (COMPONENT_COLLISION)
 #define PI 3.14159265
 
+<<<<<<< HEAD
 int loc_ready = 30;
+=======
+extern unsigned int player_entity;
+>>>>>>> origin/Development
 
 int handle_collision_target(World *world, int entityIndex) {
 	if (world->collision[entityIndex].timer < world->collision[entityIndex].timerMax) {
@@ -164,6 +168,35 @@ void handle_entity_collision(CollisionData data, World * world, int curEntityID)
 		}
 		break;
 	case COLLISION_STAIR:
+		if (world->collision[curEntityID].type == COLLISION_HACKER || world->collision[curEntityID].type == COLLISION_GUARD) {
+			int targx = world->wormhole[data.entityID].targetX, targy = world->wormhole[data.entityID].targetY, targl = world->wormhole[data.entityID].targetLevel;
+			destroy_world(world);
+			unsigned int e = create_player(world, targx, targy, true, COLLISION_HACKER);
+			load_animation("assets/Graphics/player/p0/rob_animation.txt", world, e);
+	        world->position[e].level = targl;
+	        player_entity = e;
+	        switch (targl) {
+				case 0:
+					map_init(world, "assets/Graphics/map/map_00/map00.txt", "assets/Graphics/map/map_00/tiles.txt");
+					break;
+				case 1:
+					map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/tiles.txt");
+					break;
+				case 2:
+					map_init(world, "assets/Graphics/map/map_02/map02.txt", "assets/Graphics/map/map_02/tiles.txt");
+					break;
+				case 3:
+					map_init(world, "assets/Graphics/map/map_03/map03.txt", "assets/Graphics/map/map_03/tiles.txt");
+					break;
+			}
+			for (unsigned int i = 0; i < MAX_ENTITIES; i++) {
+				if (IN_THIS_COMPONENT(world->mask[i], COMPONENT_LEVEL)) {
+					world->level[i].levelID = targl;
+					break;
+				}
+			}
+			//printf("t: %i\n", world->position[player_entity].level);
+		}
 		break;
 	case COLLISION_HACKER:
 		if (world->collision[curEntityID].type == COLLISION_GUARD) {
@@ -211,37 +244,56 @@ void movement_system(World* world, int sendpipe) {
 				temp.level = position->level;
 				bool moved = false;
 				
+				if (command->commands[C_ACTION]) {
+					
+				}
 				if (command->commands[C_UP]) {
 					add_force(world, entity, world->movement[entity].acceleration, -90);
+<<<<<<< HEAD
 					play_animation(&(world->animation[entity]), "up");
 					moved = true;
+=======
+					play_animation(world, entity, (char*)"up");
+>>>>>>> origin/Development
 				}
 				else {
-					cancel_animation(world, entity, "up");
+					cancel_animation(world, entity, (char*)"up");
 				}
 				if (command->commands[C_DOWN]) {
 					add_force(world, entity, world->movement[entity].acceleration, 90);
+<<<<<<< HEAD
 					play_animation(&(world->animation[entity]), "down");
 					moved = true;
+=======
+					play_animation(world, entity, (char*)"down");
+>>>>>>> origin/Development
 				}
 				else {
-					cancel_animation(world, entity, "down");
+					cancel_animation(world, entity, (char*)"down");
 				}
 				if (command->commands[C_LEFT]) {
 					add_force(world, entity, world->movement[entity].acceleration, 180);
+<<<<<<< HEAD
 					play_animation(&(world->animation[entity]), "left");
 					moved = true;
+=======
+					play_animation(world, entity, (char*)"left");
+>>>>>>> origin/Development
 				}
 				else {
-					cancel_animation(world, entity, "left");
+					cancel_animation(world, entity, (char*)"left");
 				}
 				if (command->commands[C_RIGHT]) {
 					add_force(world, entity, world->movement[entity].acceleration, 0);
+<<<<<<< HEAD
 					play_animation(&(world->animation[entity]), "right");
 					moved = true;
+=======
+					play_animation(world, entity, (char*)"right");
+>>>>>>> origin/Development
 				}
 				else {
-					cancel_animation(world, entity, "right");
+					cancel_animation(world, entity, (char*)"right");
 				}
 
 				CollisionData data;
@@ -253,7 +305,10 @@ void movement_system(World* world, int sendpipe) {
 					apply_forcey(temp, *movement);
 					data = collision_system(world, temp, entity);
 					handle_y_collision(data, temp, *movement);
+					position->x = temp.x + goffsetW;
+					position->y = temp.y + goffsetH;
 					handle_entity_collision(data, world, entity);
+<<<<<<< HEAD
 
 				}	
 				position->x = temp.x + goffsetW;
@@ -261,6 +316,13 @@ void movement_system(World* world, int sendpipe) {
 
 				if(moved)
 					send_location(world, sendpipe);
+=======
+				}
+				else {
+					position->x = temp.x + goffsetW;
+					position->y = temp.y + goffsetH;
+				}
+>>>>>>> origin/Development
 			}
 		}
 	} 

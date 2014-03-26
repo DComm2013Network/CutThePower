@@ -7,8 +7,16 @@
 #include <time.h>
 #include <stdio.h>
 
+<<<<<<< HEAD
 
 #define FPS_MAX 60
+=======
+#define FPS_MAX 60
+
+int game_net_signalfd, game_net_lockfd;
+bool running;
+unsigned int player_entity;
+>>>>>>> origin/Development
 
 int network_ready = 0;
 int send_ready = 0;
@@ -66,12 +74,17 @@ int main(int argc, char* argv[]) {
 	unsigned int entity = -1;
 	int send_router_fd[2];
 	int rcv_router_fd[2];
+<<<<<<< HEAD
 	create_pipe(send_router_fd);
 	create_pipe(rcv_router_fd);
+=======
+
+	//create_pipe(send_router_fd);
+	//create_pipe(rcv_router_fd);
+>>>>>>> origin/Development
 
 	World *world = (World*)malloc(sizeof(World));
 	printf("Current World size: %i\n", sizeof(World));
-	bool running = true;
 	
 	//SDL_Init(SDL_INIT_VIDEO);
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
@@ -92,8 +105,12 @@ int main(int argc, char* argv[]) {
 	//map_init(world, "assets/Graphics/lobby/lobby.txt", "assets/Graphics/lobby/lobby_tiles.txt");
 	//map_init(world, "assets/Graphics/lobby.txt", "assets/Graphics/tiles_lobby.txt");
 	
+<<<<<<< HEAD
 
 	KeyMapInit("assets/Input/keymap.txt");
+=======
+	KeyMapInit((char*)"assets/Input/keymap.txt");
+>>>>>>> origin/Development
 	init_render_player_system();
 	//unsigned int entity = create_player(world, 600, 600, true);
 	
@@ -103,16 +120,22 @@ int main(int argc, char* argv[]) {
 	//entity = create_player(world, 600, 600, true, COLLISION_HACKER);
 						
 	//world->mask[entity] |= COMPONENT_ANIMATION;
-	
 	//load_animation("assets/Graphics/player/robber/rob_animation.txt", world, entity);
 	
 	FPS fps;
 	fps.init();
+<<<<<<< HEAD
 
+=======
+	running = true;
+	player_entity = -1;
+	
+>>>>>>> origin/Development
 	while (running)
 	{
 		
 		//INPUT
+<<<<<<< HEAD
 		KeyInputSystem(world, &running);
 		MouseInputSystem(world, &entity, &running);
 		movement_system(world, send_router_fd[WRITE_END]);
@@ -120,6 +143,16 @@ int main(int argc, char* argv[]) {
 			map_render(surface, world, entity);
 		}
 		animation_system(world, &entity, send_router_fd, rcv_router_fd);
+=======
+		KeyInputSystem(world);
+		MouseInputSystem(world);
+		movement_system(world);
+		if (player_entity < MAX_ENTITIES) {
+			map_render(surface, world, player_entity);
+			//send_system(world, send_router_fd[WRITE_END]);
+		}
+		animation_system(world);
+>>>>>>> origin/Development
 		render_player_system(*world, surface);
 
 		////NETWORK CODE
@@ -136,6 +169,8 @@ int main(int argc, char* argv[]) {
 	}
 	
 	cleanup_sound();
+	
+	printf("Exiting The Game\n");
 	
 	return 0;
 }

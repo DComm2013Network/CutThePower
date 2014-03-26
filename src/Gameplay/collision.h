@@ -13,6 +13,7 @@ typedef struct {
 CollisionData collision_system(World* world, PositionComponent entity, int entityID);
 int wall_collision(World* world, PositionComponent entity);
 int entity_collision(World* world, PositionComponent entity, int entityID);
+int tag_entity_collision(World *world, PositionComponent entity, int entityID);
 int handle_target_collision(World *world, int entityIndex);
 int handle_entity_collision(World *world, int entityIndex);
 

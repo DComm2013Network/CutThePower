@@ -1,11 +1,13 @@
+/** @ingroup Gameplay */
+/** @{ */
+/** @file components.h */
+/** @} */
 #ifndef GAMEPLAY_COMPONENTS_H
 #define GAMEPLAY_COMPONENTS_H
 
 #include "../components.h"
 #include "../Network/Packets.h"
 #include "collisiontypes.h"
-
-//Example components. These should be in their simplest form so no duplicate data.
 
 typedef struct {
 	float x;

@@ -17,17 +17,11 @@
 #include "systems.h"
 #include "../sound.h"
 
-#define MAP_SECTION_WIDTH 25
-#define MAP_SECTION_HEIGHT 25
-
-SDL_Surface *map_surface; /**< The surface on which to render the map. */
+SDL_Surface *map_surface = 0; /**< The surface on which to render the map. */
 SDL_Rect map_rect;        /**< The rectangle containing the map. */
 int w;                    /**< The map's width. */
 int h;                    /**< The map's height. */
 int level;                /**< The current floor. */
-
-
-void load_map_section(int **map, SDL_Surface **tiles, int startX, int startY, int map_width, int map_height, SDL_Surface **map_surface);
 
 /**
  * Initiates the map by loading the tiles and putting it into one large texture.
@@ -37,7 +31,7 @@ void load_map_section(int **map, SDL_Surface **tiles, int startX, int startY, in
  * Revisions:
  *     -# March 10th - Jordan Marling: Implemented reading in the file correctly for the Stairs, 
  *    able to now set the location of the stairs & where the stairs will push the player to.
- *
+ *loading
  * @param[out] world      The world struct in which to store the map.
  * @param[in]  file_map   The pathway for the map.
  * @param[in]  file_tiles Pathway for the tiles.
@@ -56,18 +50,20 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 	FILE *fp_tiles;
 	
 	int width, height;
+<<<<<<< HEAD
 	int x, y, i, a;
+=======
+	int x, y, i;
+>>>>>>> origin/Development
 	//uint8_t** map;
 	int **collision_map;
 	int **map;
-	//int **collision_map;
+	//int **collision_map;loading
 	
 	//char entity_type[64];
 	char *entity_type = (char*)malloc(sizeof(char) * 128);
 	int entity_count;
 	
-	char entity_type[64];
-	int entity_count;
 	
 	SDL_Surface **tiles;
 	int *collision;
@@ -77,6 +73,10 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 	char *tile_filename = (char*)malloc(sizeof(char) * 128);
 	
 	SDL_Rect tile_rect;
+	
+	if (map_surface != 0) {
+		SDL_FreeSurface(map_surface);
+	}
 	
 	//load tiles
 	if ((fp_tiles = fopen(file_tiles, "r")) == 0) {
@@ -125,7 +125,6 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 			printf("Error loading tile: %s\n", tile_filename);
 			return -1;
 		}
-		
 	}
 	
 	fclose(fp_tiles);
@@ -187,30 +186,51 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 			//printf("Found entity: %s\n", entity_type);
 			
 			if (strcmp(entity_type, "stair") == 0) { //stair
-				fscanf(fp_map, "%d %d %d %d %d", &a, &a, &a, &a, &a);
+				
+				//stair x y targetX targetY 2
+				unsigned int entity;
+				int x, y, floor;
+				float targetX, targetY;
+				
+				if (fscanf(fp_map, "%d %d %f %f %d", &x, &y, &targetX, &targetY, &floor) != 5) {
+					printf("Error loading stair\n");
+					return -1;
+				}
+				
+				create_stair(world, floor, targetX * TILE_WIDTH + TILE_WIDTH / 2, targetY * TILE_HEIGHT + TILE_HEIGHT / 2, x * TILE_WIDTH + TILE_WIDTH / 2, y * TILE_HEIGHT + TILE_HEIGHT / 2, TILE_WIDTH, TILE_HEIGHT, level);
+				
+				printf("mx: %d\n", x * TILE_WIDTH);
+				printf("my: %d\n", y * TILE_HEIGHT);
+				printf("mw: %d\n", TILE_WIDTH);
+				printf("mh: %d\n", TILE_HEIGHT);
+				
+				
+				//printf("tx: %i, ty: %i\n", targetX, targetY);
+				//printf("Create stair entity %d\n", entity);
+				
 			}
 			else if (strcmp(entity_type, "object") == 0) { //animated objects
 				
 				unsigned int entity;
-				int x, y;
+				float x, y;
+				int w, h;
 				char *animation_name = (char*)malloc(sizeof(char) * 64);
 				char *animation_filename = (char*)malloc(sizeof(char) * 64);
 				
-				if (fscanf(fp_map, "%d %d %s %s", &x, &y, animation_filename, animation_name) != 4) {
+				if (fscanf(fp_map, "%f %f %d %d %s %s", &x, &y, &w, &h, animation_filename, animation_name) != 6) {
 					printf("Error loading object!\n");
 					return -1;
 				}
 				
-				printf("Loading object [%s] %s\n", animation_name, animation_filename);
-				
-				
 				entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION | COMPONENT_COLLISION);
 				
-				world->position[entity].x = TILE_WIDTH * x;
-				world->position[entity].y = TILE_HEIGHT * y;
+				//printf("Loading object %d [%s] %s\n", entity, animation_name, animation_filename);
 				
-				world->position[entity].width = TILE_WIDTH;
-				world->position[entity].height = TILE_HEIGHT;
+				world->position[entity].x = x * TILE_WIDTH + TILE_WIDTH / 2;
+				world->position[entity].y = y * TILE_HEIGHT + TILE_HEIGHT / 2;
+				
+				world->position[entity].width = w;
+				world->position[entity].height = h;
 				
 				world->renderPlayer[entity].width = TILE_WIDTH;
 				world->renderPlayer[entity].height = TILE_HEIGHT;
@@ -223,7 +243,7 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 				world->collision[entity].radius = 0;
 				
 				load_animation(animation_filename, world, entity);
-				play_animation(&(world->animation[entity]), animation_name);
+				play_animation(world, entity, animation_name);
 				
 				free(animation_name);
 				free(animation_filename);
@@ -292,7 +312,7 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 	
 	
 	
-	create_level(world, collision_map, width, height, TILE_WIDTH);
+	create_level(world, collision_map, width, height, TILE_WIDTH, level);
 	
 	for (i = 0; i < width; i++) {
 		free(map[i]);
@@ -330,7 +350,7 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 /**
  * Add the surface to the main surface of the window.
  * 
- * Fills the remaining space with a pink color to ensure that
+ * Fills the remaining space with a pink (black) color to ensure that
  * there are no errors in tiles. If so, pink background will show.
  * 
  * Revisions:
@@ -361,7 +381,7 @@ void map_render(SDL_Surface *surface, World *world, unsigned int player_entity) 
 		return;
 	}
 	
-	SDL_FillRect(surface, NULL, 0xFF33FF);
+	SDL_FillRect(surface, NULL, 0x000000);
 	
 	map_rect.x = (WIDTH/2) -( playerXPosition + playerWidth / 2 );
 	map_rect.y = (HEIGHT/2) - ( playerYPosition + playerHeight / 2 );
@@ -395,56 +415,3 @@ void map_render(SDL_Surface *surface, World *world, unsigned int player_entity) 
 	
 	SDL_BlitSurface(map_surface, NULL, surface, &tempRect);
 }
-
-
-
-void load_map_section(int **map, SDL_Surface **tiles, int startX, int startY, int map_width, int map_height, SDL_Surface **map_surface) {
-	
-	int x, y;
-	SDL_Rect tile_rect;
-	
-	//cap the size to make sure the surface is not too big.
-	if (startX + MAP_SECTION_WIDTH < map_width) {
-		map_width = startX + MAP_SECTION_WIDTH;
-	}
-	if (startY + MAP_SECTION_HEIGHT < map_height) {
-		map_height = startY + MAP_SECTION_HEIGHT;
-	}
-	
-	printf("Making map sized: %dx%d\n", map_width - startX, map_height - startY);
-	
-	*map_surface = 0;
-	
-	//create a new surface with the desired size.
-	*map_surface = SDL_CreateRGBSurface(0, (map_width - startX) * TILE_WIDTH, (map_height - startY) * TILE_HEIGHT, 32, 0, 0, 0, 0);
-
-	printf("Made surface!\n");
-	printf("Size: %dx%d\n", map_width * TILE_WIDTH, map_height * TILE_HEIGHT);
-
-	if (*map_surface == 0) {
-		printf("error making map surface.\n");
-		return;
-	}
-
-	tile_rect.w = TILE_WIDTH;
-	tile_rect.h = TILE_HEIGHT;
-	
-	
-	printf("filling!\n");
-	SDL_FillRect(*map_surface, NULL, 0xFF0000);
-	printf("filled!\n");
-	
-	for(y = startY; y < map_height; y++) {
-		for(x = startX; x < map_width; x++) {
-			
-			tile_rect.x = (x * TILE_WIDTH) - startX;
-			tile_rect.y = (y * TILE_HEIGHT) - startY;
-			
-			SDL_BlitSurface(tiles[map[x][y]], NULL, *map_surface, &tile_rect);
-			
-		}
-	}
-	
-}
-
-
