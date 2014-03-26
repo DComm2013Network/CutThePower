@@ -188,10 +188,6 @@ void handle_entity_collision(CollisionData data, World * world, int curEntityID)
 			//COMMENT THIS OUT IF YOU WANT TO CHANGE FLOORS ON SINGLEPLAYER
 			//COMMENT THIS OUT IF YOU WANT TO CHANGE FLOORS ON SINGLEPLAYER
 			destroy_world_not_player(world);
-			unsigned int e = create_player(world, targx, targy, true, COLLISION_HACKER, 0, character);
-			load_animation("assets/Graphics/player/p0/rob_animation.txt", world, e);
-	        world->position[e].level = targl;
-	        player_entity = e;
 	        switch (targl) {
 				case 0:
 					map_init(world, "assets/Graphics/map/map_00/map00.txt", "assets/Graphics/map/map_00/tiles.txt");
