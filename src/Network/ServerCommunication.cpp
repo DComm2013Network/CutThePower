@@ -23,6 +23,7 @@
 #include "GameplayCommunication.h"
 #include "PipeUtils.h"
 #include "Packets.h"
+#include "packet_min_utils.h"
 
 extern uint32_t packet_sizes[NUM_PACKETS];
 static int cnt_errno = -1;
@@ -204,6 +205,19 @@ int handle_udp_in(int router_pipe_fd, UDPsocket udp_sock)
     if((game_packet = recv_udp_packet(udp_sock, &packet_type, &timestamp)) == NULL)
         return (packet_type == INVALID_PACKET_TYPE) - 1; // If it's a corrupted packet, that's fine; return 0
 
+	// if it's a min pos update, decapsulate it first
+	if(packet_type == P_MIN_POS)
+	{
+		packet_type = P_POSUPDATE;
+		game_packet = (void *)decapsulate_pos_update((PKT_POS_UPDATE_MIN *)game_packet);
+	}
+
+	else if (packet_type == P_MIN_POS_ALL)
+	{
+		packet_type = G_ALLPOSUPDATE;
+		game_packet = decapsulate_all_pos_update((PKT_ALL_POS_UPDATE_MIN *)game_packet);
+	}
+	
     if(write_packet(router_pipe_fd, packet_type, game_packet) == -1 ||
         write_pipe(router_pipe_fd, &timestamp, sizeof(timestamp)) == -1)
     {
@@ -507,6 +521,19 @@ int send_tcp(void * data, TCPsocket sock, uint32_t size){
 int send_udp(void * data, uint32_t * type, UDPsocket sock, uint32_t size){
 
     int numsent;
+    if(*type == P_POSUPDATE)
+    {
+    	*type = P_MIN_POS;
+    	data = encapsulate_pos_update((PKT_POS_UPDATE *)data);
+		size = packet_sizes[*type - 1];
+	}
+	else if(*type == G_ALLPOSUPDATE)
+	{
+		*type = P_MIN_POS_ALL;
+		data = encapsulate_all_pos_update((PKT_ALL_POS_UPDATE *)data);
+		size = packet_sizes[*type - 1];
+	}
+    
     UDPpacket *pktdata = alloc_packet(size);
     memcpy(pktdata->data, type, sizeof(uint32_t));
     memcpy(pktdata->data + sizeof(uint32_t), data, size - sizeof(uint32_t));
