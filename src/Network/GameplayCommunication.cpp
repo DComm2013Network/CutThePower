@@ -16,20 +16,22 @@
 #include "NetworkRouter.h"
 
 uint32_t packet_sizes[NUM_PACKETS] = {
-	sizeof(PKT_PLAYER_NAME),         //0
-	sizeof(PKT_PLAYER_CONNECT),      //1
-	sizeof(PKT_GAME_STATUS),         //2
-	sizeof(PKT_SND_CHAT),            //3
-	sizeof(pkt05),                   //4
-	sizeof(PKT_OBJ_LOC),             //5
-	0,                               //6
-	sizeof(PKT_OBJECTIVE_STATUS),    //7
-	0,                               //8
-    sizeof(PKT_POS_UPDATE),          //9
-    sizeof(PKT_ALL_POS_UPDATE),      //10
-	sizeof(PKT_FLOOR_MOVE_REQUEST),  //11
-	sizeof(PKT_FLOOR_MOVE),          //12
-    sizeof(PKT_TAGGING)              //13
+	sizeof(PKT_PLAYER_NAME),         // 0
+	sizeof(PKT_PLAYER_CONNECT),      // 1
+	sizeof(PKT_GAME_STATUS),         // 2
+	sizeof(PKT_SND_CHAT),            // 3
+	sizeof(pkt05),                   // 4
+	sizeof(PKT_OBJ_LOC),             // 5
+	0,                               // 6
+	sizeof(PKT_OBJECTIVE_STATUS),    // 7
+	0,                               // 8
+    sizeof(PKT_POS_UPDATE),          // 9
+    sizeof(PKT_ALL_POS_UPDATE),      // 10
+	sizeof(PKT_FLOOR_MOVE_REQUEST),  // 11
+	sizeof(PKT_FLOOR_MOVE),          // 12
+    sizeof(PKT_TAGGING),             // 13
+    sizeof(PKT_POS_UPDATE_MIN),      // 14
+    sizeof(PKT_ALL_POS_UPDATE_MIN)   // 15
 };
 
 /**

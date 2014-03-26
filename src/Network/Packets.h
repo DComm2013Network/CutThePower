@@ -54,8 +54,10 @@
 #define P_FLOOR_MOVE_REQ 12
 #define P_FLOOR_MOVE     13
 #define P_TAGGING        14
+#define P_MIN_POS        15
+#define P_MIN_POS_ALL    16
 
-#define NUM_PACKETS  14
+#define NUM_PACKETS  16
 
 #define ABHISHEK 	0
 #define AMAN		1
@@ -194,5 +196,17 @@ typedef struct pkt14 {
 	playerNo_t	tagger_id; /* the person who tagged */
 	playerNo_t  taggee_id; /* the person who got tagged */
 } PKT_TAGGING;
+
+typedef struct pkt15 {
+	uint32_t data;
+	uint8_t vel;
+} PKT_POS_UPDATE_MIN;
+
+typedef struct pkt16 {
+	uint32_t players_on_floor;
+	uint32_t xPos[11];
+	uint32_t yPos[11];
+	uint8_t vel[32];
+} PKT_ALL_POS_UPDATE_MIN;
 
 #endif
