@@ -179,7 +179,7 @@ void *read_data(int fd, uint32_t *type){
     int read_bytes;
     void *packet;
     *type = read_type(fd);
-    if(*type <= 0 || *type > 14){
+    if(*type <= 0 || *type > NUM_PACKETS){
         perror("read_data: Failed to read packet type from pipe");
         return NULL;
     }
