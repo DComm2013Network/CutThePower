@@ -118,8 +118,8 @@ int client_update_system(World *world, int net_pipe) {
 				break;
 		}
 		free(packet);
-		// if(floor_changed == 1)
-		// 	return 1;
+		if(floor_changed == 1)
+			return 1;
 	}
 
 	return 0;
