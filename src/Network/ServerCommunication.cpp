@@ -702,7 +702,7 @@ int get_protocol(uint32_t type)
 		case P_CONNECT:
 		case G_STATUS:
 		case P_CHAT:
-		case P_CLNT_LOBBY:
+		case P_READY_STAT:
 		case P_OBJCTV_LOC:
 		case P_UNDEF:
 		case P_KEEPALIVE:

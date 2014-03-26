@@ -12,6 +12,7 @@
 #include "SendSystem.h"
 
 extern int network_ready;
+teamNo_t player_team = 0;
 
 /**
  * Checks the world for data and sends out data updates to be passed to the server. Currently sends out\
@@ -84,7 +85,7 @@ void send_intialization(World *world, int fd, char * username, char * serverip)
 		}
 	}	
 	write_packet(fd, P_NAME, pkt1);
-
+	free(pkt1);
 }
 
 void move_request(World * world, int fd, floorNo_t floor, pos_t xpos, pos_t ypos)
@@ -105,4 +106,26 @@ void move_request(World * world, int fd, floorNo_t floor, pos_t xpos, pos_t ypos
 		}
 	}	
 	write_packet(fd, P_FLOOR_MOVE_REQ, pkt);
+	free(pkt);
+}
+
+void send_status_ready(World * world, int fd, teamNo_t team)
+{
+	PKT_READY_STATUS * pkt = (PKT_READY_STATUS*)malloc(sizeof(PKT_READY_STATUS));
+	if(player_team != team)
+	{
+		for (int j = 0; j < MAX_ENTITIES; j++) {
+			if (IN_THIS_COMPONENT(world->mask[j], COMPONENT_PLAYER | COMPONENT_CONTROLLABLE))
+			{
+				pkt->player_number = world->player[j].playerNo;
+				pkt->ready_status = PLAYER_STATE_READY;
+				pkt->team_number = team;
+				memcpy(pkt->player_name, world->player[j].name, MAX_NAME);
+				player_team = team;
+				break;
+			}
+		}	
+	}
+	write_packet(fd, P_READY_STAT, pkt);
+	free(pkt);
 }

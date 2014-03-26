@@ -260,24 +260,27 @@ void client_update_status(World *world, void *packet)
 	for(int i = 0; i < MAX_PLAYERS; i++)
 	{
 		if(status_update->player_valid[i] == true)
-		{
-			// if(status_update->otherPlayers_teams[i] == ROBBERS)
-			// {	
-				if(player_table[i] == UNASSIGNED) // They're on the floor but haven't yet been created
-		        {
-		            player_table[i] = create_player(world, 400, 600, false, COLLISION_HACKER, i, status_update->characters[i]);
-		            load_animation("assets/Graphics/player/p0/rob_animation.txt", world, player_table[i]);
-		        }
-			//}
+		{	
+			if(player_table[i] == UNASSIGNED) // They're on the floor but haven't yet been created
+	        {
+	            player_table[i] = create_player(world, 400, 600, false, COLLISION_HACKER, i, status_update->characters[i]);
+	            load_animation("assets/Graphics/player/p0/rob_animation.txt", world, player_table[i]);
+	        }
 
-			// else if(status_update->otherPlayers_teams[i] == COPS)
-			// {
-				// if(player_table[i] == UNASSIGNED) // They're on the floor but haven't yet been created
-		  //       {
-		  //           player_table[i] = create_player(world, 400, 600, COLLISION_HACKER, false, i);
-		  //           load_animation("assets/Graphics/player/robber/rob_animation.txt", world, player_table[i]);
-		  //       }
-			//}
+	        if(player_table[i] != UNASSIGNED && status_update->player_valid[i])
+	        {
+	        	if(status_update->otherPlayers_teams[i] == COPS)
+	        	{
+	        		player_table[i] = create_player(world, 400, 600, false, COLLISION_HACKER, i, status_update->characters[i]);
+	            	load_animation("assets/Graphics/player/p0/rob_animation.txt", world, player_table[i]);
+	        	}
+
+	        	if(status_update->otherPlayers_teams[i] == ROBBERS)
+	        	{
+	        		player_table[i] = create_player(world, 400, 600, false, COLLISION_HACKER, i, status_update->characters[i]);
+	             	load_animation("assets/Graphics/player/p0/rob_animation.txt", world, player_table[i]);
+	        	}
+	        }
 		} 
 		else
 		{

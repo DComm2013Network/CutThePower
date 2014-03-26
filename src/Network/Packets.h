@@ -44,7 +44,7 @@
 #define P_CONNECT        2
 #define G_STATUS         3
 #define P_CHAT           4
-#define P_CLNT_LOBBY     5
+#define P_READY_STAT     5
 #define P_OBJCTV_LOC     6
 #define P_UNDEF          7 // NOT DEFINED
 #define P_OBJSTATUS      8
@@ -140,7 +140,7 @@ typedef struct pkt05{
 	status_t	ready_status;
 	teamNo_t	team_number;
 	char 		player_name[MAX_NAME];
-} pkt05;
+} PKT_READY_STATUS;
 
 typedef struct pkt06{
 	floorNo_t	map_data[MAX_FLOORS];
