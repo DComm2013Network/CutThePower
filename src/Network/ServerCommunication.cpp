@@ -165,12 +165,6 @@ int handle_tcp_in(int router_pipe_fd, TCPsocket tcp_sock)
     if((game_packet = recv_tcp_packet(tcp_sock, &packet_type, &timestamp)) == NULL)
         return (packet_type == P_KEEPALIVE) - 1; // If it's a keep alive, ignore and return 0. 
 
-    else if(write_pipe(router_pipe_fd, &packet_type, sizeof(packet_type)) == -1)
-    {
-        set_error(ERR_IPC_FAIL);
-        return -1;
-    }
-
     if(write_packet(router_pipe_fd, packet_type, game_packet) == -1 ||
         write_pipe(router_pipe_fd, &timestamp, sizeof(timestamp)) == -1)
     {
