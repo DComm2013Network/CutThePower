@@ -12,11 +12,7 @@
 #define COLLISION_MASK (COMPONENT_COLLISION)
 #define PI 3.14159265
 
-<<<<<<< HEAD
-int loc_ready = 30;
-=======
 extern unsigned int player_entity;
->>>>>>> origin/Development
 
 int handle_collision_target(World *world, int entityIndex) {
 	if (world->collision[entityIndex].timer < world->collision[entityIndex].timerMax) {
@@ -171,7 +167,7 @@ void handle_entity_collision(CollisionData data, World * world, int curEntityID)
 		if (world->collision[curEntityID].type == COLLISION_HACKER || world->collision[curEntityID].type == COLLISION_GUARD) {
 			int targx = world->wormhole[data.entityID].targetX, targy = world->wormhole[data.entityID].targetY, targl = world->wormhole[data.entityID].targetLevel;
 			destroy_world(world);
-			unsigned int e = create_player(world, targx, targy, true, COLLISION_HACKER);
+			unsigned int e = create_player(world, targx, targy, true, COLLISION_HACKER, 0);
 			load_animation("assets/Graphics/player/p0/rob_animation.txt", world, e);
 	        world->position[e].level = targl;
 	        player_entity = e;
@@ -249,48 +245,32 @@ void movement_system(World* world, int sendpipe) {
 				}
 				if (command->commands[C_UP]) {
 					add_force(world, entity, world->movement[entity].acceleration, -90);
-<<<<<<< HEAD
-					play_animation(&(world->animation[entity]), "up");
-					moved = true;
-=======
 					play_animation(world, entity, (char*)"up");
->>>>>>> origin/Development
+					moved = true;
 				}
 				else {
 					cancel_animation(world, entity, (char*)"up");
 				}
 				if (command->commands[C_DOWN]) {
 					add_force(world, entity, world->movement[entity].acceleration, 90);
-<<<<<<< HEAD
-					play_animation(&(world->animation[entity]), "down");
-					moved = true;
-=======
 					play_animation(world, entity, (char*)"down");
->>>>>>> origin/Development
+					moved = true;
 				}
 				else {
 					cancel_animation(world, entity, (char*)"down");
 				}
 				if (command->commands[C_LEFT]) {
 					add_force(world, entity, world->movement[entity].acceleration, 180);
-<<<<<<< HEAD
-					play_animation(&(world->animation[entity]), "left");
-					moved = true;
-=======
 					play_animation(world, entity, (char*)"left");
->>>>>>> origin/Development
+					moved = true;
 				}
 				else {
 					cancel_animation(world, entity, (char*)"left");
 				}
 				if (command->commands[C_RIGHT]) {
 					add_force(world, entity, world->movement[entity].acceleration, 0);
-<<<<<<< HEAD
-					play_animation(&(world->animation[entity]), "right");
-					moved = true;
-=======
 					play_animation(world, entity, (char*)"right");
->>>>>>> origin/Development
+					moved = true;
 				}
 				else {
 					cancel_animation(world, entity, (char*)"right");
@@ -308,21 +288,14 @@ void movement_system(World* world, int sendpipe) {
 					position->x = temp.x + goffsetW;
 					position->y = temp.y + goffsetH;
 					handle_entity_collision(data, world, entity);
-<<<<<<< HEAD
-
-				}	
-				position->x = temp.x + goffsetW;
-				position->y = temp.y + goffsetH;
-
-				if(moved)
-					send_location(world, sendpipe);
-=======
 				}
 				else {
 					position->x = temp.x + goffsetW;
 					position->y = temp.y + goffsetH;
 				}
->>>>>>> origin/Development
+
+				if(moved)
+					send_location(world, sendpipe);
 			}
 		}
 	} 

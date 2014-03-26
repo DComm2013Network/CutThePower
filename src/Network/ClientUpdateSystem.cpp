@@ -18,7 +18,7 @@
 extern int send_ready;
 extern int game_ready;
 static int controllable_playerNo;
-extern int game_net_signalfd, game_net_lockfd;
+extern int game_net_signalfd;
 extern int network_ready;
 static unsigned int *player_table = NULL; /**< A lookup table mapping server player numbers to client entities. */
 

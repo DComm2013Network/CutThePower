@@ -113,7 +113,7 @@ unsigned int create_level(World* world, int** map, int width, int height, int ti
  * @designer
  * @author
  */
-unsigned int create_player(World* world, int x, int y, bool controllable, int collisiontype, playerNo_t pno = NULL) {
+unsigned int create_player(World* world, int x, int y, bool controllable, int collisiontype, playerNo_t pno) {
 	unsigned int entity;
 	PositionComponent pos;
 	RenderPlayerComponent render;
@@ -176,13 +176,9 @@ unsigned int create_player(World* world, int x, int y, bool controllable, int co
 										COMPONENT_COMMAND | 
 										COMPONENT_MOVEMENT | 
 										COMPONENT_COLLISION |
-<<<<<<< HEAD
 										COMPONENT_CONTROLLABLE |
-										COMPONENT_PLAYER; //| COMPONENT_MOVEMENT | COMPONENT_COLLISION;
-=======
-										COMPONENT_ANIMATION |
-										COMPONENT_CONTROLLABLE; //| COMPONENT_MOVEMENT | COMPONENT_COLLISION;
->>>>>>> origin/Development
+										COMPONENT_PLAYER |
+										COMPONENT_ANIMATION;
 			} else {
 				world->mask[entity] =	COMPONENT_POSITION | 
 										COMPONENT_RENDER_PLAYER | 

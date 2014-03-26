@@ -12,6 +12,9 @@
 
 extern bool running;
 extern unsigned int player_entity;
+extern int send_router_fd[];
+extern int rcv_router_fd[];
+extern int game_net_signalfd;
 
 bool menu_click(World *world, unsigned int entity) {
 	
@@ -405,15 +408,16 @@ void animation_end(World *world, unsigned int entity, int animation_id) {
 		//map_init(world, "assets/Graphics/SampleFloor.txt", "assets/Graphics/tiles_lobby.txt");
 		
 		map_init(world, (char*)"assets/Graphics/map/map_00/map00.txt", (char*)"assets/Graphics/map/map_00/tiles.txt");
-		player_entity = create_player(world, 620, 420, true, COLLISION_HACKER);
+		player_entity = create_player(world, 620, 420, true, COLLISION_HACKER, 0);
 		
 		load_animation((char*)"assets/Graphics/player/p0/rob_animation.txt", world, player_entity);
 		
-		
-		
+		////NETWORK CODE
+		game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
+
+		init_client_network(send_router_fd, rcv_router_fd);
+		send_intialization(world, send_router_fd[WRITE_END]);
 		//PUT CLIENT START CODE HERE!!!@!@!!!!
-		
-		
 	}
 	//LOADING SCREEN ENDED
 	else if (animationComponent->id == 1) { //1 is the loading screen

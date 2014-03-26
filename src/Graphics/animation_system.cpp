@@ -16,10 +16,6 @@
 
 #define SYSTEM_MASK (COMPONENT_RENDER_PLAYER | COMPONENT_ANIMATION) /**< The entity must have a animation and render component */
 
-<<<<<<< HEAD
-int game_net_signalfd, game_net_lockfd;
-=======
->>>>>>> origin/Development
 /**
  * Updates animations
  *
@@ -36,11 +32,8 @@ int game_net_signalfd, game_net_lockfd;
  *
  * @author Jordan Marling
  */
-<<<<<<< HEAD
-void animation_system(World *world, unsigned int *player_entity, int send_router_fd[2], int rcv_router_fd[2]) {
-=======
 void animation_system(World *world) {
->>>>>>> origin/Development
+
 	
 	unsigned int entity;
 	AnimationComponent 		*animationComponent;
@@ -74,47 +67,7 @@ void animation_system(World *world) {
 						
 						animation->index = 0;
 						if (animation->loop == -1) {
-							
-<<<<<<< HEAD
-							if (animationComponent->id == 0) { //0 is the intro screen!
-								
-								destroy_world(world);
-						
-								stop_music();
-								stop_effect();
-								
-								//map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/map01_tiles.txt");
-								//map_init(world, "assets/Graphics/lobby/lobby.txt", "assets/Graphics/lobby/lobby_tiles.txt");
-								//map_init(world, "assets/Graphics/SampleFloor.txt", "assets/Graphics/tiles_lobby.txt");
-								
-								map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/map01_tiles.txt");
-								*player_entity = create_player(world, 600, 600, true, COLLISION_HACKER, 0);
-													
-								world->mask[*player_entity] |= COMPONENT_ANIMATION;
-								
-								load_animation("assets/Graphics/player/robber/rob_animation.txt", world, *player_entity);
-								
-								////NETWORK CODE
-								game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
-								game_net_lockfd     = eventfd(0, EFD_SEMAPHORE);
 
-								init_client_network(send_router_fd, rcv_router_fd);
-								send_intialization(world, send_router_fd[WRITE_END]);
-								////NETWORK CODE
-
-								return;
-							}
-							else if (animationComponent->id == 1) { //1 is the loading screen!
-								
-								destroy_world(world);
-								
-								create_intro(world);
-								
-								return;
-							}
-							
-=======
->>>>>>> origin/Development
 							animationComponent->current_animation = -1;
 							renderPlayer->playerSurface = animation->surfaces[0];
 							

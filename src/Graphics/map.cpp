@@ -50,11 +50,7 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 	FILE *fp_tiles;
 	
 	int width, height;
-<<<<<<< HEAD
-	int x, y, i, a;
-=======
 	int x, y, i;
->>>>>>> origin/Development
 	//uint8_t** map;
 	int **collision_map;
 	int **map;
@@ -327,22 +323,6 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 	
 	free(entity_type);
 	free(tile_filename);
-	
-	/*for (int x = 0; x < width; x++) {
-		for (int y = 0; y < height; y++) {
-			for (int n = 0; n < num_tiles; n++) {
-				if (tileTypes[n] == map[x][y]) {
-					map[x][y] = collisionTypes[n];
-					break;
-				}
-			}
-		}
-	}*/
-	
-	//create_level(world, collision_map, width, height, TILE_WIDTH);
-	
-	//free(tileTypes);
-	//free(collisionTypes);
 
 	return 0;
 }
