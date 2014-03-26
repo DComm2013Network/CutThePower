@@ -525,13 +525,13 @@ int send_udp(void * data, uint32_t * type, UDPsocket sock, uint32_t size){
     {
     	*type = P_MIN_POS;
     	data = encapsulate_pos_update((PKT_POS_UPDATE *)data);
-		size = packet_sizes[*type - 1];
+		size = packet_sizes[*type - 1] + sizeof(uint32_t);
 	}
 	else if(*type == G_ALLPOSUPDATE)
 	{
 		*type = P_MIN_POS_ALL;
 		data = encapsulate_all_pos_update((PKT_ALL_POS_UPDATE *)data);
-		size = packet_sizes[*type - 1];
+		size = packet_sizes[*type - 1] + sizeof(uint32_t);
 	}
     
     UDPpacket *pktdata = alloc_packet(size);
