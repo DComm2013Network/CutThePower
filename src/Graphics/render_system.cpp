@@ -45,7 +45,7 @@ SDL_Surface *ibeam;
 void render_player_system(World& world, SDL_Surface* surface) {
 	
 	unsigned int entity;
-	int i, j;
+	unsigned int i, j;
 	RenderPlayerComponent 	*renderPlayer;
 	PositionComponent 		*position;
 	TextFieldComponent		*text;

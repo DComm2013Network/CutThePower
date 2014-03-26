@@ -1,5 +1,0 @@
-1
-
-tim 2 40 -1 1                        
-assets/Graphics/objects/select/tim/tim_1.png
-assets/Graphics/objects/select/tim/tim_2.png

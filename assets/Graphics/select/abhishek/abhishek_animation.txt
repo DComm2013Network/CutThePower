@@ -1,6 +1,0 @@
-1
-
-abhishek 3 40 -1 1
-assets/Graphics/objects/select/abhishek/abhishek_1.png
-assets/Graphics/objects/select/abhishek/abhishek_2.png
-assets/Graphics/objects/select/abhishek/abhishek_3.png

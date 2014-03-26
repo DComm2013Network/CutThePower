@@ -1,5 +1,0 @@
-1
-
-vincent 2 40 -1 1                        
-assets/Graphics/objects/select/vincent/vincent_1.png
-assets/Graphics/objects/select/vincent/vincent_2.png

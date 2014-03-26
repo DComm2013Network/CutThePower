@@ -1,5 +1,0 @@
-1
-
-aman 2 40 -1 1
-assets/Graphics/objects/select/aman/aman_1.png
-assets/Graphics/objects/select/aman/aman_2.png

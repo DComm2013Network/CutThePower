@@ -93,7 +93,7 @@ int main(int argc, char* argv[]) {
 	//map_init(world, "assets/Graphics/lobby/lobby.txt", "assets/Graphics/lobby/lobby_tiles.txt");
 	//map_init(world, "assets/Graphics/lobby.txt", "assets/Graphics/tiles_lobby.txt");
 	
-	KeyMapInit("assets/Input/keymap.txt");
+	KeyMapInit((char*)"assets/Input/keymap.txt");
 	init_render_player_system();
 	//unsigned int entity = create_player(world, 600, 600, true);
 	
@@ -132,6 +132,8 @@ int main(int argc, char* argv[]) {
 	}
 	
 	cleanup_sound();
+	
+	printf("Exiting The Game\n");
 	
 	return 0;
 }

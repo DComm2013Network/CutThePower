@@ -167,18 +167,21 @@ void handle_entity_collision(CollisionData data, World * world, int curEntityID)
 			int targx = world->wormhole[data.entityID].targetX, targy = world->wormhole[data.entityID].targetY, targl = world->wormhole[data.entityID].targetLevel;
 			destroy_world(world);
 			unsigned int e = create_player(world, targx, targy, true, COLLISION_HACKER);
-			load_animation("assets/Graphics/player/robber/rob_animation.txt", world, e);
+			load_animation("assets/Graphics/player/p0/rob_animation.txt", world, e);
 	        world->position[e].level = targl;
 	        player_entity = e;
 	        switch (targl) {
 				case 0:
-					map_init(world, "assets/Graphics/map/map_00/map00.txt", "assets/Graphics/map/map_00/map00_tiles.txt");
+					map_init(world, "assets/Graphics/map/map_00/map00.txt", "assets/Graphics/map/map_00/tiles.txt");
 					break;
 				case 1:
-					map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/map01_tiles.txt");
+					map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/tiles.txt");
 					break;
 				case 2:
-					map_init(world, "assets/Graphics/map/map_02/map02.txt", "assets/Graphics/map/map_02/map02_tiles.txt");
+					map_init(world, "assets/Graphics/map/map_02/map02.txt", "assets/Graphics/map/map_02/tiles.txt");
+					break;
+				case 3:
+					map_init(world, "assets/Graphics/map/map_03/map03.txt", "assets/Graphics/map/map_03/tiles.txt");
 					break;
 			}
 			for (unsigned int i = 0; i < MAX_ENTITIES; i++) {
@@ -236,38 +239,35 @@ void movement_system(World* world) {
 				temp.level = position->level;
 				
 				if (command->commands[C_ACTION]) {
-					movement->maxSpeed = 6.0;
-				}
-				else {
-					movement->maxSpeed = 4.0;
+					
 				}
 				if (command->commands[C_UP]) {
 					add_force(world, entity, world->movement[entity].acceleration, -90);
-					play_animation(world, entity, "up");
+					play_animation(world, entity, (char*)"up");
 				}
 				else {
-					cancel_animation(world, entity, "up");
+					cancel_animation(world, entity, (char*)"up");
 				}
 				if (command->commands[C_DOWN]) {
 					add_force(world, entity, world->movement[entity].acceleration, 90);
-					play_animation(world, entity, "down");
+					play_animation(world, entity, (char*)"down");
 				}
 				else {
-					cancel_animation(world, entity, "down");
+					cancel_animation(world, entity, (char*)"down");
 				}
 				if (command->commands[C_LEFT]) {
 					add_force(world, entity, world->movement[entity].acceleration, 180);
-					play_animation(world, entity, "left");
+					play_animation(world, entity, (char*)"left");
 				}
 				else {
-					cancel_animation(world, entity, "left");
+					cancel_animation(world, entity, (char*)"left");
 				}
 				if (command->commands[C_RIGHT]) {
 					add_force(world, entity, world->movement[entity].acceleration, 0);
-					play_animation(world, entity, "right");
+					play_animation(world, entity, (char*)"right");
 				}
 				else {
-					cancel_animation(world, entity, "right");
+					cancel_animation(world, entity, (char*)"right");
 				}
 
 				CollisionData data;
