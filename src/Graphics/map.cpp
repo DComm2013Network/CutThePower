@@ -7,8 +7,9 @@
 /** @} */
 
  
- 
+
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -60,8 +61,12 @@ void render_fog_of_war(SDL_Surface *surface, struct fogOfWarStruct *fow)
 			}
 			else if(visible == 1)
 			{
+				fow -> tiles[y][x].visible = 2;
+			}
+			else if(visible == 2)
+			{
 			
-				//SDL_BlitSurface(fow -> alphaFog[count++], NULL, surface, &tempRect);
+				SDL_BlitSurface(fow -> alphaFog[count++], NULL, surface, &tempRect);
 				
 			}
 		}
@@ -77,7 +82,6 @@ void init_fog_of_war(struct fogOfWarStruct **fow)
 		int const TOTALTILESX = 2560;
 		int const TOTALTILESY = 1520;
 		
-		int rmask, gmask, bmask, amask;
 
 		(*fow) = (struct fogOfWarStruct*)malloc(sizeof(struct fogOfWarStruct));
 
@@ -106,31 +110,12 @@ void init_fog_of_war(struct fogOfWarStruct **fow)
 			
 		for(int i = 0; i < (fogOfWarHeight * fogOfWarWidth); i++)
 		{
+			(*fow) -> fogOfWar[ i ] = IMG_Load("assets/Graphics/fog_visited.bmp");
 			(*fow) -> fogOfWar[ i ] = SDL_CreateRGBSurface(0, TILE_WIDTH, TILE_HEIGHT, 32, 0, 0, 0, 0);
 			SDL_FillRect((*fow) -> fogOfWar[ i ],0,0x221122);
-			
-			#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-		  rmask = 0xff000000;
-		  gmask = 0x00ff0000;
-		  bmask = 0x0000ff00;
-		  amask = 0x000000ff;
-			#else
-		  rmask = 0x000000ff;
-		  gmask = 0x0000ff00;
-		  bmask = 0x00ff0000;
-		  amask = 0xff000000;
-			#endif
-
-		  (*fow) -> alphaFog[ i ] = SDL_CreateRGBSurface(0, TILE_WIDTH, TILE_HEIGHT, 32, rmask, gmask, bmask, amask);
-		  if((*fow) -> alphaFog[ i ] == NULL) 
-		  {
-		      fprintf(stderr, "CreateRGBSurface failed: %s\n", SDL_GetError());
-		  }
-		  else
-		  {
-		  	
-		  }
 		}
+		
+		
 }
 
 void cleanup_fog_of_war(struct fogOfWarStruct *fow)
