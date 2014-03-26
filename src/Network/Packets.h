@@ -140,7 +140,7 @@ typedef struct pkt05{
 	status_t	ready_status;
 	teamNo_t	team_number;
 	char 		player_name[MAX_NAME];
-} pkt05;
+} PKT_READY_STATUS;
 
 typedef struct pkt06{
 	floorNo_t	map_data[MAX_FLOORS];

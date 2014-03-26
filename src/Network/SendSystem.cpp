@@ -106,3 +106,8 @@ void move_request(World * world, int fd, floorNo_t floor, pos_t xpos, pos_t ypos
 	}	
 	write_packet(fd, P_FLOOR_MOVE_REQ, pkt);
 }
+
+void send_status_ready(World * world)
+{
+	
+}

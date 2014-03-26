@@ -27,6 +27,7 @@ void update_server(World *world, unsigned update_mask);
 void client_update_obj_loc(World *world, void *packet);
 void client_update_obj_status(World *world, void *packet);
 void client_update_floor(World *world, void *packet);
+void send_status_ready(World * world);
 
 #endif
 
