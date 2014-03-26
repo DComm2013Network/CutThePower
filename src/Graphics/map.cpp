@@ -43,16 +43,26 @@ void render_fog_of_war(SDL_Surface *surface, struct fogOfWarStruct *fow)
 	{
 		for(int x = 0; x < fogOfWarWidth; x++)
 		{
-			if(fow -> tiles[y][x].visible == 0)
+			int visible = fow -> tiles[y][x].visible;
+
+			SDL_Rect tempRect;
+			tempRect.x = fow -> tiles[y][x].rect.x - xOffset;
+			tempRect.y = fow -> tiles[y][x].rect.y - yOffset;
+				
+			tempRect.w = TILE_WIDTH;
+			tempRect.h = TILE_HEIGHT;
+
+			if(visible == 0)
+			{		
+				
+				SDL_BlitSurface(fow -> fogOfWar[count++], NULL, surface, &tempRect);
+				
+			}
+			else if(visible == 1)
 			{
-				SDL_Rect tempRect;
-				tempRect.x = fow -> tiles[y][x].rect.x - xOffset;
-				tempRect.y = fow -> tiles[y][x].rect.y - yOffset;
-					
-				tempRect.w = TILE_WIDTH;
-				tempRect.h = TILE_HEIGHT;
 			
-				SDL_BlitSurface(fow -> fogOfWar[count++], NULL, surface, &tempRect); 
+				SDL_BlitSurface(fow -> alphaFog[count++], NULL, surface, &tempRect);
+				
 			}
 		}
 	}
@@ -64,20 +74,22 @@ void init_fog_of_war(struct fogOfWarStruct **fow)
 		fogOfWarWidth = 64;  // screen width (tiles/screen)
 		fogOfWarHeight = 38; // screen height (tiles/screen)
 
-		int const totalTilesX = 2560;
-		int const totalTilesY = 1520;
+		int const TOTALTILESX = 2560;
+		int const TOTALTILESY = 1520;
+		
+		int rmask, gmask, bmask, amask;
 
 		(*fow) = (struct fogOfWarStruct*)malloc(sizeof(struct fogOfWarStruct));
 
 
 		// fog of war tile map
-		(*fow) -> tiles = (struct fowtile**)malloc(sizeof(struct fowtile*) * totalTilesY);
+		(*fow) -> tiles = (struct fowtile**)malloc(sizeof(struct fowtile*) * TOTALTILESY);
 
-		for(int y = 0; y < totalTilesY; y++)
+		for(int y = 0; y < TOTALTILESY; y++)
 		{
-			(*fow) -> tiles[y] = (struct fowtile*)malloc(sizeof(struct fowtile) * totalTilesX);
+			(*fow) -> tiles[y] = (struct fowtile*)malloc(sizeof(struct fowtile) * TOTALTILESX);
 
-			for(int x = 0; x < totalTilesX; x++)
+			for(int x = 0; x < TOTALTILESX; x++)
 			{
 				(*fow) -> tiles[y][x].visible = 0;
 				(*fow) -> tiles[y][x].rect.x = (x * TILE_WIDTH );
@@ -90,11 +102,34 @@ void init_fog_of_war(struct fogOfWarStruct **fow)
 	
 		// array of surfaces
 		(*fow) -> fogOfWar = (SDL_Surface**)malloc(sizeof(SDL_Surface*) * fogOfWarWidth * fogOfWarHeight);
-	
+		(*fow) -> alphaFog = (SDL_Surface**)malloc(sizeof(SDL_Surface*) * fogOfWarWidth * fogOfWarHeight);
+			
 		for(int i = 0; i < (fogOfWarHeight * fogOfWarWidth); i++)
 		{
 			(*fow) -> fogOfWar[ i ] = SDL_CreateRGBSurface(0, TILE_WIDTH, TILE_HEIGHT, 32, 0, 0, 0, 0);
 			SDL_FillRect((*fow) -> fogOfWar[ i ],0,0x221122);
+			
+			#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+		  rmask = 0xff000000;
+		  gmask = 0x00ff0000;
+		  bmask = 0x0000ff00;
+		  amask = 0x000000ff;
+			#else
+		  rmask = 0x000000ff;
+		  gmask = 0x0000ff00;
+		  bmask = 0x00ff0000;
+		  amask = 0xff000000;
+			#endif
+
+		  (*fow) -> alphaFog[ i ] = SDL_CreateRGBSurface(0, TILE_WIDTH, TILE_HEIGHT, 32, rmask, gmask, bmask, amask);
+		  if((*fow) -> alphaFog[ i ] == NULL) 
+		  {
+		      fprintf(stderr, "CreateRGBSurface failed: %s\n", SDL_GetError());
+		  }
+		  else
+		  {
+		  	
+		  }
 		}
 }
 /**************************************************************************/

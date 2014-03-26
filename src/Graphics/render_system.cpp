@@ -152,15 +152,23 @@ void render_player_system(World& world, SDL_Surface* surface, struct fogOfWarStr
 	fow -> tiles[addOne(yPos)][xPos].visible = 1;
 	fow -> tiles[subOne(yPos)][xPos].visible = 1;
 	
+	
 	fow -> tiles[addOne(yPos)][addOne(xPos)].visible = 1;
 	fow -> tiles[subOne(yPos)][subOne(xPos)].visible = 1;
 	
 	fow -> tiles[addOne(yPos)][subOne(xPos)].visible = 1;
 	fow -> tiles[subOne(yPos)][addOne(xPos)].visible = 1;
 	
+
 	fow -> tiles[yPos][addOne(xPos)].visible = 1;
 	fow -> tiles[yPos][subOne(xPos)].visible = 1;
-			
+
+
+	//fow -> tiles[ addOne(addOne(yPos)) ][xPos].visible = 1;
+	//fow -> tiles[ subOne(subOne(yPos)) ][xPos].visible = 1;
+	
+	//fow -> tiles[yPos][ addOne(addOne(xPos)) ].visible = 1;
+	//fow -> tiles[yPos][ subOne(subOne(xPos)) ].visible = 1;			
 }
 
 /*SAM******************************/
