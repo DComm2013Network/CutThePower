@@ -16,20 +16,20 @@
 #include "NetworkRouter.h"
 
 uint32_t packet_sizes[NUM_PACKETS] = {
-	sizeof(PKT_PLAYER_NAME), //0
-	sizeof(PKT_PLAYER_CONNECT), //1
-	sizeof(PKT_GAME_STATUS), //2
-	sizeof(PKT_SND_CHAT), //3
-	sizeof(struct pkt05), //4
-	sizeof(struct pkt06), //5
-	0, //6
-	sizeof(PKT_OBJECTIVE_STATUS), //7
-	0, //8
-    sizeof(PKT_POS_UPDATE), //9
-    sizeof(PKT_ALL_POS_UPDATE), //10
-	sizeof(PKT_FLOOR_MOVE_REQUEST), //11
-	sizeof(PKT_FLOOR_MOVE), //12
-    sizeof(PKT_TAGGING)
+	sizeof(PKT_PLAYER_NAME),         //0
+	sizeof(PKT_PLAYER_CONNECT),      //1
+	sizeof(PKT_GAME_STATUS),         //2
+	sizeof(PKT_SND_CHAT),            //3
+	sizeof(pkt05),                   //4
+	sizeof(PKT_OBJ_LOC),             //5
+	0,                               //6
+	sizeof(PKT_OBJECTIVE_STATUS),    //7
+	0,                               //8
+    sizeof(PKT_POS_UPDATE),          //9
+    sizeof(PKT_ALL_POS_UPDATE),      //10
+	sizeof(PKT_FLOOR_MOVE_REQUEST),  //11
+	sizeof(PKT_FLOOR_MOVE),          //12
+    sizeof(PKT_TAGGING)              //13
 };
 
 /**
@@ -94,6 +94,7 @@ void* read_packet(int fd, uint32_t size)
         return NULL;
     }
 
+	fprintf(stderr, "read_packet: size: %u\n", size);
     return temp; 
 }
 
@@ -197,6 +198,7 @@ void *read_data(int fd, uint32_t *type){
     int read_bytes;
     void *packet;
     *type = read_type(fd);
+	fprintf(stderr, "Type: %u\n", *type);
     if(*type <= 0 || *type > 14){
         perror("read_data: Failed to read packet type from pipe");
         return NULL;

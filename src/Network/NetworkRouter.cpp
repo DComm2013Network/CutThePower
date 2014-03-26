@@ -72,6 +72,7 @@ void *networkRouter(void *args)
     FD_SET(recvfd[READ_END], &listen_fds);
     FD_SET(gameplay->read_pipe, &listen_fds);
     FD_SET(game_net_signalfd, &listen_fds);
+    FD_SET(send_failure_fd, &listen_fds);
 
     network_ready = 1;
     cached_chat->head = cached_chat;
@@ -87,16 +88,17 @@ void *networkRouter(void *args)
         active = listen_fds;
         ret = select(max_fd + 1, &active, NULL, NULL, NULL);
 
-        if(FD_ISSET(send_failure_fd, &active))
+        if(ret && FD_ISSET(send_failure_fd, &active))
         {
             pthread_cancel(thread_receive);
             net_cleanup(send_data, receive_data, gameplay, cached_packets);
             return NULL;
         }
 
-        if(FD_ISSET(recvfd[READ_END], &active))
+        if(ret && FD_ISSET(recvfd[READ_END], &active))
         {
 			packet = read_data(recvfd[READ_END], &type);
+
             if(!packet)
             {
                 set_error(ERR_IPC_FAIL);
@@ -142,6 +144,8 @@ void *networkRouter(void *args)
             --ret;
 		}
     }
+    pthread_cancel(thread_receive);
+    // Kill the send thread... forgot how this was supposed to happen, oops
     net_cleanup(send_data, receive_data, gameplay, cached_packets);
     return NULL;
 }
@@ -337,6 +341,7 @@ int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int send
 
     *max_fd = recvfd[READ_END] > gameplay->read_pipe ? recvfd[READ_END] : gameplay->read_pipe;
     *max_fd = game_net_signalfd > *max_fd ? game_net_signalfd : *max_fd;
+    *max_fd = send_failure_fd > *max_fd ? send_failure_fd : *max_fd;
 
     /* Initialize SDL_net */
     if (SDLNet_Init() < 0)

@@ -168,7 +168,7 @@ int handle_tcp_in(int router_pipe_fd, TCPsocket tcp_sock)
     if(write_packet(router_pipe_fd, packet_type, game_packet) == -1 ||
         write_pipe(router_pipe_fd, &timestamp, sizeof(timestamp)) == -1)
     {
-        fprintf(stderr, "TCP>Router: Error in write packet\n");
+        fprintf(stderr, "handle_tcp_in: Error in write packet\n");
         set_error(ERR_IPC_FAIL);
         free(game_packet);
         return -1;
