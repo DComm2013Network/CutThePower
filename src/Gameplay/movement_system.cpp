@@ -303,15 +303,12 @@ void movement_system(World* world, int sendpipe) {
 				if (position->level == 0) {
 					if (position->x < 240) {
 						send_status_ready(world, sendpipe, 1);
-						//world->player[entity].teamNo = 1;
 					}
 					else if (position->x > 1000) {
 						send_status_ready(world, sendpipe, 2);
-						//world->player[entity].teamNo = 2;
 					}
-					else if (world->player[entity].teamNo != 0) {
-						
-						//world->player[entity].teamNo = 0;
+					else {
+						//send_status_ready(world, sendpipe, 0);
 					}
 				}
 				if(moved && !floor_change_flag)

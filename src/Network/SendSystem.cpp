@@ -134,9 +134,9 @@ void move_request(World * world, int fd, floorNo_t floor, pos_t xpos, pos_t ypos
  */
 void send_status_ready(World * world, int fd, teamNo_t team)
 {
-	PKT_READY_STATUS * pkt = (PKT_READY_STATUS*)malloc(sizeof(PKT_READY_STATUS));
 	if(player_team != team)
 	{
+		PKT_READY_STATUS * pkt = (PKT_READY_STATUS*)malloc(sizeof(PKT_READY_STATUS));
 		for (int j = 0; j < MAX_ENTITIES; j++) {
 			if (IN_THIS_COMPONENT(world->mask[j], COMPONENT_PLAYER | COMPONENT_CONTROLLABLE))
 			{
@@ -147,11 +147,11 @@ void send_status_ready(World * world, int fd, teamNo_t team)
 				player_team = team;
 				break;
 			}
-		}	
+		}
+		printf("Changed to team %d\n", team);
+		write_packet(fd, P_READY_STAT, pkt);
+		free(pkt);	
 	}
-	printf("Changed to team %d\n", team);
-	write_packet(fd, P_READY_STAT, pkt);
-	free(pkt);
 }
 
 /*UNDERSTANDING THE lobby
