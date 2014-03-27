@@ -90,10 +90,7 @@ extern int send_failure_fd;
         else if(numready == 0) // Timed out; tell network router to check if server is down
         {
             int oldstate;
-            uint32_t type = P_KEEPALIVE;cket_type - 1])) <= 0)
-    {
-        perror("write_packet: Failed to write packet");
-        return -1;
+            uint32_t type = P_KEEPALIVE;
             pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &oldstate);
             write_pipe(recv_data->write_pipe, &type, sizeof(uint32_t));
             pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, &oldstate);

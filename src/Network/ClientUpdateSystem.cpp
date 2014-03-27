@@ -188,7 +188,7 @@ void client_update_pos(World *world, void *packet)
 			world->movement[player_table[i]].movY 	= pos_update->yVel[i];
 			world->position[player_table[i]].x		= pos_update->xPos[i];
 			world->position[player_table[i]].y		= pos_update->yPos[i];
-			world->position[playerr_table[i]].level	= pos_update->floor;
+			world->position[player_table[i]].level	= pos_update->floor;
 		}
 	}
 }
