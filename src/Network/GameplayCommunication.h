@@ -1,3 +1,11 @@
+/** @ingroup Network */
+/** @{ */
+/**
+ * Header file for functions related to communication with gameplay.
+ *
+ * @file GameplayCommunication.h
+ */
+/** @} */
 #ifndef GAMEPLAYCOMMUNICATION_H
 #define GAMEPLAYCOMMUNICATION_H
 
@@ -7,12 +15,19 @@
 #include <cstdint>
 #include <cerrno>
 
-/* Thread structure */
+#define NET_SHUTDOWN -1 /**< The network will write this to the gameplay 
+                             module (possibly followed by an error message) on shutdown. */
+
+/**
+ * A structure of data that will be passed on to child threads.
+ *
+ * @struct WTHREAD_DATA, *PDATA
+ */
 typedef struct THREAD_DATA
 {
-    int read_pipe;  /* pipe descriptor for reading */
-    int write_pipe; /* pipe descriptor for writing */
-    char *ip_address_string;
+    int read_pipe;  /**< pipe descriptor for reading */
+    int write_pipe; /**< pipe descriptor for writing */
+    char *ip_address_string; /**< ip address of the server */
 } WTHREAD_DATA, *PDATA;
 
 /* Packet reading wrappers */

@@ -1,0 +1,9 @@
+1
+
+konst 3 1 -1 -1                     
+assets/Graphics/screen/menu/select/konst/konst_1.png
+assets/Graphics/screen/menu/select/konst/konst_2.png
+assets/Graphics/screen/menu/select/konst/konst_3.png
+
+1 
+hover 0

@@ -12,13 +12,15 @@
 #include "GameplayCommunication.h"
 #include "PipeUtils.h"
 #include "../world.h"
+#include "../systems.h"
+#include <sys/poll.h>
 
-/**
- * TODO:	Rearrange the switch statement to put the most likely packets first. 
- *			This would be, in order: 11, 8, 4, 7 (?), and we'll have to decide the rest later
- */
-
-extern int game_net_signalfd, game_net_lockfd;
+extern int send_ready;
+extern int game_ready;
+static int controllable_playerNo;
+extern int game_net_signalfd;
+extern int network_ready;
+int floor_change_flag = 0;
 static unsigned int *player_table = NULL; /**< A lookup table mapping server player numbers to client entities. */
 
 /**
@@ -31,71 +33,132 @@ static unsigned int *player_table = NULL; /**< A lookup table mapping server pla
  * @param[in] world 	The world struct to be updated.
  * @param[in] net_pipe	The read end of a pipe connected to the network module.
  *
- * @designer Shane Spoor, Clark Allenby
+ * @designer Shane Spoor
+ * @designer Clark Allenby
  * @author Shane Spoor
  */
-void client_update_system(World *world, int net_pipe) {
+int client_update_system(World *world, int net_pipe) {
 	void* 		packet;
 	uint32_t 	type;
 	uint32_t 	num_packets;
 	uint64_t	signal = 1;
+	uint64_t 	sem_buf;
 	unsigned	i;
-	
 	if(!player_table)
 	{
 		player_table = (unsigned int *)malloc(sizeof(unsigned int) * MAX_PLAYERS);
 		memset(player_table, 255, MAX_PLAYERS * sizeof(unsigned int)); 
 	}
-	
-	//write(game_net_signalfd, &signal, sizeof(uint64_t));
-	//read(game_net_lockfd, &signal, sizeof(uint64_t)); /* Wait for network to finish writing */
-	
-	//num_packets = read_type(net_pipe); // the function just reads a 32 bit value, so this works; semantically, not ideal
-	
-	// Commented out code is for adapting to multiple packet updates at a time
-	// for(i = 0; i < num_packets; ++i)
-	// {
-	while((packet = read_data(net_pipe, &type)) != NULL) {
 
-		switch (type) {
-			case P_CONNECT:
-				if(client_update_info(world, packet) == CONNECT_CODE_DENIED)
-					return; // Pass error up to someone else to deal with
+    if(!network_ready) // Don't try to read the pipe until the network module has been initialised
+        return -3;
+
+	write(game_net_signalfd, &signal, sizeof(uint64_t));
+	num_packets = read_type(net_pipe); // the function just reads a 32 bit value, so this works; semantically, not ideal
+
+    if(num_packets == NET_SHUTDOWN) // network is shutting down; this is the only packet
+    {
+        char err_buf[128];
+        uint32_t str_size;
+        read_pipe(net_pipe, &str_size, sizeof(str_size));
+        if(str_size)
+        {
+            read_pipe(net_pipe, err_buf, str_size);
+            err_buf[str_size] = 0; // null terminate the string
+            fprintf(stderr, "%s", err_buf);
+        }
+        memset(player_table, 255, MAX_PLAYERS * sizeof(uint32_t));
+        network_ready = 0;
+        return - 2;
+    }
+
+	for(i = 0; i < num_packets; ++i)
+	{
+
+		packet = read_data(net_pipe, &type);
+		if(floor_change_flag == 1)
+		{
+			switch(type)
+			{
+				case P_FLOOR_MOVE:
+				client_update_floor(world, packet);
+				floor_change_flag = 0;
+				game_ready++;
 				break;
-			case G_STATUS:
-				client_update_status(world, packet);
-				break;
-			case P_CHAT:
-				// Chat data
-				break;
-			case P_OBJCTV_LOC:
-				// Map info
-				break;
-			case 7: // undefined
-				// Floor stuff
-				break;
-			case P_OBJSTATUS:
-				// Objective update (game_status is significant here)
-				break;
-			case G_ALLPOSUPDATE:
-				client_update_pos(world, packet);
-				break;
-			case P_TAGGING:
-				//tagging logic
-				//I don't know how this compiled for you guys. -Clark
-				//player_tag_packet(world, packet);
-				break;
-			// Should never receive a packet outside the above range (the rest are unpurposed or client->server packets); 
-			// discard it (and maybe log an error) if we get one
-			case 1:
-			case 5:
-			case 9:
-			case 10:
-			case 12:
-			default:
-				break;
+			}
+		}
+		else {
+			switch (type) 
+			{ 
+				case P_CONNECT:
+					if(client_update_info(world, packet) == CONNECT_CODE_DENIED)
+					{
+						return -1; // Pass error up to someone else to deal with
+					}
+					break;
+				case G_STATUS:
+					client_update_status(world, packet);
+					game_ready++;
+					break;
+				case P_CHAT:
+					client_update_chat(world, packet);
+					break;
+				case P_OBJCTV_LOC:
+					client_update_obj_loc(world, packet);
+					break;
+				case 7: // undefined
+					// Floor stuff
+					break;
+				case P_OBJSTATUS:
+					client_update_obj_status(world, packet);
+					break;
+				case G_ALLPOSUPDATE:
+					client_update_pos(world, packet);
+					break;
+				case P_FLOOR_MOVE:
+					client_update_floor(world, packet);
+					game_ready++;
+					break;
+				case P_TAGGING:
+					player_tag_packet(world, packet);
+					break;
+				default:
+					break;
+			}
 		}
 		free(packet);
+	}
+
+	return 0;
+}
+void client_update_chat(World *world, void *packet)
+{
+	PKT_SND_CHAT *snd_chat = (PKT_SND_CHAT*)packet;
+	printf("%s", snd_chat->message);
+}
+void client_update_obj_loc(World *world, void *packet)
+{
+	PKT_OBJ_LOC *obj_loc = (PKT_OBJ_LOC*) packet;
+}
+
+void client_update_obj_status(World *world, void *packet)
+{
+	PKT_OBJ_LOC *obj_loc = (PKT_OBJ_LOC*) packet;
+}
+
+
+void client_update_floor(World *world, void *packet)
+{
+	PKT_FLOOR_MOVE* floor_move = (PKT_FLOOR_MOVE*)packet;
+	for (int i = 0; i < MAX_PLAYERS; i++)
+	{
+		if(i == controllable_playerNo)
+		{
+			world->position[player_table[i]].x		= floor_move->xPos;
+			world->position[player_table[i]].y		= floor_move->yPos;
+			world->position[player_table[i]].level	= floor_move->new_floor;
+			break;
+		}
 	}
 }
 
@@ -117,16 +180,26 @@ void client_update_pos(World *world, void *packet)
 	PKT_ALL_POS_UPDATE *pos_update = (PKT_ALL_POS_UPDATE *)packet;
 	for (int i = 0; i < MAX_PLAYERS; i++)
 	{
-		if (!pos_update->players_on_floor[i] || player_table[i] == CLIENT_PLAYER) // If they're not on this floor or it's our player
+        if(i == controllable_playerNo)
 			continue;
-
-		world->movement[player_table[i]].movX	= pos_update->xVel[i];
-		world->movement[player_table[i]].movY 	= pos_update->yVel[i];
-		world->position[player_table[i]].x		= pos_update->xPos[i];
-		world->position[player_table[i]].y		= pos_update->yPos[i];
-		world->position[player_table[i]].level	= pos_update->floor;
+		
+		if(player_table[i] != UNASSIGNED)
+		{
+			if(!pos_update->players_on_floor[i])
+			{
+				world->mask[player_table[i]] &= ~(COMPONENT_RENDER_PLAYER | COMPONENT_COLLISION); // If the player is no longer on the floor, turn off render and collision
+				continue;
+			}
+			world->mask[player_table[i]] |= COMPONENT_RENDER_PLAYER | COMPONENT_COLLISION;
+			world->movement[player_table[i]].movX	= pos_update->xVel[i];
+			world->movement[player_table[i]].movY 	= pos_update->yVel[i];
+			world->position[player_table[i]].x		= pos_update->xPos[i];
+			world->position[player_table[i]].y		= pos_update->yPos[i];
+			world->position[player_table[i]].level	= pos_update->floor;
+		}
 	}
 }
+
 
 /**
  * If this function is called, it means the current player got tagged.
@@ -155,6 +228,9 @@ void player_tag_packet(World *world, void *packet)
  *
  * @param[out]	world 	The world struct containing the ojective states to be updated.
  * @param[in]	packet	The packet containing objective update information.
+ *
+ * @designer
+ * @author
  */
 void client_update_objectives(World *world, void *packet)
 {
@@ -180,22 +256,37 @@ void client_update_objectives(World *world, void *packet)
 void client_update_status(World *world, void *packet)
 {
 	PKT_GAME_STATUS *status_update = (PKT_GAME_STATUS *)packet;
-	unsigned int entity;
-	for(int i = 0; i < MAX_PLAYERS; ++i)
+
+	for(int i = 0; i < MAX_PLAYERS; i++)
 	{
-		if(!status_update->player_valid[i] || player_table[i] == CLIENT_PLAYER) // Don't update if they're not valid or it's our player
-			continue;
-		
-		if(player_table[i] == UNASSIGNED)
+		if(status_update->player_valid[i] == true)
 		{
-			entity 								= create_player(world, 0, 0, false);
-			world->player[entity].teamNo 		= status_update->otherPlayers_teams[i];
-			world->player[entity].playerNo 		= i + 1;
-			player_table[i] 					= entity;
-			strcpy(world->player[entity].name, status_update->otherPlayers_name[i]);
+			// if(status_update->otherPlayers_teams[i] == ROBBERS)
+			// {	
+				if(player_table[i] == UNASSIGNED) // They're on the floor but haven't yet been created
+		        {
+		            player_table[i] = create_player(world, 400, 600, false, COLLISION_HACKER, i, status_update->characters[i]);
+		            load_animation("assets/Graphics/player/p0/rob_animation.txt", world, player_table[i]);
+		        }
+			//}
+
+			// else if(status_update->otherPlayers_teams[i] == COPS)
+			// {
+				// if(player_table[i] == UNASSIGNED) // They're on the floor but haven't yet been created
+		  //       {
+		  //           player_table[i] = create_player(world, 400, 600, COLLISION_HACKER, false, i);
+		  //           load_animation("assets/Graphics/player/robber/rob_animation.txt", world, player_table[i]);
+		  //       }
+			//}
+		} 
+		else
+		{
+			if(player_table[i] != UNASSIGNED)
+			{
+				destroy_entity(world, player_table[i]);
+				player_table[i] = UNASSIGNED;
+			}
 		}
-		
-		world->player[entity].readyStatus = status_update->readystatus[i];
 	}
 }
 
@@ -219,11 +310,19 @@ int client_update_info(World *world, void *packet)
 	if(client_info->connect_code == CONNECT_CODE_DENIED)
 		return CONNECT_CODE_DENIED;
 
-	world->player[CLIENT_PLAYER].teamNo					= client_info->clients_team_number;
-	world->player[CLIENT_PLAYER].playerNo				= client_info->clients_player_number;
-	player_table[client_info->clients_player_number]	= CLIENT_PLAYER; // Or whatever the client's player entity is assigned
-	
+	for (int i = 0; i < MAX_ENTITIES; i++)
+	{
+		if (IN_THIS_COMPONENT(world->mask[i], COMPONENT_MOVEMENT | COMPONENT_POSITION | COMPONENT_PLAYER | COMPONENT_CONTROLLABLE))
+		{
+			world->player[i].teamNo							= client_info->clients_team_number;
+			world->player[i].playerNo						= client_info->clients_player_number;
+			controllable_playerNo 							= client_info->clients_player_number;
+			player_table[client_info->clients_player_number] = i;	
+		}
+	}
+
+	send_ready = 1;
+
 	return CONNECT_CODE_ACCEPTED;
 }
-
 
