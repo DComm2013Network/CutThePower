@@ -203,6 +203,7 @@ typedef struct pkt15 {
 } PKT_POS_UPDATE_MIN;
 
 typedef struct pkt16 {
+	uint8_t  floor;
 	uint32_t players_on_floor;
 	uint32_t xPos[11];
 	uint32_t yPos[11];

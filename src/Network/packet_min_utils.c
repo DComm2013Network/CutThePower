@@ -157,6 +157,7 @@ PKT_ALL_POS_UPDATE_MIN *encapsulate_all_pos_update(PKT_ALL_POS_UPDATE *old_pkt) 
 	if(!pkt)
 		return NULL;
 	
+	pkt->floor = (uint8_t)old_pkt->floor;
 	pkt->players_on_floor = 0;
 	for (i = 0; i < 32; i++) {
 		n_xVel = (uint32_t)round(old_pkt->xVel[i] * GRANULARITY_VEL + FACTOR);
@@ -228,6 +229,8 @@ PKT_ALL_POS_UPDATE *decapsulate_all_pos_update(PKT_ALL_POS_UPDATE_MIN *pkt) {
 	
 	if(!old_pkt)
 		return NULL;
+	
+	old_pkt->floor = (floorNo_t)pkt->floor;
 	
 	for (i = 0; i < 32; i++) {
 		old_pkt->players_on_floor[i] = (pkt->players_on_floor >> i) & 0x1;
