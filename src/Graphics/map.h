@@ -28,6 +28,8 @@ struct fogOfWarStruct
 	
 	SDL_Surface **fogOfWar;
 	SDL_Surface **alphaFog;
+	
+	SDL_Surface  *corners[16];
 };
 
 int map_init(World* world, char *file_map, char *tilemap);

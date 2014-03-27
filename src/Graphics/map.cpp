@@ -53,18 +53,83 @@ void render_fog_of_war(SDL_Surface *surface, struct fogOfWarStruct *fow)
 			tempRect.w = TILE_WIDTH;
 			tempRect.h = TILE_HEIGHT;
 
-			if(visible == 0)
-			{		
-				SDL_BlitSurface(fow -> fogOfWar[count++], NULL, surface, &tempRect);
-			}
-			else if(visible == 1)
+			switch(visible)
 			{
-				fow -> tiles[y][x].visible = 2;
-			}
-			else if(visible == 2)
-			{
+				case 0:
+					SDL_BlitSurface(fow -> fogOfWar[count++], NULL, surface, &tempRect);
+					break;
 			
-				SDL_BlitSurface(fow -> alphaFog[count++], NULL, surface, &tempRect);
+				case 1:
+					fow -> tiles[y][x].visible = 2;
+					break;
+			
+				case 2:
+					SDL_BlitSurface(fow -> alphaFog[count++], NULL, surface, &tempRect);
+					break;
+			
+			
+				case 11: // top left arrow
+					SDL_BlitSurface(fow -> corners[0], NULL, surface, &tempRect);
+					fow -> tiles[y][x].visible = 2;
+					break;
+
+				case 12: // right side
+					SDL_BlitSurface(fow -> corners[1], NULL, surface, &tempRect);				
+					fow -> tiles[y][x].visible = 2;
+					break;
+					
+				case 13: // left side
+					SDL_BlitSurface(fow->corners[2], NULL, surface, &tempRect);
+					fow -> tiles[y][x].visible = 2;
+					break;
+					
+					
+				case 14: // bot left arrow
+					SDL_BlitSurface(fow->corners[3], NULL, surface, &tempRect);
+					fow -> tiles[y][x].visible = 2;
+					break;
+					
+				case 15: 
+					SDL_BlitSurface(fow->corners[4], NULL, surface, &tempRect);
+					fow -> tiles[y][x].visible = 2;
+					break;
+					
+				case 16: 
+					SDL_BlitSurface(fow->corners[5], NULL, surface, &tempRect);
+					fow -> tiles[y][x].visible = 2;
+					break;
+					
+					
+				case 17: // bot left arrow
+					SDL_BlitSurface(fow->corners[6], NULL, surface, &tempRect);
+					fow -> tiles[y][x].visible = 2;
+					break;
+					
+				case 18: 
+					SDL_BlitSurface(fow->corners[7], NULL, surface, &tempRect);
+					fow -> tiles[y][x].visible = 2;
+					break;
+					
+				case 19: 
+					SDL_BlitSurface(fow->corners[8], NULL, surface, &tempRect);
+					fow -> tiles[y][x].visible = 2;
+					break;
+					
+					
+				case 20: // bot left arrow
+					SDL_BlitSurface(fow->corners[9], NULL, surface, &tempRect);
+					fow -> tiles[y][x].visible = 2;
+					break;
+					
+				case 21: 
+					SDL_BlitSurface(fow->corners[10], NULL, surface, &tempRect);
+					fow -> tiles[y][x].visible = 2;
+					break;
+					
+				case 22: 
+					SDL_BlitSurface(fow->corners[11], NULL, surface, &tempRect);
+					fow -> tiles[y][x].visible = 2;
+					break;
 			}
 		}
 	}
@@ -110,7 +175,7 @@ void init_fog_of_war(struct fogOfWarStruct **fow)
 			(*fow) -> alphaFog[ i ] = SDL_CreateRGBSurface(0, TILE_WIDTH, TILE_HEIGHT, 32, 0, 0, 0, 0);
 			SDL_FillRect((*fow) -> alphaFog[ i ],0,0x221122);
 			SDL_SetSurfaceBlendMode((*fow)->alphaFog[ i ], SDL_BLENDMODE_BLEND);
-			SDL_SetSurfaceAlphaMod ((*fow)->alphaFog[ i ] , 100);
+			SDL_SetSurfaceAlphaMod ((*fow)->alphaFog[ i ] , 110);
 
 
 			(*fow) -> fogOfWar[ i ] = SDL_CreateRGBSurface(0, TILE_WIDTH, TILE_HEIGHT, 32, 0, 0, 0, 0);
@@ -118,7 +183,21 @@ void init_fog_of_war(struct fogOfWarStruct **fow)
 
 		}
 		
+		(*fow)->corners[0] = IMG_Load("assets/Graphics/fow/topleft/head.png");
+		(*fow)->corners[1] = IMG_Load("assets/Graphics/fow/topleft/right.png");
+		(*fow)->corners[2] = IMG_Load("assets/Graphics/fow/topleft/left.png");
+			
+		(*fow)->corners[3] = IMG_Load("assets/Graphics/fow/botleft/head.png");
+		(*fow)->corners[4] = IMG_Load("assets/Graphics/fow/botleft/right.png");
+		(*fow)->corners[5] = IMG_Load("assets/Graphics/fow/botleft/left.png");
+			
+		(*fow)->corners[6] = IMG_Load("assets/Graphics/fow/topright/head.png");
+		(*fow)->corners[7] = IMG_Load("assets/Graphics/fow/topright/right.png");
+		(*fow)->corners[8] = IMG_Load("assets/Graphics/fow/topright/left.png");
 		
+		(*fow)->corners[9] = IMG_Load("assets/Graphics/fow/botright/head.png");
+		(*fow)->corners[10] = IMG_Load("assets/Graphics/fow/botright/right.png");
+		(*fow)->corners[11] = IMG_Load("assets/Graphics/fow/botright/left.png");
 }
 
 void cleanup_fog_of_war(struct fogOfWarStruct *fow)
@@ -127,6 +206,11 @@ void cleanup_fog_of_war(struct fogOfWarStruct *fow)
 	{
 		SDL_FreeSurface(fow -> fogOfWar[i]);
 		SDL_FreeSurface(fow -> alphaFog[i]);
+	}
+	
+	for(int i = 0; i < 12; i++)
+	{
+		SDL_FreeSurface(fow -> corners[i]);
 	}
 }
 /**************************************************************************/

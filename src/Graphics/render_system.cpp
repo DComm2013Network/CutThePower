@@ -22,6 +22,7 @@ SDL_Surface *ibeam;
 
 int subOne(int n);
 int addOne(int n);
+void makeVisible(struct fogOfWarStruct *fow, PositionComponent *position);
 
 /**
  * Render a player onto the map. 
@@ -140,38 +141,93 @@ void render_player_system(World& world, SDL_Surface* surface, struct fogOfWarStr
 
 	
 	/*SAM*********************************/
+	makeVisible(fow, position);
+	/*************************************/
+
+}
+
+/*SAM******************************/
+void makeVisible(struct fogOfWarStruct *fow, PositionComponent *position)
+{
+
+/*******************
+ 5 | 5 | 3 | 5 | 5 |
+-------------------
+ 5 | 4 | 2 | 3 | 5 |
+-------------------
+ 3 | 2 | 1 | 2 | 3 |
+-------------------
+ 5 | 4 | 2 | 4 | 5 |
+-------------------
+ 5 | 5 | 3 | 5 | 5 |
+*******************/
+
+
 	int xPos = (double)position->x / TILE_WIDTH;
 	int yPos = (double)position->y / TILE_HEIGHT;
 
+	int by = addOne(yPos);
+	int ty = subOne(yPos);
+	int lx = subOne(xPos);
+	int rx = addOne(xPos);
 	
 	fow -> xOffset = -map_rect.x;
 	fow -> yOffset = -map_rect.y;
 	
-	fow -> tiles[yPos][xPos].visible = 1;
-
-	fow -> tiles[addOne(yPos)][xPos].visible = 1;
-	fow -> tiles[subOne(yPos)][xPos].visible = 1;
 	
-	
-	fow -> tiles[addOne(yPos)][addOne(xPos)].visible = 1;
-	fow -> tiles[subOne(yPos)][subOne(xPos)].visible = 1;
-	
-	fow -> tiles[addOne(yPos)][subOne(xPos)].visible = 1;
-	fow -> tiles[subOne(yPos)][addOne(xPos)].visible = 1;
-	
-
-	fow -> tiles[yPos][addOne(xPos)].visible = 1;
-	fow -> tiles[yPos][subOne(xPos)].visible = 1;
+	// standing on it
+	fow -> tiles[yPos][xPos].visible = 1; // 1
 
 
-	//fow -> tiles[ addOne(addOne(yPos)) ][xPos].visible = 1;
-	//fow -> tiles[ subOne(subOne(yPos)) ][xPos].visible = 1;
+	// immediate top & bottom
+	fow -> tiles[ty][xPos].visible = 1; // 2 // top
+	fow -> tiles[by][xPos].visible = 1; // 2 // bottom
+
+	// immediate left & right
+	fow -> tiles[yPos][rx].visible = 1; // 2 // right
+	fow -> tiles[yPos][lx].visible = 1; // 2 // left
 	
-	//fow -> tiles[yPos][ addOne(addOne(xPos)) ].visible = 1;
-	//fow -> tiles[yPos][ subOne(subOne(xPos)) ].visible = 1;			
+	
+	// far top & bottom
+	fow -> tiles[subOne(ty)][xPos].visible = 1; // 3 // top
+	fow -> tiles[addOne(by)][xPos].visible = 1; // 3 // bottom
+		
+	// far left & right
+	fow -> tiles[yPos][ addOne(rx) ].visible = 1; // 3 // right
+	fow -> tiles[yPos][ subOne(lx) ].visible = 1; // 3 // left
+	
+	
+	// immediate right corners
+	fow -> tiles[ty][rx].visible = 1; // 4 // top right
+	fow -> tiles[by][rx].visible = 1; // 4 // bottom right
+
+	// immediate left corners
+	fow -> tiles[ty][lx].visible = 1; // 4 // top left
+	fow -> tiles[by][lx].visible = 1; // 4 // bottom right
+
+	// top left arc
+	fow -> tiles[subOne(ty)][subOne(lx)].visible = 11; // 5 // arrow head
+	fow -> tiles[subOne(ty)][ lx ].visible = 12; // 5 // arrow right
+	fow -> tiles[ ty ][subOne(lx)].visible = 13; // 5 // arrow left
+
+
+	// bottom left arc
+	fow -> tiles[addOne(by)][subOne(lx)].visible = 14; // 5 // arrow head
+	fow -> tiles[addOne(by)][ lx ].visible = 16; // 5 // arrow left
+	fow -> tiles[ by ][subOne(lx)].visible = 15; // 5 // arrow right
+		
+
+	// top right arc
+	fow -> tiles[subOne(ty)][addOne(rx)].visible = 17; // 5 // arrow head
+	fow -> tiles[ ty ][addOne(rx)].visible = 18; // 5 // arrow right
+	fow -> tiles[subOne(ty)][ rx ].visible = 19; // 5 // arrow left
+	
+	// bottom right arc
+	fow -> tiles[addOne(by)][addOne(rx)].visible = 20; // 5 // arrow head
+	fow -> tiles[ by ][addOne(rx)].visible = 21; // 5 // arrow right
+	fow -> tiles[addOne(by)][ rx ].visible = 22; // 5 // arrow left
 }
 
-/*SAM******************************/
 int addOne(int n)
 {
 	return ++n;
