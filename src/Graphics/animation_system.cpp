@@ -49,15 +49,15 @@ void animation_system(World *world) {
 			if (animationComponent->current_animation > -1) {
 
 				animation = &(animationComponent->animations[animationComponent->current_animation]);
-
+				
 				if (animation->index == 0 && animation->ms_last == 0 && animation->sound_effect > -1) {
 					play_effect(animation->sound_effect);
 				}
-
+				
 				if (SDL_GetTicks() - animation->ms_last > animation->ms_to_skip) {
-
+					
 					animation->ms_last = SDL_GetTicks();
-
+					
 					animation->index++;
 					if (animation->index >= animation->surface_count) {
 
@@ -68,7 +68,6 @@ void animation_system(World *world) {
 							renderPlayer->playerSurface = animation->surfaces[0];
 
 							//printf("Animation finished\nEntity: %u\nName: %s\n", entity, animation->name);
-
 							animation_end(world, entity);
 							continue;
 						}
@@ -83,15 +82,15 @@ void animation_system(World *world) {
 				if (animationComponent->rand_animation < 0) {
 					continue;
 				}
-
+				
 				//if (rand() % animationComponent->rand_occurance == 0) {
 				//	animationComponent->current_animation = animationComponent->rand_animation;
 				//}
-
+				
 				if (SDL_GetTicks() > animationComponent->next_random_occurance) {
-
+					
 					animationComponent->current_animation = animationComponent->rand_animation;
-
+					
 					animationComponent->last_random_occurance = SDL_GetTicks();
 					animationComponent->next_random_occurance = (rand() % (animationComponent->rand_occurance_max - animationComponent->rand_occurance_min)) + animationComponent->rand_occurance_min + SDL_GetTicks();
 				}
@@ -113,7 +112,6 @@ void animation_system(World *world) {
  * @author Jordan Marling
  */
 int load_animation(const char *filename, World *world, unsigned int entity) {
-
 	AnimationComponent *animationComponent = &(world->animation[entity]);
 	RenderPlayerComponent *renderComponent = &(world->renderPlayer[entity]);
 
@@ -148,7 +146,6 @@ int load_animation(const char *filename, World *world, unsigned int entity) {
 	animationComponent->hover_animation = -1;
 
 	for(animation_index = 0; animation_index < animationComponent->animation_count; animation_index++) {
-
 		if (fscanf(fp, "%s %d %d %d %d", animation_name, &animation_frames, &ms_to_skip, &triggered_sound, &loop_animation) != 5) {
 			printf("Expected more animations!\n");
 			return -1;
@@ -201,13 +198,13 @@ int load_animation(const char *filename, World *world, unsigned int entity) {
 			}
 
 			if (strcmp(feature_type, "random") == 0) {
-
+				
 				if (fscanf(fp, "%d %d %d", &(animationComponent->rand_animation), &(animationComponent->rand_occurance_min), &(animationComponent->rand_occurance_max)) != 3) {
-
+					
 					printf("Wrong parameters for random. It should be 'random <animation index> <min delay in milliseconds> <max delay in milliseconds>\n");
-
+					
 					animationComponent->rand_animation = -1;
-
+					
 				}
 				else {
 					animationComponent->last_random_occurance = SDL_GetTicks();
@@ -242,18 +239,17 @@ int load_animation(const char *filename, World *world, unsigned int entity) {
  * @author Jordan Marling
  */
 void cancel_animation(World *world, unsigned int entity) {
-
 	AnimationComponent *animation = &(world->animation[entity]);
 	RenderPlayerComponent *render = &(world->renderPlayer[entity]);
 
 	if (animation->current_animation == -1)
 		return;
-
-
+	
+	
 	render->playerSurface = animation->animations[animation->current_animation].surfaces[0];
-
+	
 	animation->current_animation = -1;
-
+	
 }
 
 /**
@@ -268,23 +264,22 @@ void cancel_animation(World *world, unsigned int entity) {
  * @author Jordan Marling
  */
 void play_animation(World *world, unsigned int entity, const char *animation_name) {
-
+	
 	int i;
 	AnimationComponent *animationComponent = &(world->animation[entity]);
-
+	
 	//Check if the current animation is already playing.
 	if (animationComponent->current_animation > -1 && strcmp(animationComponent->animations[animationComponent->current_animation].name, animation_name) == 0) {
 		return;
 	}
-
 	for(i = 0; i < animationComponent->animation_count; i++) {
 
 		if (strcmp(animationComponent->animations[i].name, animation_name) == 0) {
-
+			
 			animationComponent->current_animation = i;
 			animationComponent->animations[i].ms_last = SDL_GetTicks();
 			animationComponent->animations[i].index = 0;
-
+			
 			return;
 		}
 

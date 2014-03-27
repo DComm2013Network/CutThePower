@@ -312,6 +312,7 @@ unsigned int create_stair(World* world, int targetLevel, int targetX, int target
 									COMPONENT_WORMHOLE;
 
 			world->position[entity] = pos;
+			world->renderPlayer[entity] = render;
 			world->wormhole[entity] = target;
 			world->collision[entity] = collision;
 			
@@ -355,15 +356,15 @@ void destroy_entity(World* world, const unsigned int entity) {
 
 	int i, j;
 	
-	world->mask[entity] = COMPONENT_EMPTY;
-	if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_POSITION)) {
-		memset(world->position, 0, sizeof(PositionComponent));
-	}
 	if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_ANIMATION)) {
 		
+		//printf("animation count: %d\n", world->animation[entity].animation_count);
+		
 		for(i = 0; i < world->animation[entity].animation_count; i++) {
+			//printf("-- count %s: %d\n", world->animation[entity].animations[i].name, world->animation[entity].animations[i].surface_count);
 			
 			free(world->animation[entity].animations[i].name);
+			
 			
 			for(j = 0; j < world->animation[entity].animations[i].surface_count; j++) {
 				
@@ -372,23 +373,41 @@ void destroy_entity(World* world, const unsigned int entity) {
 				//printf("Free frame!\n");
 				
 			}
+			
+			free(world->animation[entity].animations[i].surfaces);
 		}
 		free(world->animation[entity].animations);
+		
+		//we have already free'd the surface so make sure it isn't free'd again.
+		world->renderPlayer[entity].playerSurface = NULL;
 	}
-	else if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_RENDER_PLAYER)) {
+	if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_RENDER_PLAYER)) {
 		
 		//printf("POINTER: %p\n", world->renderPlayer[entity].playerSurface);
 		
-		//if (world->renderPlayer[entity].playerSurface != NULL)
-			//SDL_FreeSurface(world->renderPlayer[entity].playerSurface);
+		if (world->renderPlayer[entity].playerSurface != NULL)
+			SDL_FreeSurface(world->renderPlayer[entity].playerSurface);
 		
 	}
-	else if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_LEVEL)) {
-		for (unsigned int i = 0; i < world->level[entity].width; i++) {
+	if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_TEXTFIELD)) {
+		
+		free(world->text[entity].text);
+		free(world->text[entity].name);
+		
+	}
+	if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_BUTTON)) {
+		free(world->button[entity].label);
+	}
+	if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_LEVEL)) {
+		
+		for (i = 0; i < world->level[entity].width; i++) {
 			free(world->level[entity].map[i]);
 		}
+		
 		free(world->level[entity].map);
 	}
+	
+	world->mask[entity] = COMPONENT_EMPTY;
 }
 
 /**

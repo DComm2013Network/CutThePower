@@ -1,6 +1,6 @@
 1
 
-mainmenu 20 4 0 -1
+mainmenu 20 45 0 -1
 assets/Graphics/screen/menu/MainMenu_01.png
 assets/Graphics/screen/menu/MainMenu_02.png
 assets/Graphics/screen/menu/MainMenu_03.png
@@ -23,4 +23,4 @@ assets/Graphics/screen/menu/MainMenu_18.png
 assets/Graphics/screen/menu/MainMenu_19.png
 
 1
-random 0 800
+random 0 5000 10000
