@@ -276,6 +276,20 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 				printf("Playing sound %d\n", sound_id);
 				
 			}
+			else if (strcmp(entity_type, "objective") == 0) {
+				
+				float x, y;
+				int level, w, h;
+				unsigned int id;
+				
+				if (fscanf(fp_map, "%f %f %d %d %u %d", &x, &y, &w, &h, &id, &level) != 6) {
+					printf("Error loading objective!\n");
+					return -1;
+				}
+				
+				//create_objective(world, x * TILE_WIDTH + TILE_WIDTH / 2, y * TILE_HEIGHT + TILE_HEIGHT / 2, w, h, id, level);
+				//printf("Loaded objective!\n");
+			}
 			else {
 				printf("Did not deal with the entity type: %s\n", entity_type);
 				break;
