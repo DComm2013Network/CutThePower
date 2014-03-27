@@ -7,9 +7,9 @@
 #include "../components.h"
 
 #define BIG_FONT				83
-#define SMALL_FONT				48
-#define BIG_FONT_OUTLINE		1
-#define SMALL_FONT_OUTLINE		1
+#define SMALL_FONT				42
+#define BIG_FONT_OUTLINE		3
+#define SMALL_FONT_OUTLINE		2
 
 TTF_Font *big;
 TTF_Font *small;
@@ -39,6 +39,13 @@ void init_fonts() {
 	
 }
 
+void cleanup_fonts() {
+	
+	TTF_CloseFont(big);
+	TTF_CloseFont(small);
+	
+}
+
 /**
  * Returns a surface with the text drawn to it.
  *
@@ -64,15 +71,15 @@ SDL_Surface *draw_text_surface(const char *text, TTF_Font *font, int outline_siz
 	if (text == 0 || strlen(text) == 0)
 		return 0;
 	
-	TTF_SetFontOutline(font, 0);
+	TTF_SetFontOutline(font, outline_size);
 	
-	if ((text_surface = TTF_RenderText_Blended(font, text, colour)) == 0) {
+	if ((text_surface = TTF_RenderText_Blended(font, text, outline)) == 0) {
 		printf("Error rendering the text.\n");
 	}
 	
-	TTF_SetFontOutline(font, outline_size);
+	TTF_SetFontOutline(font, 0);
 	
-	if ((outline_surface = TTF_RenderText_Solid(font, text, outline)) == 0) {
+	if ((outline_surface = TTF_RenderText_Blended(font, text, colour)) == 0) {
 		printf("Error rendering the outline of the big text.\n");
 	}
 	
@@ -84,6 +91,8 @@ SDL_Surface *draw_text_surface(const char *text, TTF_Font *font, int outline_siz
 	size.h = 0;
 	
 	SDL_BlitSurface(outline_surface, NULL, text_surface, &size);
+	
+	SDL_FreeSurface(outline_surface);
 	
 	return text_surface;
 }

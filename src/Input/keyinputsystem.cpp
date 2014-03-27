@@ -22,6 +22,7 @@
 #include "../world.h"
 #include "components.h"
 #include "../systems.h"
+#include "../Graphics/text.h"
 
 #define SYSTEM_MASK (COMPONENT_COMMAND) /**< Entities with a command component will be processed by the system. */
 
@@ -98,6 +99,7 @@ void KeyInputSystem(World *world)
 			}
 		}
 		else if (text->length < MAX_STRING) {
+			
 			for(int i = 0; i <= 512; i++) {
 				
 				code = SDL_GetScancodeFromName((char*)&i);
@@ -232,7 +234,7 @@ void KeyInputSystem(World *world)
  * @author Jordan Marling
  *
  */
-int KeyMapInit(char *file) 
+int KeyMapInit(const char *file) 
 {
 	return KeyMapInitArray(file, (int**)&command_keys);
 }
@@ -255,7 +257,7 @@ int KeyMapInit(char *file)
  * @author Jordan Marling
  *
  */
-int KeyMapInitArray(char *file, int **command_array) 
+int KeyMapInitArray(const char *file, int **command_array) 
 {
 	
 	FILE *fp;

@@ -66,6 +66,7 @@ public:
 int main(int argc, char* argv[]) {
 	SDL_Window *window;
 	SDL_Surface *surface;
+	
 	int send_router_fd[2];
 	int rcv_router_fd[2];
 
@@ -75,16 +76,15 @@ int main(int argc, char* argv[]) {
 	World *world = (World*)malloc(sizeof(World));
 	printf("Current World size: %i\n", sizeof(World));
 	
-	//SDL_Init(SDL_INIT_VIDEO);
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
 	
-	window = SDL_CreateWindow("Cut The Power", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_OPENGL);
-	surface = SDL_GetWindowSurface(window);
-	
+	window = SDL_CreateWindow("Cut The Power", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, SDL_WINDOW_OPENGL);
 	if (window == NULL) {
 		printf("Error initializing the window.\n");
 		return 1;
 	}
+	surface = SDL_GetWindowSurface(window);
+	
 	
 	init_sound();
 	init_fonts();
@@ -92,21 +92,11 @@ int main(int argc, char* argv[]) {
 	init_world(world);
 	srand(time(NULL));//random initializer
 	
-	//map_init(world, "assets/Graphics/lobby/lobby.txt", "assets/Graphics/lobby/lobby_tiles.txt");
-	//map_init(world, "assets/Graphics/lobby.txt", "assets/Graphics/tiles_lobby.txt");
-	
 	KeyMapInit((char*)"assets/Input/keymap.txt");
 	init_render_player_system();
-	//unsigned int entity = create_player(world, 600, 600, true);
 	
 	create_main_menu(world);
-	//create_bsod_menu(world);
 	
-	//map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/map01_tiles.txt");
-	//entity = create_player(world, 600, 600, true, COLLISION_HACKER);
-						
-	//world->mask[entity] |= COMPONENT_ANIMATION;
-	//load_animation("assets/Graphics/player/robber/rob_animation.txt", world, entity);
 	
 	FPS fps;
 	fps.init();
@@ -133,7 +123,15 @@ int main(int argc, char* argv[]) {
 		fps.update();
 	}
 	
+	cleanup_map();
 	cleanup_sound();
+	cleanup_fonts();
+	
+	destroy_world(world);
+	free(world);
+	
+	//SDLNet_Quit();
+	SDL_Quit();
 	
 	printf("Exiting The Game\n");
 	

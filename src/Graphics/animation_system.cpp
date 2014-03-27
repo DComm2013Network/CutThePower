@@ -71,7 +71,7 @@ void animation_system(World *world) {
 							
 							//printf("Animation finished\nEntity: %u\nName: %s\n", entity, animation->name);
 							
-							animation_end(world, entity, animationComponent->id);
+							animation_end(world, entity);
 							continue;
 						}
 					}

@@ -5,6 +5,7 @@
 #include "../world.h"
 
 void init_fonts();
+void cleanup_fonts();
 SDL_Surface *draw_big_text(const char *text);
 SDL_Surface *draw_small_text(const char *text);
 void render_big_text(World *world, unsigned int entity, const char *text);

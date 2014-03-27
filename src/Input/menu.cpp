@@ -206,8 +206,11 @@ void create_textfield(World *world, const char *name, int x, int y, const char* 
 			world->text[entity].text[i] = toupper(text[i]);
 		}
 		world->text[entity].length = strlen(text);
+		
+		//world->text[entity].textSurface = draw_small_text(text);
 	} else {
 		world->text[entity].length = 0;
+		//world->text[entity].textSurface = 0;
 	}
 
 	world->text[entity].focused = false;
@@ -354,7 +357,7 @@ void create_keymap_menu(World *world) {
 	char filename[64];
 	strcpy(filename, "assets/Graphics/screen/menu/keymap/keymap_");
 	
-	KeyMapInitArray((char*)"assets/Input/keymap.txt", &commands);
+	KeyMapInitArray("assets/Input/keymap.txt", &commands);
 	
 	
 	strcpy((char*)(filename + pos), SDL_GetScancodeName((SDL_Scancode)commands[C_UP]));
@@ -438,10 +441,10 @@ void create_setup_menu(World *world) {
 	create_title(world, "SETUP", (WIDTH / 2), (HEIGHT / 2) - 250);
 	
 	create_label(world, "USERNAME", (WIDTH / 2) - 550, (HEIGHT / 2) - 25);
-	create_textfield(world, "setup_username", (WIDTH / 2) - 55, (HEIGHT / 2) - 30, NULL, 1);
+	create_textfield(world, "setup_username", (WIDTH / 2) - 100, (HEIGHT / 2) - 30, NULL, 1);
 	
 	create_label(world, "SERVER IP", (WIDTH / 2) - 550, (HEIGHT / 2) + 50);
-	create_textfield(world, "setup_serverip", (WIDTH / 2) - 55, (HEIGHT / 2) + 45, NULL, 1);
+	create_textfield(world, "setup_serverip", (WIDTH / 2) - 100, (HEIGHT / 2) + 45, NULL, 1);
 	
 	
 	create_button(world, "BACK", "setup_back", (WIDTH / 2) + 150, (HEIGHT / 2) + 275);
