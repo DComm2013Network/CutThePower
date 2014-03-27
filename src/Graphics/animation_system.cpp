@@ -236,13 +236,12 @@ int load_animation(const char *filename, World *world, unsigned int entity) {
  *
  * @param world Pointer to the world structure (contains "world" info, entities / components)
  * @param entity The entity to cancel the animation for
- * @param animation_name The animation that the entity gets frozen at
  *
  * @designer Jordan Marling
  *
  * @author Jordan Marling
  */
-void cancel_animation(World *world, unsigned int entity, const char *animation_name) {
+void cancel_animation(World *world, unsigned int entity) {
 	
 	AnimationComponent *animation = &(world->animation[entity]);
 	RenderPlayerComponent *render = &(world->renderPlayer[entity]);
@@ -250,13 +249,11 @@ void cancel_animation(World *world, unsigned int entity, const char *animation_n
 	if (animation->current_animation == -1)
 		return;
 	
-	if (strcmp(animation->animations[animation->current_animation].name, animation_name) == 0) {
-		
-		render->playerSurface = animation->animations[animation->current_animation].surfaces[0];
-		
-		animation->current_animation = -1;
-		
-	}
+	
+	render->playerSurface = animation->animations[animation->current_animation].surfaces[0];
+	
+	animation->current_animation = -1;
+	
 }
 
 /**
@@ -275,20 +272,18 @@ void play_animation(World *world, unsigned int entity, const char *animation_nam
 	int i;
 	AnimationComponent *animationComponent = &(world->animation[entity]);
 	
+	//Check if the current animation is already playing.
+	if (animationComponent->current_animation > -1 && strcmp(animationComponent->animations[animationComponent->current_animation].name, animation_name) == 0) {
+		return;
+	}
+	
 	for(i = 0; i < animationComponent->animation_count; i++) {
 		
 		if (strcmp(animationComponent->animations[i].name, animation_name) == 0) {
 			
-			if (animationComponent->current_animation != -1)
-				return;
-			
 			animationComponent->current_animation = i;
 			animationComponent->animations[i].ms_last = SDL_GetTicks();
 			animationComponent->animations[i].index = 0;
-			
-			//printf("Playing animation: %s\n", animation_name);
-			
-			//world->renderPlayer[entity].playerSurface = animationComponent->animations[i].surfaces[1];
 			
 			return;
 		}

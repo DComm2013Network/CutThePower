@@ -212,28 +212,28 @@ void movement_system(World* world) {
 					play_animation(world, entity, (char*)"up");
 				}
 				else {
-					cancel_animation(world, entity, (char*)"up");
+					cancel_animation(world, entity);
 				}
 				if (command->commands[C_DOWN]) {
 					add_force(world, entity, world->movement[entity].acceleration, 90);
 					play_animation(world, entity, (char*)"down");
 				}
 				else {
-					cancel_animation(world, entity, (char*)"down");
+					//cancel_animation(world, entity);
 				}
 				if (command->commands[C_LEFT]) {
 					add_force(world, entity, world->movement[entity].acceleration, 180);
 					play_animation(world, entity, (char*)"left");
 				}
 				else {
-					cancel_animation(world, entity, (char*)"left");
+					//cancel_animation(world, entity);
 				}
 				if (command->commands[C_RIGHT]) {
 					add_force(world, entity, world->movement[entity].acceleration, 0);
 					play_animation(world, entity, (char*)"right");
 				}
 				else {
-					cancel_animation(world, entity, (char*)"right");
+					//cancel_animation(world, entity, (char*)"right");
 				}
 
 				CollisionData data;
