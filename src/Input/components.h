@@ -9,6 +9,7 @@
 #ifndef INPUT_COMPONENT_H
 #define INPUT_COMPONENT_H
 
+#include <SDL2/SDL.h>
 #include "../components.h"
 
 /**

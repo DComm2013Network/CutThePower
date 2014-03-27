@@ -44,7 +44,7 @@ int level;                /**< The current floor. */
  * @date February 26, 2014
  */
 
-int map_init(World* world, char *file_map, char *file_tiles) {
+int map_init(World* world, const char *file_map, const char *file_tiles) {
 	
 	FILE *fp_map;
 	FILE *fp_tiles;
@@ -180,19 +180,37 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 			
 			//printf("Found entity: %s\n", entity_type);
 			
-			if (strcmp(entity_type, "stair") == 0) { //stair
+			if (strcmp(entity_type, "stair") == 0 || strcmp(entity_type, "stairs") == 0) { //stairs
 				
 				//stair x y targetX targetY 2
 				unsigned int entity;
 				int x, y, floor;
 				float targetX, targetY;
+				char dir;
 				
-				if (fscanf(fp_map, "%d %d %f %f %d", &x, &y, &targetX, &targetY, &floor) != 5) {
+				if (fscanf(fp_map, "%d %d %f %f %d %c", &x, &y, &targetX, &targetY, &floor, &dir) != 6) {
 					printf("Error loading stair\n");
 					return -1;
 				}
 				
-				create_stair(world, floor, targetX * TILE_WIDTH + TILE_WIDTH / 2, targetY * TILE_HEIGHT + TILE_HEIGHT / 2, x * TILE_WIDTH + TILE_WIDTH / 2, y * TILE_HEIGHT + TILE_HEIGHT / 2, TILE_WIDTH, TILE_HEIGHT, level);
+				switch (dir) { // make the hitboxes for the stairs
+					case 'l':
+						create_stair(world, floor, targetX * TILE_WIDTH + TILE_WIDTH / 2, targetY * TILE_HEIGHT + TILE_HEIGHT / 2, x * TILE_WIDTH + TILE_WIDTH / 2 - 4, y * TILE_HEIGHT + TILE_HEIGHT / 2, TILE_WIDTH, TILE_HEIGHT, level);
+						create_block(world, x * TILE_WIDTH + 7, y * TILE_HEIGHT + TILE_HEIGHT / 2, 10, TILE_HEIGHT - 4, floor);
+						break;
+					case 'r':
+						create_stair(world, floor, targetX * TILE_WIDTH + TILE_WIDTH / 2, targetY * TILE_HEIGHT + TILE_HEIGHT / 2, x * TILE_WIDTH + TILE_WIDTH / 2 + 4, y * TILE_HEIGHT + TILE_HEIGHT / 2, TILE_WIDTH, TILE_HEIGHT, level);
+						create_block(world, x * TILE_WIDTH + TILE_WIDTH - 7, y * TILE_HEIGHT + TILE_HEIGHT / 2, 10, TILE_HEIGHT - 4, floor);
+						break;
+					case 'u':
+						create_stair(world, floor, targetX * TILE_WIDTH + TILE_WIDTH / 2, targetY * TILE_HEIGHT + TILE_HEIGHT / 2, x * TILE_WIDTH + TILE_WIDTH / 2, y * TILE_HEIGHT + TILE_HEIGHT / 2 - 4, TILE_WIDTH, TILE_HEIGHT, level);
+						create_block(world, x * TILE_WIDTH + TILE_WIDTH / 2, y * TILE_HEIGHT + 7, TILE_WIDTH - 4, 10, floor);
+						break;
+					case 'd':
+						create_stair(world, floor, targetX * TILE_WIDTH + TILE_WIDTH / 2, targetY * TILE_HEIGHT + TILE_HEIGHT / 2, x * TILE_WIDTH + TILE_WIDTH / 2, y * TILE_HEIGHT + TILE_HEIGHT / 2 + 4, TILE_WIDTH, TILE_HEIGHT, level);
+						create_block(world, x * TILE_WIDTH + TILE_WIDTH / 2, y * TILE_HEIGHT + TILE_HEIGHT - 7, TILE_WIDTH - 4, 10, floor);
+						break;
+				}
 				
 				printf("mx: %d\n", x * TILE_WIDTH);
 				printf("my: %d\n", y * TILE_HEIGHT);
@@ -271,6 +289,7 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 	
 	//render to surface
 	
+	cleanup_map();
 	map_surface = SDL_CreateRGBSurface(0, width * TILE_WIDTH, height * TILE_HEIGHT, 32, 0, 0, 0, 0);
 	
 	if (map_surface == 0) {
@@ -294,8 +313,6 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 		}
 	}
 	
-	//load_map_section(map, tiles, 0, 0, width * TILE_WIDTH, height * TILE_HEIGHT, &map_surface);
-	
 	for(i = 0; i < num_tiles; i++) {
 		SDL_FreeSurface(tiles[i]);
 	}
@@ -304,7 +321,6 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 	map_rect.y = 0;
 	w = map_rect.w = width * TILE_WIDTH;
 	h = map_rect.h = height * TILE_HEIGHT;
-	
 	
 	
 	create_level(world, collision_map, width, height, TILE_WIDTH, level);
@@ -323,23 +339,15 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 	free(entity_type);
 	free(tile_filename);
 	
-	/*for (int x = 0; x < width; x++) {
-		for (int y = 0; y < height; y++) {
-			for (int n = 0; n < num_tiles; n++) {
-				if (tileTypes[n] == map[x][y]) {
-					map[x][y] = collisionTypes[n];
-					break;
-				}
-			}
-		}
-	}*/
-	
-	//create_level(world, collision_map, width, height, TILE_WIDTH);
-	
-	//free(tileTypes);
-	//free(collisionTypes);
-
 	return 0;
+}
+
+void cleanup_map() {
+	
+	if (map_surface != 0) {
+		SDL_FreeSurface(map_surface);
+	}
+	
 }
 
 /**
