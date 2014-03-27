@@ -18,7 +18,7 @@ bool soundon = true;
  */
 void init_sound() {
 	
-	initialize audio mixer.
+	//initialize audio mixer.
 	if(Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) == -1) {
 
        return;    

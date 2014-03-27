@@ -42,7 +42,6 @@ int client_update_system(World *world, int net_pipe) {
 	uint32_t 	type;
 	uint32_t 	num_packets;
 	uint64_t	signal = 1;
-	uint64_t 	sem_buf;
 	unsigned	i;
 	if(!player_table)
 	{
