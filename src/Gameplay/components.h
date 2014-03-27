@@ -67,4 +67,9 @@ typedef struct {
     int targetY;    
 } WormholeComponent;
 
+typedef struct {
+	unsigned int objectiveID;
+	bool status;
+} ObjectiveComponent;
+
 #endif

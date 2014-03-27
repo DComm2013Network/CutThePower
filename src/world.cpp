@@ -199,58 +199,32 @@ unsigned int create_player(World* world, int x, int y, bool controllable, int co
 }
 
 //creates a target for the hackers
-unsigned int create_target(World* world, int x, int y, int collisiontype) {
+unsigned int create_objective(World* world, float x, float y, int w, int h, int id, int level) {
 	unsigned int entity;
-	PositionComponent pos;
-	RenderPlayerComponent render;
-	CollisionComponent collision;
-
-	int lastID = -1;
-	unsigned int tempMask = 0;
 	
-	render.width = 20;
-	render.height = 20;
-	render.playerSurface = SDL_LoadBMP("assets/Graphics/target.bmp");
-	if (!render.playerSurface) {
-		printf("mat is a doof\n");
+	entity = create_entity(world, COMPONENT_POSITION | COMPONENT_COLLISION | COMPONENT_OBJECTIVE);
+	
+	if (entity == MAX_ENTITIES) {
+		return MAX_ENTITIES;
 	}
 	
-	pos.x = x;
-	pos.y = y;
-
-	pos.width = render.width;
-	pos.height = render.height;
-	pos.level = 0;
+	world->position[entity].x = x;
+	world->position[entity].y = y;
+	world->position[entity].width = w;
+	world->position[entity].height = h;
+	world->position[entity].level = level;
 	
-	collision.id = 0;
-	collision.type = collisiontype;
-	collision.timer = 0;
-	collision.timerMax = 1000;
-	collision.active = true;
-	collision.radius = 50;
+	world->collision[entity].id = 0;
+	world->collision[entity].type = COLLISION_TARGET;
+	world->collision[entity].timer = 0;
+	world->collision[entity].timerMax = 0;
+	world->collision[entity].active = true;
+	world->collision[entity].radius = 0;
 	
-	for(entity = 0; entity < MAX_ENTITIES; ++entity) {
-		tempMask = world->mask[entity] & COMPONENT_POSITION;
-		if (tempMask == COMPONENT_MOVEMENT) {
-			lastID = world->collision[entity].id;
-		}
-		
-		if (world->mask[entity] == COMPONENT_EMPTY) {
-			lastID += 1;
-			collision.id = lastID;
-
-			world->mask[entity] =	COMPONENT_POSITION | 
-									COMPONENT_RENDER_PLAYER | 
-									COMPONENT_COLLISION;
-
-			world->position[entity] = pos;
-			world->renderPlayer[entity] = render;
-			world->collision[entity] = collision;
-			
-			return entity;
-		}
-	}
-	return MAX_ENTITIES;
+	world->objective[entity].objectiveID = id;
+	world->objective[entity].status = false;
+	
+	return entity;
 }
 
 /**
