@@ -82,7 +82,6 @@ int client_update_system(World *world, int net_pipe) {
 			{
 				case P_FLOOR_MOVE:
 				client_update_floor(world, packet);
-				floor_change_flag = 0;
 				game_ready++;
 				break;
 			}
@@ -150,16 +149,10 @@ void client_update_obj_status(World *world, void *packet)
 void client_update_floor(World *world, void *packet)
 {
 	PKT_FLOOR_MOVE* floor_move = (PKT_FLOOR_MOVE*)packet;
-	for (int i = 0; i < MAX_PLAYERS; i++)
-	{
-		if(i == controllable_playerNo)
-		{
-			world->position[player_table[i]].x		= floor_move->xPos;
-			world->position[player_table[i]].y		= floor_move->yPos;
-			world->position[player_table[i]].level	= floor_move->new_floor;
-			break;
-		}
-	}
+	world->position[player_table[controllable_playerNo]].x		= floor_move->xPos;
+	world->position[player_table[controllable_playerNo]].y		= floor_move->yPos;
+	world->position[player_table[controllable_playerNo]].level	= floor_move->new_floor;
+	floor_change_flag = 0;
 }
 
 /**
@@ -195,7 +188,7 @@ void client_update_pos(World *world, void *packet)
 			world->movement[player_table[i]].movY 	= pos_update->yVel[i];
 			world->position[player_table[i]].x		= pos_update->xPos[i];
 			world->position[player_table[i]].y		= pos_update->yPos[i];
-			world->position[player_table[i]].level	= pos_update->floor;
+			world->position[playerr_table[i]].level	= pos_update->floor;
 		}
 	}
 }

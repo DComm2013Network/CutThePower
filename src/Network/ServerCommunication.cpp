@@ -90,7 +90,10 @@ extern int send_failure_fd;
         else if(numready == 0) // Timed out; tell network router to check if server is down
         {
             int oldstate;
-            uint32_t type = P_KEEPALIVE;
+            uint32_t type = P_KEEPALIVE;cket_type - 1])) <= 0)
+    {
+        perror("write_packet: Failed to write packet");
+        return -1;
             pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &oldstate);
             write_pipe(recv_data->write_pipe, &type, sizeof(uint32_t));
             pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, &oldstate);
@@ -339,7 +342,7 @@ void *recv_udp_packet(UDPsocket sock, uint32_t *packet_type, uint64_t *timestamp
     memcpy(timestamp, pktdata->data + packet_size + sizeof(uint32_t), sizeof(*timestamp));
 	*timestamp = *((uint64_t *)(pktdata->data + packet_size + sizeof(uint32_t)));
 
-	SDLNet_FreePacket(pktdata);
+	SDLNet_FreePacket(pktdata);    
 	return packet;
 }
 
