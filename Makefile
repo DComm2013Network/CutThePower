@@ -7,8 +7,8 @@ OBJDIR=obj
 SRCDIR=src
 
 BIN_DEFAULT=$(BINDIR)/CutThePower
-OBJ_DEFAULT=$(OBJDIR)/Gameplay/collision_system.o $(OBJDIR)/Gameplay/movement_system.o $(OBJDIR)/Graphics/render_system.o $(OBJDIR)/Graphics/animation_system.o $(OBJDIR)/Graphics/map.o $(OBJDIR)/Input/keyinputsystem.o $(OBJDIR)/Input/mouseinputsystem.o $(OBJDIR)/Input/menu.o $(OBJDIR)/main.o $(OBJDIR)/sound.o $(OBJDIR)/world.o $(OBJDIR)/triggered.o $(OBJDIR)/Network/GameplayCommunication.o $(OBJDIR)/Network/ServerCommunication.o $(OBJDIR)/Network/PipeUtils.o $(OBJDIR)/Network/NetworkRouter.o $(OBJDIR)/Network/ClientUpdateSystem.o $(OBJDIR)/Network/SendSystem.o $(OBJDIR)/Network/packet_min_utils.o $(OBJDIR)/Graphics/text.o
- 
+OBJ_DEFAULT=$(OBJDIR)/Gameplay/collision_system.o $(OBJDIR)/Gameplay/movement_system.o $(OBJDIR)/Graphics/render_system.o $(OBJDIR)/Graphics/animation_system.o $(OBJDIR)/Graphics/map.o $(OBJDIR)/Input/keyinputsystem.o $(OBJDIR)/Input/mouseinputsystem.o $(OBJDIR)/Input/menu.o $(OBJDIR)/main.o $(OBJDIR)/sound.o $(OBJDIR)/world.o $(OBJDIR)/triggered.o $(OBJDIR)/Graphics/text.o $(OBJDIR)/Network/GameplayCommunication.o $(OBJDIR)/Network/ServerCommunication.o $(OBJDIR)/Network/PipeUtils.o $(OBJDIR)/Network/NetworkRouter.o $(OBJDIR)/Network/ClientUpdateSystem.o $(OBJDIR)/Network/SendSystem.o $(OBJDIR)/Network/packet_min_utils.o
+
 CutThePower: $(OBJ_DEFAULT)
 	test -d $(BINDIR) || mkdir -p $(BINDIR)
 	$(CC) $(FLAGS) -o $(BINDIR)/CutThePower $(OBJ_DEFAULT) $(LIBS)
@@ -24,6 +24,9 @@ debug: $(OBJ_DEFAULT)
 	$(CC) $(FLAGS) -g -o $(BINDIR)/CutThePower $(OBJ_DEFAULT) $(LIBS)
 	gdb $(BINDIR)/CutThePower
 
+$(OBJDIR)/Network/packet_min_utils.o: $(SRCDIR)/Network/packet_min_utils.c
+	test -d $(OBJDIR)/Network || mkdir -p $(OBJDIR)/Network
+	$(CC) $(FLAGS) -c -o $(OBJDIR)/Network/packet_min_utils.o $(SRCDIR)/Network/packet_min_utils.c
 
 $(OBJDIR)/Gameplay/collision_system.o: $(SRCDIR)/Gameplay/collision_system.cpp
 	test -d $(OBJDIR)/Gameplay || mkdir -p $(OBJDIR)/Gameplay
@@ -101,10 +104,3 @@ $(OBJDIR)/world.o: $(SRCDIR)/world.cpp
 	test -d $(OBJDIR) || mkdir -p $(OBJDIR)
 	$(CC) $(FLAGS) -c -o $(OBJDIR)/world.o $(SRCDIR)/world.cpp
 
-$(OBJDIR)/Network/packet_min_utils.o: $(SRCDIR)/Network/packet_min_utils.c
-	test -d $(OBJDIR)/Network || mkdir -p $(OBJDIR)/Network
-	$(CC) $(FLAGS) -c -o $(OBJDIR)/Network/packet_min_utils.o $(SRCDIR)/Network/packet_min_utils.c
-
-$(OBJDIR)/world.o: $(SRCDIR)/Graphics/text.cpp
-	test -d $(OBJDIR) || mkdir -p $(OBJDIR)
-	$(CC) $(FLAGS) -c -o $(OBJDIR)/Graphics/text.o $(SRCDIR)/Graphics/text.cpp
