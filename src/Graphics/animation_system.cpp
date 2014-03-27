@@ -71,7 +71,7 @@ void animation_system(World *world) {
 							
 							//printf("Animation finished\nEntity: %u\nName: %s\n", entity, animation->name);
 							
-							animation_end(world, entity, animationComponent->id);
+							animation_end(world, entity);
 							continue;
 						}
 					}
@@ -86,8 +86,16 @@ void animation_system(World *world) {
 					continue;
 				}
 				
-				if (rand() % animationComponent->rand_occurance == 0) {
+				//if (rand() % animationComponent->rand_occurance == 0) {
+				//	animationComponent->current_animation = animationComponent->rand_animation;
+				//}
+				
+				if (SDL_GetTicks() > animationComponent->next_random_occurance) {
+					
 					animationComponent->current_animation = animationComponent->rand_animation;
+					
+					animationComponent->last_random_occurance = SDL_GetTicks();
+					animationComponent->next_random_occurance = (rand() % (animationComponent->rand_occurance_max - animationComponent->rand_occurance_min)) + animationComponent->rand_occurance_min + SDL_GetTicks();
 				}
 			}
 			
@@ -95,7 +103,18 @@ void animation_system(World *world) {
 	}
 }
 
-int load_animation(char *filename, World *world, unsigned int entity) {
+/**
+ * This loads in an animation text file to create an animated component.
+ *
+ * @param filename The filename of the animation text file
+ * @param world Pointer to the world structure (contains "world" info, entities / components)
+ * @param entity The entity to create the animation for
+ *
+ * @designer Jordan Marling
+ *
+ * @author Jordan Marling
+ */
+int load_animation(const char *filename, World *world, unsigned int entity) {
 	
 	AnimationComponent *animationComponent = &(world->animation[entity]);
 	RenderPlayerComponent *renderComponent = &(world->renderPlayer[entity]);
@@ -128,7 +147,6 @@ int load_animation(char *filename, World *world, unsigned int entity) {
 	animationComponent->id = -1;
 	
 	animationComponent->rand_animation = -1;
-	animationComponent->rand_occurance = -1;
 	animationComponent->hover_animation = -1;
 	
 	for(animation_index = 0; animation_index < animationComponent->animation_count; animation_index++) {
@@ -185,11 +203,17 @@ int load_animation(char *filename, World *world, unsigned int entity) {
 			}
 			
 			if (strcmp(feature_type, "random") == 0) {
-				if (fscanf(fp, "%d %d", &(animationComponent->rand_animation), &(animationComponent->rand_occurance)) != 2) {
+				
+				if (fscanf(fp, "%d %d %d", &(animationComponent->rand_animation), &(animationComponent->rand_occurance_min), &(animationComponent->rand_occurance_max)) != 3) {
+					
+					printf("Wrong parameters for random. It should be 'random <animation index> <min delay in milliseconds> <max delay in milliseconds>\n");
 					
 					animationComponent->rand_animation = -1;
-					animationComponent->rand_occurance = -1;
 					
+				}
+				else {
+					animationComponent->last_random_occurance = SDL_GetTicks();
+					animationComponent->next_random_occurance = (rand() % (animationComponent->rand_occurance_max - animationComponent->rand_occurance_min)) + animationComponent->rand_occurance_min + SDL_GetTicks();
 				}
 			}
 			else if (strcmp(feature_type, "hover") == 0) {
@@ -209,7 +233,18 @@ int load_animation(char *filename, World *world, unsigned int entity) {
 	return 0;
 }
 
-void cancel_animation(World *world, unsigned int entity, char *animation_name) {
+/**
+ * This cancels an entities animation and freezes it on the first frame specified by the animation_name
+ *
+ * @param world Pointer to the world structure (contains "world" info, entities / components)
+ * @param entity The entity to cancel the animation for
+ * @param animation_name The animation that the entity gets frozen at
+ *
+ * @designer Jordan Marling
+ *
+ * @author Jordan Marling
+ */
+void cancel_animation(World *world, unsigned int entity, const char *animation_name) {
 	
 	AnimationComponent *animation = &(world->animation[entity]);
 	RenderPlayerComponent *render = &(world->renderPlayer[entity]);
@@ -226,7 +261,18 @@ void cancel_animation(World *world, unsigned int entity, char *animation_name) {
 	}
 }
 
-void play_animation(World *world, unsigned int entity, char *animation_name) {
+/**
+ * This plays in an animation text file to create an animated component.
+ *
+ * @param world Pointer to the world structure (contains "world" info, entities / components)
+ * @param entity The entity to cancel the animation for
+ * @param animation_name The animation that gets played
+ *
+ * @designer Jordan Marling
+ *
+ * @author Jordan Marling
+ */
+void play_animation(World *world, unsigned int entity, const char *animation_name) {
 	
 	int i;
 	AnimationComponent *animationComponent = &(world->animation[entity]);
