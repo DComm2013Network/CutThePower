@@ -52,6 +52,8 @@ void cleanup_sound() {
 	for(i = 0; i < SOUND_EFFECT_NUM; i++) {
 		Mix_FreeChunk(effects[i]);
 	}
+	
+	Mix_CloseAudio();
 }
 
 /**
