@@ -14,15 +14,12 @@
 
 extern unsigned int player_entity;
 
-int handle_collision_target(World *world, int entityIndex) {
-	if (world->collision[entityIndex].timer < world->collision[entityIndex].timerMax) {
-		world->collision[entityIndex].timer += 2;
-	} else {
-		world->collision[entityIndex].active = false;
-		world->collision[entityIndex].type = COLLISION_EMPTY;
-		//world->mask[entityIndex] = COMPONENT_EMPTY;
+bool handle_collision_target(World *world, int entityIndex) {
+	if (!world->objective[entityIndex].status) {
+		world->objective[entityIndex].status = true;
+		return true;
 	}
-	return COLLISION_TARGET;
+	return false;
 }
 
 void add_force(World& world, unsigned int entity, float magnitude, float dir) {
@@ -154,8 +151,10 @@ void handle_y_collision(World* world, CollisionData data, PositionComponent& pos
 void handle_entity_collision(CollisionData data, World * world, int curEntityID) {
 	switch(data.entity_code) {
 	case COLLISION_TARGET:
-		if (world->collision[curEntityID].type == COLLISION_HACKER) {
-			handle_collision_target(world, data.entityID);
+		if (world->collision[curEntityID].type == COLLISION_HACKER && world->command[curEntityID].commands[C_ACTION]) {
+			if (handle_collision_target(world, data.entityID)) {
+				printf("You captured a target! You is the best!\n");
+			}
 		}
 		break;
 	case COLLISION_STAIR:
@@ -230,8 +229,6 @@ void movement_system(World* world) {
 				temp.height = position->height;
 				temp.level = position->level;
 				
-				if (command->commands[C_ACTION]) {
-				}
 				if (command->commands[C_UP]) {
 					add_force(world, entity, world->movement[entity].acceleration, -90);
 				}

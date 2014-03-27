@@ -287,8 +287,8 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 					return -1;
 				}
 				
-				//create_objective(world, x * TILE_WIDTH + TILE_WIDTH / 2, y * TILE_HEIGHT + TILE_HEIGHT / 2, w, h, id, level);
-				//printf("Loaded objective!\n");
+				create_objective(world, x * TILE_WIDTH + TILE_WIDTH / 2, y * TILE_HEIGHT + TILE_HEIGHT / 2, w, h, id, level);
+				printf("Loaded objective!\n");
 			}
 			else {
 				printf("Did not deal with the entity type: %s\n", entity_type);
