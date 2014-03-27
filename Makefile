@@ -1,14 +1,14 @@
 CC=g++
 FLAGS=-Wall -std=c++11 -O0 -g -fpermissive 
-LIBS=-lSDL2 -lSDL2_image -lSDL2_net -lSDL2_mixer -lpthread
+LIBS=-lSDL2 -lSDL2_image -lSDL2_net -lSDL2_mixer -lpthread -lSDL2_ttf
 
 BINDIR=bin
 OBJDIR=obj
 SRCDIR=src
 
 BIN_DEFAULT=$(BINDIR)/CutThePower
-OBJ_DEFAULT=$(OBJDIR)/Gameplay/collision_system.o $(OBJDIR)/Gameplay/movement_system.o $(OBJDIR)/Graphics/render_system.o $(OBJDIR)/Graphics/animation_system.o $(OBJDIR)/Graphics/map.o $(OBJDIR)/Input/keyinputsystem.o $(OBJDIR)/Input/mouseinputsystem.o $(OBJDIR)/Input/menu.o $(OBJDIR)/main.o $(OBJDIR)/sound.o $(OBJDIR)/world.o $(OBJDIR)/triggered.o $(OBJDIR)/Network/GameplayCommunication.o $(OBJDIR)/Network/ServerCommunication.o $(OBJDIR)/Network/PipeUtils.o $(OBJDIR)/Network/NetworkRouter.o $(OBJDIR)/Network/ClientUpdateSystem.o $(OBJDIR)/Network/SendSystem.o
- 
+OBJ_DEFAULT=$(OBJDIR)/Gameplay/collision_system.o $(OBJDIR)/Gameplay/movement_system.o $(OBJDIR)/Graphics/render_system.o $(OBJDIR)/Graphics/animation_system.o $(OBJDIR)/Graphics/map.o $(OBJDIR)/Input/keyinputsystem.o $(OBJDIR)/Input/mouseinputsystem.o $(OBJDIR)/Input/menu.o $(OBJDIR)/main.o $(OBJDIR)/sound.o $(OBJDIR)/world.o $(OBJDIR)/triggered.o $(OBJDIR)/Graphics/text.o $(OBJDIR)/Network/GameplayCommunication.o $(OBJDIR)/Network/ServerCommunication.o $(OBJDIR)/Network/PipeUtils.o $(OBJDIR)/Network/NetworkRouter.o $(OBJDIR)/Network/ClientUpdateSystem.o $(OBJDIR)/Network/SendSystem.o
+
 CutThePower: $(OBJ_DEFAULT)
 	test -d $(BINDIR) || mkdir -p $(BINDIR)
 	$(CC) $(FLAGS) -o $(BINDIR)/CutThePower $(OBJ_DEFAULT) $(LIBS)
@@ -40,6 +40,10 @@ $(OBJDIR)/Graphics/render_system.o: $(SRCDIR)/Graphics/render_system.cpp
 $(OBJDIR)/Graphics/animation_system.o: $(SRCDIR)/Graphics/animation_system.cpp
 	test -d $(OBJDIR)/Graphics || mkdir -p $(OBJDIR)/Graphics
 	$(CC) $(FLAGS) -c -o $(OBJDIR)/Graphics/animation_system.o $(SRCDIR)/Graphics/animation_system.cpp
+
+$(OBJDIR)/Graphics/text.o: $(SRCDIR)/Graphics/text.cpp
+	test -d $(OBJDIR)/Graphics || mkdir -p $(OBJDIR)/Graphics
+	$(CC) $(FLAGS) -c -o $(OBJDIR)/Graphics/text.o $(SRCDIR)/Graphics/text.cpp
 
 $(OBJDIR)/Graphics/map.o: $(SRCDIR)/Graphics/map.cpp
 	test -d $(OBJDIR)/Graphics || mkdir -p $(OBJDIR)/Graphics

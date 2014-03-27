@@ -44,7 +44,7 @@ int level;                /**< The current floor. */
  * @date February 26, 2014
  */
 
-int map_init(World* world, char *file_map, char *file_tiles) {
+int map_init(World* world, const char *file_map, const char *file_tiles) {
 	
 	FILE *fp_map;
 	FILE *fp_tiles;
@@ -181,7 +181,7 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 			
 			//printf("Found entity: %s\n", entity_type);
 			
-			if (strcmp(entity_type, "stair") == 0) { //stair
+			if (strcmp(entity_type, "stair") == 0 || strcmp(entity_type, "stairs") == 0) { //stairs
 				
 				//stair x y targetX targetY 2
 				unsigned int entity;
@@ -272,6 +272,7 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 	
 	//render to surface
 	
+	cleanup_map();
 	map_surface = SDL_CreateRGBSurface(0, width * TILE_WIDTH, height * TILE_HEIGHT, 32, 0, 0, 0, 0);
 	
 	if (map_surface == 0) {
@@ -295,8 +296,6 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 		}
 	}
 	
-	//load_map_section(map, tiles, 0, 0, width * TILE_WIDTH, height * TILE_HEIGHT, &map_surface);
-	
 	for(i = 0; i < num_tiles; i++) {
 		SDL_FreeSurface(tiles[i]);
 	}
@@ -305,7 +304,6 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 	map_rect.y = 0;
 	w = map_rect.w = width * TILE_WIDTH;
 	h = map_rect.h = height * TILE_HEIGHT;
-	
 	
 	
 	create_level(world, collision_map, width, height, TILE_WIDTH, level);
@@ -325,6 +323,14 @@ int map_init(World* world, char *file_map, char *file_tiles) {
 	free(tile_filename);
 
 	return 0;
+}
+
+void cleanup_map() {
+	
+	if (map_surface != 0) {
+		SDL_FreeSurface(map_surface);
+	}
+	
 }
 
 /**

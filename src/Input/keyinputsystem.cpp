@@ -22,6 +22,7 @@
 #include "../world.h"
 #include "components.h"
 #include "../systems.h"
+#include "../Graphics/text.h"
 
 #define SYSTEM_MASK (COMPONENT_COMMAND) /**< Entities with a command component will be processed by the system. */
 
@@ -92,30 +93,14 @@ void KeyInputSystem(World *world)
 		if (currentKeyboardState[SDL_SCANCODE_BACKSPACE] &&
 			!prevKeyboardState[SDL_SCANCODE_BACKSPACE]) {
 			text->length--;
+			text->text[text->length] = '\0';
 			if (text->length < 0) {
 				text->length = 0;
 			}
 		}
-		
-		if (text->length < MAX_STRING) {
+		else if (text->length < MAX_STRING) {
 			
-			if (currentKeyboardState[SDL_SCANCODE_SPACE] &&
-				!prevKeyboardState[SDL_SCANCODE_SPACE]) {
-					
-				text->text[text->length] = '\0';
-				text->length++;
-				
-			}
-			
-			if (currentKeyboardState[SDL_SCANCODE_PERIOD] &&
-				!prevKeyboardState[SDL_SCANCODE_PERIOD]) {
-					
-				text->text[text->length] = '.';
-				text->length++;
-				
-			}
-			
-			for(int i = 'A'; i <= 'Z'; i++) {
+			for(int i = 0; i <= 512; i++) {
 				
 				code = SDL_GetScancodeFromName((char*)&i);
 				
@@ -125,19 +110,7 @@ void KeyInputSystem(World *world)
 					text->text[text->length] = (char)i;
 					text->length++;
 					
-				}
-			}
-			
-			for(int i = '0'; i <= '9'; i++) {
-				
-				code = SDL_GetScancodeFromName((char*)&i);
-				
-				if (currentKeyboardState[code] &&
-					!prevKeyboardState[code]) {
-					
-					text->text[text->length] = (char)i;
-					text->length++;
-					
+					break;
 				}
 			}
 		}
@@ -181,9 +154,9 @@ void KeyInputSystem(World *world)
 				//world->collision[mainframe].type = COLLISION_SOLID;
 				//world->collision[mainframe].active = true;
 				//world->collision[mainframe].radius = 1;
-				
-				//load_animation((char*)"assets/Graphics/objects/computers/mainframe_5_animation.txt", world, mainframe);
-				//play_animation(world, mainframe, (char*)"mainframe");
+
+				//load_animation("assets/Graphics/objects/computers/mainframe_5_animation.txt", world, mainframe);
+				//play_animation(world, mainframe, "mainframe");
 				
 			}
 			//END DELETE
@@ -217,7 +190,7 @@ void KeyInputSystem(World *world)
  * @author Jordan Marling
  *
  */
-int KeyMapInit(char *file) 
+int KeyMapInit(const char *file) 
 {
 	return KeyMapInitArray(file, (int**)&command_keys);
 }
@@ -240,7 +213,7 @@ int KeyMapInit(char *file)
  * @author Jordan Marling
  *
  */
-int KeyMapInitArray(char *file, int **command_array) 
+int KeyMapInitArray(const char *file, int **command_array) 
 {
 	
 	FILE *fp;

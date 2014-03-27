@@ -7,6 +7,7 @@
 #include "components.h"
 #include "sound.h"
 #include "Input/menu.h"
+#include "Graphics/text.h"
 
 #define SHOW_MENU_INTRO 0 //1 == load intro, 0 == load straight into map
 
@@ -20,8 +21,6 @@ char *username;
 char *serverip;
 
 bool menu_click(World *world, unsigned int entity) {
-	
-	char* playerFileName;
 	
 	//printf("Clicked: %s\n", world->button[entity].label);
 	
@@ -62,8 +61,11 @@ bool menu_click(World *world, unsigned int entity) {
 	}
 	else if (strcmp(world->button[entity].label, "options_sound_off") == 0) {
 		
-		world->renderPlayer[entity].playerSurface = IMG_Load("assets/Graphics/screen/menu/menu_button_soundon.png");
-		world->button[entity].label = (char*)"options_sound_on";
+		world->position[entity].x = (WIDTH / 2);
+		render_small_text(world, entity, "SOUND ON");
+		
+		world->button[entity].label = (char*)realloc(world->button[entity].label, sizeof(char) * strlen("options_sound_on"));
+		strcpy(world->button[entity].label, "options_sound_on");
 		
 		enable_sound(true);
 		play_music(SOUND_MUSIC_MENU_RAIN);
@@ -71,8 +73,11 @@ bool menu_click(World *world, unsigned int entity) {
 	}
 	else if (strcmp(world->button[entity].label, "options_sound_on") == 0) {
 		
-		world->renderPlayer[entity].playerSurface = IMG_Load("assets/Graphics/screen/menu/menu_button_soundoff.png");
-		world->button[entity].label = (char*)"options_sound_off";
+		world->position[entity].x = (WIDTH / 2);
+		render_small_text(world, entity, "SOUND OFF");
+		
+		world->button[entity].label = (char*)realloc(world->button[entity].label, sizeof(char) * strlen("options_sound_off"));
+		strcpy(world->button[entity].label, "options_sound_off");
 		
 		enable_sound(false);
 		
@@ -89,6 +94,8 @@ bool menu_click(World *world, unsigned int entity) {
 	else if (strcmp(world->button[entity].label, "keymap_back") == 0) {
 		
 		destroy_menu(world);
+		
+		KeyMapInit("assets/Input/keymap.txt");
 		
 		create_options_menu(world);
 		
@@ -295,7 +302,9 @@ bool menu_click(World *world, unsigned int entity) {
 	else if (strcmp(world->button[entity].label, "menu_select_random") == 0) {
 		
 		destroy_menu(world);
-		character = rand()%18;
+		
+		character = rand() % 18;
+		
 		create_setup_menu(world);
 		
 	}
@@ -319,9 +328,8 @@ bool menu_click(World *world, unsigned int entity) {
 	}
 	else if (strcmp(world->button[entity].label, "setup_play") == 0) {
 		
-		//map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/map01_tiles.txt");
-		//map_init(world, "assets/Graphics/lobby/lobby.txt", "assets/Graphics/lobby/lobby_tiles.txt");
-		//map_init(world, "assets/Graphics/SampleFloor.txt", "assets/Graphics/tiles_lobby.txt");
+		char *username;
+		char *serverip;
 		
 		unsigned int i;
 		
@@ -345,25 +353,17 @@ bool menu_click(World *world, unsigned int entity) {
 		printf("Username: %s\n", username);
 		printf("Server IP: %s\n", serverip);
 		
-		destroy_world(world);
-		
 		
 		#if SHOW_MENU_INTRO 
 		
+		destroy_world(world);
 		create_load_screen(world);
-		//create_intro(world);
 		
 		#else
 		
-		//map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/map01_tiles.txt");
-		//player_entity = create_player(world, 600, 600, true, COLLISION_HACKER);
+		world->animation[entity].id = 0;
 		
-		//world->mask[player_entity] |= COMPONENT_ANIMATION;
-		//load_animation("assets/Graphics/player/robber/rob_animation.txt", world, player_entity);
-		
-		//printf("Loaded player: %d\n", player_entity);
-		
-		animation_end(world, entity, 0);
+		animation_end(world, entity);
 		#endif
 		
 	}
@@ -391,33 +391,30 @@ bool menu_click(World *world, unsigned int entity) {
 	return true;
 }
 
-void animation_end(World *world, unsigned int entity, int animation_id) {
+void animation_end(World *world, unsigned int entity) {
 	
 	AnimationComponent *animationComponent = &(world->animation[entity]);
 	
 	//INTRO SCREEN ENDED
 	if (animationComponent->id == 0) { //0 is the intro screen
-					
+		
 		destroy_world(world);
 		
 		stop_music();
 		stop_effect();
 		
-		//map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/map01_tiles.txt");
-		//map_init(world, "assets/Graphics/lobby/lobby.txt", "assets/Graphics/lobby/lobby_tiles.txt");
-		//map_init(world, "assets/Graphics/SampleFloor.txt", "assets/Graphics/tiles_lobby.txt");
-		
-		map_init(world, (char*)"assets/Graphics/map/map_00/map00.txt", (char*)"assets/Graphics/map/map_00/tiles.txt");
+		map_init(world, "assets/Graphics/map/map_00/map00.txt", "assets/Graphics/map/map_00/tiles.txt");
 		player_entity = create_player(world, 620, 420, true, COLLISION_HACKER, 0, character);
 		
-		load_animation((char*)"assets/Graphics/player/p0/rob_animation.txt", world, player_entity);
+		load_animation("assets/Graphics/player/p0/rob_animation.txt", world, player_entity);
 		
 		////NETWORK CODE
 		game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
 
 		init_client_network(send_router_fd, rcv_router_fd);
 		send_intialization(world, send_router_fd[WRITE_END], username, serverip);
-		//PUT CLIENT START CODE HERE!!!@!@!!!!
+		
+		
 	}
 	//LOADING SCREEN ENDED
 	else if (animationComponent->id == 1) { //1 is the loading screen
