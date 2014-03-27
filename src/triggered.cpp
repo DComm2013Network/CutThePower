@@ -395,7 +395,7 @@ void animation_end(World *world, unsigned int entity) {
 		stop_music();
 		stop_effect();
 		
-		map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/tiles.txt");
+		map_init(world, "assets/Graphics/map/map_00/map00.txt", "assets/Graphics/map/map_00/tiles.txt");
 		player_entity = create_player(world, 600, 600, true, COLLISION_HACKER);
 		
 		world->mask[player_entity] |= COMPONENT_ANIMATION;
