@@ -178,7 +178,6 @@ unsigned int create_player(World* world, int x, int y, bool controllable, int co
 			} else {
 				world->mask[entity] =	COMPONENT_POSITION | 
 										COMPONENT_RENDER_PLAYER | 
-										COMPONENT_COMMAND | 
 										COMPONENT_ANIMATION |
 										COMPONENT_COLLISION | 
 										COMPONENT_MOVEMENT;
@@ -331,7 +330,7 @@ unsigned int create_block(World* world, int x, int y, int width, int height, int
 	world->position[entity].level = level;
 	
 	world->collision[entity].id = 0;
-	world->collision[entity].type = COLLISION_WALL;
+	world->collision[entity].type = COLLISION_SOLID;
 	world->collision[entity].timer = 0;
 	world->collision[entity].timerMax = 0;
 	world->collision[entity].active = true;

@@ -7,7 +7,7 @@
 
 //This is the mask the system uses to see if it will work on the entity.
 #define STANDARD_MASK (COMPONENT_POSITION | COMPONENT_MOVEMENT)
-#define CONTROLLABLE_MASK (COMPONENT_POSITION | COMPONENT_MOVEMENT)
+#define CONTROLLABLE_MASK (COMPONENT_POSITION | COMPONENT_MOVEMENT | COMPONENT_CONTROLLABLE)
 #define INPUT_MASK (COMPONENT_INPUT)
 #define COLLISION_MASK (COMPONENT_COLLISION)
 #define PI 3.14159265
@@ -56,16 +56,8 @@ void apply_force(World& world, unsigned int entity) {
 	world.position[entity].y += world.movement[entity].movY;
 }
 
-void apply_forcex(PositionComponent& position, MovementComponent movement) {
-	position.x += movement.movX;
-}
-
 void remove_forcex(PositionComponent& position, MovementComponent movement) {
 	position.x -= movement.movX;
-}
-
-void apply_forcey(PositionComponent& position, MovementComponent movement) {
-	position.y += movement.movY;
 }
 
 void remove_forcey(PositionComponent& position, MovementComponent movement) {
@@ -95,7 +87,7 @@ void apply_deceleration_y(MovementComponent &movement, float friction) {
 	movement.movY *= 1 - friction;
 }
 
-void handle_x_collision(CollisionData data, PositionComponent& position, MovementComponent &movement) {
+void handle_x_collision(World* world, CollisionData data, PositionComponent& position, MovementComponent &movement, unsigned int entity) {
 	switch(data.entity_code) {
 	case COLLISION_SOLID:
 		remove_forcex(position, movement);
@@ -120,12 +112,14 @@ void handle_x_collision(CollisionData data, PositionComponent& position, Movemen
 	    apply_deceleration_x(movement, 0.01);
 	    break;
 	default:
-		apply_deceleration_x(movement);
+		if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_CONTROLLABLE)) {
+			apply_deceleration_x(movement);
+		}
 		break;
 	}
 }
 
-void handle_y_collision(CollisionData data, PositionComponent& position, MovementComponent &movement) {
+void handle_y_collision(World* world, CollisionData data, PositionComponent& position, MovementComponent &movement, unsigned int entity) {
 	switch(data.entity_code) {
 	case COLLISION_SOLID:
 		remove_forcey(position, movement);
@@ -150,7 +144,9 @@ void handle_y_collision(CollisionData data, PositionComponent& position, Movemen
 	    apply_deceleration_y(movement, 0.001);
 	    break;
 	default:
-		apply_deceleration_y(movement);
+		if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_CONTROLLABLE)) {
+			apply_deceleration_y(movement);
+		}
 		break;
 	}
 }
@@ -195,12 +191,10 @@ void handle_entity_collision(CollisionData data, World * world, int curEntityID)
 		break;
 	case COLLISION_HACKER:
 		if (world->collision[curEntityID].type == COLLISION_GUARD) {
-			//world->mask[data.entityID] = COMPONENT_EMPTY;
 		}
 		break;
 	case COLLISION_GUARD:
 		if (world->collision[curEntityID].type == COLLISION_HACKER) {
-			//world->mask[curEntityID] = COMPONENT_EMPTY;
 		}
 		break;
 	default:
@@ -230,10 +224,8 @@ void movement_system(World* world) {
 			//game loop so there is no jittering on very slow systems.
 			if (controllable->active == true) {
 				PositionComponent temp;
-				int goffsetW = 0;//(position->width);
-				int goffsetH = 0;//(position->height);
-				temp.x = position->x - goffsetW;
-				temp.y = position->y - goffsetH;
+				temp.x = position->x;
+				temp.y = position->y;
 				temp.width = position->width;
 				temp.height = position->height;
 				temp.level = position->level;
@@ -242,50 +234,56 @@ void movement_system(World* world) {
 				}
 				if (command->commands[C_UP]) {
 					add_force(world, entity, world->movement[entity].acceleration, -90);
-					play_animation(world, entity, (char*)"up");
-				}
-				else {
-					cancel_animation(world, entity, (char*)"up");
 				}
 				if (command->commands[C_DOWN]) {
 					add_force(world, entity, world->movement[entity].acceleration, 90);
-					play_animation(world, entity, (char*)"down");
-				}
-				else {
-					cancel_animation(world, entity, (char*)"down");
 				}
 				if (command->commands[C_LEFT]) {
 					add_force(world, entity, world->movement[entity].acceleration, 180);
-					play_animation(world, entity, (char*)"left");
-				}
-				else {
-					cancel_animation(world, entity, (char*)"left");
 				}
 				if (command->commands[C_RIGHT]) {
 					add_force(world, entity, world->movement[entity].acceleration, 0);
-					play_animation(world, entity, (char*)"right");
-				}
-				else {
-					cancel_animation(world, entity, (char*)"right");
 				}
 
 				CollisionData data;
 				if (IN_THIS_COMPONENT(world->mask[entity], COLLISION_MASK)) {
-
-					apply_forcex(temp, *movement);
+					temp.x += movement->movX;
 					data = collision_system(world, temp, entity);
-					handle_x_collision(data, temp, *movement);
-					apply_forcey(temp, *movement);
+					handle_x_collision(world, data, temp, *movement, entity);
+					temp.y += movement->movY;
 					data = collision_system(world, temp, entity);
-					handle_y_collision(data, temp, *movement);
-					position->x = temp.x + goffsetW;
-					position->y = temp.y + goffsetH;
+					handle_y_collision(world, data, temp, *movement, entity);
+					position->x = temp.x;
+					position->y = temp.y;
 					handle_entity_collision(data, world, entity);
 				}
 				else {
-					position->x = temp.x + goffsetW;
-					position->y = temp.y + goffsetH;
+					position->x = temp.x;
+					position->y = temp.y;
 				}
+				
+				if (movement->movX > 0 && abs(movement->movX) > abs(movement->movY)) {
+					play_animation(world, entity, (char*)"right");
+					//right
+				}
+				else if (movement->movX < 0 && abs(movement->movX) > abs(movement->movY)) {
+					play_animation(world, entity, (char*)"left");
+					//left
+				}
+				else if (movement->movY > 0 && abs(movement->movY) > abs(movement->movX)) {
+					play_animation(world, entity, (char*)"down");
+					//down
+				}
+				else if (movement->movY < 0 && abs(movement->movY) > abs(movement->movX)) {
+					play_animation(world, entity, (char*)"up");
+					//up
+				}
+				else {
+					//none
+					cancel_animation(world, entity);
+				}
+				
+				
 				if (position->level == 0) {
 					if (position->x < 240) {
 						world->player[entity].teamNo = 1;
@@ -299,7 +297,34 @@ void movement_system(World* world) {
 				}
 			}
 		}
-	} 
+		else if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_POSITION | COMPONENT_MOVEMENT | COMPONENT_COLLISION)) {
+			command = &(world->command[entity]);
+			position = &(world->position[entity]);
+			controllable = &(world->controllable[entity]);
+			movement = &(world->movement[entity]);
+			collision = &(world->collision[entity]);
+			CollisionData data;
+			PositionComponent temp;
+			temp.x = position->x;
+			temp.y = position->y;
+			temp.width = position->width;
+			temp.height = position->height;
+			temp.level = position->level;
+			
+			temp.x += movement->movX;
+			data = collision_system(world, temp, entity);
+			handle_x_collision(world, data, temp, *movement, entity);
+			
+			temp.y += movement->movY;
+			data = collision_system(world, temp, entity);
+			handle_y_collision(world, data, temp, *movement, entity);
+			
+			position->x = temp.x;
+			position->y = temp.y;
+			
+			handle_entity_collision(data, world, entity);
+		}
+	}
 }
 
 

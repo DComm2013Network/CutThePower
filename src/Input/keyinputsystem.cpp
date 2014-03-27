@@ -153,41 +153,7 @@ void KeyInputSystem(World *world)
             command->commands[C_LEFT] = (currentKeyboardState[command_keys[C_LEFT]] != 0);
             command->commands[C_DOWN] = (currentKeyboardState[command_keys[C_DOWN]] != 0);
             command->commands[C_RIGHT] = (currentKeyboardState[command_keys[C_RIGHT]] != 0);
-
-			
-			command->commands[C_ACTION] = (currentKeyboardState[command_keys[C_ACTION]] != 0);// && (prevKeyboardState[command_keys[C_ACTION]] == 0);
-			
-			//THIS IS VENDING MACHINE SIMULIATOR CODE
-			//DELETE IF YOU DO NOT WANT TO PLACE VENDING MACHINES!!!!!
-			if (command->commands[C_ACTION]) {
-				
-				//unsigned int mainframe = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION | COMPONENT_COLLISION);
-				
-				/*int x = (int)((world->position[entity].x + world->position[entity].width / 2) / TILE_WIDTH);
-				int y = (int)((world->position[entity].y + world->position[entity].height / 2) / TILE_HEIGHT);
-				
-				world->position[mainframe].x = x * TILE_WIDTH;
-				world->position[mainframe].y = y * TILE_HEIGHT;*/
-				
-				/*world->position[mainframe].x = (world->position[entity].x / TILE_WIDTH) * TILE_WIDTH;
-				world->position[mainframe].y = (world->position[entity].y / TILE_HEIGHT) * TILE_HEIGHT;
-				
-				world->position[mainframe].width = TILE_WIDTH;
-				world->position[mainframe].height = TILE_HEIGHT;
-				
-				world->renderPlayer[mainframe].width = TILE_WIDTH;
-				world->renderPlayer[mainframe].height = TILE_HEIGHT;*/
-				
-				//world->collision[mainframe].type = COLLISION_SOLID;
-				//world->collision[mainframe].active = true;
-				//world->collision[mainframe].radius = 1;
-				
-				//load_animation((char*)"assets/Graphics/objects/computers/mainframe_5_animation.txt", world, mainframe);
-				//play_animation(world, mainframe, (char*)"mainframe");
-				
-			}
-			//END DELETE
-			
+			command->commands[C_ACTION] = (currentKeyboardState[command_keys[C_ACTION]] != 0) && (prevKeyboardState[command_keys[C_ACTION]] == 0);
         }
     }
     

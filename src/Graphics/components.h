@@ -30,12 +30,12 @@ typedef struct {
 	
 	char *name; //name of animation
 	SDL_Surface **surfaces; //surface array
-	int index; //current surface to be drawn
-	int surface_count; //total amount of surfaces
-	int frames_to_skip; //frames in between surface changes
-	int frame_count; //current amount of frames between surface change
-	int sound_effect; //sound effect to be played
-	int loop; //-1 is no loop, 1 is loop
+  	int index; //current surface to be drawn
+  	int surface_count; //total amount of surfaces
+	unsigned int ms_to_skip; //milliseconds in between surface changes
+	unsigned int ms_last; //current amount of frames between surface change
+  	int sound_effect; //sound effect to be played
+  	int loop; //-1 is no loop, 1 is loop
 	
 } Animation;
 
@@ -51,12 +51,16 @@ typedef struct {
 	Animation *animations; //animation array
 	int animation_count; //amount of animations
 	int current_animation; //current animation to be played, -1 is none
-	
+
 	int hover_animation; //id of the animation to be played while hovered over, -1 is none
-	int rand_animation; //id of the animation to be played when triggered. -1 is none
-	int rand_occurance; //has a 1/rand_occurance to happen once a frame. -1 is none
 	int id; //this is used to trigger an event at the end of an animation, -1 is none
-	
+
+	int rand_animation; //id of the animation to be played when triggered. -1 is none
+	int rand_occurance_min; //the minimum time delay for a random animation
+	int rand_occurance_max; //the maximum time delay for a random animation
+	unsigned int last_random_occurance; //the last time the random animation was played
+	unsigned int next_random_occurance; //the next time the random animation is played
+
 } AnimationComponent;
 
 #endif
