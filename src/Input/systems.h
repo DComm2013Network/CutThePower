@@ -4,8 +4,8 @@
 #include "../world.h"
 
 void KeyInputSystem(World *world);
-int KeyMapInit(char *file);
-int KeyMapInitArray(char *file, int **commmands);
+int KeyMapInit(const char *file);
+int KeyMapInitArray(const char *file, int **commmands);
 void MouseInputSystem(World *world);
 
 #endif

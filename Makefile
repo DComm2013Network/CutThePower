@@ -1,6 +1,6 @@
 CC=g++
 FLAGS=-Wall -std=c++11 -O0 -g -fpermissive 
-LIBS=-lSDL2 -lSDL2_image -lSDL2_net -lSDL2_mixer -lpthread -lm
+LIBS=-lSDL2 -lSDL2_image -lSDL2_net -lSDL2_mixer -lpthread -lSDL2_ttf
 
 BINDIR=bin
 OBJDIR=obj
@@ -40,6 +40,10 @@ $(OBJDIR)/Graphics/render_system.o: $(SRCDIR)/Graphics/render_system.cpp
 $(OBJDIR)/Graphics/animation_system.o: $(SRCDIR)/Graphics/animation_system.cpp
 	test -d $(OBJDIR)/Graphics || mkdir -p $(OBJDIR)/Graphics
 	$(CC) $(FLAGS) -c -o $(OBJDIR)/Graphics/animation_system.o $(SRCDIR)/Graphics/animation_system.cpp
+
+$(OBJDIR)/Graphics/text.o: $(SRCDIR)/Graphics/text.cpp
+	test -d $(OBJDIR)/Graphics || mkdir -p $(OBJDIR)/Graphics
+	$(CC) $(FLAGS) -c -o $(OBJDIR)/Graphics/text.o $(SRCDIR)/Graphics/text.cpp
 
 $(OBJDIR)/Graphics/map.o: $(SRCDIR)/Graphics/map.cpp
 	test -d $(OBJDIR)/Graphics || mkdir -p $(OBJDIR)/Graphics
