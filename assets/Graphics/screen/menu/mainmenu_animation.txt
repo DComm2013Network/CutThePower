@@ -1,6 +1,6 @@
 1
 
-mainmenu 20 4 0 -1
+mainmenu 20 45 0 -1
 assets/Graphics/screen/menu/MainMenu_01.png
 assets/Graphics/screen/menu/MainMenu_02.png
 assets/Graphics/screen/menu/MainMenu_03.png

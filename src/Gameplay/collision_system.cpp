@@ -1,3 +1,13 @@
+/** @ingroup Gameplay */
+/** @{ */
+
+/**
+ * Contains functions for detecting and handling collisions.
+ *
+ * @todo Implement stair collision detection.
+ * @file collision_system.cpp
+ */
+/** @} */
 #include "../components.h"
 #include "../systems.h"
 #include "../world.h"
@@ -6,34 +16,28 @@
 #include <stdio.h>
 #include <math.h>
 
-#define COLLISION_MASK (COMPONENT_COLLISION)
-#define LEVEL_MASK (COMPONENT_LEVEL)
+#define COLLISION_MASK (COMPONENT_COLLISION) /**< Indicates that an entity can collide with other entities. */
+#define LEVEL_MASK (COMPONENT_LEVEL) /**< Indicates that an entity has levels (floors). */
 
 
-/*--------------------------------------------------------------------------------------------------------
---FUNCTION: collision_system
---
---DESIGNER: Joshua Campbell
---
---PROGRAMMERS: Joshua Campbell
---
---REVISIONS: none
---
---PARAMATERS:
---	 World &world - the world structure
---	 PositionComponent entity - the temporary position entity used for checking for collisions
---	 int entityID - the current entity being checked based on its position in the world struct
---
---RETURNS:
---	 Returns 0 for no collision
---	 Returns COLLISION_WALL for a collision with a wall
---	 Returns COLLISION_HACKER for a collision with a hacker
---	 Returns COLLISION_GUARD for a collision with a guard
---	 Returns COLLISION_STAIR for a collision with a stair
---
---NOTES:
---This is the main wrapper function for all other collision checking functions.
---------------------------------------------------------------------------------------------------------*/
+/**
+ * This is the main wrapper function for all other collision checking functions.
+ *
+ * @param[in,out] world    A reference to the world structure.
+ * @param[in]     entity   The temporary position entity used for checking for collisions. 
+ * @param[in]     entityID The current entity being checked based on its position in the world struct
+ *
+ * @return <ul>
+ *             <li>Returns 0 for no collision</li>
+ *             <li>Returns COLLISION_WALL for a collision with a wall</li>
+ *             <li>Returns COLLISION_HACKER for a collision with a hacker</li>
+ *             <li>Returns COLLISION_GUARD for a collision with a guard</li>
+ *             <li>Returns COLLISION_STAIR for a collision with a stair</li>
+ *         </ul>
+ *
+ * @designer Joshua Campbell
+ * @author   Joshua campbell
+ */
 CollisionData collision_system(World *world, PositionComponent entity, int entityID) {
 	int entityIndex = -1;
 	CollisionData data;
@@ -50,26 +54,17 @@ CollisionData collision_system(World *world, PositionComponent entity, int entit
 	return data;
 }
 
-/*--------------------------------------------------------------------------------------------------------
---FUNCTION: wall_collision
---
---DESIGNER: Joshua Campbell & Clark Allenby
---
---PROGRAMMERS: Joshua Campbell & Clark Allenby
---
---REVISIONS: none
---
---PARAMATERS:
---	 World &world - the world structure
---	 PositionComponent entity - the temporary position entity used for checking for collisions
---
---RETURNS:
---	 Returns true if a collision occurred
---	 Returns false if there was no collision
---
---NOTES:
---Checks for collisions with walls on the map.
---------------------------------------------------------------------------------------------------------*/
+/**
+ * Checks for collisions with walls on the map.
+ *
+ * @param[in,out] world    A reference to the world structure.
+ * @param[in]     entity   The temporary position entity used for checking for collisions. 
+ *
+ * @return True if a collision occurred, or false if there was no collision.
+ *
+ * @designer Joshua Campbell & Clark Allenby
+ * @author   Joshua campbell & Clark Allenby
+ */
 int wall_collision(World *world, PositionComponent entity) {
 	int i = 0;
 	int curlevel = -1;
@@ -115,64 +110,42 @@ int wall_collision(World *world, PositionComponent entity) {
 	return COLLISION_EMPTY;
 }
 
-
-/*--------------------------------------------------------------------------------------------------------
---FUNCTION: stair_collision
---
---DESIGNER: Joshua Campbell
---
---PROGRAMMERS: Joshua Campbell
---
---REVISIONS: none
---
---PARAMATERS:
---	 World &world - the world structure
---	 PositionComponent entity - the temporary position entity used for checking for collisions
---
---RETURNS:
---	 Returns 0 for no collision
---	 Returns COLLISION_WALL for a collision with a wall
---	 Returns COLLISION_HACKER for a collision with a hacker
---	 Returns COLLISION_GUARD for a collision with a guard
---	 Returns COLLISION_STAIR for a collision with a stair
---
---NOTES:
---Checks for collisions with stairs on the map.
---------------------------------------------------------------------------------------------------------*/
+/**
+ * Checks for collisions with stairs on the map.
+ *
+ * @param[in,out] world    A reference to the world structure.
+ * @param[in]     entity   The temporary position entity used for checking for collisions. 
+ *
+ * @return True if the entity collided with a set of stairs, false if they did not.
+ *
+ * @designer Joshua Campbell
+ * @author   Joshua campbell
+ */
 bool stair_collision(World &world, PositionComponent entity) {
 	
 	
 	return false;
 }
 
-/*--------------------------------------------------------------------------------------------------------
---FUNCTION: entity_collision
---
---DESIGNER: Joshua Campbell
---
---PROGRAMMERS: Joshua Campbell
---
---REVISIONS: none
---
---PARAMATERS:
---	 World &world - the world structure
---	 PositionComponent entity - the temporary position entity used for checking for collisions
---	 int entityID - the current entity being checked based on its position in the world struct
---
---RETURNS:
---	 Returns true if a collision occurred
---	 Returns false if there was no collision
---
---NOTES:
---This checks if there is a collision between two entities on the map.
---------------------------------------------------------------------------------------------------------*/
+/**
+ * Checks if there's a collision between two entities on the map.
+ *
+ * @param[in,out] world    A reference to the world structure.
+ * @param[in]     entity   The temporary position entity used for checking for collisions. 
+ * @param[in]     entityID The current entity being checked based on its position in the world struct
+ *
+ * @return True if a collision occurred, or false if there was no collision.
+ *
+ * @designer Joshua Campbell
+ * @author   Joshua campbell
+ */
 int entity_collision(World *world, PositionComponent entity, int entityID) {
 	int i = 0;
 
 	//entity.x += entity.width / 2;
 	//entity.y += entity.height / 2;
 	for (i = 0; i < MAX_ENTITIES; i++) {
-		if (i != entityID && (world->mask[i] & COLLISION_MASK) != 0) {
+		if (i != entityID && IN_THIS_COMPONENT(world->mask[i], COLLISION_MASK)) {
 			if (entity.x + entity.width / 2 - 1 > world->position[i].x - world->position[i].width / 2 + 1 &&
 				entity.x - entity.width / 2 + 1 < world->position[i].x + world->position[i].width / 2 - 1 &&
 				entity.y + entity.height / 2 - 1 > world->position[i].y - world->position[i].height / 2 + 1 &&

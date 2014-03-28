@@ -9,6 +9,11 @@
 #include "../Network/Packets.h"
 #include "collisiontypes.h"
 
+/**
+ * Describes an entity's position, dimensions and level.
+ *
+ * @struct PositionComponent
+ */
 typedef struct {
 	float x;
 	float y;
@@ -17,10 +22,20 @@ typedef struct {
 	int level;
 } PositionComponent;
 
+/**
+ * Determines whether an entity may be controlled.
+ *
+ * @struct ControllableComponent
+ */
 typedef struct {
 	bool active;
 } ControllableComponent;
 
+/**
+ * Holds the type of collision an entity had.
+ *
+ * @struct CollisionComponent
+ */
 typedef struct {
 	int id;
 	int type;
@@ -30,6 +45,11 @@ typedef struct {
 	int radius;
 } CollisionComponent;
 
+/**
+ * Describes a floor's properties.
+ *
+ * @struct LevelComponent
+ */
 typedef struct {
 	int levelID;
 	int** map;
@@ -38,6 +58,11 @@ typedef struct {
 	int tileSize;
 } LevelComponent;
 
+/**
+ * Describes an entity's position, dimensions and level.
+ *
+ * @struct PositionComponent
+ */
 typedef struct {
 	int id;
 	int lastDirection;
@@ -67,5 +92,10 @@ typedef struct {
     int targetX;
     int targetY;    
 } WormholeComponent;
+
+typedef struct {
+	unsigned int objectiveID;
+	bool status;
+} ObjectiveComponent;
 
 #endif
