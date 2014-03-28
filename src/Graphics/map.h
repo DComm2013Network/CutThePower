@@ -17,7 +17,7 @@
 struct fowtile
 {
 	SDL_Rect rect;
-	int visible;
+	int visible[NUMLEVELS];
 };
 
 struct fogOfWarStruct

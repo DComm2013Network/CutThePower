@@ -50,7 +50,7 @@ void render_fog_of_war(SDL_Surface *surface, struct fogOfWarStruct *fow)
 	{
 		for(int x = 0; x < fogOfWarWidth; x++)
 		{
-			int visible = fow -> tiles[y][x].visible;
+			int visible = fow -> tiles[y][x].visible[ level ];
 
 			SDL_Rect tileRect;
 			tileRect.x = fow -> tiles[y][x].rect.x - xOffset;
@@ -105,11 +105,14 @@ void init_fog_of_war(struct fogOfWarStruct **fow)
 
 			for(int x = 0; x < TOTALTILESX; x++)
 			{
-				(*fow) -> tiles[y][x].visible = 1;
-				(*fow) -> tiles[y][x].rect.x = (x * TILE_WIDTH );
-				(*fow) -> tiles[y][x].rect.y = (y * TILE_HEIGHT);
-				(*fow) -> tiles[y][x].rect.w = ( TILE_WIDTH  );
-				(*fow) -> tiles[y][x].rect.h = ( TILE_HEIGHT );				
+				for(int lev = 0; l < NUMLEVELS; i++)
+				{
+					(*fow) -> tiles[y][x].visible[ lev ] = 1;
+					(*fow) -> tiles[y][x].rect.x = (x * TILE_WIDTH );
+					(*fow) -> tiles[y][x].rect.y = (y * TILE_HEIGHT);
+					(*fow) -> tiles[y][x].rect.w = ( TILE_WIDTH  );
+					(*fow) -> tiles[y][x].rect.h = ( TILE_HEIGHT );				
+				}
 			}	
 		}
 	
