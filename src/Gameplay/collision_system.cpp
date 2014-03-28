@@ -93,6 +93,7 @@ int wall_collision(World *world, PositionComponent entity) {
 	
 	xdts = ceil((float)entity.width / (float)world->level[curlevel].tileSize);
 	ydts = ceil((float)entity.height / (float)world->level[curlevel].tileSize);
+
 	
 	// debug statement: printf("xl: %i, xr: %i, yt: %i, yb: %i, xdts: %i, ydts: %i\n", xl, xr, yt, yb, xdts, ydts);
 	for (int i = 0; i < xdts; i++) {
@@ -100,14 +101,17 @@ int wall_collision(World *world, PositionComponent entity) {
 			return COLLISION_WALL;
 		}
 		if (world->level[curlevel].map[xr - i * world->level[curlevel].tileSize][yb] == L_WALL) {
+
 			return COLLISION_WALL;
 		}
 	}
 	for (int i = 0; i < ydts; i++) {
 		if (world->level[curlevel].map[xr][yt + i * world->level[curlevel].tileSize] == L_WALL) {
+
 			return COLLISION_WALL;
 		}
 		if (world->level[curlevel].map[xl][yb - i * world->level[curlevel].tileSize] == L_WALL) {
+
 			return COLLISION_WALL;
 		}
 	}

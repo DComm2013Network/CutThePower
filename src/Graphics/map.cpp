@@ -310,7 +310,7 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 	
 	
 	create_level(world, collision_map, width, height, TILE_WIDTH, level);
-	
+
 	for (i = 0; i < width; i++) {
 		free(map[i]);
 		free(collision_map[i]);

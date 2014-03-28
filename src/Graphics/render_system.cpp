@@ -134,7 +134,7 @@ void render_player_system(World& world, SDL_Surface* surface, struct fogOfWarStr
 	struct fogOfWarPlayerPosition fowp;
 	
 	fowp.world = &world;
-	fowp.pos	 = position;
+	fowp.pos   = position;
 	fowp.fow   = fow;
 	
 	makeSurroundingTilesVisible(&fowp);

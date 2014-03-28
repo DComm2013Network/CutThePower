@@ -17,8 +17,9 @@ extern SDL_Rect map_rect;
 
 int subOne(int n);
 int addOne(int n);
-void setVisibilityType					(struct fogOfWarPlayerPosition *fowp, int yDel, int xDel, int visibility);
+void setVisibilityType (struct fogOfWarPlayerPosition *fowp, int yDel, int xDel, int visibility);
 
+int wall_collision(World *world, PositionComponent position);
 
 int fogOfWarHeight;
 int fogOfWarWidth;
@@ -224,7 +225,10 @@ void makeSurroundingTilesVisible(struct fogOfWarPlayerPosition *fowp)
 	setVisibilityType(fowp, (   BOT   ), (RGHT + RGHT), 21);
 }
 
+int isWallCollision(World *world, PositionComponent newpos)
+{
 
+}
 
 int getTilePos(int pos, int delta)
 {
@@ -238,11 +242,13 @@ int getTilePos(int pos, int delta)
 
 void setVisibilityType(struct fogOfWarPlayerPosition *fowp, int yDel, int xDel, int visibility)
 {
-	struct fogOfWarStruct *fow 		= fowp -> fow;
-	PositionComponent 	  *pos 		= fowp -> pos;
-	World 								*world	= fowp -> world;
+	struct fogOfWarStruct *fow = fowp -> fow;
+	PositionComponent     *pos = fowp -> pos;
+	World 		      *world = fowp -> world;
 
-	//if(wall_collision(world, *pos) == COLLISION_WALL) return;
+	PositionComponent newposition;
+
+
 
 	int xPos = pos->x / TILE_WIDTH;
 	int yPos = pos->y / TILE_HEIGHT;
@@ -250,6 +256,13 @@ void setVisibilityType(struct fogOfWarPlayerPosition *fowp, int yDel, int xDel, 
 	int y = getTilePos(yPos, yDel);
 	int x = getTilePos(xPos, xDel);
 	
+	newposition.x 	   = x * TILE_WIDTH;
+	newposition.y 	   = y * TILE_HEIGHT;
+	newposition.height = pos -> height;
+	newposition.width  = pos -> width;
+	newposition.level  = pos -> level;
+
+	//if(entity_collision(world, newposition, ) == ) return;
 	
 	fow -> tiles[y][x].visible[ pos->level ] = visibility;
 }
