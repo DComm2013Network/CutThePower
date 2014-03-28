@@ -17,6 +17,7 @@ extern int send_router_fd[];
 extern int rcv_router_fd[];
 extern unsigned int player_entity;
 extern int network_ready;
+int targl = 0;
 
 
 int handle_collision_target(World *world, int entityIndex) {
@@ -161,7 +162,7 @@ void handle_y_collision(CollisionData data, PositionComponent& position, Movemen
 	}
 }
 
-void rebuild_floor(World * world, int targl)
+void rebuild_floor(World * world)
 {
 	destroy_world_not_player(world);
     switch (targl) {
@@ -197,14 +198,9 @@ void handle_entity_collision(CollisionData data, World * world, int curEntityID)
 		if (world->collision[curEntityID].type == COLLISION_HACKER || world->collision[curEntityID].type == COLLISION_GUARD) {
 			int targx = world->wormhole[data.entityID].targetX;
 			int targy = world->wormhole[data.entityID].targetY;
-			int targl = world->wormhole[data.entityID].targetLevel;
+			targl = world->wormhole[data.entityID].targetLevel;
 			
 			move_request(world, send_router_fd[WRITE_END], targl, targx, targy);
-		 	if(!network_ready)
-		 	{
-		 		rebuild_floor(world, targl);
-		 		break;
-		 	}
 
 		 	floor_change_flag = 1;
 		}

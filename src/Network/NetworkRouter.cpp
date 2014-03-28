@@ -350,13 +350,14 @@ int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int send
         return -1;
     }
 
-    resolve_host(&ipaddr, TCP_PORT, "10.42.0.73");
-    resolve_host(&udpaddr, UDP_PORT, "10.42.0.73");
+    resolve_host(&ipaddr, TCP_PORT, "192.168.0.49");
+    resolve_host(&udpaddr, UDP_PORT, "192.168.0.49");
     
     tcp_sock = SDLNet_TCP_Open(&ipaddr);
 
     if(!tcp_sock) {
         fprintf(stderr, "SDLNet_TCP_Open: %s\n", SDLNet_GetError());
+        network_ready = 0;
         set_error(ERR_NO_CONN);
         return -1;
     }

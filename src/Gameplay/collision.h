@@ -16,6 +16,6 @@ int entity_collision(World* world, PositionComponent entity, int entityID);
 int tag_entity_collision(World *world, PositionComponent entity, int entityID);
 int handle_target_collision(World *world, int entityIndex);
 int handle_entity_collision(World *world, int entityIndex);
-void rebuild_floor(World * world, int targl);
+void rebuild_floor(World * world);
 
 #endif
