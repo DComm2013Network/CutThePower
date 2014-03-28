@@ -176,10 +176,6 @@ void create_textfield(World *world, const char *name, int x, int y, const char* 
 		
 	} else {
 		world->text[entity].length = 0;
-<<<<<<< HEAD
-=======
-		//world->text[entity].textSurface = 0;
->>>>>>> 482321996f9a5cbfc9599e3d0ed6d420b38ad120
 	}
 
 	world->text[entity].focused = false;
@@ -497,13 +493,7 @@ void create_load_screen(World *world) {
 	world->renderPlayer[entity].width = WIDTH;
 	world->renderPlayer[entity].height = HEIGHT;
 	
-	
-<<<<<<< HEAD
 	play_animation(world, entity, "load");
-
-=======
-	play_animation(world, entity, (char*)"load");
->>>>>>> 482321996f9a5cbfc9599e3d0ed6d420b38ad120
 }
 
 void create_select_screen(World *world) {
@@ -546,8 +536,3 @@ void create_select_screen(World *world) {
 	world->renderPlayer[entity].width = WIDTH;
 	world->renderPlayer[entity].height = HEIGHT;
 }
-
-<<<<<<< HEAD
-=======
-
->>>>>>> 482321996f9a5cbfc9599e3d0ed6d420b38ad120

@@ -313,35 +313,35 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 				
 				if (command->commands[C_UP]) {
 					add_force(world, entity, world->movement[entity].acceleration, -90);
-					play_animation(world, entity, (char*)"up");
+					play_animation(world, entity, "up");
 					moved = true;
 				}
 				else {
-					cancel_animation(world, entity, (char*)"up");
+					cancel_animation(world, entity);
 				}
 				if (command->commands[C_DOWN]) {
 					add_force(world, entity, world->movement[entity].acceleration, 90);
-					play_animation(world, entity, (char*)"down");
+					play_animation(world, entity, "down");
 					moved = true;
 				}
 				else {
-					cancel_animation(world, entity, (char*)"down");
+					cancel_animation(world, entity);
 				}
 				if (command->commands[C_LEFT]) {
 					add_force(world, entity, world->movement[entity].acceleration, 180);
-					play_animation(world, entity, (char*)"left");
+					play_animation(world, entity, "left");
 					moved = true;
 				}
 				else {
-					cancel_animation(world, entity, (char*)"left");
+					cancel_animation(world, entity);
 				}
 				if (command->commands[C_RIGHT]) {
 					add_force(world, entity, world->movement[entity].acceleration, 0);
-					play_animation(world, entity, (char*)"right");
+					play_animation(world, entity, "right");
 					moved = true;
 				}
 				else {
-					cancel_animation(world, entity, (char*)"right");
+					cancel_animation(world, entity);
 				}
 
 				CollisionData data;
@@ -355,7 +355,7 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 					apply_forcey(temp, *movement, fps);
 					data = collision_system(world, temp, entity);
 					handle_y_collision(world, data, temp, *movement, entity, fps);
-					collisionType = handle_entity_collision(data, world, entity);
+					collisionType = handle_entity_collision(world, entity);
 					p.x = position->x;
 					p.y = position->y;
 					p.width = 60;
