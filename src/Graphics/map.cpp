@@ -7,8 +7,9 @@
 /** @} */
 
  
- 
+
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -17,11 +18,13 @@
 #include "systems.h"
 #include "../sound.h"
 
+
 SDL_Surface *map_surface = 0; /**< The surface on which to render the map. */
 SDL_Rect map_rect;        /**< The rectangle containing the map. */
 int w;                    /**< The map's width. */
 int h;                    /**< The map's height. */
 int level;                /**< The current floor. */
+
 
 /**
  * Initiates the map by loading the tiles and putting it into one large texture.

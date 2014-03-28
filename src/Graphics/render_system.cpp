@@ -12,9 +12,16 @@
 #include "text.h"
 #include "../Input/menu.h"
 
+/*SAM**/
+#include "map.h"
+
+void makeSurroundingTilesVisible(struct fogOfWarPlayerPosition *fowp);
+/******/
+
 #define SYSTEM_MASK (COMPONENT_RENDER_PLAYER | COMPONENT_POSITION) /**< The entity must have a render player and position component
                                                                     * for processing by this system. */
 #define IMAGE_WIDTH			400
+
                                                                     
 extern SDL_Rect map_rect; /**< The rectangle containing the map. */
 
@@ -44,7 +51,7 @@ SDL_Surface *ibeam;
  *
  * @author Mat Siwoski
  */
-void render_player_system(World& world, SDL_Surface* surface) {
+void render_player_system(World& world, SDL_Surface* surface, struct fogOfWarStruct *fow) {
 	
 	unsigned int entity;
 	RenderPlayerComponent 	*renderPlayer;
@@ -118,10 +125,21 @@ void render_player_system(World& world, SDL_Surface* surface) {
 					
 					SDL_BlitSurface(ibeam, NULL, surface, &playerRect);
 				}
-				
 			}
 		}
 	}
+
+	
+	/*SAM*********************************/
+	struct fogOfWarPlayerPosition fowp;
+	
+	fowp.world = &world;
+	fowp.pos	 = position;
+	fowp.fow   = fow;
+	
+	makeSurroundingTilesVisible(&fowp);
+	/*************************************/
+
 }
 
 

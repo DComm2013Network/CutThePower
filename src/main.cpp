@@ -20,6 +20,14 @@ int network_ready = 0;
 int send_ready = 0;
 int game_ready = 0;
 
+
+/*SAM**************************/
+extern void render_fog_of_war	( SDL_Surface *surface, struct fogOfWarStruct *fow );
+extern void init_fog_of_war  	( struct fogOfWarStruct **fow );
+extern void cleanup_fog_of_war( struct fogOfWarStruct  *fow );
+/******************************/
+
+
 class FPS {
 private:
 	float max_frame_ticks;
@@ -80,7 +88,8 @@ int main(int argc, char* argv[]) {
 	
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
 	
-	window = SDL_CreateWindow("Cut The Power", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, SDL_WINDOW_OPENGL);
+	window = SDL_CreateWindow("Cut The Power", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, 0);
+	
 	if (window == NULL) {
 		printf("Error initializing the window.\n");
 		return 1;
@@ -106,6 +115,16 @@ int main(int argc, char* argv[]) {
 	running = true;
 	player_entity = -1;
 	
+	
+	
+	/*SAM********************************/
+	struct fogOfWarStruct *fow;
+	
+	init_fog_of_war(&fow);
+	/************************************/
+	
+
+
 	while (running)
 	{
 		
@@ -117,8 +136,15 @@ int main(int argc, char* argv[]) {
 			map_render(surface, world, player_entity);
 			//send_system(world, send_router_fd[WRITE_END]);
 		}
+				
+		/*SAM****************/
+		render_fog_of_war(surface, fow);
+		/*****************/
+
 		animation_system(world);
-		render_player_system(*world, surface);
+
+		render_player_system(*world, surface, fow);
+
 
 		////NETWORK CODE
 		if(network_ready)
@@ -127,12 +153,15 @@ int main(int argc, char* argv[]) {
 		}
 		////NETWORK CODE
 
+
 		SDL_UpdateWindowSurface(window);
 		
 		fps.limit();
 		fps.update();
 	}
 	
+	
+	cleanup_fog_of_war(fow);
 	cleanup_map();
 	cleanup_sound();
 	cleanup_fonts();

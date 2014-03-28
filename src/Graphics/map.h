@@ -11,6 +11,35 @@
 
 #define TILE_WIDTH	40 /**< The width of a tile in pixels. */
 #define TILE_HEIGHT	40 /**< The height of a tile in pixels. */
+#define NUMLEVELS		8
+
+
+
+struct fogOfWarPlayerPosition
+{
+	World *world;
+	PositionComponent *pos;
+	struct fogOfWarStruct *fow;
+};
+
+struct fowtile
+{
+	SDL_Rect rect;
+	int visible[NUMLEVELS];
+};
+
+struct fogOfWarStruct
+{
+	struct fowtile **tiles;
+	
+	int xOffset;
+	int yOffset;
+	
+	SDL_Surface **fogOfWar;
+	SDL_Surface **alphaFog;
+	
+	SDL_Surface  *corners[16];
+};
 
 int map_init(World* world, const char *file_map, const char *tilemap);
 void cleanup_map();
