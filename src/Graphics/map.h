@@ -6,7 +6,7 @@
 #ifndef MAP_H
 #define MAP_H
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include "../world.h"
 
 

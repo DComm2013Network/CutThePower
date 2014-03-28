@@ -8,12 +8,12 @@
 
 #include "world.h"
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_keycode.h>
-#include <SDL2/SDL_scancode.h>
+#include <SDL.h>
+#include <SDL_keycode.h>
+#include <SDL_scancode.h>
 
 #include <stdlib.h>
-#include <cstdio>
+#include <stdio.h>
 
 void create_label(World *world, char *image, int x, int y, int w, int h);
 void create_button(World *world, char *image, char *name, int x, int y);
@@ -73,41 +73,31 @@ unsigned int create_entity(World* world, unsigned int attributes) {
  * @designer
  * @author
  */
-unsigned int create_level(World* world, uint32_t** map, int width, int height, int tileSize) {
+unsigned int create_level(World* world, int** map, int width, int height, int tileSize, int levelID) {
+	
 	unsigned int entity = 0;
-	int lastID = -1;
-	unsigned int tempMask = 0;
+	//int lastID = -1;
 	int i = 0;
 	int n = 0;
-	for (entity = 0; entity < MAX_ENTITIES; ++entity) {
-		tempMask = world->mask[entity] & COMPONENT_LEVEL;
-		if (tempMask == COMPONENT_LEVEL) {
-			lastID = world->level[entity].levelID;
-		}
 	
-		if (world->mask[entity] == COMPONENT_EMPTY) {
-			lastID++;
-			world->mask[entity] = COMPONENT_LEVEL;
-			world->level[entity].map = (uint32_t**)malloc(sizeof(uint32_t*) * width);
-			for (i = 0; i < width; i++) {
-				world->level[entity].map[i] = (uint32_t*)malloc(sizeof(uint32_t) * height);
-			}
-			for (i = 0; i < width; i++) {
-				for (n = 0; n < height; n++) {
-					world->level[entity].map[i][n] = map[i][n];
-				}
-			}
-			world->level[entity].levelID = lastID;
-			world->level[entity].width = width;
-			world->level[entity].height = height;
-			world->level[entity].tileSize = tileSize;
+	entity = create_entity(world, COMPONENT_LEVEL);
+	
+	//lastID++;
+	world->level[entity].map = (int**)malloc(sizeof(int*) * width);
+	for (i = 0; i < width; i++) {
+		world->level[entity].map[i] = (int*)malloc(sizeof(int) * height);
+		for (n = 0; n < height; n++) {
 			
-			return entity;
+			world->level[entity].map[i][n] = map[i][n];
+			
 		}
 	}
+	world->level[entity].levelID = levelID;
+	world->level[entity].width = width;
+	world->level[entity].height = height;
+	world->level[entity].tileSize = tileSize;
 	
-	
-	return MAX_ENTITIES;
+	return entity;
 }
 
 /**
@@ -143,10 +133,10 @@ unsigned int create_player(World* world, int x, int y, bool controllable, int co
 	render.width = 40;
 	render.height = 40;
 	//render.playerSurface = IMG_Load("assets/Graphics/player_80px.png");
-	render.playerSurface = IMG_Load("assets/Graphics/hacker_down.png");
-	if (!render.playerSurface) {
-		printf("mat is a doof\n");
-	}
+	//render.playerSurface = IMG_Load("assets/Graphics/hacker_down.png");
+	//if (!render.playerSurface) {
+	//	printf("mat is a doof\n");
+	//}
 	
 	pos.x = x;
 	pos.y = y;
@@ -294,31 +284,55 @@ unsigned int create_target(World* world, int x, int y, int collisiontype) {
 unsigned int create_stair(World* world, int targetLevel, int targetX, int targetY, int x, int y, int width, int height, int level) {
 	unsigned int entity;
 	PositionComponent pos;
-    WormholeComponent target;
-    CollisionComponent collision;
+	WormholeComponent target;
+	RenderPlayerComponent render;
+	CollisionComponent collision;
+
 	int lastID = -1;
 	unsigned int tempMask = 0;
-		
+	
+	render.width = 40;
+	render.height = 40;
+	render.playerSurface = SDL_LoadBMP("assets/Graphics/lobby/stair.bmp");
+	if (!render.playerSurface) {
+		printf("mat is a doof\n");
+	}
+	
 	pos.x = x;
 	pos.y = y;
 
-	pos.width = width;
-	pos.height = height;
-	pos.level = level;
-
-    target.targetLevel = targetLevel;
+	pos.width = render.width;
+	pos.height = render.height;
+	pos.level = 0;
+	
+	target.targetLevel = targetLevel;
     target.targetX = targetX;
     target.targetY = targetY;
-
-    collision.type = 0;
+    
+	collision.id = 0;
+	collision.type = COLLISION_STAIR;
+	collision.timer = 0;
+	collision.timerMax = 600;
+	collision.active = true;
+	collision.radius = 0;
 	
 	for(entity = 0; entity < MAX_ENTITIES; ++entity) {
+		tempMask = world->mask[entity] & COMPONENT_POSITION;
+		if (tempMask == COMPONENT_MOVEMENT) {
+			lastID = world->collision[entity].id;
+		}
+		
 		if (world->mask[entity] == COMPONENT_EMPTY) {
-				world->mask[entity] =	COMPONENT_POSITION | 
-                                        COMPONENT_COLLISION |
-                                        COMPONENT_WORMHOLE;
+			lastID += 1;
+			collision.id = lastID;
+
+			world->mask[entity] =	COMPONENT_POSITION | 
+									COMPONENT_RENDER_PLAYER | 
+									COMPONENT_COLLISION |
+									COMPONENT_WORMHOLE;
 
 			world->position[entity] = pos;
+			world->renderPlayer[entity] = render;
 			world->wormhole[entity] = target;
 			world->collision[entity] = collision;
 			
@@ -342,6 +356,33 @@ unsigned int create_stair(World* world, int targetLevel, int targetX, int target
  * @author
  */
 void destroy_entity(World* world, const unsigned int entity) {
+
+	/*int i, j;
+	
+	if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_ANIMATION)) {
+		
+		for(i = 0; i < world->animation[entity].animation_count; i++) {
+			
+			//free(world->animation[entity].animations[i].name);
+			
+			for(j = 0; j < world->animation[entity].animations[j].surface_count; j++) {
+				
+				//SDL_FreeSurface(world->animation[entity].animations[j].surfaces[j]);
+				
+			}
+		}
+		//free(world->animation[entity].animations);
+		
+	}
+	else if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_RENDER_PLAYER)) {
+		
+		//printf("POINTER: %p\n", world->renderPlayer[entity].playerSurface);
+		
+		//if (world->renderPlayer[entity].playerSurface != NULL)
+			//SDL_FreeSurface(world->renderPlayer[entity].playerSurface);
+		
+	}*/
+	
 	world->mask[entity] = COMPONENT_EMPTY;
 }
 

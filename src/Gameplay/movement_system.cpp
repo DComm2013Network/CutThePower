@@ -2,6 +2,7 @@
 #include "../systems.h"
 #include "../world.h"
 #include "../Gameplay/collision.h"
+#include "../triggered.h"
 #include "stdio.h"
 #include <math.h>
 
@@ -23,18 +24,40 @@ int handle_collision_target(World *world, int entityIndex) {
 	return COLLISION_TARGET;
 }
 
-void add_force(World& world, unsigned int entity, float magnitude, float dir) {
+
+
+void add_force(World* world, unsigned int entity, float magnitude, float dir, FPS fps) {
+	if ((world->mask[entity] & STANDARD_MASK) == STANDARD_MASK) {
+		world->movement[entity].movX += cos(dir * PI / 180) * magnitude;// * (FPS_MAX / fps.getFPS());
+		world->movement[entity].movY += sin(dir * PI / 180) * magnitude;// * (FPS_MAX / fps.getFPS());
+		//printf("%f\n", fps.getFPS());
+		if (sqrt(pow(world->movement[entity].movX, 2) + pow(world->movement[entity].movY, 2)) > world->movement[entity].maxSpeed) {
+			float tx = world->movement[entity].movX;// * (FPS_MAX / fps.getFPS());
+			float ty = world->movement[entity].movY;// * (FPS_MAX / fps.getFPS());
+			world->movement[entity].movX *= world->movement[entity].maxSpeed / sqrt(pow(tx, 2) + pow(ty, 2));
+			world->movement[entity].movY *= world->movement[entity].maxSpeed / sqrt(pow(tx, 2) + pow(ty, 2));
+		}
+	}
+}
+
+void apply_force(World* world, unsigned int entity) {
+	world->position[entity].x += world->movement[entity].movX;
+	world->position[entity].y += world->movement[entity].movY;
+}
+
+
+/*void add_force(World& world, unsigned int entity, float magnitude, float dir, FPS fps) {
 	if ((world.mask[entity] & STANDARD_MASK) == STANDARD_MASK) {
 		world.movement[entity].movX += cos(dir * PI / 180) * magnitude;
 		world.movement[entity].movY += sin(dir * PI / 180) * magnitude;
 		if (sqrt(pow(world.movement[entity].movX, 2) + pow(world.movement[entity].movY, 2)) > world.movement[entity].maxSpeed) {
 			float tx = world.movement[entity].movX;
 			float ty = world.movement[entity].movY;
-			world.movement[entity].movX *= world.movement[entity].maxSpeed / sqrt(pow(tx, 2) + pow(ty, 2));
-			world.movement[entity].movY *= world.movement[entity].maxSpeed / sqrt(pow(tx, 2) + pow(ty, 2));
+			world.movement[entity].movX *= world.movement[entity].maxSpeed / sqrt(pow(tx, 2) + pow(ty, 2)) * (FPS_MAX / fps.update());
+			world.movement[entity].movY *= world.movement[entity].maxSpeed / sqrt(pow(tx, 2) + pow(ty, 2)) * (FPS_MAX / fps.update());
 		}
 	}
-}
+}*/
 
 void add_force(MovementComponent& movement, float magnitude, float dir) {
 
@@ -54,20 +77,20 @@ void apply_force(World& world, unsigned int entity) {
 	world.position[entity].y += world.movement[entity].movY;
 }
 
-void apply_forcex(PositionComponent& position, MovementComponent movement) {
-	position.x += movement.movX;
+void apply_forcex(PositionComponent& position, MovementComponent movement, FPS fps) {
+	position.x += movement.movX * (FPS_MAX / fps.getFPS());
 }
 
-void remove_forcex(PositionComponent& position, MovementComponent movement) {
-	position.x -= movement.movX;
+void remove_forcex(PositionComponent& position, MovementComponent movement, FPS fps) {
+	position.x -= movement.movX * (FPS_MAX / fps.getFPS());
 }
 
-void apply_forcey(PositionComponent& position, MovementComponent movement) {
-	position.y += movement.movY;
+void apply_forcey(PositionComponent& position, MovementComponent movement, FPS fps) {
+	position.y += movement.movY * (FPS_MAX / fps.getFPS());
 }
 
-void remove_forcey(PositionComponent& position, MovementComponent movement) {
-	position.y -= movement.movY;
+void remove_forcey(PositionComponent& position, MovementComponent movement, FPS fps) {
+	position.y -= movement.movY * (FPS_MAX / fps.getFPS());
 }
 
 void apply_deceleration(World* world, unsigned int entity) {
@@ -93,10 +116,27 @@ void apply_deceleration_y(MovementComponent &movement, float friction) {
 	movement.movY *= 1 - friction;
 }
 
-void handle_x_collision(CollisionData data, PositionComponent& position, MovementComponent &movement) {
+void handle_x_collision(CollisionData data, PositionComponent& position, MovementComponent &movement, FPS fps) {
+	switch(data.entity_code) {
+	case COLLISION_SOLID:
+		remove_forcex(position, movement, fps);
+		movement.movX = 0;
+		break;
+	case COLLISION_HACKER:
+		remove_forcex(position, movement, fps);
+		movement.movX = 0;
+		break;
+	case COLLISION_GUARD:
+		remove_forcex(position, movement, fps);
+		movement.movX = 0;
+		break;
+	default:
+		break;
+	}
+
 	switch(data.map_code) {
 	case COLLISION_WALL:
-		remove_forcex(position, movement);
+		remove_forcex(position, movement, fps);
 		movement.movX = 0;
 		break;
 	case COLLISION_BELTRIGHT:
@@ -114,10 +154,34 @@ void handle_x_collision(CollisionData data, PositionComponent& position, Movemen
 	}
 }
 
-void handle_y_collision(CollisionData data, PositionComponent& position, MovementComponent &movement) {
+void teleport(World * world, int player, int wormhole){
+    //set current location to the target location
+	world->position[player].x = world->wormhole[wormhole].targetX;
+	world->position[player].y = world->wormhole[wormhole].targetY;
+	world->position[player].level = world->wormhole[wormhole].targetLevel;
+}
+
+void handle_y_collision(CollisionData data, PositionComponent& position, MovementComponent &movement, FPS fps) {
+	switch(data.entity_code) {
+	case COLLISION_SOLID:
+		remove_forcey(position, movement, fps);
+		movement.movY = 0;
+		break;
+	case COLLISION_HACKER:
+		remove_forcey(position, movement, fps);
+		movement.movY = 0;
+		break;
+	case COLLISION_GUARD:
+		remove_forcey(position, movement, fps);
+		movement.movY = 0;
+		break;
+	default:
+		break;
+	}
+
 	switch(data.map_code) {
 	case COLLISION_WALL:
-		remove_forcey(position, movement);
+		remove_forcey(position, movement, fps);
 		movement.movY = 0;
 		break;
 	case COLLISION_BELTDOWN:
@@ -135,7 +199,7 @@ void handle_y_collision(CollisionData data, PositionComponent& position, Movemen
 	}
 }
 
-void handle_entity_collision(CollisionData data, World * world, int curEntityID) {
+int handle_entity_collision(CollisionData data, World * world, int curEntityID, FPS fps) {
 	switch(data.entity_code) {
 	case COLLISION_TARGET:
 		if (world->collision[curEntityID].type == COLLISION_HACKER) {
@@ -143,6 +207,16 @@ void handle_entity_collision(CollisionData data, World * world, int curEntityID)
 		}
 		break;
 	case COLLISION_STAIR:
+		if (world->collision[curEntityID].type == COLLISION_HACKER ||
+			world->collision[curEntityID].type == COLLISION_GUARD) {
+			//set current position + level data to wormholes target location
+	        teleport(world ,curEntityID, data.entityID);
+			change_level(world, world->wormhole[data.entityID].targetLevel);
+
+			printf("HERE MOTHERFUCKER!\n");
+
+			return MSG_ROOMCHANGE;
+		}
 		break;
 	case COLLISION_HACKER:
 		if (world->collision[curEntityID].type == COLLISION_GUARD) {
@@ -157,9 +231,10 @@ void handle_entity_collision(CollisionData data, World * world, int curEntityID)
 	default:
 		break;
 	}
+	return data.entity_code;
 }
 
-void movement_system(World* world) {
+void movement_system(World* world, FPS fps) {
 	unsigned int entity;
 	PositionComponent		*position;
 	CommandComponent		*command;
@@ -188,55 +263,55 @@ void movement_system(World* world) {
 				temp.width = position->width;
 				temp.height = position->height;
 				temp.level = position->level;
+				int collisionType = -1;
 				
 				if (command->commands[C_UP]) {
-					add_force(world, entity, world->movement[entity].acceleration, -90);
+					add_force(world, entity, world->movement[entity].acceleration, -90, fps);
+					play_animation(world, entity, "up");
+				}
+				else {
+					cancel_animation(world, entity, "up");
 				}
 				if (command->commands[C_DOWN]) {
-					add_force(world, entity, world->movement[entity].acceleration, 90);
+					add_force(world, entity, world->movement[entity].acceleration, 90, fps);
+					play_animation(world, entity, "down");
+				}
+				else {
+					cancel_animation(world, entity, "down");
 				}
 				if (command->commands[C_LEFT]) {
-					add_force(world, entity, world->movement[entity].acceleration, 180);
+					add_force(world, entity, world->movement[entity].acceleration, 180, fps);
+					play_animation(world, entity, "left");
+				}
+				else {
+					cancel_animation(world, entity, "left");
 				}
 				if (command->commands[C_RIGHT]) {
-					add_force(world, entity, world->movement[entity].acceleration, 0);
+					add_force(world, entity, world->movement[entity].acceleration, 0, fps);
+					play_animation(world, entity, "right");
+				}
+				else {
+					cancel_animation(world, entity, "right");
 				}
 
 				CollisionData data;
 				if (IN_THIS_COMPONENT(world->mask[entity], COLLISION_MASK)) {
 
-					apply_forcex(temp, *movement);
+					apply_forcex(temp, *movement, fps);
 					data = collision_system(world, temp, entity);
-					handle_x_collision(data, temp, *movement);
-					apply_forcey(temp, *movement);
+					handle_x_collision(data, temp, *movement, fps);
+					apply_forcey(temp, *movement, fps);
 					data = collision_system(world, temp, entity);
-					handle_y_collision(data, temp, *movement);
-					handle_entity_collision(data, world, entity);
+					handle_y_collision(data, temp, *movement, fps);
+					collisionType = handle_entity_collision(data, world, entity, fps);
 
-				}	
-				position->x = temp.x + goffsetW;
-				position->y = temp.y + goffsetH;
+				}
+				if (collisionType != MSG_ROOMCHANGE) {
+					position->x = temp.x + goffsetW;
+					position->y = temp.y + goffsetH;
+				}
 			}
 		}
 	} 
-}
-
-
-void add_force(World* world, unsigned int entity, float magnitude, float dir) {
-	if ((world->mask[entity] & STANDARD_MASK) == STANDARD_MASK) {
-		world->movement[entity].movX += cos(dir * PI / 180) * magnitude;
-		world->movement[entity].movY += sin(dir * PI / 180) * magnitude;
-		if (sqrt(pow(world->movement[entity].movX, 2) + pow(world->movement[entity].movY, 2)) > world->movement[entity].maxSpeed) {
-			float tx = world->movement[entity].movX;
-			float ty = world->movement[entity].movY;
-			world->movement[entity].movX *= world->movement[entity].maxSpeed / sqrt(pow(tx, 2) + pow(ty, 2));
-			world->movement[entity].movY *= world->movement[entity].maxSpeed / sqrt(pow(tx, 2) + pow(ty, 2));
-		}
-	}
-}
-
-void apply_force(World* world, unsigned int entity) {
-	world->position[entity].x += world->movement[entity].movX;
-	world->position[entity].y += world->movement[entity].movY;
 }
 

@@ -1,0 +1,5 @@
+1
+
+play 2 40 -1 1
+assets/Graphics/objects/npc/piano/piano1_br.png
+assets/Graphics/objects/npc/piano/piano2_br.png

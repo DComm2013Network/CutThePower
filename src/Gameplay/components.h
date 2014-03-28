@@ -30,7 +30,7 @@ typedef struct {
 
 typedef struct {
 	int levelID;
-	uint32_t** map;
+	int** map;
 	int width;
 	int height;
 	int tileSize;

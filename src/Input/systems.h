@@ -3,9 +3,9 @@
 
 #include "../world.h"
 
-void KeyInputSystem(World *world, bool *running);
+void KeyInputSystem(World *world);
 int KeyMapInit(char *file);
 int KeyMapInitArray(char *file, int **commmands);
-void MouseInputSystem(World *world, unsigned int *entity);
+void MouseInputSystem(World *world);
 
 #endif

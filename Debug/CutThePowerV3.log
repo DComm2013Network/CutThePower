@@ -1,0 +1,34 @@
+﻿Build started 2014-03-27 4:25:30 PM.
+     1>Project "D:\SDL\Development\Projects\CutThePowerV3\CutThePowerV3\CutThePowerV3.vcxproj" on node 2 (build target(s)).
+     1>InitializeBuildStatus:
+         Creating "Debug\CutThePowerV3.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       ClCompile:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt src\triggered.cpp
+         triggered.cpp
+     1>d:\sdl\development\projects\cutthepowerv3\cutthepowerv3\src\world.h(55): warning C4305: '=' : truncation from 'double' to 'float'
+       Link:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\SDL\Development\Projects\CutThePowerV3\Debug\CutThePowerV3.exe" /NOLOGO SDL2.lib SDL2main.lib SDL2_mixer.lib SDL2_image.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\CutThePowerV3.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"D:\SDL\Development\Projects\CutThePowerV3\Debug\CutThePowerV3.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\SDL\Development\Projects\CutThePowerV3\Debug\CutThePowerV3.lib" /MACHINE:X86 Debug\collision_system.obj
+         Debug\movement_system.obj
+         Debug\animation_system.obj
+         Debug\map.obj
+         Debug\render_system.obj
+         Debug\keyinputsystem.obj
+         Debug\menu.obj
+         Debug\mouseinputsystem.obj
+         Debug\main.obj
+         Debug\sound.obj
+         Debug\triggered.obj
+         Debug\world.obj
+         LINK : D:\SDL\Development\Projects\CutThePowerV3\Debug\CutThePowerV3.exe not found or not built by the last incremental link; performing full link
+     1>MSVCRTD.lib(cinitexe.obj) : warning LNK4098: defaultlib 'msvcrt.lib' conflicts with use of other libs; use /NODEFAULTLIB:library
+         CutThePowerV3.vcxproj -> D:\SDL\Development\Projects\CutThePowerV3\Debug\CutThePowerV3.exe
+       Manifest:
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"D:\SDL\Development\Projects\CutThePowerV3\Debug\CutThePowerV3.exe;#1" /manifest Debug\CutThePowerV3.exe.intermediate.manifest
+       FinalizeBuildStatus:
+         Deleting file "Debug\CutThePowerV3.unsuccessfulbuild".
+         Touching "Debug\CutThePowerV3.lastbuildstate".
+     1>Done Building Project "D:\SDL\Development\Projects\CutThePowerV3\CutThePowerV3\CutThePowerV3.vcxproj" (build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.43

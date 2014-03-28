@@ -31,6 +31,7 @@ typedef struct  {
  */
 typedef struct  {
 	
+	char *name; 	/**< The name of the text field. */
 	char *text;    /**< The text contained within this text field. */
 	bool focused;  /**< Whether the text field has focus. */
 	int length;    /**< The number of characters allowed within the textfield. */

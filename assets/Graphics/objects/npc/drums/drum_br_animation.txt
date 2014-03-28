@@ -1,0 +1,6 @@
+1
+
+drum 3 40 -1 1
+assets/Graphics/objects/npc/drums/drum_1_br.png
+assets/Graphics/objects/npc/drums/drum_2_br.png
+assets/Graphics/objects/npc/drums/drum_3_br.png

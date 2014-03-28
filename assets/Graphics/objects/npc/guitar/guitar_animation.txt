@@ -1,0 +1,6 @@
+1
+
+guitar 3 40 -1 1
+assets/Graphics/objects/npc/guitar/guitar_1.png
+assets/Graphics/objects/npc/guitar/guitar_2.png
+assets/Graphics/objects/npc/guitar/guitar_3.png
