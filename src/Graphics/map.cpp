@@ -32,6 +32,12 @@ int level;                /**< The current floor. */
 
 
 /*SAM*************************************************************************/
+void blit_tile(SDL_Surface *surface, struct fogOfWarStruct *fow, SDL_Rect *tileRect, int y, int x, int i)
+{
+	SDL_BlitSurface(fow -> corners[i], NULL, surface, tileRect);
+	fow -> tiles[y][x].visible = 2;
+}
+
 void render_fog_of_war(SDL_Surface *surface, struct fogOfWarStruct *fow)
 {
 	int xOffset = fow -> xOffset;
@@ -46,90 +52,32 @@ void render_fog_of_war(SDL_Surface *surface, struct fogOfWarStruct *fow)
 		{
 			int visible = fow -> tiles[y][x].visible;
 
-			SDL_Rect tempRect;
-			tempRect.x = fow -> tiles[y][x].rect.x - xOffset;
-			tempRect.y = fow -> tiles[y][x].rect.y - yOffset;
+			SDL_Rect tileRect;
+			tileRect.x = fow -> tiles[y][x].rect.x - xOffset;
+			tileRect.y = fow -> tiles[y][x].rect.y - yOffset;
 				
-			tempRect.w = TILE_WIDTH;
-			tempRect.h = TILE_HEIGHT;
+			tileRect.w = TILE_WIDTH;
+			tileRect.h = TILE_HEIGHT;
 
 			switch(visible)
 			{
-				case 0:
-					SDL_BlitSurface(fow -> fogOfWar[count++], NULL, surface, &tempRect);
-					break;
+				case 0:	fow -> tiles[y][x].visible = 2;	break;
+				
+				case 1: SDL_BlitSurface(fow -> fogOfWar[count++], NULL, surface, &tileRect); break;
+				case 2: SDL_BlitSurface(fow -> alphaFog[count++], NULL, surface, &tileRect); break;
 			
-				case 1:
-					fow -> tiles[y][x].visible = 2;
-					break;
-			
-				case 2:
-					SDL_BlitSurface(fow -> alphaFog[count++], NULL, surface, &tempRect);
-					break;
-			
-			
-				case 11: // top left arrow
-					SDL_BlitSurface(fow -> corners[0], NULL, surface, &tempRect);
-					fow -> tiles[y][x].visible = 2;
-					break;
-
-				case 12: // right side
-					SDL_BlitSurface(fow -> corners[1], NULL, surface, &tempRect);				
-					fow -> tiles[y][x].visible = 2;
-					break;
-					
-				case 13: // left side
-					SDL_BlitSurface(fow->corners[2], NULL, surface, &tempRect);
-					fow -> tiles[y][x].visible = 2;
-					break;
-					
-					
-				case 14: // bot left arrow
-					SDL_BlitSurface(fow->corners[3], NULL, surface, &tempRect);
-					fow -> tiles[y][x].visible = 2;
-					break;
-					
-				case 15: 
-					SDL_BlitSurface(fow->corners[4], NULL, surface, &tempRect);
-					fow -> tiles[y][x].visible = 2;
-					break;
-					
-				case 16: 
-					SDL_BlitSurface(fow->corners[5], NULL, surface, &tempRect);
-					fow -> tiles[y][x].visible = 2;
-					break;
-					
-					
-				case 17: // bot left arrow
-					SDL_BlitSurface(fow->corners[6], NULL, surface, &tempRect);
-					fow -> tiles[y][x].visible = 2;
-					break;
-					
-				case 18: 
-					SDL_BlitSurface(fow->corners[7], NULL, surface, &tempRect);
-					fow -> tiles[y][x].visible = 2;
-					break;
-					
-				case 19: 
-					SDL_BlitSurface(fow->corners[8], NULL, surface, &tempRect);
-					fow -> tiles[y][x].visible = 2;
-					break;
-					
-					
-				case 20: // bot left arrow
-					SDL_BlitSurface(fow->corners[9], NULL, surface, &tempRect);
-					fow -> tiles[y][x].visible = 2;
-					break;
-					
-				case 21: 
-					SDL_BlitSurface(fow->corners[10], NULL, surface, &tempRect);
-					fow -> tiles[y][x].visible = 2;
-					break;
-					
-				case 22: 
-					SDL_BlitSurface(fow->corners[11], NULL, surface, &tempRect);
-					fow -> tiles[y][x].visible = 2;
-					break;
+				case 10: blit_tile(surface, fow, &tileRect, y, x, 0); break;
+				case 11: blit_tile(surface, fow, &tileRect, y, x, 1); break;					
+				case 12: blit_tile(surface, fow, &tileRect, y, x, 2); break;	
+				case 13: blit_tile(surface, fow, &tileRect, y, x, 3); break;
+				case 14: blit_tile(surface, fow, &tileRect, y, x, 4); break;
+				case 15: blit_tile(surface, fow, &tileRect, y, x, 5); break;
+				case 16: blit_tile(surface, fow, &tileRect, y, x, 6); break;
+				case 17: blit_tile(surface, fow, &tileRect, y, x, 7); break;
+				case 18: blit_tile(surface, fow, &tileRect, y, x, 8); break;
+				case 19: blit_tile(surface, fow, &tileRect, y, x, 9); break;
+				case 20: blit_tile(surface, fow, &tileRect, y, x, 10); break;
+				case 21: blit_tile(surface, fow, &tileRect, y, x, 11); break;
 			}
 		}
 	}
@@ -157,7 +105,7 @@ void init_fog_of_war(struct fogOfWarStruct **fow)
 
 			for(int x = 0; x < TOTALTILESX; x++)
 			{
-				(*fow) -> tiles[y][x].visible = 0;
+				(*fow) -> tiles[y][x].visible = 1;
 				(*fow) -> tiles[y][x].rect.x = (x * TILE_WIDTH );
 				(*fow) -> tiles[y][x].rect.y = (y * TILE_HEIGHT);
 				(*fow) -> tiles[y][x].rect.w = ( TILE_WIDTH  );

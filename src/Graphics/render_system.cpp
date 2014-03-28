@@ -13,6 +13,15 @@
 #define SYSTEM_MASK (COMPONENT_RENDER_PLAYER | COMPONENT_POSITION) /**< The entity must have a render player and position component
                                                                     * for processing by this system. */
 #define IMAGE_WIDTH			400
+
+
+struct fogOfWarPlayerPosition
+{
+	World *world;
+	PositionComponent *pos;
+	struct fogOfWarStruct *fow;
+};
+
                                                                     
 extern SDL_Rect map_rect; /**< The rectangle containing the map. */
 
@@ -22,7 +31,10 @@ SDL_Surface *ibeam;
 
 int subOne(int n);
 int addOne(int n);
-void makeVisible(struct fogOfWarStruct *fow, PositionComponent *position);
+void makeSurroundingTilesVisible(struct fogOfWarPlayerPosition *fowp);
+void setVisibilityType					(struct fogOfWarPlayerPosition *fowp, int yDel, int xDel, int visibility);
+
+int wall_collision(World *world, PositionComponent entity);
 
 /**
  * Render a player onto the map. 
@@ -141,13 +153,20 @@ void render_player_system(World& world, SDL_Surface* surface, struct fogOfWarStr
 
 	
 	/*SAM*********************************/
-	makeVisible(fow, position);
+	struct fogOfWarPlayerPosition fowp;
+	
+	fowp.world = &world;
+	fowp.pos	 = position;
+	fowp.fow   = fow;
+	
+	makeSurroundingTilesVisible(&fowp);
 	/*************************************/
 
 }
 
+
 /*SAM******************************/
-void makeVisible(struct fogOfWarStruct *fow, PositionComponent *position)
+void makeSurroundingTilesVisible(struct fogOfWarPlayerPosition *fowp)
 {
 
 /*******************
@@ -163,70 +182,88 @@ void makeVisible(struct fogOfWarStruct *fow, PositionComponent *position)
 *******************/
 
 
-	int xPos = (double)position->x / TILE_WIDTH;
-	int yPos = (double)position->y / TILE_HEIGHT;
+	int xPos = (double)fowp->pos->x / TILE_WIDTH;
+	int yPos = (double)fowp->pos->y / TILE_HEIGHT;
 
 	int by = addOne(yPos);
 	int ty = subOne(yPos);
 	int lx = subOne(xPos);
 	int rx = addOne(xPos);
 	
-	fow -> xOffset = -map_rect.x;
-	fow -> yOffset = -map_rect.y;
+	fowp -> fow -> xOffset = -map_rect.x;
+	fowp -> fow -> yOffset = -map_rect.y;
 	
+
+	#define LEFT -1
+	#define RGHT +1
+	#define TOP	 -1
+	#define BOT	 +1
+
+	setVisibilityType(fowp, 0, 0, 0);
+
+	setVisibilityType(fowp, TOP,  0, 0);
+	setVisibilityType(fowp, BOT,  0, 0);
+
+	setVisibilityType(fowp, 0,  LEFT, 0);
+	setVisibilityType(fowp, 0,  RGHT, 0);
 	
-	// standing on it
-	fow -> tiles[yPos][xPos].visible = 1; // 1
-
-
-	// immediate top & bottom
-	fow -> tiles[ty][xPos].visible = 1; // 2 // top
-	fow -> tiles[by][xPos].visible = 1; // 2 // bottom
-
-	// immediate left & right
-	fow -> tiles[yPos][rx].visible = 1; // 2 // right
-	fow -> tiles[yPos][lx].visible = 1; // 2 // left
+	setVisibilityType(fowp, 0, (RGHT + RGHT), 0);
+	setVisibilityType(fowp, 0, (LEFT + LEFT), 0);
 	
+	setVisibilityType(fowp, TOP, LEFT, 0);
+	setVisibilityType(fowp, BOT, RGHT, 0);
 	
-	// far top & bottom
-	fow -> tiles[subOne(ty)][xPos].visible = 1; // 3 // top
-	fow -> tiles[addOne(by)][xPos].visible = 1; // 3 // bottom
-		
-	// far left & right
-	fow -> tiles[yPos][ addOne(rx) ].visible = 1; // 3 // right
-	fow -> tiles[yPos][ subOne(lx) ].visible = 1; // 3 // left
+	setVisibilityType(fowp, TOP, RGHT, 0);
+	setVisibilityType(fowp, BOT, LEFT, 0);
 	
+	setVisibilityType(fowp, (TOP + TOP),  0, 0);
+	setVisibilityType(fowp, (BOT + BOT),  0, 0);
 	
-	// immediate right corners
-	fow -> tiles[ty][rx].visible = 1; // 4 // top right
-	fow -> tiles[by][rx].visible = 1; // 4 // bottom right
-
-	// immediate left corners
-	fow -> tiles[ty][lx].visible = 1; // 4 // top left
-	fow -> tiles[by][lx].visible = 1; // 4 // bottom right
-
-	// top left arc
-	fow -> tiles[subOne(ty)][subOne(lx)].visible = 11; // 5 // arrow head
-	fow -> tiles[subOne(ty)][ lx ].visible = 12; // 5 // arrow right
-	fow -> tiles[ ty ][subOne(lx)].visible = 13; // 5 // arrow left
-
-
-	// bottom left arc
-	fow -> tiles[addOne(by)][subOne(lx)].visible = 14; // 5 // arrow head
-	fow -> tiles[addOne(by)][ lx ].visible = 16; // 5 // arrow left
-	fow -> tiles[ by ][subOne(lx)].visible = 15; // 5 // arrow right
-		
-
-	// top right arc
-	fow -> tiles[subOne(ty)][addOne(rx)].visible = 17; // 5 // arrow head
-	fow -> tiles[ ty ][addOne(rx)].visible = 18; // 5 // arrow right
-	fow -> tiles[subOne(ty)][ rx ].visible = 19; // 5 // arrow left
+	setVisibilityType(fowp, (TOP + TOP), LEFT, 0); 
+	setVisibilityType(fowp, (BOT + BOT), LEFT, 0);
 	
-	// bottom right arc
-	fow -> tiles[addOne(by)][addOne(rx)].visible = 20; // 5 // arrow head
-	fow -> tiles[ by ][addOne(rx)].visible = 21; // 5 // arrow right
-	fow -> tiles[addOne(by)][ rx ].visible = 22; // 5 // arrow left
+	setVisibilityType(fowp, (TOP + TOP), RGHT, 0);
+	setVisibilityType(fowp, (BOT + BOT), RGHT, 0);
+	
+	setVisibilityType(fowp, TOP, (LEFT + LEFT), 0);
+	setVisibilityType(fowp, TOP, (RGHT + RGHT), 0);
+	
+	setVisibilityType(fowp, BOT, (LEFT + LEFT), 0);
+	setVisibilityType(fowp, BOT, (RGHT + RGHT), 0);
+	
+	//setVisibilityType(fowp, (BOT + BOT), (RGHT + RGHT), 16);
 }
+
+
+
+int getTilePos(int pos, int delta)
+{
+	int absd = (delta > 0) ? delta : (-1) * delta;
+	
+	for(int i = 0; i < absd; i++)
+		pos = (delta < 0) ? subOne(pos) : addOne(pos);
+		
+	return pos;
+}
+
+void setVisibilityType(struct fogOfWarPlayerPosition *fowp, int yDel, int xDel, int visibility)
+{
+	struct fogOfWarStruct *fow 		= fowp -> fow;
+	PositionComponent 	  *pos 		= fowp -> pos;
+	World 								*world	= fowp -> world;
+
+	if(wall_collision(world, *pos) == COLLISION_WALL) return;
+
+	int xPos = pos->x / TILE_WIDTH;
+	int yPos = pos->y / TILE_HEIGHT;
+	
+	int y = getTilePos(yPos, yDel);
+	int x = getTilePos(xPos, xDel);
+	
+	
+	fow -> tiles[y][x].visible[level] = visibility;
+}
+
 
 int addOne(int n)
 {

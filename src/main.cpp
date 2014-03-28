@@ -85,7 +85,7 @@ int main(int argc, char* argv[]) {
 	//SDL_Init(SDL_INIT_VIDEO);
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
 	
-	window = SDL_CreateWindow("Cut The Power", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_OPENGL);
+	window = SDL_CreateWindow("Cut The Power", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, 0);
 	surface = SDL_GetWindowSurface(window);
 	
 	if (window == NULL) {

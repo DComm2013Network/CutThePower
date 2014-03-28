@@ -12,6 +12,7 @@
 
 #define TILE_WIDTH	40 /**< The width of a tile in pixels. */
 #define TILE_HEIGHT	40 /**< The height of a tile in pixels. */
+#define NUMLEVELS		8
 
 struct fowtile
 {
