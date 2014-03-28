@@ -5,10 +5,10 @@
 #include "systems.h"
 #include "world.h"
 #include "level.h"
+#include <time.h>
 
 #define HEIGHT 600
 #define WIDTH 800
-
 /*
  * 
  * This is a simple demo that illustrates the use of component based systems. The code in here
@@ -83,10 +83,13 @@
  * 
  * 
  */
+extern int send_router_fd[];
+
 int main() {
 	SDL_Window *window;
 	SDL_Surface *surface;
-
+	double begTime = clock() / (CLOCKS_PER_SEC/1000.0);
+	double currentTime;
 	World world;
 	bool running = true;
 	InputComponent input;
@@ -142,6 +145,13 @@ int main() {
 		movement_system(world);
 		render_system(world, surface);
 		
+		currentTime = clock() / (CLOCKS_PER_SEC/1000.0);
+		if((currentTime - begTime) >= SEND_FREQUENCY * 10)
+		{
+			send_location(world, send_router_fd[WRITE_END]);
+		}
+		begTime = clock() / (CLOCKS_PER_SEC/1000.0);
+
 		SDL_UpdateWindowSurface(window);
 	}
 	

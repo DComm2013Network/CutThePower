@@ -18,7 +18,6 @@
 
 extern int floor_change_flag;
 extern int send_router_fd[];
-extern int rcv_router_fd[];
 extern unsigned int player_entity;
 extern int network_ready;
 int targl = 0;
@@ -326,7 +325,6 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 				temp.width = position->width;
 				temp.height = position->height;
 				temp.level = position->level;
-
 				bool moved = false;
 				int collisionType = -1;
 				
@@ -334,7 +332,6 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 					add_force(world, entity, world->movement[entity].acceleration, -90);
 
 					play_animation(world, entity, "up");
-					moved = true;
 				}
 				else {
 					cancel_animation(world, entity);
@@ -342,7 +339,6 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 				if (command->commands[C_DOWN]) {
 					add_force(world, entity, world->movement[entity].acceleration, 90);
 					play_animation(world, entity, "down");
-					moved = true;
 				}
 				else {
 					cancel_animation(world, entity);
@@ -350,7 +346,6 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 				if (command->commands[C_LEFT]) {
 					add_force(world, entity, world->movement[entity].acceleration, 180);
 					play_animation(world, entity, "left");
-					moved = true;
 				}
 				else {
 					cancel_animation(world, entity);
@@ -358,7 +353,6 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 				if (command->commands[C_RIGHT]) {
 					add_force(world, entity, world->movement[entity].acceleration, 0);
 					play_animation(world, entity, "right");
-					moved = true;
 				}
 				else {
 					cancel_animation(world, entity);
@@ -438,8 +432,6 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 						//send_status_ready(world, sendpipe, 0);
 					}
 				}
-				if(moved && !floor_change_flag)
-					send_location(world, sendpipe);
 			}
 		}
 		else if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_POSITION | COMPONENT_MOVEMENT | COMPONENT_COLLISION)) {
