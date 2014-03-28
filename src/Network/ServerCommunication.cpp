@@ -225,7 +225,6 @@ int handle_udp_in(int router_pipe_fd, UDPsocket udp_sock)
         free(game_packet);
         return -1;
     }
-    fprintf(stderr, "Type: %u\n", packet_type);
 
     free(game_packet);
     return 0;

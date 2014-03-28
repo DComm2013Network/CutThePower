@@ -42,7 +42,6 @@ int client_update_system(World *world, int net_pipe) {
 	uint32_t 	type;
 	uint32_t 	num_packets;
 	uint64_t	signal = 1;
-	uint64_t 	sem_buf;
 	unsigned	i;
 	if(!player_table)
 	{
@@ -130,22 +129,70 @@ int client_update_system(World *world, int net_pipe) {
 
 	return 0;
 }
+/**
+ * Updates the positions and movement properties of every other player.
+ *
+ * The function will ignore players that aren't on the current floor and the client's
+ * own player, since they're said to be authoritative over their own position (except
+ * for their floor).
+ *
+ * @param[in, out]	world 	The world struct holding the data to be updated.
+ * @param[in] 		packet	The packet containing update information.
+ *
+ * @designer Shane Spoor
+ * @author Shane Spoor
+ */
 void client_update_chat(World *world, void *packet)
 {
 	PKT_SND_CHAT *snd_chat = (PKT_SND_CHAT*)packet;
 	printf("%s", snd_chat->message);
 }
+/**
+ * Updates the positions and movement properties of every other player.
+ *
+ * The function will ignore players that aren't on the current floor and the client's
+ * own player, since they're said to be authoritative over their own position (except
+ * for their floor).
+ *
+ * @param[in, out]	world 	The world struct holding the data to be updated.
+ * @param[in] 		packet	The packet containing update information.
+ *
+ * @designer Shane Spoor
+ * @author Shane Spoor
+ */
 void client_update_obj_loc(World *world, void *packet)
 {
 	PKT_OBJ_LOC *obj_loc = (PKT_OBJ_LOC*) packet;
 }
-
+/**
+ * Updates the positions and movement properties of every other player.
+ *
+ * The function will ignore players that aren't on the current floor and the client's
+ * own player, since they're said to be authoritative over their own position (except
+ * for their floor).
+ *
+ * @param[in, out]	world 	The world struct holding the data to be updated.
+ * @param[in] 		packet	The packet containing update information.
+ *
+ * @designer Shane Spoor
+ * @author Shane Spoor
+ */
 void client_update_obj_status(World *world, void *packet)
 {
 	PKT_OBJ_LOC *obj_loc = (PKT_OBJ_LOC*) packet;
 }
 
-
+/**
+ * Updates the the floor and position of the controllable player. If a player intiated
+ * floor change occurs, will also set the floor change flag to 0 after setting the players
+ * location.
+ *
+ * @param[in, out]	world 	The world struct holding the data to be updated.
+ * @param[in] 		packet	The packet containing update information.
+ *
+ * @designer Ramzi Chennafi
+ * @author Ramzi Chennafi 
+ */
 void client_update_floor(World *world, void *packet)
 {
 	PKT_FLOOR_MOVE* floor_move = (PKT_FLOOR_MOVE*)packet;

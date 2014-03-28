@@ -4,10 +4,12 @@
 /** @} */
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 
 #include "../world.h"
 #include "components.h"
 #include "systems.h"
+#include "text.h"
 #include "../Input/menu.h"
 
 #define SYSTEM_MASK (COMPONENT_RENDER_PLAYER | COMPONENT_POSITION) /**< The entity must have a render player and position component
@@ -16,8 +18,8 @@
                                                                     
 extern SDL_Rect map_rect; /**< The rectangle containing the map. */
 
-const char *character_map = ".01234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-SDL_Surface *text_chars[38]; /**< we have 37 different characters. */
+//const char *character_map = ".01234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+//SDL_Surface *text_chars[38]; /**< we have 37 different characters. */
 SDL_Surface *ibeam;
 
 /**
@@ -45,7 +47,6 @@ SDL_Surface *ibeam;
 void render_player_system(World& world, SDL_Surface* surface) {
 	
 	unsigned int entity;
-	unsigned int i, j;
 	RenderPlayerComponent 	*renderPlayer;
 	PositionComponent 		*position;
 	TextFieldComponent		*text;
@@ -104,30 +105,16 @@ void render_player_system(World& world, SDL_Surface* surface) {
 				
 				text = &(world.text[entity]);
 				
-				playerRect.y += 5;
-				playerRect.x -= (IMAGE_WIDTH / 2);
+				playerRect.x += 10;
+				playerRect.y += 8;
 				
-				for(i = 0; i < text->length; i++) {
-					
-					for(j = 0; j < strlen(character_map); j++) {
-						if (character_map[j] == text->text[i])
-							break;
-					}
-					
-					playerRect.x += CHARACTER_WIDTH;
-					
-					//If we find a character, draw it
-					if (j < strlen(character_map)) {
-						
-						SDL_BlitSurface(text_chars[j], NULL, surface, &playerRect);
-						
-					}
-					
-				}
+				//TODO: Store the text in a component instead of creating it every frame.
+				//Perhaps we should store it in the renderPlayer component and draw the
+				//textbox if it has a text field component?
+				SDL_BlitSurface(draw_small_text(text->text), NULL, surface, &playerRect);
 				
 				if (text->focused) {
-					playerRect.x += CHARACTER_WIDTH;
-					playerRect.y += 5;
+					playerRect.x += get_small_text_width(text->text) + 1;
 					
 					SDL_BlitSurface(ibeam, NULL, surface, &playerRect);
 				}
@@ -140,7 +127,7 @@ void render_player_system(World& world, SDL_Surface* surface) {
 
 void init_render_player_system() {
 	
-	int i;
+	/*int i;
 	const int pos = strlen("assets/Graphics/screen/menu/keymap/keymap_");
 	//char filename[64];
 	char *filename = (char*)malloc(sizeof(char) * 128);
@@ -158,8 +145,10 @@ void init_render_player_system() {
 		if (text_chars[i] == 0) {
 			printf("Error loading %c\n", character_map[i]);
 		}
-	}
+	}*/
 	
-	ibeam = IMG_Load("assets/Graphics/screen/menu/keymap/keymap_ibeam.png");
-	free(filename);
+	if ((ibeam = IMG_Load("assets/Graphics/screen/menu/ibeam.png")) == 0) {
+		printf("Error loading ibeam image.\n");
+	}
+	//free(filename);
 }
