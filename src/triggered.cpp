@@ -402,6 +402,7 @@ void animation_end(World *world, unsigned int entity) {
 		game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
 
 		init_client_network(send_router_fd, rcv_router_fd);
+		init_client_update(world);
 		send_intialization(world, send_router_fd[WRITE_END], username, serverip);
 	}
 	//LOADING SCREEN ENDED

@@ -227,17 +227,6 @@ void client_update_objectives(World *world, void *packet)
 {
 	PKT_OBJECTIVE_STATUS *objective_update = (PKT_OBJECTIVE_STATUS *)packet;
 	
-	if(!objective_table)
-	{
-		objective_table = (unsigned char *)malloc(MAX_OBJECTIVES);
-		int objectives_taken = 0;
-		for(int i = 0; i < MAX_ENTITIES; ++i)
-		{
-			if(IN_THIS_COMPONENT(world->mask[i], COMPONENT_OBJECTIVE))
-				objective_table[objectives_taken++] = i;
-		}
-	}
-	
 	for(int i = 0; i < MAX_OBJECTIVES; ++i)
 	{
 	    if(!objective_update->objectives_captured[i]) // If the ojective is non-existent, then all following objectives are non-existent as well
@@ -262,12 +251,6 @@ void client_update_objectives(World *world, void *packet)
 void client_update_status(World *world, void *packet)
 {
 	PKT_GAME_STATUS *status_update = (PKT_GAME_STATUS *)packet;
-
-	if(!player_table)
-	{
-		player_table = (unsigned int *)malloc(sizeof(unsigned int) * MAX_PLAYERS);
-		memset(player_table, 255, MAX_PLAYERS * sizeof(unsigned int)); 
-	}
 
 	for(int i = 0; i < MAX_PLAYERS; i++)
 	{
@@ -340,4 +323,33 @@ int client_update_info(World *world, void *packet)
 
 	return CONNECT_CODE_ACCEPTED;
 }
+
+/**
+ * Initialises the lookup tables for players and objectives.
+ *
+ * @return 1 if the tables were initialised properly, or 0 if the memory couldn't be allocated.
+ */
+int init_client_update(World *world)
+{
+	int objectives_taken = 0;
+
+	objective_table = (unsigned char *)malloc(MAX_OBJECTIVES);
+	player_table = (unsigned int *)malloc(sizeof(unsigned int) * MAX_PLAYERS);
+
+	if(!objective_table || !player_table)
+	{
+	    perror("init_client_update: malloc");
+	    return 0;
+	}
+	
+	for(int i = 0; i < MAX_ENTITIES; ++i)
+	{
+		if(IN_THIS_COMPONENT(world->mask[i], COMPONENT_OBJECTIVE))
+			objective_table[objectives_taken++] = i;
+	}
+
+	memset(player_table, 255, MAX_PLAYERS * sizeof(unsigned int));
+	return 1;
+}
+
 
