@@ -16,6 +16,8 @@ extern int floor_change_flag;
 extern int send_router_fd[];
 extern int rcv_router_fd[];
 extern unsigned int player_entity;
+extern int network_ready;
+
 
 int handle_collision_target(World *world, int entityIndex) {
 	if (world->collision[entityIndex].timer < world->collision[entityIndex].timerMax) {
@@ -159,9 +161,29 @@ void handle_y_collision(CollisionData data, PositionComponent& position, Movemen
 	}
 }
 
-void rebuild_floor()
+void rebuild_floor(World * world, int targl)
 {
-
+	destroy_world_not_player(world);
+    switch (targl) {
+		case 0:
+			map_init(world, "assets/Graphics/map/map_00/map00.txt", "assets/Graphics/map/map_00/tiles.txt");
+			break;
+		case 1:
+			map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/tiles.txt");
+			break;
+		case 2:
+			map_init(world, "assets/Graphics/map/map_02/map02.txt", "assets/Graphics/map/map_02/tiles.txt");
+			break;
+		case 3:
+			map_init(world, "assets/Graphics/map/map_03/map03.txt", "assets/Graphics/map/map_03/tiles.txt");
+			break;
+	}
+	for (unsigned int i = 0; i < MAX_ENTITIES; i++) {
+		if (IN_THIS_COMPONENT(world->mask[i], COMPONENT_LEVEL)) {
+			world->level[i].levelID = targl;
+			break;
+		}
+	}
 }
 
 void handle_entity_collision(CollisionData data, World * world, int curEntityID) {
@@ -173,32 +195,18 @@ void handle_entity_collision(CollisionData data, World * world, int curEntityID)
 		break;
 	case COLLISION_STAIR:
 		if (world->collision[curEntityID].type == COLLISION_HACKER || world->collision[curEntityID].type == COLLISION_GUARD) {
-			int targx = world->wormhole[data.entityID].targetX, targy = world->wormhole[data.entityID].targetY, targl = world->wormhole[data.entityID].targetLevel;
+			int targx = world->wormhole[data.entityID].targetX;
+			int targy = world->wormhole[data.entityID].targetY;
+			int targl = world->wormhole[data.entityID].targetLevel;
 			
 			move_request(world, send_router_fd[WRITE_END], targl, targx, targy);
+		 	if(!network_ready)
+		 	{
+		 		rebuild_floor(world, targl);
+		 		break;
+		 	}
+
 		 	floor_change_flag = 1;
-			destroy_world_not_player(world);
-	        switch (targl) {
-				case 0:
-					map_init(world, "assets/Graphics/map/map_00/map00.txt", "assets/Graphics/map/map_00/tiles.txt");
-					break;
-				case 1:
-					map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/tiles.txt");
-					break;
-				case 2:
-					map_init(world, "assets/Graphics/map/map_02/map02.txt", "assets/Graphics/map/map_02/tiles.txt");
-					break;
-				case 3:
-					map_init(world, "assets/Graphics/map/map_03/map03.txt", "assets/Graphics/map/map_03/tiles.txt");
-					break;
-			}
-			for (unsigned int i = 0; i < MAX_ENTITIES; i++) {
-				if (IN_THIS_COMPONENT(world->mask[i], COMPONENT_LEVEL)) {
-					world->level[i].levelID = targl;
-					break;
-				}
-			}
-			//printf("t: %i\n", world->position[player_entity].level);
 		}
 		break;
 	case COLLISION_HACKER:
@@ -300,17 +308,17 @@ void movement_system(World* world, int sendpipe) {
 					position->x = temp.x + goffsetW;
 					position->y = temp.y + goffsetH;
 				}
-				// if (position->level == 0) {
-				// 	if (position->x < 240) {
-				// 		send_status_ready(world, sendpipe, 1);
-				// 	}
-				// 	else if (position->x > 1000) {
-				// 		send_status_ready(world, sendpipe, 2);
-				// 	}
-				// 	else {
-				// 		//send_status_ready(world, sendpipe, 0);
-				// 	}
-				// }
+				if (position->level == 0) {
+					if (position->x < 240) {
+						send_status_ready(world, sendpipe, 1);
+					}
+					else if (position->x > 1000) {
+						send_status_ready(world, sendpipe, 2);
+					}
+					else {
+						//send_status_ready(world, sendpipe, 0);
+					}
+				}
 				if(moved && !floor_change_flag)
 					send_location(world, sendpipe);
 			}
