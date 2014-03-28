@@ -424,12 +424,12 @@ void animation_end(World *world, unsigned int entity) {
 		stop_effect();
 		
 		map_init(world, "assets/Graphics/map/map_00/map00.txt", "assets/Graphics/map/map_00/tiles.txt");
-		player_entity = create_player(world, 620, 420, true, COLLISION_HACKER);
+		player_entity = create_player(world, 620, 420, true, COLLISION_GUARD);
 		
-		create_objective(world, 620, 380, 40, 40, 0, 0);
 		
-		world->mask[player_entity] |= COMPONENT_ANIMATION;
 		load_animation("assets/Graphics/player/p0/rob_animation.txt", world, player_entity);
+		unsigned int e = create_player(world, 620, 460, false, COLLISION_HACKER);
+		load_animation("assets/Graphics/player/p0/rob_animation.txt", world, e);
 		
 		
 		//PUT CLIENT START CODE HERE!!!@!@!!!!

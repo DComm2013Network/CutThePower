@@ -8,6 +8,9 @@
 #define WIDTH 1280
 #define HEIGHT 768
 
+//max FPS
+#define FPS_MAX 60
+
 //Maximum entities that will be used.
 #define MAX_ENTITIES 256
 
@@ -35,6 +38,71 @@ typedef struct {
 	WormholeComponent		wormhole[MAX_ENTITIES];
 	ObjectiveComponent		objective[MAX_ENTITIES];
 } World;
+
+class FPS {
+private:
+	float max_frame_ticks;
+	Uint32 last_ticks;
+	int fps;
+	int numFrames;
+	Uint32 startTime;
+
+	Uint32 current_ticks;
+	Uint32 target_ticks;
+
+public:
+	void init() {
+		startTime = SDL_GetTicks();
+		max_frame_ticks = (1000.0/(float)FPS_MAX) + 0.00001;
+		fps = 0;
+		last_ticks = SDL_GetTicks();
+		numFrames = 0; 
+	}
+
+	void limit() {
+		fps++;
+		target_ticks = last_ticks + Uint32(fps * max_frame_ticks);
+		current_ticks = SDL_GetTicks();
+
+		if (current_ticks < target_ticks) {
+			SDL_Delay(target_ticks - current_ticks);
+			current_ticks = SDL_GetTicks();
+		}
+
+		if (current_ticks - last_ticks >= 1000) {
+			fps = 0;
+			last_ticks = SDL_GetTicks();
+		}
+	}
+
+	float update() {
+		numFrames++;
+		float display_fps = ( numFrames/(float)(SDL_GetTicks() - startTime) )*1000;
+		if (numFrames >= (100.0 / ((double)60 / FPS_MAX))) {
+			startTime = SDL_GetTicks();
+			numFrames = 0;
+		}
+		return display_fps;
+	}
+
+	float getFPS() {
+		int newtime = SDL_GetTicks();
+		if (newtime - startTime != 0) {
+			float display_fps = ( numFrames/(float)(newtime - startTime) )*1000;
+			if (numFrames >= ((100.0 / ((double)60 / FPS_MAX)) + 1)) {
+				startTime = SDL_GetTicks();
+				numFrames = 0;
+			}
+			if (display_fps > 0) {
+				return display_fps;
+			} else {
+				return FPS_MAX;
+			}
+		} else {
+			return FPS_MAX;
+		}
+	}
+};
 
 void init_world(World* world);
 unsigned int create_entity(World* world, unsigned int attributes);

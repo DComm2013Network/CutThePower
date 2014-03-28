@@ -10,58 +10,9 @@
 #include <time.h>
 #include <stdio.h>
 
-#define FPS_MAX 60
-
 int game_net_signalfd, game_net_lockfd;
 bool running;
 unsigned int player_entity;
-
-class FPS {
-private:
-	float max_frame_ticks;
-	Uint32 last_ticks;
-	int fps;
-	int numFrames;
-	Uint32 startTime;
-
-	Uint32 current_ticks;
-	Uint32 target_ticks;
-
-public:
-	void init() {
-		startTime = SDL_GetTicks();
-		max_frame_ticks = (1000.0/(float)FPS_MAX) + 0.00001;
-		fps = 0;
-		last_ticks = SDL_GetTicks();
-		numFrames = 0; 
-	}
-
-	void limit() {
-		fps++;
-		target_ticks = last_ticks + Uint32(fps * max_frame_ticks);
-		current_ticks = SDL_GetTicks();
-
-		if (current_ticks < target_ticks) {
-			SDL_Delay(target_ticks - current_ticks);
-			current_ticks = SDL_GetTicks();
-		}
-
-		if (current_ticks - last_ticks >= 1000) {
-			fps = 0;
-			last_ticks = SDL_GetTicks();
-		}
-	}
-
-	void update() {
-		numFrames++;
-		float display_fps = ( numFrames/(float)(SDL_GetTicks() - startTime) )*1000;
-		//printf("%f\n", display_fps);
-		if (numFrames >= (100.0 / ((double)60 / FPS_MAX))) {
-			startTime = SDL_GetTicks();
-			numFrames = 0;
-		}
-	}
-};
 
 int main(int argc, char* argv[]) {
 	SDL_Window *window;
@@ -109,7 +60,7 @@ int main(int argc, char* argv[]) {
 		//INPUT
 		KeyInputSystem(world);
 		MouseInputSystem(world);
-		movement_system(world);
+		movement_system(world, fps);
 		if (player_entity < MAX_ENTITIES) {
 			map_render(surface, world, player_entity);
 			//send_system(world, send_router_fd[WRITE_END]);
@@ -132,8 +83,6 @@ int main(int argc, char* argv[]) {
 	
 	//SDLNet_Quit();
 	SDL_Quit();
-	
-	printf("Exiting The Game\n");
 	
 	printf("Exiting The Game\n");
 	

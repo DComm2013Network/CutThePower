@@ -15,4 +15,6 @@
 #define COLLISION_BELTLEFT		10011
 #define COLLISION_SOLID			10012
 
+#define MSG_ROOMCHANGE			20000
+
 #endif
