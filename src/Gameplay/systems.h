@@ -10,9 +10,9 @@
 
 #include "../world.h"
 void render_system(World* world, SDL_Surface *surface);
-void movement_system(World* world, int sendpipe);
 void add_force(World* world, unsigned int entity, float magnitude, float dir);
 void apply_force(World* world, unsigned int entity);
+void movement_system(World* world, FPS fps, int sendpipe);
 void update_system(World* world);
 
 #endif

@@ -81,7 +81,7 @@
 // Game Status Definitions
 
 #define GAME_STATE_WAITING 		0x001
-#define GAME_STATE_ACTIVE 		0x002
+#define GAME_STATE_WAITING_ACTIVE 		0x002
 #define GAME_STATE_OVER 		0x003
 #define PLAYER_STATE_READY 		0x004
 #define PLAYER_STATE_WAITING 	0x005
@@ -125,7 +125,7 @@ typedef struct pkt02{
 } PKT_PLAYER_CONNECT;
 
 typedef struct pkt03{
-	int			player_valid[MAX_PLAYERS];
+	uint32_t	player_valid[MAX_PLAYERS];
 	char 		otherPlayers_name[MAX_PLAYERS][MAX_NAME];
 	teamNo_t 	otherPlayers_teams[MAX_PLAYERS];
 	character_t characters[MAX_PLAYERS];

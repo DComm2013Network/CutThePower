@@ -21,43 +21,41 @@ char *username;
 char *serverip;
 
 bool menu_click(World *world, unsigned int entity) {
-	
 	//printf("Clicked: %s\n", world->button[entity].label);
-	
+
 	//MAIN MENU
 	if (strcmp(world->button[entity].label, "mainmenu_play") == 0) {
-		
+
 		destroy_menu(world);
 		
 		create_select_screen(world);
-		
 	}
 	else if (strcmp(world->button[entity].label, "mainmenu_options") == 0) {
-		
+
 		destroy_menu(world);
-		
+
 		create_options_menu(world);
 	}
 	else if (strcmp(world->button[entity].label, "mainmenu_credits") == 0) {
-		
+
 		destroy_menu(world);
-		
+
 		create_credits_menu(world);
-		
+
 	}
 	else if (strcmp(world->button[entity].label, "mainmenu_exit") == 0) {
 		destroy_world(world);
 		
 		running = false;
 	}
-	
+
 	//OPTIONS
 	else if (strcmp(world->button[entity].label, "options_back") == 0) {
-		
+
 		destroy_menu(world);
-		
+
 		create_main_menu(world);
-		
+
 	}
 	else if (strcmp(world->button[entity].label, "options_sound_off") == 0) {
 		
@@ -69,7 +67,7 @@ bool menu_click(World *world, unsigned int entity) {
 		
 		enable_sound(true);
 		play_music(SOUND_MUSIC_MENU_RAIN);
-		
+
 	}
 	else if (strcmp(world->button[entity].label, "options_sound_on") == 0) {
 		
@@ -80,25 +78,25 @@ bool menu_click(World *world, unsigned int entity) {
 		strcpy(world->button[entity].label, "options_sound_off");
 		
 		enable_sound(false);
-		
+
 	}
 	else if (strcmp(world->button[entity].label, "options_keymap") == 0) {
-		
+
 		destroy_menu(world);
-		
+
 		create_keymap_menu(world);
-		
+
 	}
-	
+
 	//KEYMAP
 	else if (strcmp(world->button[entity].label, "keymap_back") == 0) {
-		
+
 		destroy_menu(world);
 		
 		KeyMapInit("assets/Input/keymap.txt");
 		
 		create_options_menu(world);
-		
+
 	}
 	else if (strcmp(world->button[entity].label, "keymap_save") == 0) {
 
@@ -138,7 +136,7 @@ bool menu_click(World *world, unsigned int entity) {
 		for(int i = 0; i < MAX_ENTITIES; i++) {
 			
 			if (IN_THIS_COMPONENT(world->mask[i], COMPONENT_TEXTFIELD)) {
-								
+							
 
 				if (strcmp(world->text[i].name, "keymap_up") == 0) {
 					fprintf(keymapFile, "C_UP W\n");
@@ -155,7 +153,6 @@ bool menu_click(World *world, unsigned int entity) {
 				else if (strcmp(world->text[i].name, "keymap_action") == 0) {
 					fprintf(keymapFile, "C_ACTION SPACE\n");
 				}
-				
 			}
 		}
 		fclose(keymapFile);
@@ -258,7 +255,6 @@ bool menu_click(World *world, unsigned int entity) {
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_ramzi") == 0) {
-		
 		destroy_menu(world);
 		character = RAMZI;
 		create_setup_menu(world);
@@ -302,60 +298,56 @@ bool menu_click(World *world, unsigned int entity) {
 	else if (strcmp(world->button[entity].label, "menu_select_random") == 0) {
 		
 		destroy_menu(world);
-		
 		character = rand() % 18;
-		
 		create_setup_menu(world);
 		
 	}
-	
+
 	//CREDITS
 	else if (strcmp(world->button[entity].label, "credits_back") == 0) {
-		
+
 		destroy_menu(world);
-		
+
 		create_main_menu(world);
-		
+
 	}
-	
+
 	//SETUP
 	else if (strcmp(world->button[entity].label, "setup_back") == 0) {
-		
+
 		destroy_menu(world);
-		
+
 		create_main_menu(world);
-		
+
 	}
 	else if (strcmp(world->button[entity].label, "setup_play") == 0) {
-		
 		char *username;
 		char *serverip;
-		
+
 		unsigned int i;
-		
+
 		stop_music();
 		stop_effect();
-		
+
 		for(i = 0; i < MAX_ENTITIES; i++) {
-			
+
 			if (IN_THIS_COMPONENT(world->mask[i], COMPONENT_TEXTFIELD)) {
-				
+
 				if (strcmp(world->text[i].name, "setup_username") == 0) {
 					username = world->text[i].text;
 				}
 				else if (strcmp(world->text[i].name, "setup_serverip") == 0) {
 					serverip = world->text[i].text;
 				}
-				
+
 			}
 		}
-		
+
 		printf("Username: %s\n", username);
 		printf("Server IP: %s\n", serverip);
 		
 		
 		#if SHOW_MENU_INTRO 
-		
 		destroy_world(world);
 		create_load_screen(world);
 		
@@ -365,25 +357,25 @@ bool menu_click(World *world, unsigned int entity) {
 		
 		animation_end(world, entity);
 		#endif
-		
+
 	}
-	
+
 	//BSOD
 	else if (strcmp(world->button[entity].label, "bsod_exit") == 0) {
-		
+
 		destroy_world(world);
-		
+
 		exit(0);
 	}
 	else if (strcmp(world->button[entity].label, "bsod_continue") == 0) {
-		
+
 		destroy_menu(world);
-		
+
 		create_main_menu(world);
 	}
-	
-	
-	
+
+
+
 	else {
 		printf("DID NOT HANDLE BUTTON: %s\n", world->button[entity].label);
 		return false;
@@ -392,14 +384,12 @@ bool menu_click(World *world, unsigned int entity) {
 }
 
 void animation_end(World *world, unsigned int entity) {
-	
 	AnimationComponent *animationComponent = &(world->animation[entity]);
-	
+
 	//INTRO SCREEN ENDED
 	if (animationComponent->id == 0) { //0 is the intro screen
-		
 		destroy_world(world);
-		
+
 		stop_music();
 		stop_effect();
 		
@@ -413,16 +403,12 @@ void animation_end(World *world, unsigned int entity) {
 
 		init_client_network(send_router_fd, rcv_router_fd);
 		send_intialization(world, send_router_fd[WRITE_END], username, serverip);
-		
-		
 	}
 	//LOADING SCREEN ENDED
 	else if (animationComponent->id == 1) { //1 is the loading screen
-		
+
 		destroy_world(world);
-		
+
 		create_intro(world);
 	}
 }
-
-

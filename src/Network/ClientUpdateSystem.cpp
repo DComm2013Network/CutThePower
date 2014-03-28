@@ -15,6 +15,7 @@
 #include "PipeUtils.h"
 #include "../world.h"
 #include "../systems.h"
+#include "../Gameplay/collision.h"
 #include <sys/poll.h>
 
 extern int send_ready;
@@ -148,6 +149,7 @@ void client_update_floor(World *world, void *packet)
 	world->position[player_table[controllable_playerNo]].x		= floor_move->xPos;
 	world->position[player_table[controllable_playerNo]].y		= floor_move->yPos;
 	world->position[player_table[controllable_playerNo]].level	= floor_move->new_floor;
+	rebuild_floor(world);
 	floor_change_flag = 0;
 }
 
@@ -231,7 +233,7 @@ void client_update_objectives(World *world, void *packet)
 		int objectives_taken = 0;
 		for(int i = 0; i < MAX_ENTITIES; ++i)
 		{
-			if(IN_THIS_COMPONENT(world->mask[i], OBJECTIVE_COMPONENT))
+			if(IN_THIS_COMPONENT(world->mask[i], COMPONENT_OBJECTIVE))
 				objective_table[objectives_taken++] = i;
 		}
 	}
@@ -241,7 +243,7 @@ void client_update_objectives(World *world, void *packet)
 	    if(!objective_update->objectives_captured[i]) // If the ojective is non-existent, then all following objectives are non-existent as well
 	        break;
 	    
-        world->objective[objective_table[i]] = objective_update->objectives_captured[i]; // Otherwise, set it to the value contained in the objective update packet
+        world->objective[objective_table[i]].status = objective_update->objectives_captured[i]; // Otherwise, set it to the value contained in the objective update packet
 	}
 }
 
