@@ -493,7 +493,6 @@ void create_load_screen(World *world) {
 	
 	world->renderPlayer[entity].width = WIDTH;
 	world->renderPlayer[entity].height = HEIGHT;
-
 	play_animation(world, entity, "load");
 }
 
@@ -537,4 +536,3 @@ void create_select_screen(World *world) {
 	world->renderPlayer[entity].width = WIDTH;
 	world->renderPlayer[entity].height = HEIGHT;
 }
-

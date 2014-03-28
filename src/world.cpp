@@ -290,7 +290,6 @@ unsigned int create_stair(World* world, int targetLevel, int targetX, int target
 									COMPONENT_WORMHOLE;
 
 			world->position[entity] = pos;
-			//world->renderPlayer[entity] = render;
 			world->wormhole[entity] = target;
 			world->collision[entity] = collision;
 			

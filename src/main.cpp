@@ -8,7 +8,6 @@
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
-#define FPS_MAX 60
 
 bool running;
 unsigned int player_entity;
@@ -46,7 +45,6 @@ int main(int argc, char* argv[]) {
 	
 	init_world(world);
 	srand(time(NULL));//random initializer
-
 	KeyMapInit("assets/Input/keymap.txt");
 	init_render_player_system();
 

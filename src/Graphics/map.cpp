@@ -188,7 +188,7 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 				int x, y, floor;
 				float targetX, targetY;
 				char dir;
-		
+
 				if (fscanf(fp_map, "%d %d %f %f %d %c", &x, &y, &targetX, &targetY, &floor, &dir) != 6) {
 					printf("Error loading stair\n");
 					return -1;

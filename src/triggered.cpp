@@ -256,42 +256,42 @@ bool menu_click(World *world, unsigned int entity) {
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_ramzi") == 0) {
 		destroy_menu(world);
-		character = RAMZI;
+		
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_robin") == 0) {
 		
 		destroy_menu(world);
-		character = ROBIN;
+		
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_sam") == 0) {
 		
 		destroy_menu(world);
-		character = SAM;
+		
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_shane") == 0) {
 		
 		destroy_menu(world);
-		character = SHANE;
+		
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_tim") == 0) {
 		
 		destroy_menu(world);
-		character = TIM;
+		
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_vincent") == 0) {
 		
 		destroy_menu(world);
-		character = VINCENT;
+
 		create_setup_menu(world);
 		
 	}
@@ -300,7 +300,7 @@ bool menu_click(World *world, unsigned int entity) {
 		destroy_menu(world);
 		character = rand() % 18;
 		create_setup_menu(world);
-		
+
 	}
 
 	//CREDITS

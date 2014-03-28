@@ -21,3 +21,4 @@
 2
 stair 3 5 1.5 2 1 l
 objective 10 10 40 40 0 0
+

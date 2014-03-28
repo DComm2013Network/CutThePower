@@ -384,7 +384,8 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 					apply_forcey(temp, *movement, fps);
 					data = collision_system(world, temp, entity);
 					handle_y_collision(world, data, temp, *movement, entity, fps);
-					collisionType = handle_entity_collision(data, world, entity);
+					collisionType = handle_entity_collision(world, entity);
+
 					p.x = position->x;
 					p.y = position->y;
 					p.width = 60;
@@ -426,17 +427,6 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 				
 				
 				//printf("FPS: %f\n", fps.getFPS());
-				if (position->level == 0) {
-					if (position->x < 240) {
-						world->player[entity].teamNo = 1;
-					}
-					else if (position->x > 1000) {
-						world->player[entity].teamNo = 2;
-					}
-					else if (world->player[entity].teamNo != 0) {
-						world->player[entity].teamNo = 0;
-					}
-				}
 				if (position->level == 0) {
 					if (position->x < 240) {
 						send_status_ready(world, sendpipe, 1);

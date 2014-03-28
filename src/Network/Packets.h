@@ -23,10 +23,10 @@
 ----------------------------------------------------------------------*/
 
 // Limits
-#define MAX_PLAYERS    32
-#define MAX_FLOORS     8
-#define MAX_NAME       15
-#define MAX_MESSAGE    180
+#define MAX_PLAYERS 32
+#define MAX_FLOORS 8
+#define MAX_NAME 15
+#define MAX_MESSAGE 180
 #define MAX_OBJECTIVES 16
 
 // Connect code Definitions
