@@ -408,8 +408,8 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 						//send_status_ready(world, sendpipe, 0);
 					}
 				}
-				if(moved && !floor_change_flag)
-					send_location(world, sendpipe);
+				send_location(world, sendpipe);
+			
 			}
 		}
 		else if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_POSITION | COMPONENT_MOVEMENT | COMPONENT_COLLISION)) {

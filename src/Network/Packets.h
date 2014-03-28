@@ -34,7 +34,7 @@
 #define CONNECT_CODE_DENIED 0x000
 
 #define TIMEOUT 5000	
-
+#define FREQUENCY 10
 #define TCP 0
 #define UDP 1
 #define READ 0
