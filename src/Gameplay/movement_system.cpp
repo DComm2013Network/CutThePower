@@ -201,7 +201,7 @@ void handle_entity_collision(CollisionData data, World * world, int curEntityID)
 			targl = world->wormhole[data.entityID].targetLevel;
 			
 			move_request(world, send_router_fd[WRITE_END], targl, targx, targy);
-
+			
 		 	floor_change_flag = 1;
 		}
 		break;
