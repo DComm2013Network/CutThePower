@@ -53,6 +53,22 @@ void apply_force(World& world, unsigned int entity) {
 	world.position[entity].y += world.movement[entity].movY;
 }
 
+void apply_forcex(PositionComponent& position, MovementComponent movement, FPS fps) {
+	position.x += movement.movX * (FPS_MAX / fps.getFPS());
+}
+
+void remove_forcex(PositionComponent& position, MovementComponent movement, FPS fps) {
+	position.x -= movement.movX * (FPS_MAX / fps.getFPS());
+}
+
+void apply_forcey(PositionComponent& position, MovementComponent movement, FPS fps) {
+	position.y += movement.movY * (FPS_MAX / fps.getFPS());
+}
+
+void remove_forcey(PositionComponent& position, MovementComponent movement, FPS fps) {
+	position.y -= movement.movY * (FPS_MAX / fps.getFPS());
+}
+
 void remove_forcex(PositionComponent& position, MovementComponent movement) {
 	position.x -= movement.movX;
 }
@@ -90,6 +106,14 @@ void handle_x_collision(World* world, CollisionData data, PositionComponent& pos
 		remove_forcex(position, movement);
 		movement.movX = 0;
 		break;
+	case COLLISION_HACKER:
+		remove_forcex(position, movement, fps);
+		movement.movX = 0;
+		break;
+	case COLLISION_GUARD:
+		remove_forcex(position, movement, fps);
+		movement.movX = 0;
+		break;
 	default:
 		break;
 	}
@@ -122,6 +146,14 @@ void handle_y_collision(World* world, CollisionData data, PositionComponent& pos
 		remove_forcey(position, movement);
 		movement.movY = 0;
 		break;
+	case COLLISION_HACKER:
+		remove_forcey(position, movement, fps);
+		movement.movY = 0;
+		break;
+	case COLLISION_GUARD:
+		remove_forcey(position, movement, fps);
+		movement.movY = 0;
+		break;
 	default:
 		break;
 	}
@@ -148,7 +180,7 @@ void handle_y_collision(World* world, CollisionData data, PositionComponent& pos
 	}
 }
 
-void handle_entity_collision(CollisionData data, World * world, int curEntityID) {
+int handle_entity_collision(CollisionData data, World * world, int curEntityID) {
 	switch(data.entity_code) {
 	case COLLISION_TARGET:
 		if (world->collision[curEntityID].type == COLLISION_HACKER && world->command[curEntityID].commands[C_ACTION]) {
@@ -185,23 +217,27 @@ void handle_entity_collision(CollisionData data, World * world, int curEntityID)
 					break;
 				}
 			}
+			return MSG_ROOMCHANGE;
 			//printf("t: %i\n", world->position[player_entity].level);
 		}
 		break;
 	case COLLISION_HACKER:
 		if (world->collision[curEntityID].type == COLLISION_GUARD) {
+			//world->mask[data.entityID] = COMPONENT_EMPTY;
 		}
 		break;
 	case COLLISION_GUARD:
 		if (world->collision[curEntityID].type == COLLISION_HACKER) {
+			//world->mask[curEntityID] = COMPONENT_EMPTY;
 		}
 		break;
 	default:
 		break;
 	}
+	return data.entity_code;
 }
 
-void movement_system(World* world) {
+void movement_system(World* world, FPS fps) {
 	unsigned int entity;
 	PositionComponent		*position;
 	CommandComponent		*command;
@@ -228,6 +264,7 @@ void movement_system(World* world) {
 				temp.width = position->width;
 				temp.height = position->height;
 				temp.level = position->level;
+				int collisionType = -1;
 				
 				if (command->commands[C_UP]) {
 					add_force(world, entity, world->movement[entity].acceleration, -90);
@@ -244,17 +281,23 @@ void movement_system(World* world) {
 
 				CollisionData data;
 				if (IN_THIS_COMPONENT(world->mask[entity], COLLISION_MASK)) {
-					temp.x += movement->movX;
+					//temp.x += movement->movX;
+					apply_forcex(temp, *movement, fps);
 					data = collision_system(world, temp, entity);
 					handle_x_collision(world, data, temp, *movement, entity);
-					temp.y += movement->movY;
+					//temp.y += movement->movY;
+					apply_forcey(temp, *movement, fps);
 					data = collision_system(world, temp, entity);
 					handle_y_collision(world, data, temp, *movement, entity);
+					//position->x = temp.x;
+					//position->y = temp.y;
+					collisionType = handle_entity_collision(data, world, entity);
+				}
+				/*else {
 					position->x = temp.x;
 					position->y = temp.y;
-					handle_entity_collision(data, world, entity);
-				}
-				else {
+				}*/
+				if (collisionType != MSG_ROOMCHANGE) {
 					position->x = temp.x;
 					position->y = temp.y;
 				}
@@ -308,11 +351,13 @@ void movement_system(World* world) {
 			temp.height = position->height;
 			temp.level = position->level;
 			
-			temp.x += movement->movX;
+			//temp.x += movement->movX;
+			apply_forcex(temp, *movement, fps);
 			data = collision_system(world, temp, entity);
 			handle_x_collision(world, data, temp, *movement, entity);
 			
-			temp.y += movement->movY;
+			//temp.y += movement->movY;
+			apply_forcey(temp, *movement, fps);
 			data = collision_system(world, temp, entity);
 			handle_y_collision(world, data, temp, *movement, entity);
 			
