@@ -252,7 +252,6 @@ void movement_system(World* world, int sendpipe) {
 				bool moved = false;
 				
 				if (command->commands[C_ACTION]) {
-					
 				}
 				if (command->commands[C_UP]) {
 					add_force(world, entity, world->movement[entity].acceleration, -90);
