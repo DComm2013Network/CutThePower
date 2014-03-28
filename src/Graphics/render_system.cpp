@@ -169,27 +169,9 @@ void render_player_system(World& world, SDL_Surface* surface, struct fogOfWarStr
 void makeSurroundingTilesVisible(struct fogOfWarPlayerPosition *fowp)
 {
 
-/*******************
- 5 | 5 | 3 | 5 | 5 |
--------------------
- 5 | 4 | 2 | 3 | 5 |
--------------------
- 3 | 2 | 1 | 2 | 3 |
--------------------
- 5 | 4 | 2 | 4 | 5 |
--------------------
- 5 | 5 | 3 | 5 | 5 |
-*******************/
-
-
 	int xPos = (double)fowp->pos->x / TILE_WIDTH;
 	int yPos = (double)fowp->pos->y / TILE_HEIGHT;
 
-	int by = addOne(yPos);
-	int ty = subOne(yPos);
-	int lx = subOne(xPos);
-	int rx = addOne(xPos);
-	
 	fowp -> fow -> xOffset = -map_rect.x;
 	fowp -> fow -> yOffset = -map_rect.y;
 	
@@ -231,7 +213,21 @@ void makeSurroundingTilesVisible(struct fogOfWarPlayerPosition *fowp)
 	setVisibilityType(fowp, BOT, (LEFT + LEFT), 0);
 	setVisibilityType(fowp, BOT, (RGHT + RGHT), 0);
 	
-	//setVisibilityType(fowp, (BOT + BOT), (RGHT + RGHT), 16);
+	setVisibilityType(fowp, (TOP + TOP), (LEFT + LEFT), 10);
+	setVisibilityType(fowp, (TOP + TOP), (   LEFT    ), 11);
+	setVisibilityType(fowp, (   TOP   ), (LEFT + LEFT), 12);
+
+	setVisibilityType(fowp, (BOT + BOT), (LEFT + LEFT), 13);
+	setVisibilityType(fowp, (BOT + BOT), (   LEFT    ), 14);
+	setVisibilityType(fowp, (   BOT   ), (LEFT + LEFT), 15);
+	
+	setVisibilityType(fowp, (TOP + TOP), (RGHT + RGHT), 16);
+	setVisibilityType(fowp, (TOP + TOP), (   RGHT    ), 17);
+	setVisibilityType(fowp, (   TOP   ), (RGHT + RGHT), 18);
+		
+	setVisibilityType(fowp, (BOT + BOT), (RGHT + RGHT), 19);
+	setVisibilityType(fowp, (BOT + BOT), (   RGHT    ), 20);
+	setVisibilityType(fowp, (   BOT   ), (RGHT + RGHT), 21);
 }
 
 
@@ -261,7 +257,7 @@ void setVisibilityType(struct fogOfWarPlayerPosition *fowp, int yDel, int xDel, 
 	int x = getTilePos(xPos, xDel);
 	
 	
-	fow -> tiles[y][x].visible[level] = visibility;
+	fow -> tiles[y][x].visible = visibility;
 }
 
 

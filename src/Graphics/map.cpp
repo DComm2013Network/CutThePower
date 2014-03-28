@@ -140,12 +140,12 @@ void init_fog_of_war(struct fogOfWarStruct **fow)
 		(*fow)->corners[5] = IMG_Load("assets/Graphics/fow/botleft/left.png");
 			
 		(*fow)->corners[6] = IMG_Load("assets/Graphics/fow/topright/head.png");
-		(*fow)->corners[7] = IMG_Load("assets/Graphics/fow/topright/right.png");
-		(*fow)->corners[8] = IMG_Load("assets/Graphics/fow/topright/left.png");
+		(*fow)->corners[7] = IMG_Load("assets/Graphics/fow/topright/left.png");
+		(*fow)->corners[8] = IMG_Load("assets/Graphics/fow/topright/right.png");
 		
 		(*fow)->corners[9] = IMG_Load("assets/Graphics/fow/botright/head.png");
-		(*fow)->corners[10] = IMG_Load("assets/Graphics/fow/botright/right.png");
-		(*fow)->corners[11] = IMG_Load("assets/Graphics/fow/botright/left.png");
+		(*fow)->corners[10] = IMG_Load("assets/Graphics/fow/botright/left.png");
+		(*fow)->corners[11] = IMG_Load("assets/Graphics/fow/botright/right.png");
 }
 
 void cleanup_fog_of_war(struct fogOfWarStruct *fow)
