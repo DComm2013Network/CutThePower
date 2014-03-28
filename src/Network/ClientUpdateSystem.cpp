@@ -3,6 +3,8 @@
  * applies them to the world.
  *
  * @file client_update_system.cpp
+ *
+ * @todo Add "end of game" logic to client_udpate_objectives
  */
 
 #include <stdlib.h>
@@ -21,7 +23,9 @@ static int controllable_playerNo;
 extern int game_net_signalfd;
 extern int network_ready;
 int floor_change_flag = 0;
-static unsigned int *player_table = NULL; /**< A lookup table mapping server player numbers to client entities. */
+
+static unsigned int *player_table     = NULL; /**< A lookup table mapping server player numbers to client entities. */
+static unsigned char *objective_table = NULL; /**< A lookup table mapping server objective numbers to client entities. */
 
 /**
  * Receives all updates from the server and applies them to the world.
@@ -43,11 +47,6 @@ int client_update_system(World *world, int net_pipe) {
 	uint32_t 	num_packets;
 	uint64_t	signal = 1;
 	unsigned	i;
-	if(!player_table)
-	{
-		player_table = (unsigned int *)malloc(sizeof(unsigned int) * MAX_PLAYERS);
-		memset(player_table, 255, MAX_PLAYERS * sizeof(unsigned int)); 
-	}
 
     if(!network_ready) // Don't try to read the pipe until the network module has been initialised
         return -3;
@@ -67,62 +66,46 @@ int client_update_system(World *world, int net_pipe) {
             fprintf(stderr, "%s", err_buf);
         }
         memset(player_table, 255, MAX_PLAYERS * sizeof(uint32_t));
+        memset(objective_table, 255, MAX_OBJECTIVES);
         network_ready = 0;
-        return - 2;
+        return -2;
     }
 
 	for(i = 0; i < num_packets; ++i)
 	{
 
 		packet = read_data(net_pipe, &type);
-		if(floor_change_flag == 1)
-		{
-			switch(type)
-			{
-				case P_FLOOR_MOVE:
-				client_update_floor(world, packet);
-				game_ready++;
+		switch (type) 
+		{ 
+			case P_CONNECT:
+				if(client_update_info(world, packet) == CONNECT_CODE_DENIED)
+				{
+					return -1; // Pass error up to someone else to deal with
+				}
 				break;
-			}
-		}
-		else {
-			switch (type) 
-			{ 
-				case P_CONNECT:
-					if(client_update_info(world, packet) == CONNECT_CODE_DENIED)
-					{
-						return -1; // Pass error up to someone else to deal with
-					}
-					break;
-				case G_STATUS:
-					client_update_status(world, packet);
-					game_ready++;
-					break;
-				case P_CHAT:
-					client_update_chat(world, packet);
-					break;
-				case P_OBJCTV_LOC:
-					client_update_obj_loc(world, packet);
-					break;
-				case 7: // undefined
-					// Floor stuff
-					break;
-				case P_OBJSTATUS:
-					client_update_obj_status(world, packet);
-					break;
-				case G_ALLPOSUPDATE:
-					client_update_pos(world, packet);
-					break;
-				case P_FLOOR_MOVE:
-					client_update_floor(world, packet);
-					game_ready++;
-					break;
-				case P_TAGGING:
-					player_tag_packet(world, packet);
-					break;
-				default:
-					break;
-			}
+			case G_STATUS:
+				client_update_status(world, packet);
+				break;
+			case P_CHAT:
+				client_update_chat(world, packet);
+				break;
+			case P_OBJCTV_LOC:
+				client_update_objectives(world, packet);
+				break;
+			case P_OBJSTATUS:
+				client_update_objectives(world, packet);
+				break;
+			case G_ALLPOSUPDATE:
+				client_update_pos(world, packet);
+				break;
+			case P_FLOOR_MOVE:
+				client_update_floor(world, packet);
+				break;
+			case P_TAGGING:
+				player_tag_packet(world, packet);
+				break;
+			default:
+				break;
 		}
 		free(packet);
 	}
@@ -146,40 +129,6 @@ void client_update_chat(World *world, void *packet)
 {
 	PKT_SND_CHAT *snd_chat = (PKT_SND_CHAT*)packet;
 	printf("%s", snd_chat->message);
-}
-/**
- * Updates the positions and movement properties of every other player.
- *
- * The function will ignore players that aren't on the current floor and the client's
- * own player, since they're said to be authoritative over their own position (except
- * for their floor).
- *
- * @param[in, out]	world 	The world struct holding the data to be updated.
- * @param[in] 		packet	The packet containing update information.
- *
- * @designer Shane Spoor
- * @author Shane Spoor
- */
-void client_update_obj_loc(World *world, void *packet)
-{
-	PKT_OBJ_LOC *obj_loc = (PKT_OBJ_LOC*) packet;
-}
-/**
- * Updates the positions and movement properties of every other player.
- *
- * The function will ignore players that aren't on the current floor and the client's
- * own player, since they're said to be authoritative over their own position (except
- * for their floor).
- *
- * @param[in, out]	world 	The world struct holding the data to be updated.
- * @param[in] 		packet	The packet containing update information.
- *
- * @designer Shane Spoor
- * @author Shane Spoor
- */
-void client_update_obj_status(World *world, void *packet)
-{
-	PKT_OBJ_LOC *obj_loc = (PKT_OBJ_LOC*) packet;
 }
 
 /**
@@ -269,15 +218,30 @@ void player_tag_packet(World *world, void *packet)
  * @param[out]	world 	The world struct containing the ojective states to be updated.
  * @param[in]	packet	The packet containing objective update information.
  *
- * @designer
- * @author
+ * @designer Shane Spoor
+ * @author   Shane Spoor
  */
 void client_update_objectives(World *world, void *packet)
 {
 	PKT_OBJECTIVE_STATUS *objective_update = (PKT_OBJECTIVE_STATUS *)packet;
+	
+	if(!objective_table)
+	{
+		objective_table = (unsigned char *)malloc(MAX_OBJECTIVES);
+		int objectives_taken = 0;
+		for(int i = 0; i < MAX_ENTITIES; ++i)
+		{
+			if(IN_THIS_COMPONENT(world->mask[i], OBJECTIVE_COMPONENT))
+				objective_table[objectives_taken++] = i;
+		}
+	}
+	
 	for(int i = 0; i < MAX_OBJECTIVES; ++i)
 	{
-		// Code to update (currently non-existing) objectives	
+	    if(!objective_update->objectives_captured[i]) // If the ojective is non-existent, then all following objectives are non-existent as well
+	        break;
+	    
+        world->objective[objective_table[i]] = objective_update->objectives_captured[i]; // Otherwise, set it to the value contained in the objective update packet
 	}
 }
 
@@ -296,6 +260,12 @@ void client_update_objectives(World *world, void *packet)
 void client_update_status(World *world, void *packet)
 {
 	PKT_GAME_STATUS *status_update = (PKT_GAME_STATUS *)packet;
+
+	if(!player_table)
+	{
+		player_table = (unsigned int *)malloc(sizeof(unsigned int) * MAX_PLAYERS);
+		memset(player_table, 255, MAX_PLAYERS * sizeof(unsigned int)); 
+	}
 
 	for(int i = 0; i < MAX_PLAYERS; i++)
 	{
