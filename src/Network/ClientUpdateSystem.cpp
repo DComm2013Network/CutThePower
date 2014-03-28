@@ -200,7 +200,6 @@ void client_update_floor(World *world, void *packet)
 	world->position[player_table[controllable_playerNo]].x		= floor_move->xPos;
 	world->position[player_table[controllable_playerNo]].y		= floor_move->yPos;
 	world->position[player_table[controllable_playerNo]].level	= floor_move->new_floor;
-	rebuild_floor(world);
 	floor_change_flag = 0;
 }
 

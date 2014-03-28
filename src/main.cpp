@@ -101,11 +101,12 @@ int main(int argc, char* argv[]) {
 		////NETWORK CODE
 		if(network_ready)
 		{
+							send_location(world, send_router_fd[WRITE_END]);
+
 			client_update_system(world, rcv_router_fd[READ]);
 			// timer_gettime(timer, &its);
 			// if(its.it_value.tv_nsec == 0)
 			// {
-				send_location(world, send_router_fd[WRITE_END]);
 			// 	its.it_value.tv_sec = 0;
 			//     its.it_value.tv_nsec = SEND_FREQUENCY * NANO_SECONDS + 1;
 			//    	its.it_interval.tv_sec = its.it_value.tv_sec;

@@ -247,9 +247,29 @@ void handle_entity_collision(CollisionData data, World * world, int curEntityID)
 			targl = world->wormhole[data.entityID].targetLevel;
 			
 			move_request(world, send_router_fd[WRITE_END], targl, targx, targy);
-			
-		 	floor_change_flag = 1;
-		 	rebuild_floor(world);
+			floor_change_flag = 1;
+		 	
+		 	destroy_world_not_player(world);
+		    switch (targl) {
+				case 0:
+					map_init(world, "assets/Graphics/map/map_00/map00.txt", "assets/Graphics/map/map_00/tiles.txt");
+					break;
+				case 1:
+					map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/tiles.txt");
+					break;
+				case 2:
+					map_init(world, "assets/Graphics/map/map_02/map02.txt", "assets/Graphics/map/map_02/tiles.txt");
+					break;
+				case 3:
+					map_init(world, "assets/Graphics/map/map_03/map03.txt", "assets/Graphics/map/map_03/tiles.txt");
+					break;
+			}
+			for (unsigned int i = 0; i < MAX_ENTITIES; i++) {
+				if (IN_THIS_COMPONENT(world->mask[i], COMPONENT_LEVEL)) {
+					world->level[i].levelID = targl;
+					break;
+				}
+			}
 			return MSG_ROOMCHANGE;
 			//printf("t: %i\n", world->position[player_entity].level);
 
