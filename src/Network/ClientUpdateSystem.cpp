@@ -115,7 +115,7 @@ int client_update_system(World *world, int net_pipe) {
 					client_update_pos(world, packet);
 					break;
 				case P_FLOOR_MOVE:
-					//client_update_floor(world, packet);
+					client_update_floor(world, packet);
 					game_ready++;
 					break;
 				case P_TAGGING:

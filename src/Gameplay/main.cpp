@@ -144,13 +144,6 @@ int main() {
 		input_system(world, running);
 		movement_system(world);
 		render_system(world, surface);
-		
-		currentTime = clock() / (CLOCKS_PER_SEC/1000.0);
-		if((currentTime - begTime) >= SEND_FREQUENCY * 10)
-		{
-			send_location(world, send_router_fd[WRITE_END]);
-		}
-		begTime = clock() / (CLOCKS_PER_SEC/1000.0);
 
 		SDL_UpdateWindowSurface(window);
 	}

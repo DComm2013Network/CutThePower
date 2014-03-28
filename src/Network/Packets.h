@@ -27,14 +27,16 @@
 #define MAX_FLOORS 8
 #define MAX_NAME 15
 #define MAX_MESSAGE 180
-#define MAX_OBJECTIVES 16
+#define MAX_OBJECTIVES 32
 
 // Connect code Definitions
 #define CONNECT_CODE_ACCEPTED 0x001
 #define CONNECT_CODE_DENIED 0x000
 
 #define TIMEOUT 5000	
-#define FREQUENCY 10
+#define SEND_FREQUENCY 10
+#define NANO_SECONDS   10000000000
+
 #define TCP 0
 #define UDP 1
 #define READ 0

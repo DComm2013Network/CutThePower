@@ -249,7 +249,7 @@ void handle_entity_collision(CollisionData data, World * world, int curEntityID)
 			move_request(world, send_router_fd[WRITE_END], targl, targx, targy);
 			
 		 	floor_change_flag = 1;
-
+		 	rebuild_floor(world);
 			return MSG_ROOMCHANGE;
 			//printf("t: %i\n", world->position[player_entity].level);
 

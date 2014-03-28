@@ -1,12 +1,14 @@
 #include <SDL2/SDL.h>
 #include "systems.h"
 #include "sound.h"
+#include "Network/Packets.h"
 #include "world.h"
 #include "Input/menu.h"
 #include "Graphics/text.h"
 
 #include <stdlib.h>
 #include <time.h>
+#include <signal.h>
 #include <stdio.h>
 
 bool running;
@@ -23,6 +25,24 @@ int main(int argc, char* argv[]) {
 	SDL_Window *window;
 	SDL_Surface *surface;
 	unsigned int entity = -1;
+	
+	struct sigevent sev;
+	struct itimerspec its;
+	timer_t timer;
+	
+	sev.sigev_notify = SIGEV_NONE;
+    sev.sigev_value.sival_ptr = &timer;
+    if (timer_create(CLOCK_REALTIME, &sev, &timer) == -1)
+    {
+    	printf("Failed to create timer.");
+        exit(2);
+   	}
+
+   	its.it_value.tv_sec = 0;
+    its.it_value.tv_nsec = SEND_FREQUENCY * NANO_SECONDS + 1;
+   	its.it_interval.tv_sec = its.it_value.tv_sec;
+   	its.it_interval.tv_nsec = its.it_value.tv_nsec;
+    timer_settime(timer, 0, &its, NULL);
 
 	create_pipe(send_router_fd);
 	create_pipe(rcv_router_fd);
@@ -50,7 +70,12 @@ int main(int argc, char* argv[]) {
 
 	init_render_player_system();
 
-	
+	its.it_value.tv_sec = 0;
+    its.it_value.tv_nsec = SEND_FREQUENCY * NANO_SECONDS + 1;
+   	its.it_interval.tv_sec = its.it_value.tv_sec;
+   	its.it_interval.tv_nsec = its.it_value.tv_nsec;
+   	timer_settime(timer, 0, &its, NULL);
+
 	create_main_menu(world);
 	
 	FPS fps;
@@ -76,7 +101,17 @@ int main(int argc, char* argv[]) {
 		////NETWORK CODE
 		if(network_ready)
 		{
-			client_update_system(world, rcv_router_fd[READ_END]);
+			client_update_system(world, rcv_router_fd[READ]);
+			// timer_gettime(timer, &its);
+			// if(its.it_value.tv_nsec == 0)
+			// {
+				send_location(world, send_router_fd[WRITE_END]);
+			// 	its.it_value.tv_sec = 0;
+			//     its.it_value.tv_nsec = SEND_FREQUENCY * NANO_SECONDS + 1;
+			//    	its.it_interval.tv_sec = its.it_value.tv_sec;
+			//    	its.it_interval.tv_nsec = its.it_value.tv_nsec;
+			//    	timer_settime(timer, 0, &its, NULL);
+			// }
 		}
 		////NETWORK CODE
 
