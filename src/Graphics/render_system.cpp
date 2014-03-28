@@ -257,7 +257,7 @@ void setVisibilityType(struct fogOfWarPlayerPosition *fowp, int yDel, int xDel, 
 	int x = getTilePos(xPos, xDel);
 	
 	
-	fow -> tiles[y][x].visible[ position->level ] = visibility;
+	fow -> tiles[y][x].visible[ pos->level ] = visibility;
 }
 
 

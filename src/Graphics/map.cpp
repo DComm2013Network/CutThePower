@@ -35,7 +35,7 @@ int level;                /**< The current floor. */
 void blit_tile(SDL_Surface *surface, struct fogOfWarStruct *fow, SDL_Rect *tileRect, int y, int x, int i)
 {
 	SDL_BlitSurface(fow -> corners[i], NULL, surface, tileRect);
-	fow -> tiles[y][x].visible = 2;
+	fow -> tiles[y][x].visible[ level - 1 ] = 2;
 }
 
 void render_fog_of_war(SDL_Surface *surface, struct fogOfWarStruct *fow)
@@ -50,7 +50,7 @@ void render_fog_of_war(SDL_Surface *surface, struct fogOfWarStruct *fow)
 	{
 		for(int x = 0; x < fogOfWarWidth; x++)
 		{
-			int visible = fow -> tiles[y][x].visible[ level ];
+			int visible = fow -> tiles[y][x].visible[ level - 1  ];
 
 			SDL_Rect tileRect;
 			tileRect.x = fow -> tiles[y][x].rect.x - xOffset;
@@ -61,7 +61,7 @@ void render_fog_of_war(SDL_Surface *surface, struct fogOfWarStruct *fow)
 
 			switch(visible)
 			{
-				case 0:	fow -> tiles[y][x].visible = 2;	break;
+				case 0:	fow -> tiles[y][x].visible[ level - 1 ] = 2;	break;
 				
 				case 1: SDL_BlitSurface(fow -> fogOfWar[count++], NULL, surface, &tileRect); break;
 				case 2: SDL_BlitSurface(fow -> alphaFog[count++], NULL, surface, &tileRect); break;
@@ -105,7 +105,7 @@ void init_fog_of_war(struct fogOfWarStruct **fow)
 
 			for(int x = 0; x < TOTALTILESX; x++)
 			{
-				for(int lev = 0; l < NUMLEVELS; i++)
+				for(int lev = 0; lev < NUMLEVELS; lev++)
 				{
 					(*fow) -> tiles[y][x].visible[ lev ] = 1;
 					(*fow) -> tiles[y][x].rect.x = (x * TILE_WIDTH );
