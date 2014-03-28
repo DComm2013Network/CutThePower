@@ -7,7 +7,7 @@ OBJDIR=obj
 SRCDIR=src
 
 BIN_DEFAULT=$(BINDIR)/CutThePower
-OBJ_DEFAULT=$(OBJDIR)/Gameplay/collision_system.o $(OBJDIR)/Gameplay/movement_system.o $(OBJDIR)/Graphics/render_system.o $(OBJDIR)/Graphics/animation_system.o $(OBJDIR)/Graphics/map.o $(OBJDIR)/Input/keyinputsystem.o $(OBJDIR)/Input/mouseinputsystem.o $(OBJDIR)/Input/menu.o $(OBJDIR)/main.o $(OBJDIR)/sound.o $(OBJDIR)/world.o $(OBJDIR)/triggered.o
+OBJ_DEFAULT=$(OBJDIR)/Gameplay/collision_system.o $(OBJDIR)/Gameplay/movement_system.o $(OBJDIR)/Graphics/render_system.o $(OBJDIR)/Graphics/animation_system.o $(OBJDIR)/Graphics/map.o $(OBJDIR)/Graphics/fog_of_war.o $(OBJDIR)/Input/keyinputsystem.o $(OBJDIR)/Input/mouseinputsystem.o $(OBJDIR)/Input/menu.o $(OBJDIR)/main.o $(OBJDIR)/sound.o $(OBJDIR)/world.o $(OBJDIR)/triggered.o
 
 CutThePower: $(OBJ_DEFAULT)
 	test -d $(BINDIR) || mkdir -p $(BINDIR)
@@ -44,6 +44,10 @@ $(OBJDIR)/Graphics/animation_system.o: $(SRCDIR)/Graphics/animation_system.cpp
 $(OBJDIR)/Graphics/map.o: $(SRCDIR)/Graphics/map.cpp
 	test -d $(OBJDIR)/Graphics || mkdir -p $(OBJDIR)/Graphics
 	$(CC) $(FLAGS) -c -o $(OBJDIR)/Graphics/map.o $(SRCDIR)/Graphics/map.cpp
+
+$(OBJDIR)/Graphics/fog_of_war.o: $(SRCDIR)/Graphics/fog_of_war.cpp
+	test -d $(OBJDIR)/Graphics || mkdir -p $(OBJDIR)/Graphics
+	$(CC) $(FLAGS) -c -o $(OBJDIR)/Graphics/fog_of_war.o $(SRCDIR)/Graphics/fog_of_war.cpp
 
 $(OBJDIR)/Input/keyinputsystem.o: $(SRCDIR)/Input/keyinputsystem.cpp
 	test -d $(OBJDIR)/Input || mkdir -p $(OBJDIR)/Input

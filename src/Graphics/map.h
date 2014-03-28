@@ -14,6 +14,15 @@
 #define TILE_HEIGHT	40 /**< The height of a tile in pixels. */
 #define NUMLEVELS		8
 
+
+
+struct fogOfWarPlayerPosition
+{
+	World *world;
+	PositionComponent *pos;
+	struct fogOfWarStruct *fow;
+};
+
 struct fowtile
 {
 	SDL_Rect rect;

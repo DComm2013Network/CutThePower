@@ -10,17 +10,15 @@
 #include "systems.h"
 #include "../Input/menu.h"
 
+/*SAM**/
+#include "map.h"
+
+void makeSurroundingTilesVisible(struct fogOfWarPlayerPosition *fowp);
+/******/
+
 #define SYSTEM_MASK (COMPONENT_RENDER_PLAYER | COMPONENT_POSITION) /**< The entity must have a render player and position component
                                                                     * for processing by this system. */
 #define IMAGE_WIDTH			400
-
-
-struct fogOfWarPlayerPosition
-{
-	World *world;
-	PositionComponent *pos;
-	struct fogOfWarStruct *fow;
-};
 
                                                                     
 extern SDL_Rect map_rect; /**< The rectangle containing the map. */
@@ -28,13 +26,6 @@ extern SDL_Rect map_rect; /**< The rectangle containing the map. */
 const char *character_map = ".01234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 SDL_Surface *text_chars[38]; /**< we have 37 different characters. */
 SDL_Surface *ibeam;
-
-int subOne(int n);
-int addOne(int n);
-void makeSurroundingTilesVisible(struct fogOfWarPlayerPosition *fowp);
-void setVisibilityType					(struct fogOfWarPlayerPosition *fowp, int yDel, int xDel, int visibility);
-
-int wall_collision(World *world, PositionComponent entity);
 
 /**
  * Render a player onto the map. 
@@ -163,116 +154,6 @@ void render_player_system(World& world, SDL_Surface* surface, struct fogOfWarStr
 	/*************************************/
 
 }
-
-
-/*SAM******************************/
-void makeSurroundingTilesVisible(struct fogOfWarPlayerPosition *fowp)
-{
-
-	int xPos = (double)fowp->pos->x / TILE_WIDTH;
-	int yPos = (double)fowp->pos->y / TILE_HEIGHT;
-
-	fowp -> fow -> xOffset = -map_rect.x;
-	fowp -> fow -> yOffset = -map_rect.y;
-	
-
-	#define LEFT -1
-	#define RGHT +1
-	#define TOP	 -1
-	#define BOT	 +1
-
-	setVisibilityType(fowp, 0, 0, 0);
-
-	setVisibilityType(fowp, TOP,  0, 0);
-	setVisibilityType(fowp, BOT,  0, 0);
-
-	setVisibilityType(fowp, 0,  LEFT, 0);
-	setVisibilityType(fowp, 0,  RGHT, 0);
-	
-	setVisibilityType(fowp, 0, (RGHT + RGHT), 0);
-	setVisibilityType(fowp, 0, (LEFT + LEFT), 0);
-	
-	setVisibilityType(fowp, TOP, LEFT, 0);
-	setVisibilityType(fowp, BOT, RGHT, 0);
-	
-	setVisibilityType(fowp, TOP, RGHT, 0);
-	setVisibilityType(fowp, BOT, LEFT, 0);
-	
-	setVisibilityType(fowp, (TOP + TOP),  0, 0);
-	setVisibilityType(fowp, (BOT + BOT),  0, 0);
-	
-	setVisibilityType(fowp, (TOP + TOP), LEFT, 0); 
-	setVisibilityType(fowp, (BOT + BOT), LEFT, 0);
-	
-	setVisibilityType(fowp, (TOP + TOP), RGHT, 0);
-	setVisibilityType(fowp, (BOT + BOT), RGHT, 0);
-	
-	setVisibilityType(fowp, TOP, (LEFT + LEFT), 0);
-	setVisibilityType(fowp, TOP, (RGHT + RGHT), 0);
-	
-	setVisibilityType(fowp, BOT, (LEFT + LEFT), 0);
-	setVisibilityType(fowp, BOT, (RGHT + RGHT), 0);
-	
-	setVisibilityType(fowp, (TOP + TOP), (LEFT + LEFT), 10);
-	setVisibilityType(fowp, (TOP + TOP), (   LEFT    ), 11);
-	setVisibilityType(fowp, (   TOP   ), (LEFT + LEFT), 12);
-
-	setVisibilityType(fowp, (BOT + BOT), (LEFT + LEFT), 13);
-	setVisibilityType(fowp, (BOT + BOT), (   LEFT    ), 14);
-	setVisibilityType(fowp, (   BOT   ), (LEFT + LEFT), 15);
-	
-	setVisibilityType(fowp, (TOP + TOP), (RGHT + RGHT), 16);
-	setVisibilityType(fowp, (TOP + TOP), (   RGHT    ), 17);
-	setVisibilityType(fowp, (   TOP   ), (RGHT + RGHT), 18);
-		
-	setVisibilityType(fowp, (BOT + BOT), (RGHT + RGHT), 19);
-	setVisibilityType(fowp, (BOT + BOT), (   RGHT    ), 20);
-	setVisibilityType(fowp, (   BOT   ), (RGHT + RGHT), 21);
-}
-
-
-
-int getTilePos(int pos, int delta)
-{
-	int absd = (delta > 0) ? delta : (-1) * delta;
-	
-	for(int i = 0; i < absd; i++)
-		pos = (delta < 0) ? subOne(pos) : addOne(pos);
-		
-	return pos;
-}
-
-void setVisibilityType(struct fogOfWarPlayerPosition *fowp, int yDel, int xDel, int visibility)
-{
-	struct fogOfWarStruct *fow 		= fowp -> fow;
-	PositionComponent 	  *pos 		= fowp -> pos;
-	World 								*world	= fowp -> world;
-
-	if(wall_collision(world, *pos) == COLLISION_WALL) return;
-
-	int xPos = pos->x / TILE_WIDTH;
-	int yPos = pos->y / TILE_HEIGHT;
-	
-	int y = getTilePos(yPos, yDel);
-	int x = getTilePos(xPos, xDel);
-	
-	
-	fow -> tiles[y][x].visible[ pos->level ] = visibility;
-}
-
-
-int addOne(int n)
-{
-	return ++n;
-}
-
-int subOne(int n)
-{
-	if (n == 0) return n;
-	else
-	return --n;
-}
-/**********************************/
 
 
 void init_render_player_system() {
