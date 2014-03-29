@@ -1,4 +1,4 @@
-49
+53
 
 00	assets/Graphics/map/map_00/00_40px.bmp		0
 01	assets/Graphics/map/map_00/01_40px.bmp		0
@@ -49,3 +49,7 @@
 46	assets/Graphics/map/map_00/wood_midright.bmp		1
 47	assets/Graphics/map/map_00/wood_botright.bmp		1
 48	assets/Graphics/map/map_00/wood_stagewall.bmp		1
+49	assets/Graphics/map/map_00/stairsdownleft.bmp	1
+50	assets/Graphics/map/map_00/stairsdownright.bmp	1
+51	assets/Graphics/map/map_00/stairsupleft.bmp	1
+52	assets/Graphics/map/map_00/stairsupright.bmp	1
