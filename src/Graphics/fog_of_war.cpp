@@ -125,7 +125,7 @@ void init_fog_of_war(struct fogOfWarStruct **fow)
 		(*fow) -> alphaFog = (SDL_Surface**)malloc(sizeof(SDL_Surface*) * fogOfWarWidth * fogOfWarHeight);
 			
 		for(int i = 0; i < (fogOfWarHeight * fogOfWarWidth); i++)
-		{	//libpng-devel-1.5.13-2
+		{	
 			(*fow) -> alphaFog[ i ] = SDL_CreateRGBSurface(0, TILE_WIDTH, TILE_HEIGHT, 32, 0, 0, 0, 0);
 			SDL_FillRect((*fow) -> alphaFog[ i ],0,0x221122);
 			SDL_SetSurfaceBlendMode((*fow)->alphaFog[ i ], SDL_BLENDMODE_BLEND);
@@ -233,7 +233,7 @@ void make_surrounding_tiles_visible(struct fogOfWarPlayerPosition *fowp)
 	}
 	
 	
-	if(set_visibility_type(fowp, TOP, LEFT, 0)) {
+	if(t && l && set_visibility_type(fowp, TOP, LEFT, 0)) {
 	
 		if( l && t )
 			set_visibility_type(fowp, TOP + TOP, LEFT + LEFT, 10);
@@ -244,7 +244,7 @@ void make_surrounding_tiles_visible(struct fogOfWarPlayerPosition *fowp)
 	}
 			
 	
-	if(set_visibility_type(fowp, BOT, LEFT, 0)) {
+	if(b && l && set_visibility_type(fowp, BOT, LEFT, 0)) {
 	
 		if( l && b )
 			set_visibility_type(fowp, BOT + BOT, LEFT + LEFT, 13);
@@ -254,7 +254,7 @@ void make_surrounding_tiles_visible(struct fogOfWarPlayerPosition *fowp)
 	}
 			
 			
-	if(set_visibility_type(fowp, TOP, RGHT, 0)) {
+	if(t && r && set_visibility_type(fowp, TOP, RGHT, 0)) {
 	
 		if( r && t )
 			set_visibility_type(fowp, TOP + TOP, RGHT + RGHT, 16);
@@ -264,7 +264,7 @@ void make_surrounding_tiles_visible(struct fogOfWarPlayerPosition *fowp)
 	}
 
 
-	if(set_visibility_type(fowp, BOT, RGHT, 0)) {
+	if(b && r && set_visibility_type(fowp, BOT, RGHT, 0)) {
 	
 		if( r && b )
 			set_visibility_type(fowp, BOT + BOT, RGHT + RGHT, 19);
