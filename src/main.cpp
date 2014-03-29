@@ -64,7 +64,16 @@ int main(int argc, char* argv[]) {
 		KeyInputSystem(world);
 		MouseInputSystem(world);
 		movement_system(world, fps, send_router_fd[WRITE]);
-	
+
+		if (player_entity < MAX_ENTITIES) {
+			map_render(surface, world, player_entity);
+		}
+		animation_system(world);
+		render_player_system(*world, surface);
+		////NETWORK CODE
+
+		SDL_UpdateWindowSurface(window);
+		
 		if(network_ready)
 		{
 			// timer_gettime(send_timer, &current_its);
@@ -75,13 +84,6 @@ int main(int argc, char* argv[]) {
 			client_update_system(world, rcv_router_fd[READ]);
 		}
 		////NETWORK CODE
-		if (player_entity < MAX_ENTITIES) {
-			map_render(surface, world, player_entity);
-		}
-		animation_system(world);
-		render_player_system(*world, surface);
-		////NETWORK CODE
-		SDL_UpdateWindowSurface(window);
 		
 		fps.limit();
 		fps.update();
