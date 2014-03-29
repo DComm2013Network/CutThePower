@@ -357,7 +357,6 @@ int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int send
 
     if(!tcp_sock) {
         fprintf(stderr, "SDLNet_TCP_Open: %s\n", SDLNet_GetError());
-        network_ready = 0;
         set_error(ERR_NO_CONN);
         return -1;
     }

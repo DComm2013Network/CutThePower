@@ -4,24 +4,14 @@
  *
  * @file client_update_system.cpp
  */
-
-#include <stdlib.h>
-#include <string.h>
-#include "Packets.h"
 #include "network_systems.h"
-#include "GameplayCommunication.h"
-#include "PipeUtils.h"
-#include "../world.h"
-#include "../systems.h"
-#include "../Gameplay/collision.h"
-#include <sys/poll.h>
 
 extern int send_ready;
 extern int game_ready;
 static int controllable_playerNo;
 extern int game_net_signalfd;
 extern int network_ready;
-int floor_change_flag = 0;
+static int floor_change_flag = 0;
 static unsigned int *player_table = NULL; /**< A lookup table mapping server player numbers to client entities. */
 
 /**
@@ -74,7 +64,6 @@ int client_update_system(World *world, int net_pipe) {
 
 	for(i = 0; i < num_packets; ++i)
 	{
-
 		packet = read_data(net_pipe, &type);
 		if(floor_change_flag == 1)
 		{
@@ -200,6 +189,7 @@ void client_update_floor(World *world, void *packet)
 	world->position[player_table[controllable_playerNo]].x		= floor_move->xPos;
 	world->position[player_table[controllable_playerNo]].y		= floor_move->yPos;
 	world->position[player_table[controllable_playerNo]].level	= floor_move->new_floor;
+	rebuild_floor(world, floor_move->new_floor);
 	floor_change_flag = 0;
 }
 
@@ -364,8 +354,6 @@ int client_update_info(World *world, void *packet)
 			player_table[client_info->clients_player_number] = i;	
 		}
 	}
-
-	send_ready = 1;
 
 	return CONNECT_CODE_ACCEPTED;
 }

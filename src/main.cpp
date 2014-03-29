@@ -16,34 +16,14 @@ unsigned int player_entity;
 int send_router_fd[2];
 int rcv_router_fd[2];
 int game_net_signalfd;
-
 int network_ready = 0;
-int send_ready = 0;
-int game_ready = 0;
 
 int main(int argc, char* argv[]) {
 	SDL_Window *window;
 	SDL_Surface *surface;
 	unsigned int entity = -1;
-	
-	struct sigevent sev;
-	struct itimerspec its;
 	struct itimerspec current_its;
-	timer_t * timer;
-	
-	sev.sigev_notify = SIGEV_NONE;
-    sev.sigev_value.sival_ptr = &timer;
-    if (timer_create(CLOCK_REALTIME, &sev, timer) == -1)
-    {
-    	printf("Failed to create timer.");
-        exit(2);
-   	}
-
-   	its.it_value.tv_sec = 0;
-    its.it_value.tv_nsec = SEND_FREQUENCY * NANO_SECONDS + 1;
-   	its.it_interval.tv_sec = its.it_value.tv_sec;
-   	its.it_interval.tv_nsec = its.it_value.tv_nsec;
-    timer_settime(*timer, 0, &its, NULL);
+	timer_t send_timer;
 
 	create_pipe(send_router_fd);
 	create_pipe(rcv_router_fd);
@@ -60,7 +40,6 @@ int main(int argc, char* argv[]) {
 	}
 	surface = SDL_GetWindowSurface(window);
 	
-	
 	init_sound();
 	init_fonts();
 	
@@ -71,15 +50,7 @@ int main(int argc, char* argv[]) {
 
 	init_render_player_system();
 
-	its.it_value.tv_sec = 0;
-    its.it_value.tv_nsec = SEND_FREQUENCY * NANO_SECONDS + 1;
-   	its.it_interval.tv_sec = its.it_value.tv_sec;
-   	its.it_interval.tv_nsec = its.it_value.tv_nsec;
-   	if(timer_settime(timer, 0, &its, NULL) == -1)
-   	{
-   		printf("errno: %d", errno);
-   		exit(2);
-   	}
+   	setup_send_timer(&send_timer);
 
 	create_main_menu(world);
 	
@@ -112,7 +83,6 @@ int main(int argc, char* argv[]) {
 				send_location(world, send_router_fd[WRITE_END]);
 			}
 			client_update_system(world, rcv_router_fd[READ]);
-			timer_settime(timer, 0, &its, NULL);
 		}
 		////NETWORK CODE
 
@@ -129,14 +99,9 @@ int main(int argc, char* argv[]) {
 	destroy_world(world);
 	free(world);
 	
-	//SDLNet_Quit();
 	SDL_Quit();
 	
 	printf("Exiting The Game\n");
 	
 	return 0;
 }
-
-
-
-

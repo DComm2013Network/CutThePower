@@ -20,8 +20,6 @@ extern int floor_change_flag;
 extern int send_router_fd[];
 extern unsigned int player_entity;
 extern int network_ready;
-int targl = 0;
-
 
 bool handle_collision_target(World *world, int entityIndex) {
 	if (!world->objective[entityIndex].status) {
@@ -204,8 +202,18 @@ void handle_y_collision(World* world, CollisionData data, PositionComponent& pos
 		break;
 	}
 }
-
-void rebuild_floor(World * world)
+/**
+ * Recreates the environment with the map specified without deleting the characters.
+ *			
+ * @param[in, out]  world  	game world, searched for updates
+ * @param[out] 		targl 	game map to load (floor level)
+ *
+ * @return  void
+ *
+ * @designer    Ramzi Chennafi
+ * @author      Ramzi Chennafi
+ */
+void rebuild_floor(World * world, int targl)
 {
 	destroy_world_not_player(world);
     switch (targl) {
@@ -244,32 +252,11 @@ void handle_entity_collision(CollisionData data, World * world, int curEntityID)
 		if (world->collision[curEntityID].type == COLLISION_HACKER || world->collision[curEntityID].type == COLLISION_GUARD) {
 			int targx = world->wormhole[data.entityID].targetX;
 			int targy = world->wormhole[data.entityID].targetY;
-			targl = world->wormhole[data.entityID].targetLevel;
+			int targl = world->wormhole[data.entityID].targetLevel;
 			
 			move_request(world, send_router_fd[WRITE_END], targl, targx, targy);
 			floor_change_flag = 1;
 		 	
-		 	destroy_world_not_player(world);
-		    switch (targl) {
-				case 0:
-					map_init(world, "assets/Graphics/map/map_00/map00.txt", "assets/Graphics/map/map_00/tiles.txt");
-					break;
-				case 1:
-					map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/tiles.txt");
-					break;
-				case 2:
-					map_init(world, "assets/Graphics/map/map_02/map02.txt", "assets/Graphics/map/map_02/tiles.txt");
-					break;
-				case 3:
-					map_init(world, "assets/Graphics/map/map_03/map03.txt", "assets/Graphics/map/map_03/tiles.txt");
-					break;
-			}
-			for (unsigned int i = 0; i < MAX_ENTITIES; i++) {
-				if (IN_THIS_COMPONENT(world->mask[i], COMPONENT_LEVEL)) {
-					world->level[i].levelID = targl;
-					break;
-				}
-			}
 			return MSG_ROOMCHANGE;
 			//printf("t: %i\n", world->position[player_entity].level);
 
@@ -383,10 +370,9 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 						world->tag[e].taggee_id = e;
 					}
 				}
-				if (collisionType != MSG_ROOMCHANGE) {
-					position->x = temp.x;
-					position->y = temp.y;
-				}
+				
+				position->x = temp.x;
+				position->y = temp.y;
 				
 				if (movement->movX > 0 && abs(movement->movX) > abs(movement->movY)) {
 					play_animation(world, entity, (char*)"right");
@@ -413,13 +399,13 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 				//printf("FPS: %f\n", fps.getFPS());
 				if (position->level == 0) {
 					if (position->x < 240) {
-						send_status_ready(world, sendpipe, 1);
+						send_status(world, sendpipe, 1, PLAYER_STATE_READY);
 					}
 					else if (position->x > 1000) {
-						send_status_ready(world, sendpipe, 2);
+						send_status(world, sendpipe, 2, PLAYER_STATE_READY);
 					}
 					else {
-						//send_status_ready(world, sendpipe, 0);
+						send_status(world, sendpipe, 0, PLAYER_STATE_WAITING);
 					}
 				}
 			}

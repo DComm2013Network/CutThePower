@@ -8,12 +8,7 @@
  */
 
 /** @} */
-#include <cstring>
-#include <pthread.h>
-#include "PipeUtils.h"
 #include "GameplayCommunication.h"
-#include "Packets.h" /* extern packet_sizes[] */
-#include "NetworkRouter.h"
 
 uint32_t packet_sizes[NUM_PACKETS] = {
 	sizeof(PKT_PLAYER_NAME),         // 0
