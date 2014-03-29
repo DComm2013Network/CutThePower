@@ -19,7 +19,7 @@ extern int game_net_signalfd;
 extern int network_ready;
 int floor_change_flag = 0;
 
-static unsigned int *player_table     = NULL; /**< A lookup table mapping server player numbers to client entities. */
+static unsigned int *player_table = NULL; /**< A lookup table mapping server player numbers to client entities. */
 static unsigned char *objective_table = NULL; /**< A lookup table mapping server objective numbers to client entities. */
 
 /**
@@ -49,6 +49,8 @@ int client_update_system(World *world, int net_pipe) {
 	write(game_net_signalfd, &signal, sizeof(uint64_t));
 	num_packets = read_type(net_pipe); // the function just reads a 32 bit value, so this works; semantically, not ideal
 
+	init_client_update(world);
+
     if(num_packets == NET_SHUTDOWN) // network is shutting down; this is the only packet
     {
         char err_buf[128];
@@ -60,7 +62,7 @@ int client_update_system(World *world, int net_pipe) {
             err_buf[str_size] = 0; // null terminate the string
             fprintf(stderr, "%s", err_buf);
         }
-        memset(player_table, 255, MAX_PLAYERS * sizeof(uint32_t));
+        memset(player_table, 255, MAX_PLAYERS);
         memset(objective_table, 255, MAX_OBJECTIVES);
         network_ready = 0;
         return -2;
