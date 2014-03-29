@@ -304,7 +304,7 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 	
 	//render to surface
 	
-	cleanup_map();
+	//cleanup_map();
 	map_surface = SDL_CreateRGBSurface(0, width * TILE_WIDTH, height * TILE_HEIGHT, 32, 0, 0, 0, 0);
 	
 	if (map_surface == 0) {

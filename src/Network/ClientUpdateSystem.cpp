@@ -49,8 +49,6 @@ int client_update_system(World *world, int net_pipe) {
 	write(game_net_signalfd, &signal, sizeof(uint64_t));
 	num_packets = read_type(net_pipe); // the function just reads a 32 bit value, so this works; semantically, not ideal
 
-	init_client_update(world);
-
     if(num_packets == NET_SHUTDOWN) // network is shutting down; this is the only packet
     {
         char err_buf[128];

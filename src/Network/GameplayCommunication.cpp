@@ -114,13 +114,13 @@ void* read_packet(int fd, uint32_t size)
 void init_client_network(int send_router_fd[2], int rcv_router_fd[2], char * ip)
 {
     pthread_t thread;
-    PDATA ndata = (PDATA) malloc(sizeof(WTHREAD_DATA));
+    PDATA pdata = (PDATA) malloc(sizeof(WTHREAD_DATA));
     
-    ndata->read_pipe = send_router_fd[READ_END];
-    ndata->write_pipe = rcv_router_fd[WRITE_END];
-    memcpy(ndata->ip, ip, MAXIP);
+    pdata->read_pipe = send_router_fd[READ_END];
+    pdata->write_pipe = rcv_router_fd[WRITE_END];
+    memcpy(pdata->ip, ip, MAXIP);
 
-    pthread_create(&thread, NULL, networkRouter, (void *)ndata);
+    pthread_create(&thread, NULL, networkRouter, (void *)pdata);
     pthread_detach(thread);
 }
 

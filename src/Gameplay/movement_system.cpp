@@ -257,12 +257,7 @@ int handle_entity_collision(CollisionData data, World * world, int curEntityID) 
 			
 			move_request(world, send_router_fd[WRITE], targl, targx, targy);
 			floor_change_flag = 1;
-		 	if(!network_ready)
-			{
-				rebuild_floor(world, targl);
-		 		return MSG_ROOMCHANGE;
-		 	}
-			
+
 			return 0;
 		}
 		break;
@@ -350,15 +345,6 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 				else {
 					cancel_animation(world, entity);
 				}
-				if (command->commands[C_DOWN]) {
-					add_force(world, entity, world->movement[entity].acceleration, 90);
-				}
-				if (command->commands[C_LEFT]) {
-					add_force(world, entity, world->movement[entity].acceleration, 180);
-				}
-				if (command->commands[C_RIGHT]) {
-					add_force(world, entity, world->movement[entity].acceleration, 0);
-				}
 
 				CollisionData data;
 				if (IN_THIS_COMPONENT(world->mask[entity], COLLISION_MASK)) {
@@ -411,8 +397,6 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 					cancel_animation(world, entity);
 				}
 				
-				
-				//printf("FPS: %f\n", fps.getFPS());
 				if (position->level == 0) {
 					if (position->x < 240) {
 						send_status(world, sendpipe, 1, PLAYER_STATE_READY);

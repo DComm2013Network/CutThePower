@@ -402,7 +402,6 @@ void destroy_world(World *world) {
 	for(entity = 0; entity < MAX_ENTITIES; entity++) {
 		destroy_entity(world, entity);
 	}
-	memset(world, 0, sizeof(World));
 }
 
 void destroy_world_not_player(World *world) {

@@ -47,7 +47,6 @@ int main(int argc, char* argv[]) {
 	srand(time(NULL));//random initializer
 	KeyMapInit("assets/Input/keymap.txt");
 	init_render_player_system();
-
    	setup_send_timer(&send_timer);
 
 	create_main_menu(world);
@@ -57,7 +56,7 @@ int main(int argc, char* argv[]) {
 
 	running = true;
 	player_entity = -1;
-	
+
 	while (running)
 	{
 		
@@ -65,14 +64,7 @@ int main(int argc, char* argv[]) {
 		KeyInputSystem(world);
 		MouseInputSystem(world);
 		movement_system(world, fps, send_router_fd[WRITE]);
-
-		if (player_entity < MAX_ENTITIES) {
-			map_render(surface, world, player_entity);
-		}
-		animation_system(world);
-		render_player_system(*world, surface);
-
-		////NETWORK CODE
+	
 		if(network_ready)
 		{
 			timer_gettime(send_timer, &current_its);
@@ -83,7 +75,12 @@ int main(int argc, char* argv[]) {
 			client_update_system(world, rcv_router_fd[READ]);
 		}
 		////NETWORK CODE
-
+		if (player_entity < MAX_ENTITIES) {
+			map_render(surface, world, player_entity);
+		}
+		animation_system(world);
+		render_player_system(*world, surface);
+		////NETWORK CODE
 		SDL_UpdateWindowSurface(window);
 		
 		fps.limit();

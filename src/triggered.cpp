@@ -17,8 +17,8 @@ extern int send_router_fd[];
 extern int rcv_router_fd[];
 extern int game_net_signalfd;
 static int character;
-static char *username;
-static char *serverip;
+static char username[MAX_NAME] = "default";
+static char serverip[MAXIP] = "192.168.0.49";
 
 bool menu_click(World *world, unsigned int entity) {
 	//printf("Clicked: %s\n", world->button[entity].label);
@@ -332,10 +332,10 @@ bool menu_click(World *world, unsigned int entity) {
 			if (IN_THIS_COMPONENT(world->mask[i], COMPONENT_TEXTFIELD)) {
 
 				if (strcmp(world->text[i].name, "setup_username") == 0) {
-					username = world->text[i].text;
+					memcpy(username, world->text[i].text, MAX_NAME);
 				}
 				else if (strcmp(world->text[i].name, "setup_serverip") == 0) {
-					serverip = world->text[i].text;
+					memcpy(serverip, world->text[i].text, MAXIP);
 				}
 
 			}
@@ -400,6 +400,7 @@ void animation_end(World *world, unsigned int entity) {
 		game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
 
 		init_client_network(send_router_fd, rcv_router_fd, serverip);
+		init_client_update(world);
 		send_intialization(world, send_router_fd[WRITE], username);
 	}
 	//LOADING SCREEN ENDED
