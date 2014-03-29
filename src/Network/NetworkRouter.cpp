@@ -65,7 +65,7 @@ void *networkRouter(void *args)
 
     sem_init(&err_sem, 0, 1);
 
-    if(init_router(&max_fd, send_data, receive_data, gameplay, sendfd, recvfd, &thread_receive, &thread_send) == -1)
+    if(init_router(&max_fd, send_data, receive_data, gameplay, sendfd, recvfd, &thread_receive, &thread_send, gameplay->ip) == -1)
     {     
         net_cleanup(send_data, receive_data, gameplay, cached_packets);
     	return NULL;
@@ -326,7 +326,7 @@ void write_shutdown(int gameplay_pipe, const char *err_str)
  * @author   Shane Spoor
  */
 int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int sendfd[2], 
-				int recvfd[2], pthread_t *thread_receive, pthread_t *thread_send)
+				int recvfd[2], pthread_t *thread_receive, pthread_t *thread_send, char* ip)
 {
     IPaddress ipaddr, udpaddr;
 	TCPsocket tcp_sock;
@@ -353,8 +353,17 @@ int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int send
         return -1;
     }
 
-    resolve_host(&ipaddr, TCP_PORT, "192.168.0.49");
-    resolve_host(&udpaddr, UDP_PORT, "192.168.0.49");
+    if(resolve_host(&ipaddr, TCP_PORT, ip) == -1)
+    {
+        set_error(ERR_NO_CONN);
+        return -1;
+    }
+
+    if(resolve_host(&udpaddr, UDP_PORT, ip) == -1)
+    {
+        set_error(ERR_NO_CONN);
+        return -1;
+    }
     
     tcp_sock = SDLNet_TCP_Open(&ipaddr);
 

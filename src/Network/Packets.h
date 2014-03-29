@@ -35,7 +35,8 @@
 
 #define TIMEOUT 5000	
 #define SEND_FREQUENCY 100
-#define NANO_SECONDS   10000000000
+#define NANO_SECONDS   1000000
+#define MAXIP 			20
 
 #define TCP 0
 #define UDP 1

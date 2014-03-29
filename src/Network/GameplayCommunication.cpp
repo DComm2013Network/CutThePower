@@ -111,13 +111,14 @@ void* read_packet(int fd, uint32_t size)
  * @designer    Ramzi Chennafi
  * @author      Ramzi Chennafi
  */
-void init_client_network(int send_router_fd[2], int rcv_router_fd[2])
+void init_client_network(int send_router_fd[2], int rcv_router_fd[2], char * ip)
 {
     pthread_t thread;
-    NETWORK_DATA * ndata = (NETWORK_DATA*) malloc(sizeof(NETWORK_DATA));
+    PDATA ndata = (PDATA) malloc(sizeof(WTHREAD_DATA));
     
     ndata->read_pipe = send_router_fd[READ_END];
     ndata->write_pipe = rcv_router_fd[WRITE_END];
+    memcpy(ndata->ip, ip, MAXIP);
 
     pthread_create(&thread, NULL, networkRouter, (void *)ndata);
     pthread_detach(thread);

@@ -63,14 +63,15 @@ void send_location(World *world, int fd)
  * @designer    Ramzi Chennafi
  * @author      Ramzi Chennafi
  */
-void send_intialization(World *world, int fd, char * username, char * serverip)
+void send_intialization(World *world, int fd, char * username)
 {
 	PKT_PLAYER_NAME * pkt1 = (PKT_PLAYER_NAME *)malloc(sizeof(PKT_PLAYER_NAME));
 	for (int j = 0; j < MAX_ENTITIES; j++) {
 		if (IN_THIS_COMPONENT(world->mask[j], COMPONENT_PLAYER | COMPONENT_CONTROLLABLE))
 		{
 			controllable_player = j;
-			memcpy(pkt1->client_player_name, world->player[j].name, sizeof(world->player[j].name));
+			memcpy(pkt1->client_player_name, username, sizeof(username));
+			memcpy(world->player[j].name, username, sizeof(username));
 			pkt1->selectedCharacter = world->player[j].character;
 			break;
 		}
@@ -163,7 +164,7 @@ void setup_send_timer(timer_t * timer)
    	}
 
 	its.it_value.tv_sec = 0;
-    its.it_value.tv_nsec = SEND_FREQUENCY * NANO_SECONDS + 1;
+    its.it_value.tv_nsec = SEND_FREQUENCY * NANO_SECONDS;
    	its.it_interval.tv_sec = its.it_value.tv_sec;
    	its.it_interval.tv_nsec = its.it_value.tv_nsec;
    	if(timer_settime(*timer, 0, &its, NULL) == -1)

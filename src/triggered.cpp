@@ -16,9 +16,9 @@ extern unsigned int player_entity;
 extern int send_router_fd[];
 extern int rcv_router_fd[];
 extern int game_net_signalfd;
-int character;
-char *username;
-char *serverip;
+static int character;
+static char *username;
+static char *serverip;
 
 bool menu_click(World *world, unsigned int entity) {
 	//printf("Clicked: %s\n", world->button[entity].label);
@@ -364,8 +364,6 @@ bool menu_click(World *world, unsigned int entity) {
 
 	}
 	else if (strcmp(world->button[entity].label, "setup_play") == 0) {
-		char *username;
-		char *serverip;
 
 		unsigned int i;
 
@@ -444,8 +442,8 @@ void animation_end(World *world, unsigned int entity) {
 		////NETWORK CODE
 		game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
 
-		init_client_network(send_router_fd, rcv_router_fd);
-		send_intialization(world, send_router_fd[WRITE], username, serverip);
+		init_client_network(send_router_fd, rcv_router_fd, serverip);
+		send_intialization(world, send_router_fd[WRITE], username);
 	}
 	//LOADING SCREEN ENDED
 	else if (animationComponent->id == 1) { //1 is the loading screen
