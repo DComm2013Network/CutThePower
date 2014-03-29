@@ -157,7 +157,7 @@ typedef struct pkt06{
 
 typedef struct pkt08
 {
-	int	objectives_captured[MAX_OBJECTIVES];
+	status_t	objectives_captured[MAX_OBJECTIVES];
 	status_t	game_status;
 } PKT_OBJECTIVE_STATUS;
 

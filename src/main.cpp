@@ -67,11 +67,11 @@ int main(int argc, char* argv[]) {
 	
 		if(network_ready)
 		{
-			timer_gettime(send_timer, &current_its);
-			if(current_its.it_value.tv_nsec == 0)
-			{
+			// timer_gettime(send_timer, &current_its);
+			// if(current_its.it_value.tv_nsec == 0)
+			// {
 				send_location(world, send_router_fd[WRITE]);
-			}
+			// }
 			client_update_system(world, rcv_router_fd[READ]);
 		}
 		////NETWORK CODE
