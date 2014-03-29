@@ -263,9 +263,9 @@ unsigned int create_stair(World* world, int targetLevel, int targetX, int target
 	pos.x = x;
 	pos.y = y;
 
-	pos.width = 2;
-	pos.height = 2;
-	pos.level = 0;
+	pos.width = width;
+	pos.height = height;
+	pos.level = level;
 	
 	target.targetLevel = targetLevel;
     target.targetX = targetX;

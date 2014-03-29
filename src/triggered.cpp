@@ -17,8 +17,8 @@ extern int send_router_fd[];
 extern int rcv_router_fd[];
 extern int game_net_signalfd;
 static int character;
-static char username[MAX_NAME] = "default";
-static char serverip[MAXIP] = "192.168.0.49";
+static char username[MAX_NAME];
+static char serverip[MAXIP];
 
 bool menu_click(World *world, unsigned int entity) {
 	//printf("Clicked: %s\n", world->button[entity].label);
