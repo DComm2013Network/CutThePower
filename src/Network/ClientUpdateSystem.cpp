@@ -12,12 +12,10 @@
 #include "../Gameplay/collision.h"
 #include "network_systems.h"
 
-extern int send_ready;
-extern int game_ready;
 static int controllable_playerNo;
 extern int game_net_signalfd;
 extern int network_ready;
-static int floor_change_flag = 0;
+int floor_change_flag = 0;
 static unsigned int *player_table = NULL; /**< A lookup table mapping server player numbers to client entities. */
 
 /**
@@ -77,7 +75,6 @@ int client_update_system(World *world, int net_pipe) {
 			{
 				case P_FLOOR_MOVE:
 				client_update_floor(world, packet);
-				game_ready++;
 				break;
 			}
 		}
@@ -92,7 +89,6 @@ int client_update_system(World *world, int net_pipe) {
 					break;
 				case G_STATUS:
 					client_update_status(world, packet);
-					game_ready++;
 					break;
 				case P_CHAT:
 					client_update_chat(world, packet);
@@ -111,7 +107,6 @@ int client_update_system(World *world, int net_pipe) {
 					break;
 				case P_FLOOR_MOVE:
 					client_update_floor(world, packet);
-					game_ready++;
 					break;
 				case P_TAGGING:
 					player_tag_packet(world, packet);

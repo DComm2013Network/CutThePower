@@ -1,3 +1,4 @@
+
 /** @ingroup Gameplay */
 /** @{ */
 /** @file movement_system.cpp */
@@ -254,7 +255,7 @@ void handle_entity_collision(CollisionData data, World * world, int curEntityID)
 			int targy = world->wormhole[data.entityID].targetY;
 			int targl = world->wormhole[data.entityID].targetLevel;
 			
-			move_request(world, send_router_fd[WRITE_END], targl, targx, targy);
+			move_request(world, send_router_fd[WRITE], targl, targx, targy);
 			floor_change_flag = 1;
 		 	
 			return MSG_ROOMCHANGE;

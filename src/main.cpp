@@ -66,10 +66,9 @@ int main(int argc, char* argv[]) {
 		//INPUT
 		KeyInputSystem(world);
 		MouseInputSystem(world);
-		movement_system(world, fps, send_router_fd[WRITE_END]);
+		movement_system(world, fps, send_router_fd[WRITE]);
 		if (player_entity < MAX_ENTITIES) {
 			map_render(surface, world, player_entity);
-			//send_system(world, send_router_fd[WRITE_END]);
 		}
 		animation_system(world);
 		render_player_system(*world, surface);
@@ -77,10 +76,10 @@ int main(int argc, char* argv[]) {
 		////NETWORK CODE
 		if(network_ready)
 		{
-			timer_gettime(timer, &current_its);
-			if(its.it_value.tv_nsec == 0)
+			timer_gettime(send_timer, &current_its);
+			if(current_its.it_value.tv_nsec == 0)
 			{
-				send_location(world, send_router_fd[WRITE_END]);
+				send_location(world, send_router_fd[WRITE]);
 			}
 			client_update_system(world, rcv_router_fd[READ]);
 		}

@@ -9,6 +9,7 @@
  */
 
 /** @} */
+#include "Packets.h"
 #include "GameplayCommunication.h"
 #include "NetworkRouter.h"	
 #include "PipeUtils.h"
@@ -150,17 +151,16 @@ void send_status(World * world, int fd, teamNo_t team, int ready_status)
  */
 void setup_send_timer(timer_t * timer)
 {
-	struct sigevent sev;
+	struct sigevent sevnt;
 	struct itimerspec its;
 	
-	sev.sigev_notify = SIGEV_NONE;
-    sev.sigev_value.sival_ptr = &timer;
-    if (timer_create(CLOCK_REALTIME, &sev, timer) == -1)
+	sevnt.sigev_notify = SIGEV_NONE;
+    sevnt.sigev_value.sival_ptr = timer;
+    if (timer_create(CLOCK_REALTIME, &sevnt, timer) == -1)
     {
-    	printf("Failed to create timer.");
+    	printf("Failed to create timer.\n");
         exit(2);
    	}
-
 
 	its.it_value.tv_sec = 0;
     its.it_value.tv_nsec = SEND_FREQUENCY * NANO_SECONDS + 1;
@@ -168,7 +168,7 @@ void setup_send_timer(timer_t * timer)
    	its.it_interval.tv_nsec = its.it_value.tv_nsec;
    	if(timer_settime(*timer, 0, &its, NULL) == -1)
    	{
-   		printf("Failed to create timer with errno: %d", errno);
+   		printf("Failed to set timer with errno: %d\n", errno);
    		exit(2);
    	}
 }

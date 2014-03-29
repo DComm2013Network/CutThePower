@@ -10,12 +10,11 @@
  * @file NetworkRouter.cpp
  */
 /** @} */
-
-#include "NetworkRouter.h"
-#include "GameplayCommunication.h"
-#include "ServerCommunication.h"
-#include "PipeUtils.h"
 #include "Packets.h"
+#include "ServerCommunication.h"
+#include "GameplayCommunication.h"
+#include "PipeUtils.h"
+#include "NetworkRouter.h"
 
 extern int game_net_signalfd;
 extern int network_ready;

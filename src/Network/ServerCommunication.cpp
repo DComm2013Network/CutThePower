@@ -12,11 +12,11 @@
  */
 
 /** @} */
-#include "NetworkRouter.h"
+#include "Packets.h"
 #include "ServerCommunication.h"
 #include "GameplayCommunication.h"
+#include "NetworkRouter.h"
 #include "PipeUtils.h"
-#include "Packets.h"
 #include "packet_min_utils.h"
 #include "ServerCommunication.h"
  

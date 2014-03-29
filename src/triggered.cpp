@@ -445,7 +445,7 @@ void animation_end(World *world, unsigned int entity) {
 		game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
 
 		init_client_network(send_router_fd, rcv_router_fd);
-		send_intialization(world, send_router_fd[WRITE_END], username, serverip);
+		send_intialization(world, send_router_fd[WRITE], username, serverip);
 	}
 	//LOADING SCREEN ENDED
 	else if (animationComponent->id == 1) { //1 is the loading screen

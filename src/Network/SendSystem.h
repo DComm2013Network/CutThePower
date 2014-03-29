@@ -5,6 +5,8 @@
 #include "../components.h"
 #include "../systems.h"
 #include "../world.h"
+#include "time.h"
+#include <signal.h>
 
 void send_location(World *world, int fd);
 void send_intialization(World *world, int fd, char * username, char * serverip);
