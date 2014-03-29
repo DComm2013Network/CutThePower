@@ -32,12 +32,18 @@ bool menu_click(World *world, unsigned int entity) {
 		
 		create_options_menu(world);
 	}
-	else if (strcmp(world->button[entity].label, "mainmenu_credits") == 0) {
+	/*else if (strcmp(world->button[entity].label, "mainmenu_credits") == 0) {
 		
 		destroy_menu(world);
 		
 		create_credits_menu(world);
 		
+	}*/
+	else if (strcmp(world->button[entity].label, "mainmenu_credits") == 0) {
+		
+		destroy_menu(world);
+		
+		create_win_screen(world);
 	}
 	else if (strcmp(world->button[entity].label, "mainmenu_exit") == 0) {
 		destroy_world(world);
@@ -373,6 +379,7 @@ bool menu_click(World *world, unsigned int entity) {
 		
 		create_main_menu(world);
 	}
+	
 	
 	
 	
