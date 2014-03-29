@@ -33,6 +33,8 @@ int fogOfWarWidth;
 
 extern int level;
 
+
+
 /**
  * Blits a fog of war "corner" tile to the larger window surface.
  * 
@@ -61,6 +63,7 @@ void blit_tile(SDL_Surface *surface, struct fogOfWarStruct *fow, SDL_Rect *tileR
 	SDL_BlitSurface(fow -> corners[i], NULL, surface, tileRect);
 	fow -> tiles[y][x].visible[ level ] = 2;
 }
+
 
 
 /**
@@ -125,6 +128,8 @@ void render_fog_of_war(SDL_Surface *surface, struct fogOfWarStruct *fow)
 		}
 	}
 }
+
+
 
 /**
  * Allocates memory for each component of the fogOfWarStruct.
@@ -215,6 +220,8 @@ void init_fog_of_war(struct fogOfWarStruct **fow)
 		(*fow)->corners[11] = IMG_Load("assets/Graphics/fow/botright/right.png");
 }
 
+
+
 /**
  * Frees the fow struct and its components' allocated heap memories
  *
@@ -243,6 +250,7 @@ void cleanup_fog_of_war(struct fogOfWarStruct *fow)
 		SDL_FreeSurface(fow -> corners[i]);
 	}
 }
+
 
 
 /**
@@ -367,6 +375,7 @@ void make_surrounding_tiles_visible(struct fogOfWarPlayerPosition *fowp)
 }
 
 
+
 /**
  * Sets the relative tile position (relative to other tiles)
  *
@@ -392,6 +401,7 @@ int set_tile_pos(int pos, int delta)
 		
 	return pos;
 }
+
 
 
 /**
@@ -432,6 +442,8 @@ int *get_visibility_type(PositionComponent *newposition, struct fogOfWarPlayerPo
 	return &fow -> tiles[y][x].visible[ pos->level ];
 }
 
+
+
 /**
  * Sets a tile's visibility.
  *
@@ -461,6 +473,7 @@ int set_visibility_type(struct fogOfWarPlayerPosition *fowp, int yDel, int xDel,
 	if( is_wall_collision(world, newposition) == COLLISION_WALL ) return 0;
 	return 1;
 }
+
 
 
 /**
@@ -506,6 +519,7 @@ int is_wall_collision(World *world, PositionComponent newposition)
 }
 
 
+
 /**
  * Adds one to a value without going out of bounds
  *
@@ -527,6 +541,8 @@ int addOne(int n)
 {
 	return ++n;
 }
+
+
 
 /**
  * Subtracts one from a value without going out of bounds (below zero)
