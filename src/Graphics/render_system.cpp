@@ -15,7 +15,7 @@
 /*SAM**/
 #include "map.h"
 
-void makeSurroundingTilesVisible(struct fogOfWarPlayerPosition *fowp);
+void make_surrounding_tiles_visible(struct fogOfWarPlayerPosition *fowp);
 /******/
 
 #define SYSTEM_MASK (COMPONENT_RENDER_PLAYER | COMPONENT_POSITION) /**< The entity must have a render player and position component
@@ -131,13 +131,13 @@ void render_player_system(World& world, SDL_Surface* surface, struct fogOfWarStr
 
 	
 	/*SAM*********************************/
-	//struct fogOfWarPlayerPosition fowp;
+	struct fogOfWarPlayerPosition fowp;
 	
-	//fowp.world = &world;
-	//fowp.pos   = position;
-	//fowp.fow   = fow;
+	fowp.world = &world;
+	fowp.pos   = position;
+	fowp.fow   = fow;
 	
-	//makeSurroundingTilesVisible(&fowp);
+	make_surrounding_tiles_visible(&fowp);
 	/*************************************/
 
 }
