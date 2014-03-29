@@ -240,7 +240,6 @@ void rebuild_floor(World * world, int targl)
 }
 
 int handle_entity_collision(CollisionData data, World * world, int curEntityID) {
-
 	switch(data.entity_code) {
 	case COLLISION_TARGET:
 		if (world->collision[curEntityID].type == COLLISION_HACKER && world->command[curEntityID].commands[C_ACTION]) {
@@ -257,8 +256,6 @@ int handle_entity_collision(CollisionData data, World * world, int curEntityID) 
 			
 			move_request(world, send_router_fd[WRITE], targl, targx, targy);
 			floor_change_flag = 1;
-
-			return 0;
 		}
 		break;
 	case COLLISION_HACKER:
@@ -357,8 +354,8 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 					apply_forcey(temp, *movement, fps);
 					data = collision_system(world, temp, entity);
 					handle_y_collision(world, data, temp, *movement, entity, fps);
-					collisionType = handle_entity_collision(world, entity);
-
+					collisionType = handle_entity_collision(data, world, entity);
+					
 					p.x = position->x;
 					p.y = position->y;
 					p.width = 60;

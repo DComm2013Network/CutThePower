@@ -195,7 +195,6 @@ unsigned int create_player(World* world, int x, int y, bool controllable, int co
 			if (controllable) {
 				world->controllable[entity] = control;
 			}
-
 			return entity;
 		}
 	}
@@ -253,54 +252,32 @@ unsigned int create_objective(World* world, float x, float y, int w, int h, int 
  */
 unsigned int create_stair(World* world, int targetLevel, int targetX, int targetY, int x, int y, int width, int height, int level) {
 	unsigned int entity;
-	PositionComponent pos;
-	WormholeComponent target;
-	CollisionComponent collision;
-
-	int lastID = -1;
-	unsigned int tempMask = 0;
 	
-	pos.x = x;
-	pos.y = y;
-
-	pos.width = width;
-	pos.height = height;
-	pos.level = level;
+	entity = create_entity(world, COMPONENT_POSITION | COMPONENT_COLLISION | COMPONENT_WORMHOLE);
 	
-	target.targetLevel = targetLevel;
-    target.targetX = targetX;
-    target.targetY = targetY;
-    
-	collision.id = 0;
-	collision.type = COLLISION_STAIR;
-	collision.timer = 0;
-	collision.timerMax = 600;
-	collision.active = true;
-	collision.radius = 0;
+	world->position[entity].x = x;
+	world->position[entity].y = y;
+	world->position[entity].width = width;
+	world->position[entity].height = height;
+	world->position[entity].level = level;
 	
-	for(entity = 0; entity < MAX_ENTITIES; ++entity) {
-		tempMask = world->mask[entity] & COMPONENT_POSITION;
-		if (tempMask == COMPONENT_MOVEMENT) {
-			lastID = world->collision[entity].id;
-		}
-		
-		if (world->mask[entity] == COMPONENT_EMPTY) {
-			world->mask[entity] =	COMPONENT_POSITION | 
-									COMPONENT_COLLISION | 
-									COMPONENT_WORMHOLE;
-
-			world->position[entity] = pos;
-			world->wormhole[entity] = target;
-			world->collision[entity] = collision;
-			
-			return entity;
-		}
-	}
-	return MAX_ENTITIES;
+	world->wormhole[entity].targetLevel = targetLevel;
+	world->wormhole[entity].targetX = targetX;
+	world->wormhole[entity].targetY = targetY;
+	
+	world->collision[entity].id = 0;
+	world->collision[entity].type = COLLISION_STAIR;
+	world->collision[entity].timer = 0;
+	world->collision[entity].timerMax = 0;
+	world->collision[entity].active = true;
+	world->collision[entity].radius = 0;
+	
+	return entity;
 }
 
 unsigned int create_block(World* world, int x, int y, int width, int height, int level) {
 	unsigned int entity = create_entity(world, COMPONENT_POSITION | COMPONENT_COLLISION);
+	
 	world->position[entity].x = x;
 	world->position[entity].y = y;
 	world->position[entity].width = width;
@@ -313,6 +290,7 @@ unsigned int create_block(World* world, int x, int y, int width, int height, int
 	world->collision[entity].timerMax = 0;
 	world->collision[entity].active = true;
 	world->collision[entity].radius = 0;
+	
 	return entity;
 }
 
@@ -400,6 +378,7 @@ void destroy_world(World *world) {
 	unsigned int entity;
 	
 	for(entity = 0; entity < MAX_ENTITIES; entity++) {
+		//printf("world->mask[%3i]: 0x%08X\n", entity, world->mask[entity]);
 		destroy_entity(world, entity);
 	}
 }
@@ -408,8 +387,9 @@ void destroy_world_not_player(World *world) {
 	unsigned int entity;
 	
 	for(entity = 0; entity < MAX_ENTITIES; entity++) {
-		if(!IN_THIS_COMPONENT(world->mask[entity], COMPONENT_PLAYER))
+		if(!IN_THIS_COMPONENT(world->mask[entity], COMPONENT_PLAYER)) {
 			destroy_entity(world, entity);
+		}
 	}
 }
 
