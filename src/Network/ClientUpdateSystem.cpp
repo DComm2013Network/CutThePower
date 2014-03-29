@@ -273,14 +273,30 @@ void client_update_status(World *world, void *packet)
 	        {
 	        	if(status_update->otherPlayers_teams[i] == COPS)
 	        	{
-	        		player_table[i] = create_player(world, 400, 600, false, COLLISION_HACKER, i, status_update->characters[i]);
-	            	load_animation("assets/Graphics/player/p1/cop_animation.txt", world, player_table[i]);
+	        		if(i == controllable_playerNo)
+	        		{
+	        			world->collision[player_table[i]].type = COLLISION_GUARD;
+	            		load_animation("assets/Graphics/player/p1/cop_animation.txt", world, player_table[i]);
+	        		}
+	        		else
+	        		{
+	        			player_table[i] = create_player(world, 400, 600, false, COLLISION_GUARD, i, status_update->characters[i]);
+	            		load_animation("assets/Graphics/player/p1/cop_animation.txt", world, player_table[i]);
+	        		}
 	        	}
 
 	        	if(status_update->otherPlayers_teams[i] == ROBBERS)
 	        	{
-	        		player_table[i] = create_player(world, 400, 600, false, COLLISION_HACKER, i, status_update->characters[i]);
-	             	load_animation("assets/Graphics/player/p0/rob_animation.txt", world, player_table[i]);
+	        		if(i == controllable_playerNo)
+	        		{
+	        			world->collision[player_table[i]].type = COLLISION_HACKER;
+	             		load_animation("assets/Graphics/player/p0/rob_animation.txt", world, player_table[i]);
+	        		}
+	        		else
+	        		{
+			    		player_table[i] = create_player(world, 400, 600, false, COLLISION_HACKER, i, status_update->characters[i]);
+			         	load_animation("assets/Graphics/player/p0/rob_animation.txt", world, player_table[i]);
+			    	}
 	        	}
 	        }
 		} 
