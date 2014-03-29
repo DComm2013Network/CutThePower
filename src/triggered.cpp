@@ -255,7 +255,6 @@ bool menu_click(World *world, unsigned int entity) {
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_ramzi") == 0) {
-		
 		destroy_menu(world);
 		
 		create_setup_menu(world);
@@ -299,49 +298,7 @@ bool menu_click(World *world, unsigned int entity) {
 	else if (strcmp(world->button[entity].label, "menu_select_random") == 0) {
 		
 		destroy_menu(world);
-		character = ROBIN;
-		create_setup_menu(world);
-		
-	}
-	else if (strcmp(world->button[entity].label, "menu_select_sam") == 0) {
-
-		destroy_menu(world);
-		character = SAM;
-
-		create_setup_menu(world);
-
-	}
-	else if (strcmp(world->button[entity].label, "menu_select_shane") == 0) {
-
-		destroy_menu(world);
-		character = SHANE;
-
-		create_setup_menu(world);
-
-	}
-	else if (strcmp(world->button[entity].label, "menu_select_tim") == 0) {
-
-		destroy_menu(world);
-
-		character = TIM;
-
-		create_setup_menu(world);
-
-	}
-	else if (strcmp(world->button[entity].label, "menu_select_vincent") == 0) {
-
-		destroy_menu(world);
-		character = VINCENT;
-
-		create_setup_menu(world);
-
-	}
-	else if (strcmp(world->button[entity].label, "menu_select_random") == 0) {
-
-		destroy_menu(world);
-		
 		character = rand() % 18;
-		
 		create_setup_menu(world);
 
 	}
@@ -445,6 +402,7 @@ void animation_end(World *world, unsigned int entity) {
 		game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
 
 		init_client_network(send_router_fd, rcv_router_fd);
+		init_client_update(world);
 		send_intialization(world, send_router_fd[WRITE_END], username, serverip);
 	}
 	//LOADING SCREEN ENDED

@@ -188,7 +188,7 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 				int x, y, floor;
 				float targetX, targetY;
 				char dir;
-				
+
 				if (fscanf(fp_map, "%d %d %f %f %d %c", &x, &y, &targetX, &targetY, &floor, &dir) != 6) {
 					printf("Error loading stair\n");
 					return -1;
@@ -433,3 +433,4 @@ void map_render(SDL_Surface *surface, World *world, unsigned int player_entity) 
 	
 	SDL_BlitSurface(map_surface, NULL, surface, &tempRect);
 }
+

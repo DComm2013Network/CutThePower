@@ -65,9 +65,7 @@ int main(int argc, char* argv[]) {
 	
 	init_world(world);
 	srand(time(NULL));//random initializer
-	
-	KeyMapInit((char*)"assets/Input/keymap.txt");
-
+	KeyMapInit("assets/Input/keymap.txt");
 	init_render_player_system();
 
 	its.it_value.tv_sec = 0;
@@ -91,6 +89,7 @@ int main(int argc, char* argv[]) {
 		KeyInputSystem(world);
 		MouseInputSystem(world);
 		movement_system(world, fps, send_router_fd[WRITE_END]);
+
 		if (player_entity < MAX_ENTITIES) {
 			map_render(surface, world, player_entity);
 			//send_system(world, send_router_fd[WRITE_END]);
@@ -135,7 +134,4 @@ int main(int argc, char* argv[]) {
 	
 	return 0;
 }
-
-
-
 

@@ -146,10 +146,10 @@ void send_status_ready(World * world, int fd, teamNo_t team)
 				player_team = team;
 				break;
 			}
-		}
+		}	
 		printf("Changed to team %d\n", team);
 		write_packet(fd, P_READY_STAT, pkt);
-		free(pkt);	
+		free(pkt);
 	}
 }
 

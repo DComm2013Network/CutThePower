@@ -230,8 +230,7 @@ void rebuild_floor(World * world)
 	}
 }
 
-void handle_entity_collision(CollisionData data, World * world, int curEntityID) {
-
+int handle_entity_collision(CollisionData data, World * world, int curEntityID) {
 	switch(data.entity_code) {
 	case COLLISION_TARGET:
 		if (world->collision[curEntityID].type == COLLISION_HACKER && world->command[curEntityID].commands[C_ACTION]) {
@@ -247,12 +246,31 @@ void handle_entity_collision(CollisionData data, World * world, int curEntityID)
 			targl = world->wormhole[data.entityID].targetLevel;
 			
 			move_request(world, send_router_fd[WRITE_END], targl, targx, targy);
-			
+
 		 	floor_change_flag = 1;
-		 	rebuild_floor(world);
+			destroy_world_not_player(world);
+	        switch (targl) {
+				case 0:
+					map_init(world, "assets/Graphics/map/map_00/map00.txt", "assets/Graphics/map/map_00/tiles.txt");
+					break;
+				case 1:
+					map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/tiles.txt");
+					break;
+				case 2:
+					map_init(world, "assets/Graphics/map/map_02/map02.txt", "assets/Graphics/map/map_02/tiles.txt");
+					break;
+				case 3:
+					map_init(world, "assets/Graphics/map/map_03/map03.txt", "assets/Graphics/map/map_03/tiles.txt");
+					break;
+			}
+			for (unsigned int i = 0; i < MAX_ENTITIES; i++) {
+				if (IN_THIS_COMPONENT(world->mask[i], COMPONENT_LEVEL)) {
+					world->level[i].levelID = targl;
+					break;
+				}
+			}
 			return MSG_ROOMCHANGE;
 			//printf("t: %i\n", world->position[player_entity].level);
-
 		}
 		break;
 	case COLLISION_HACKER:
@@ -307,10 +325,12 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 				temp.width = position->width;
 				temp.height = position->height;
 				temp.level = position->level;
+				bool moved = false;
 				int collisionType = -1;
 				
 				if (command->commands[C_UP]) {
 					add_force(world, entity, world->movement[entity].acceleration, -90);
+
 					play_animation(world, entity, "up");
 				}
 				else {
@@ -337,6 +357,15 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 				else {
 					cancel_animation(world, entity);
 				}
+				if (command->commands[C_DOWN]) {
+					add_force(world, entity, world->movement[entity].acceleration, 90);
+				}
+				if (command->commands[C_LEFT]) {
+					add_force(world, entity, world->movement[entity].acceleration, 180);
+				}
+				if (command->commands[C_RIGHT]) {
+					add_force(world, entity, world->movement[entity].acceleration, 0);
+				}
 
 				CollisionData data;
 				if (IN_THIS_COMPONENT(world->mask[entity], COLLISION_MASK)) {
@@ -350,6 +379,7 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 					data = collision_system(world, temp, entity);
 					handle_y_collision(world, data, temp, *movement, entity, fps);
 					collisionType = handle_entity_collision(world, entity);
+
 					p.x = position->x;
 					p.y = position->y;
 					p.width = 60;
@@ -369,19 +399,19 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 				}
 				
 				if (movement->movX > 0 && abs(movement->movX) > abs(movement->movY)) {
-					play_animation(world, entity, (char*)"right");
+					play_animation(world, entity, "right");
 					//right
 				}
 				else if (movement->movX < 0 && abs(movement->movX) > abs(movement->movY)) {
-					play_animation(world, entity, (char*)"left");
+					play_animation(world, entity, "left");
 					//left
 				}
 				else if (movement->movY > 0 && abs(movement->movY) > abs(movement->movX)) {
-					play_animation(world, entity, (char*)"down");
+					play_animation(world, entity, "down");
 					//down
 				}
 				else if (movement->movY < 0 && abs(movement->movY) > abs(movement->movX)) {
-					play_animation(world, entity, (char*)"up");
+					play_animation(world, entity, "up");
 					//up
 				}
 				else {

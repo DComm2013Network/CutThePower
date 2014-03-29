@@ -20,10 +20,8 @@ void init_sound() {
 	
 	//initialize audio mixer.
 	if(Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) == -1) {
-
-       return;    
-   }
-	
+          return;    
+       }
 	music = (Mix_Music**)malloc(sizeof(Mix_Music*) * SOUND_MUSIC_NUM);
 	effects = (Mix_Chunk**)malloc(sizeof(Mix_Chunk*) * SOUND_EFFECT_NUM);
 	
@@ -49,13 +47,12 @@ void cleanup_sound() {
 	for(i = 0; i < SOUND_MUSIC_NUM; i++) {
 		Mix_FreeMusic(music[i]);
 	}
-
+	
 	for(i = 0; i < SOUND_EFFECT_NUM; i++) {
 		Mix_FreeChunk(effects[i]);
 	}
 	
 	Mix_CloseAudio();
-
 }
 
 /**
@@ -96,7 +93,6 @@ void play_music(int sound) {
 	}
 	
 	Mix_PlayMusic(music[sound], -1);
-	
 }
 
 /**
@@ -108,7 +104,7 @@ void play_music(int sound) {
  * @author Jordan Marling
  */
 void stop_music() {
-	Mix_HaltMusic();
+//	Mix_HaltMusic();
 }
 
 /**
