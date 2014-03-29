@@ -50,9 +50,12 @@ void animation_system(World *world) {
 
 				animation = &(animationComponent->animations[animationComponent->current_animation]);
 				
-				if (animation->index == 0 && animation->ms_last == 0 && animation->sound_effect > -1) {
-					play_effect(animation->sound_effect);
-				}
+				//printf("index: %d ms_last: %d  sound effect: %d\n", animation->index, animation->ms_last, animation->sound_effect);
+				
+				//if (animation->index == 0 && animationComponent->first_triggered && animation->sound_effect > -1) {
+				//	play_effect(animation->sound_effect);
+				//	printf("Playing sound effect %d\n", animation->sound_effect);
+				//}
 				
 				if (SDL_GetTicks() - animation->ms_last > animation->ms_to_skip) {
 					
@@ -61,7 +64,7 @@ void animation_system(World *world) {
 					animation->index++;
 					if (animation->index >= animation->surface_count) {
 
-						animation->index = 0;
+						animation->index = 1;
 						if (animation->loop == -1) {
 
 							animationComponent->current_animation = -1;
@@ -93,6 +96,11 @@ void animation_system(World *world) {
 					
 					animationComponent->last_random_occurance = SDL_GetTicks();
 					animationComponent->next_random_occurance = (rand() % (animationComponent->rand_occurance_max - animationComponent->rand_occurance_min)) + animationComponent->rand_occurance_min + SDL_GetTicks();
+					
+					if (animationComponent->animations[animationComponent->rand_animation].sound_effect > -1) {
+						play_effect(animationComponent->animations[animationComponent->rand_animation].sound_effect);
+						//printf("Playing sound effect %d\n", animationComponent->animations[animationComponent->rand_animation].sound_effect);
+					}
 				}
 			}
 
@@ -242,6 +250,10 @@ void cancel_animation(World *world, unsigned int entity) {
 	AnimationComponent *animation = &(world->animation[entity]);
 	RenderPlayerComponent *render = &(world->renderPlayer[entity]);
 
+	if (!IN_THIS_COMPONENT(world->mask[entity], COMPONENT_ANIMATION)) {
+		return;
+	}
+
 	if (animation->current_animation == -1)
 		return;
 	
@@ -267,6 +279,11 @@ void play_animation(World *world, unsigned int entity, const char *animation_nam
 	
 	int i;
 	AnimationComponent *animationComponent = &(world->animation[entity]);
+	RenderPlayerComponent *renderComponent = &(world->renderPlayer[entity]);
+	
+	if (!IN_THIS_COMPONENT(world->mask[entity], COMPONENT_ANIMATION)) {
+		return;
+	}
 	
 	//Check if the current animation is already playing.
 	if (animationComponent->current_animation > -1 && strcmp(animationComponent->animations[animationComponent->current_animation].name, animation_name) == 0) {
@@ -279,6 +296,13 @@ void play_animation(World *world, unsigned int entity, const char *animation_nam
 			animationComponent->current_animation = i;
 			animationComponent->animations[i].ms_last = SDL_GetTicks();
 			animationComponent->animations[i].index = 0;
+			
+			renderComponent->playerSurface = animationComponent->animations[i].surfaces[0];
+			
+			if (animationComponent->animations[i].sound_effect > -1) {
+				play_effect(animationComponent->animations[i].sound_effect);
+				//printf("Playing sound effect %d\n", animationComponent->animations[i].sound_effect);
+			}
 			
 			return;
 		}

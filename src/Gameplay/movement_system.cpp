@@ -159,6 +159,7 @@ void handle_entity_collision(CollisionData data, World * world, int curEntityID)
 		break;
 	case COLLISION_STAIR:
 		if (world->collision[curEntityID].type == COLLISION_HACKER || world->collision[curEntityID].type == COLLISION_GUARD) {
+			printf("Floor changed\n");
 			int targx = world->wormhole[data.entityID].targetX, targy = world->wormhole[data.entityID].targetY, targl = world->wormhole[data.entityID].targetLevel;
 			destroy_world(world);
 			unsigned int e = create_player(world, targx, targy, true, COLLISION_HACKER);
@@ -185,6 +186,7 @@ void handle_entity_collision(CollisionData data, World * world, int curEntityID)
 					break;
 				}
 			}
+			printf("Floor changed ended\n");
 			//printf("t: %i\n", world->position[player_entity].level);
 		}
 		break;
@@ -260,20 +262,28 @@ void movement_system(World* world) {
 				}
 				
 				if (movement->movX > 0 && abs(movement->movX) > abs(movement->movY)) {
-					play_animation(world, entity, (char*)"right");
+					play_animation(world, entity, "right");
 					//right
 				}
 				else if (movement->movX < 0 && abs(movement->movX) > abs(movement->movY)) {
-					play_animation(world, entity, (char*)"left");
+					play_animation(world, entity, "left");
 					//left
 				}
 				else if (movement->movY > 0 && abs(movement->movY) > abs(movement->movX)) {
-					play_animation(world, entity, (char*)"down");
+					play_animation(world, entity, "down");
 					//down
 				}
 				else if (movement->movY < 0 && abs(movement->movY) > abs(movement->movX)) {
-					play_animation(world, entity, (char*)"up");
+					play_animation(world, entity, "up");
 					//up
+				}
+				else if (movement->movX > 0.15 && abs(movement->movX) == abs(movement->movY)) {
+					play_animation(world, entity, "right");
+					//diagonal - up/right and down/right
+				}
+				else if (movement->movX < -0.15 && abs(movement->movX) == abs(movement->movY)) {
+					play_animation(world, entity, "left");
+					//diagonal - up/left and down/left
 				}
 				else {
 					//none
@@ -302,6 +312,7 @@ void movement_system(World* world) {
 			collision = &(world->collision[entity]);
 			CollisionData data;
 			PositionComponent temp;
+			
 			temp.x = position->x;
 			temp.y = position->y;
 			temp.width = position->width;

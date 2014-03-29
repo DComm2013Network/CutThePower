@@ -4,8 +4,6 @@
  * @file world.cpp
  */
 
-#define ANIMATION_AMOUNT 6
-
 #include "world.h"
 
 #include <SDL2/SDL.h>
@@ -14,9 +12,6 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-
-void create_label(World *world, char *image, int x, int y, int w, int h);
-void create_button(World *world, char *image, char *name, int x, int y);
 
 /**
  * This function initializes every mask to be 0, so that there are no components.
@@ -398,7 +393,6 @@ void destroy_world(World *world) {
 	for(entity = 0; entity < MAX_ENTITIES; entity++) {
 		destroy_entity(world, entity);
 	}
-	memset(world, 0, sizeof(World));
 }
 
 

@@ -33,6 +33,8 @@ int *command_keys; /**< This is the current keycodes mapped to each command. */
 extern const char *character_map;
 extern bool running;
 
+extern int window_width, window_height;
+
 /**
  * Polls the keyboard for input and performs the appropriate action.
  *
@@ -69,6 +71,14 @@ void KeyInputSystem(World *world)
         if (event.type == SDL_QUIT) {
             running = false;
         }
+        else if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
+			
+			//printf("X: %d Y: %d\n", event.window.data1, event.window.data2);
+			
+			window_width = event.window.data1;
+			window_height = event.window.data2;
+			
+		}
     }
     
     currentKeyboardState = SDL_GetKeyboardState(&numKeys);

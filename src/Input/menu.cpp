@@ -266,7 +266,7 @@ void create_main_menu_background(World *world) {
 	world->position[background].width = WIDTH;
 	world->position[background].height = HEIGHT;
 	
-	load_animation((char*)"assets/Graphics/screen/menu/mainmenu_animation.txt", world, background);
+	load_animation("assets/Graphics/screen/menu/mainmenu_animation.txt", world, background);
 	
 	world->renderPlayer[background].width = WIDTH;
 	world->renderPlayer[background].height = HEIGHT;
@@ -274,6 +274,54 @@ void create_main_menu_background(World *world) {
 	play_music(SOUND_MUSIC_MENU_RAIN);
 }
 
+
+/**
+ * Creates the logo screen
+ *
+ * @param world The world struct
+ *
+ * @designer Jordan Marling
+ * @designer Mat Siwoski
+ *
+ * @author Jordan Marling
+ */
+void create_logo_screen(World* world) {
+	
+	unsigned int entity;
+	
+	//create black background
+	entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
+	
+	world->position[entity].x = 0;
+	world->position[entity].y = 0;
+	world->position[entity].width = WIDTH;
+	world->position[entity].height = HEIGHT;
+	
+	world->renderPlayer[entity].playerSurface = IMG_Load("assets/Graphics/screen/logo/load.png");
+	if (world->renderPlayer[entity].playerSurface == 0) {
+		printf("Error loading logo background\n");
+	}
+	
+	world->renderPlayer[entity].width = WIDTH;
+	world->renderPlayer[entity].height = HEIGHT;
+	
+	//create animation
+	entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION);
+	
+	world->position[entity].x = 440;
+	world->position[entity].y = 334;
+	world->position[entity].width = 400;
+	world->position[entity].height = 100;
+	
+	load_animation("assets/Graphics/screen/logo/animation.txt", world, entity);
+	
+	world->animation[entity].id = 2;
+	
+	world->renderPlayer[entity].width = 400;
+	world->renderPlayer[entity].height = 100;
+	
+	play_animation(world, entity, "load");
+}
 
 
 /**
@@ -321,8 +369,9 @@ void create_options_menu(World *world) {
 	
 	create_title(world, "OPTIONS", (WIDTH / 2), (HEIGHT / 2) - 250);
 	
-	create_button(world, "SOUND ON", "options_sound_on", (WIDTH / 2), (HEIGHT / 2) + 50);
-	create_button(world, "KEYMAP", "options_keymap", (WIDTH / 2), (HEIGHT / 2) + 125);
+	create_button(world, "SOUND ON", "options_sound_on", (WIDTH / 2), (HEIGHT / 2) - 25);
+	create_button(world, "KEYMAP", "options_keymap", (WIDTH / 2), (HEIGHT / 2) + 50);
+	create_button(world, "FULLSCREEN OFF", "options_fullscreen_off", (WIDTH / 2), (HEIGHT / 2) + 125);
 	create_button(world, "BACK", "options_back", (WIDTH / 2), (HEIGHT / 2) + 200);
 }
 

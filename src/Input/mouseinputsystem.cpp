@@ -18,6 +18,7 @@
 #define ANIMATION_MASK (COMPONENT_ANIMATION | COMPONENT_POSITION)
 
 int textField = -1;
+extern int window_width, window_height;
 
 /**
  * Updates the mouse position for every frame. 
@@ -49,6 +50,13 @@ void MouseInputSystem(World *world)
 
     lclick = (currentState & SDL_BUTTON(1)) == 0 && (previousState & SDL_BUTTON(1)) != 0;
     rclick = (currentState & SDL_BUTTON(3)) == 0 && (previousState & SDL_BUTTON(3)) != 0;
+
+	//scale the mouse to fit the screen size so the mouse works on window resize.
+	x = (int)(x * (float)WIDTH / window_width);
+	y = (int)(y * (float)HEIGHT / window_height);
+	
+	
+
 
     if (lclick) {
         textField = -1;

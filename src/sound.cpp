@@ -19,7 +19,7 @@ bool soundon = true;
 void init_sound() {
 	
 	//initialize audio mixer.
-	if(Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) == -1) {
+	if(Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096) == -1) {
         return;    
     }
 	
@@ -30,6 +30,7 @@ void init_sound() {
 	music[1] = Mix_LoadMUS("assets/Sound/maps/lobby_bg.wav");
 	
 	effects[0] = Mix_LoadWAV("assets/Sound/menu/sound_menu_thunder.wav");
+	effects[1] = Mix_LoadWAV("assets/Sound/logo/logo.wav");
 	
 }
 

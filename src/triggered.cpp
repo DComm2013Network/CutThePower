@@ -13,6 +13,7 @@
 
 extern bool running;
 extern unsigned int player_entity;
+extern SDL_Window *window;
 
 bool menu_click(World *world, unsigned int entity) {
 	//printf("Clicked: %s\n", world->button[entity].label);
@@ -80,6 +81,28 @@ bool menu_click(World *world, unsigned int entity) {
 
 		create_keymap_menu(world);
 
+	}
+	else if (strcmp(world->button[entity].label, "options_fullscreen_off") == 0) {
+
+		world->position[entity].x = (WIDTH / 2);
+		render_small_text(world, entity, "FULLSCREEN ON");
+		
+		world->button[entity].label = (char*)realloc(world->button[entity].label, sizeof(char) * strlen("options_fullscreen_on"));
+		strcpy(world->button[entity].label, "options_fullscreen_on");
+		
+		SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+		
+	}
+	else if (strcmp(world->button[entity].label, "options_fullscreen_on") == 0) {
+
+		world->position[entity].x = (WIDTH / 2);
+		render_small_text(world, entity, "FULLSCREEN OFF");
+		
+		world->button[entity].label = (char*)realloc(world->button[entity].label, sizeof(char) * strlen("options_fullscreen_off"));
+		strcpy(world->button[entity].label, "options_fullscreen_off");
+		
+		SDL_SetWindowFullscreen(window, 0);
+		
 	}
 
 	//KEYMAP
@@ -423,16 +446,18 @@ void animation_end(World *world, unsigned int entity) {
 		stop_music();
 		stop_effect();
 		
+		//map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/tiles.txt");
+					
 		map_init(world, "assets/Graphics/map/map_00/map00.txt", "assets/Graphics/map/map_00/tiles.txt");
 		player_entity = create_player(world, 620, 420, true, COLLISION_HACKER);
 		
 		create_objective(world, 620, 380, 40, 40, 0, 0);
 		
 		world->mask[player_entity] |= COMPONENT_ANIMATION;
-		load_animation("assets/Graphics/player/p0/rob_animation.txt", world, player_entity);
+		load_animation("assets/Graphics/player/shane/animation.txt", world, player_entity);
+		//load_animation("assets/Graphics/player/p0/rob_animation.txt", world, player_entity);
 		
 		
-		//PUT CLIENT START CODE HERE!!!@!@!!!!
 
 
 	}
@@ -442,5 +467,11 @@ void animation_end(World *world, unsigned int entity) {
 		destroy_world(world);
 
 		create_intro(world);
+	}
+	else if (animationComponent->id == 2) { //2 is the logo loading screen
+		
+		destroy_world(world);
+		
+		create_main_menu(world);
 	}
 }

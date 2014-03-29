@@ -279,10 +279,10 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 			else if (strcmp(entity_type, "objective") == 0) {
 				
 				float x, y;
-				int level, w, h;
+				int w, h;
 				unsigned int id;
 				
-				if (fscanf(fp_map, "%f %f %d %d %u %d", &x, &y, &w, &h, &id, &level) != 6) {
+				if (fscanf(fp_map, "%f %f %d %d %u", &x, &y, &w, &h, &id) != 5) {
 					printf("Error loading objective!\n");
 					return -1;
 				}
@@ -302,8 +302,7 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 	
 	
 	//render to surface
-	
-	cleanup_map();
+	//cleanup_map();
 	map_surface = SDL_CreateRGBSurface(0, width * TILE_WIDTH, height * TILE_HEIGHT, 32, 0, 0, 0, 0);
 	
 	if (map_surface == 0) {
