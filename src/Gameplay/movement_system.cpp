@@ -239,7 +239,7 @@ void rebuild_floor(World * world, int targl)
 	}
 }
 
-void handle_entity_collision(CollisionData data, World * world, int curEntityID) {
+int handle_entity_collision(CollisionData data, World * world, int curEntityID) {
 
 	switch(data.entity_code) {
 	case COLLISION_TARGET:
@@ -257,9 +257,13 @@ void handle_entity_collision(CollisionData data, World * world, int curEntityID)
 			
 			move_request(world, send_router_fd[WRITE], targl, targx, targy);
 			floor_change_flag = 1;
-		 	
-			return MSG_ROOMCHANGE;
-			//printf("t: %i\n", world->position[player_entity].level);
+		 	if(!network_ready)
+			{
+				rebuild_floor(world, targl);
+		 		return MSG_ROOMCHANGE;
+		 	}
+			
+			return 0;
 
 		}
 		break;
