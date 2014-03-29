@@ -33,7 +33,29 @@ int fogOfWarWidth;
 
 extern int level;
 
-
+/**
+ * Blits a fog of war "corner" tile to the larger window surface.
+ * 
+ * The tile surface to blit is defined in corners[].
+ * The relative (NOT absolute in x and y coords !) position of the tile is defined in the tile map.
+ *
+ * Revisions:
+ *     None.
+ *loading
+ * @param surface 	The window surface.
+ * @param fow   		A pointer to a fogOfWarStruct. Includes the corners[] array and the two-dimensional tile map.
+ * @param tileRect  A pointer to an SDL rect. Defines the tile's position and dimensions.
+ * @param y					The y coordinate of the tile in the tile map.
+ * @param x					The x coordinate of the tile in the tile map.
+ * #param i					The index of the tile surface in the corners array.
+ *
+ * @return void.
+ * 
+ * @designer Sam Youssef
+ * @author Sam Youssef
+ *
+ * @date March 29, 2014
+ */
 void blit_tile(SDL_Surface *surface, struct fogOfWarStruct *fow, SDL_Rect *tileRect, int y, int x, int i)
 {
 	SDL_BlitSurface(fow -> corners[i], NULL, surface, tileRect);
@@ -41,6 +63,24 @@ void blit_tile(SDL_Surface *surface, struct fogOfWarStruct *fow, SDL_Rect *tileR
 }
 
 
+/**
+ * Renders all fog of war tiles to the window surface:
+ * 
+ * Loops through the tile map to blit all the tiles that need blitting.
+ *
+ * Revisions:
+ *     None.
+ *loading
+ * @param surface 	The window surface.
+ * @param fow   		A pointer to a fogOfWarStruct. Contains a reference to the tile's visibility, i.e. whether or not it should be blitted.
+ *
+ * @return void.
+ * 
+ * @designer Sam Youssef
+ * @author Sam Youssef
+ *
+ * @date March 29, 2014
+ */
 void render_fog_of_war(SDL_Surface *surface, struct fogOfWarStruct *fow)
 {
 	int xOffset = fow -> xOffset;
@@ -86,7 +126,28 @@ void render_fog_of_war(SDL_Surface *surface, struct fogOfWarStruct *fow)
 	}
 }
 
-
+/**
+ * Allocates memory for each component of the fogOfWarStruct.
+ * 
+ * Sets the default positions in absolute coords of all fog tiles.
+ * Sets the visibility of each fog tile at each level to opaque.
+ *
+ * Initializes opaque fog surfaces
+ * Initializes transparent fog surfaces
+ * Initializes corner-vision fog surfaces
+ *
+ * Revisions:
+ *     None.
+ *loading
+ * @param fow   		A double pointer to a null fogOfWarStruct which is to be initialized
+ *
+ * @return void.
+ * 
+ * @designer Sam Youssef
+ * @author Sam Youssef
+ *
+ * @date March 29, 2014
+ */
 void init_fog_of_war(struct fogOfWarStruct **fow)
 {
 		fogOfWarWidth = 64;  // screen width (tiles/screen)
@@ -154,6 +215,21 @@ void init_fog_of_war(struct fogOfWarStruct **fow)
 		(*fow)->corners[11] = IMG_Load("assets/Graphics/fow/botright/right.png");
 }
 
+/**
+ * Frees the fow struct and its components' allocated heap memories
+ *
+ * Revisions:
+ *     None.
+ *loading
+ * @param fow   		A double pointer to a null fogOfWarStruct which is to be freed
+ *
+ * @return void.
+ * 
+ * @designer Sam Youssef
+ * @author Sam Youssef
+ *
+ * @date March 29, 2014
+ */
 void cleanup_fog_of_war(struct fogOfWarStruct *fow)
 {
 	for(int i = 0; i < (fogOfWarHeight * fogOfWarWidth); i++)
@@ -169,7 +245,23 @@ void cleanup_fog_of_war(struct fogOfWarStruct *fow)
 }
 
 
-/*** visibility settings ***/
+/**
+ * Makes the tiles surrounding the player (by a radius of two) visible.
+ *
+ * Handles walls by removing the line of sight behind them. 
+ *
+ * Revisions:
+ *     None.
+ *loading
+ * @param fow   		A double pointer to a null fogOfWarStruct which contains the tile map
+ *
+ * @return void.
+ * 
+ * @designer Sam Youssef
+ * @author Sam Youssef
+ *
+ * @date March 29, 2014
+ */
 void make_surrounding_tiles_visible(struct fogOfWarPlayerPosition *fowp)
 {
 	fowp -> fow -> xOffset = -map_rect.x;
@@ -275,7 +367,23 @@ void make_surrounding_tiles_visible(struct fogOfWarPlayerPosition *fowp)
 }
 
 
-int get_tile_pos(int pos, int delta)
+/**
+ * Sets the relative tile position (relative to other tiles)
+ *
+ * Revisions:
+ *     None.
+ *loading
+ * @param pos   		The relative position along the x or y axis
+ * @param delta			The needed offset
+ *
+ * @return void.
+ * 
+ * @designer Sam Youssef
+ * @author Sam Youssef
+ *
+ * @date March 29, 2014
+ */
+int set_tile_pos(int pos, int delta)
 {
 	int absd = (delta > 0) ? delta : (-1) * delta;
 	
@@ -285,6 +393,25 @@ int get_tile_pos(int pos, int delta)
 	return pos;
 }
 
+
+/**
+ * Gets the current visibility of a tile around the player's position -- e.g. opaque, transparent, etc.
+ *
+ * Revisions:
+ *     None.
+ *loading
+ * @param newposition	A pointer to a PositionComponent struct which will hold the new position
+ * @param fow   			A double pointer to a fogOfWarStruct which contains the player's current position
+ * @param yDel				Offset along y axis
+ * @param xDel				Offset along x axis
+ *
+ * @return void.
+ * 
+ * @designer Sam Youssef
+ * @author Sam Youssef
+ *
+ * @date March 29, 2014
+ */
 int *get_visibility_type(PositionComponent *newposition, struct fogOfWarPlayerPosition *fowp, int yDel, int xDel)
 {
 	struct fogOfWarStruct *fow 	 = fowp -> fow;
@@ -293,8 +420,8 @@ int *get_visibility_type(PositionComponent *newposition, struct fogOfWarPlayerPo
 	int xPos = pos->x / TILE_WIDTH;
 	int yPos = pos->y / TILE_HEIGHT;
 	
-	int y = get_tile_pos(yPos, yDel);
-	int x = get_tile_pos(xPos, xDel);
+	int y = set_tile_pos(yPos, yDel);
+	int x = set_tile_pos(xPos, xDel);
 	
 	newposition->x 	   = x * TILE_WIDTH;
 	newposition->y 	   = y * TILE_HEIGHT;
@@ -305,6 +432,24 @@ int *get_visibility_type(PositionComponent *newposition, struct fogOfWarPlayerPo
 	return &fow -> tiles[y][x].visible[ pos->level ];
 }
 
+/**
+ * Sets a tile's visibility.
+ *
+ * Revisions:
+ *     None.
+ *loading
+ * @param fow   			A double pointer to a null fogOfWarStruct
+ * @param yDel				The y offset (from the player's position) of the tile
+ * @param xDel				The x offset (from the player's position) of the tile
+ * @param visibility	The new tile visibility
+ *
+ * @return void.
+ * 
+ * @designer Sam Youssef
+ * @author Sam Youssef
+ *
+ * @date March 29, 2014
+ */
 int set_visibility_type(struct fogOfWarPlayerPosition *fowp, int yDel, int xDel, int visibility)
 {
 
@@ -318,6 +463,22 @@ int set_visibility_type(struct fogOfWarPlayerPosition *fowp, int yDel, int xDel,
 }
 
 
+/**
+ * Determines whether a tile is a wall tile
+ *
+ * Revisions:
+ *     None.
+ *loading
+ * @param world 			The world struct.
+ * @param newposition	Tile position.
+ *
+ * @return void.
+ * 
+ * @designer Sam Youssef
+ * @author Sam Youssef
+ *
+ * @date March 29, 2014
+ */
 int is_wall_collision(World *world, PositionComponent newposition)
 {
 	int curlevel = -1;
@@ -345,11 +506,43 @@ int is_wall_collision(World *world, PositionComponent newposition)
 }
 
 
+/**
+ * Adds one to a value without going out of bounds
+ *
+ * Sets the visibility of each fog tile at each level to be shown.
+ *
+ * Revisions:
+ *     None.
+ *loading
+ * @param n				A value.
+ *
+ * @return void.
+ * 
+ * @designer Sam Youssef
+ * @author Sam Youssef
+ *
+ * @date March 29, 2014
+ */
 int addOne(int n)
 {
 	return ++n;
 }
 
+/**
+ * Subtracts one from a value without going out of bounds (below zero)
+ *
+ * Revisions:
+ *     None.
+ *loading
+ * @param n   		A value.
+ *
+ * @return void.
+ * 
+ * @designer Sam Youssef
+ * @author Sam Youssef
+ *
+ * @date March 29, 2014
+ */
 int subOne(int n)
 {
 	if (n == 0) return n;
