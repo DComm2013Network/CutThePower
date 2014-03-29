@@ -28,11 +28,12 @@ int main(int argc, char* argv[]) {
 	
 	struct sigevent sev;
 	struct itimerspec its;
-	timer_t timer;
+	struct itimerspec current_its;
+	timer_t * timer;
 	
 	sev.sigev_notify = SIGEV_NONE;
     sev.sigev_value.sival_ptr = &timer;
-    if (timer_create(CLOCK_REALTIME, &sev, &timer) == -1)
+    if (timer_create(CLOCK_REALTIME, &sev, timer) == -1)
     {
     	printf("Failed to create timer.");
         exit(2);
@@ -42,7 +43,7 @@ int main(int argc, char* argv[]) {
     its.it_value.tv_nsec = SEND_FREQUENCY * NANO_SECONDS + 1;
    	its.it_interval.tv_sec = its.it_value.tv_sec;
    	its.it_interval.tv_nsec = its.it_value.tv_nsec;
-    timer_settime(timer, 0, &its, NULL);
+    timer_settime(*timer, 0, &its, NULL);
 
 	create_pipe(send_router_fd);
 	create_pipe(rcv_router_fd);
@@ -74,7 +75,11 @@ int main(int argc, char* argv[]) {
     its.it_value.tv_nsec = SEND_FREQUENCY * NANO_SECONDS + 1;
    	its.it_interval.tv_sec = its.it_value.tv_sec;
    	its.it_interval.tv_nsec = its.it_value.tv_nsec;
-   	timer_settime(timer, 0, &its, NULL);
+   	if(timer_settime(timer, 0, &its, NULL) == -1)
+   	{
+   		printf("errno: %d", errno);
+   		exit(2);
+   	}
 
 	create_main_menu(world);
 	
@@ -101,18 +106,13 @@ int main(int argc, char* argv[]) {
 		////NETWORK CODE
 		if(network_ready)
 		{
-							send_location(world, send_router_fd[WRITE_END]);
-
+			timer_gettime(timer, &current_its);
+			if(its.it_value.tv_nsec == 0)
+			{
+				send_location(world, send_router_fd[WRITE_END]);
+			}
 			client_update_system(world, rcv_router_fd[READ]);
-			// timer_gettime(timer, &its);
-			// if(its.it_value.tv_nsec == 0)
-			// {
-			// 	its.it_value.tv_sec = 0;
-			//     its.it_value.tv_nsec = SEND_FREQUENCY * NANO_SECONDS + 1;
-			//    	its.it_interval.tv_sec = its.it_value.tv_sec;
-			//    	its.it_interval.tv_nsec = its.it_value.tv_nsec;
-			//    	timer_settime(timer, 0, &its, NULL);
-			// }
+			timer_settime(timer, 0, &its, NULL);
 		}
 		////NETWORK CODE
 
