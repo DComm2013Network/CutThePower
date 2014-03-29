@@ -15,13 +15,6 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 
-#include "NetworkRouter.h"
-#include "ServerCommunication.h"
-#include "GameplayCommunication.h"
-#include "PipeUtils.h"
-#include "Packets.h"
-#include "packet_min_utils.h"
-
 
 #define INFINITE_TIMEOUT -1   /**< Tells SDL to wait for an "infinite" (49 day) timeout */
 #define MAX_TCP_RECV     2944 /**< Max TCP "packet" size from server to client (PKT_GAME_STATUS)*/

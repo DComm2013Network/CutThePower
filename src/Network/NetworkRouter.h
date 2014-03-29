@@ -17,10 +17,6 @@
 #include <sys/types.h>
 #include <fcntl.h>
 #include <sys/eventfd.h>
-#include "GameplayCommunication.h"
-#include "ServerCommunication.h"
-#include "PipeUtils.h"
-#include "Packets.h"
 
 #define READ_RECV_THREAD	0
 #define WRITE_SEND_THREAD 	1

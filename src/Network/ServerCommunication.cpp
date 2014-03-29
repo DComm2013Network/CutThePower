@@ -12,7 +12,12 @@
  */
 
 /** @} */
-
+#include "NetworkRouter.h"
+#include "ServerCommunication.h"
+#include "GameplayCommunication.h"
+#include "PipeUtils.h"
+#include "Packets.h"
+#include "packet_min_utils.h"
 #include "ServerCommunication.h"
  
 extern uint32_t packet_sizes[NUM_PACKETS];

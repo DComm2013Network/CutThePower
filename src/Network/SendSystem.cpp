@@ -9,6 +9,9 @@
  */
 
 /** @} */
+#include "GameplayCommunication.h"
+#include "NetworkRouter.h"	
+#include "PipeUtils.h"
 #include "SendSystem.h"
 
 extern int network_ready;

@@ -17,10 +17,6 @@
 #include <cstring>
 #include <pthread.h>
 
-#include "PipeUtils.h"
-#include "Packets.h" /* extern packet_sizes[] */
-#include "NetworkRouter.h"
-
 #define NET_SHUTDOWN -1 /**< The network will write this to the gameplay 
                              module (possibly followed by an error message) on shutdown. */
 

@@ -9,7 +9,10 @@
 
 /** @} */
 #include "GameplayCommunication.h"
-
+#include "PipeUtils.h"
+#include "Packets.h" /* extern packet_sizes[] */
+#include "NetworkRouter.h"
+ 
 uint32_t packet_sizes[NUM_PACKETS] = {
 	sizeof(PKT_PLAYER_NAME),         // 0
 	sizeof(PKT_PLAYER_CONNECT),      // 1

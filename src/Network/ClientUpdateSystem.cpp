@@ -4,6 +4,12 @@
  *
  * @file client_update_system.cpp
  */
+#include "Packets.h"
+#include "GameplayCommunication.h"
+#include "PipeUtils.h"
+#include "../world.h"
+#include "../systems.h"
+#include "../Gameplay/collision.h"
 #include "network_systems.h"
 
 extern int send_ready;

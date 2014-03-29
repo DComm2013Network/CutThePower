@@ -9,14 +9,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/poll.h>
- 
-#include "Packets.h"
-#include "network_systems.h"
-#include "GameplayCommunication.h"
-#include "PipeUtils.h"
-#include "../world.h"
-#include "../systems.h"
-#include "../Gameplay/collision.h"
 
 #define CLIENT_PLAYER 		0 			/**< The client's player's entity number (may also be passed into the function) */
 #define UNASSIGNED			4294967295	/**< The player's number has not yet been assigned. */
