@@ -36,14 +36,18 @@ static teamNo_t player_team = 0;
 void send_location(World *world, int fd) 
 { 
 	PKT_POS_UPDATE * pkt4 = (PKT_POS_UPDATE*)malloc(sizeof(PKT_POS_UPDATE));
-    
-	pkt4->xPos = world->position[controllable_player].x;
-	pkt4->yPos = world->position[controllable_player].y;
-	pkt4->xVel = world->movement[controllable_player].movX;
-	pkt4->yVel = world->movement[controllable_player].movY;
-	pkt4->floor = world->position[controllable_player].level;
-	pkt4->player_number = world->player[controllable_player].playerNo;
-
+    for (int i = 0; i < MAX_ENTITIES; i++)
+	{
+		if (IN_THIS_COMPONENT(world->mask[i], COMPONENT_MOVEMENT | COMPONENT_POSITION | COMPONENT_PLAYER | COMPONENT_CONTROLLABLE))
+		{
+			pkt4->xPos = world->position[i].x;
+			pkt4->yPos = world->position[i].y;
+			pkt4->xVel = world->movement[i].movX;
+			pkt4->yVel = world->movement[i].movY;
+			pkt4->floor = world->position[i].level;
+			pkt4->player_number = world->player[i].playerNo;
+		}
+	}
 	write_packet(fd, P_POSUPDATE, pkt4);
     free(pkt4);
 }
