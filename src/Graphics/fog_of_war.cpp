@@ -24,6 +24,9 @@
 #define OPAQUE_VIS 2
 		
 
+#define OPAQUE_FOG_COLOUR 0x000000
+#define TRANSP_FOG_COLOUR 0x221122
+
 extern SDL_Rect map_rect;
 
 int subOne(int n);
@@ -199,13 +202,15 @@ void init_fog_of_war(struct fogOfWarStruct **fow)
 		for(int i = 0; i < (fogOfWarHeight * fogOfWarWidth); i++)
 		{	
 			(*fow) -> alphaFog[ i ] = SDL_CreateRGBSurface(0, TILE_WIDTH, TILE_HEIGHT, 32, 0, 0, 0, 0);
-			SDL_FillRect((*fow) -> alphaFog[ i ],0,0x221122);
+			SDL_FillRect((*fow) -> alphaFog[ i ], 0, TRANSP_FOG_COLOUR);
+			
+			
 			SDL_SetSurfaceBlendMode((*fow)->alphaFog[ i ], SDL_BLENDMODE_BLEND);
-			SDL_SetSurfaceAlphaMod ((*fow)->alphaFog[ i ] , 110);
+			SDL_SetSurfaceAlphaMod ((*fow)->alphaFog[ i ] , 102);
 
 
 			(*fow) -> fogOfWar[ i ] = SDL_CreateRGBSurface(0, TILE_WIDTH, TILE_HEIGHT, 32, 0, 0, 0, 0);
-			SDL_FillRect((*fow) -> fogOfWar[ i ],0,0x000000);
+			SDL_FillRect((*fow) -> fogOfWar[ i ], 0, OPAQUE_FOG_COLOUR);
 
 		}
 		
@@ -560,7 +565,7 @@ int is_wall_collision(World *world, PositionComponent newposition)
 
 
 /**
- * Adds one to a value without going out of bounds
+ * Adds one to a value without going outside map bounds
  *
  * Sets the visibility of each fog tile at each level to be shown.
  *
@@ -585,7 +590,7 @@ int addOne(int n)
 
 
 /**
- * Subtracts one from a value without going out of bounds (below zero)
+ * Subtracts one from a value without going outside map bounds (below zero)
  *
  * Revisions:
  *     None.

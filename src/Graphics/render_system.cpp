@@ -13,8 +13,6 @@
 #include "../Input/menu.h"
 
 /*SAM**/
-#include "map.h"
-
 void make_surrounding_tiles_visible(struct fogOfWarPlayerPosition *fowp);
 /******/
 
@@ -107,6 +105,21 @@ void render_player_system(World& world, SDL_Surface* surface, struct fogOfWarStr
 			
 			SDL_BlitScaled(renderPlayer->playerSurface, &clipRect, surface, &playerRect);
 			
+			
+			/*SAM*********************************/		
+			if (IN_THIS_COMPONENT(world.mask[entity], COMPONENT_PLAYER)) {	
+	
+				struct fogOfWarPlayerPosition fowp;
+		
+				fowp.world = &world;
+				fowp.pos   = position;
+				fowp.fow   = fow;
+	
+				make_surrounding_tiles_visible(&fowp);	
+			}
+			/*************************************/		
+			
+			
 			//check if a textbox.
 			if (IN_THIS_COMPONENT(world.mask[entity], COMPONENT_TEXTFIELD)) {
 				
@@ -128,18 +141,6 @@ void render_player_system(World& world, SDL_Surface* surface, struct fogOfWarStr
 			}
 		}
 	}
-
-	
-	/*SAM*********************************/
-	struct fogOfWarPlayerPosition fowp;
-	
-	fowp.world = &world;
-	fowp.pos   = position;
-	fowp.fow   = fow;
-	
-	make_surrounding_tiles_visible(&fowp);
-	/*************************************/
-
 }
 
 
