@@ -325,34 +325,10 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 				temp.width = position->width;
 				temp.height = position->height;
 				temp.level = position->level;
-				bool moved = false;
 				int collisionType = -1;
 				
 				if (command->commands[C_UP]) {
 					add_force(world, entity, world->movement[entity].acceleration, -90);
-
-					play_animation(world, entity, "up");
-				}
-				else {
-					cancel_animation(world, entity);
-				}
-				if (command->commands[C_DOWN]) {
-					add_force(world, entity, world->movement[entity].acceleration, 90);
-					play_animation(world, entity, "down");
-				}
-				else {
-					cancel_animation(world, entity);
-				}
-				if (command->commands[C_LEFT]) {
-					add_force(world, entity, world->movement[entity].acceleration, 180);
-					play_animation(world, entity, "left");
-				}
-				else {
-					cancel_animation(world, entity);
-				}
-				if (command->commands[C_RIGHT]) {
-					add_force(world, entity, world->movement[entity].acceleration, 0);
-					play_animation(world, entity, "right");
 				}
 				else {
 					cancel_animation(world, entity);
@@ -360,11 +336,20 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 				if (command->commands[C_DOWN]) {
 					add_force(world, entity, world->movement[entity].acceleration, 90);
 				}
+				else {
+					cancel_animation(world, entity);
+				}
 				if (command->commands[C_LEFT]) {
 					add_force(world, entity, world->movement[entity].acceleration, 180);
 				}
+				else {
+					cancel_animation(world, entity);
+				}
 				if (command->commands[C_RIGHT]) {
 					add_force(world, entity, world->movement[entity].acceleration, 0);
+				}
+				else {
+					cancel_animation(world, entity);
 				}
 
 				CollisionData data;
@@ -418,7 +403,6 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 					//none
 					cancel_animation(world, entity);
 				}
-				
 				
 				//printf("FPS: %f\n", fps.getFPS());
 				if (position->level == 0) {
