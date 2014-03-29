@@ -176,6 +176,7 @@ void create_textfield(World *world, const char *name, int x, int y, const char* 
 		
 	} else {
 		world->text[entity].length = 0;
+		//world->text[entity].textSurface = 0;
 	}
 
 	world->text[entity].focused = false;
@@ -492,7 +493,6 @@ void create_load_screen(World *world) {
 	
 	world->renderPlayer[entity].width = WIDTH;
 	world->renderPlayer[entity].height = HEIGHT;
-	
 	play_animation(world, entity, "load");
 }
 

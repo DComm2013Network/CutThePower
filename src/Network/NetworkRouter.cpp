@@ -70,7 +70,7 @@ void *networkRouter(void *args)
         net_cleanup(send_data, receive_data, gameplay, cached_packets);
     	return NULL;
     }
-
+	
     FD_ZERO(&listen_fds);
     FD_SET(recvfd[READ_END], &listen_fds);
     FD_SET(gameplay->read_pipe, &listen_fds);
@@ -92,11 +92,7 @@ void *networkRouter(void *args)
         ret = select(max_fd + 1, &active, NULL, NULL, NULL);
 
         if(ret && FD_ISSET(send_failure_fd, &active))
-        {
-            pthread_cancel(thread_receive);
-            net_cleanup(send_data, receive_data, gameplay, cached_packets);
-            return NULL;
-        }
+        	break;
 
         if(ret && FD_ISSET(recvfd[READ_END], &active))
         {
@@ -147,6 +143,8 @@ void *networkRouter(void *args)
             --ret;
 		}
     }
+
+	
     pthread_cancel(thread_receive);
     // Kill the send thread... forgot how this was supposed to happen, oops
     net_cleanup(send_data, receive_data, gameplay, cached_packets);

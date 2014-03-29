@@ -133,10 +133,10 @@ void send_status(World * world, int fd, teamNo_t team, int ready_status)
 		pkt->team_number = team;
 		memcpy(pkt->player_name, world->player[controllable_player].name, MAX_NAME);
 		player_team = team;
-	
+
 		printf("Changed to team %d\n", team);
 		write_packet(fd, P_READY_STAT, pkt);
-		free(pkt);	
+		free(pkt);
 	}
 }
 /**

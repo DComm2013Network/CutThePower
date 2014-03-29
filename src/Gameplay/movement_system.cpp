@@ -264,7 +264,6 @@ int handle_entity_collision(CollisionData data, World * world, int curEntityID) 
 		 	}
 			
 			return 0;
-
 		}
 		break;
 	case COLLISION_HACKER:
@@ -319,10 +318,12 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 				temp.width = position->width;
 				temp.height = position->height;
 				temp.level = position->level;
+				bool moved = false;
 				int collisionType = -1;
 				
 				if (command->commands[C_UP]) {
 					add_force(world, entity, world->movement[entity].acceleration, -90);
+
 					play_animation(world, entity, "up");
 				}
 				else {
@@ -349,6 +350,15 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 				else {
 					cancel_animation(world, entity);
 				}
+				if (command->commands[C_DOWN]) {
+					add_force(world, entity, world->movement[entity].acceleration, 90);
+				}
+				if (command->commands[C_LEFT]) {
+					add_force(world, entity, world->movement[entity].acceleration, 180);
+				}
+				if (command->commands[C_RIGHT]) {
+					add_force(world, entity, world->movement[entity].acceleration, 0);
+				}
 
 				CollisionData data;
 				if (IN_THIS_COMPONENT(world->mask[entity], COLLISION_MASK)) {
@@ -362,6 +372,7 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 					data = collision_system(world, temp, entity);
 					handle_y_collision(world, data, temp, *movement, entity, fps);
 					collisionType = handle_entity_collision(world, entity);
+
 					p.x = position->x;
 					p.y = position->y;
 					p.width = 60;
@@ -380,19 +391,19 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 				position->y = temp.y;
 				
 				if (movement->movX > 0 && abs(movement->movX) > abs(movement->movY)) {
-					play_animation(world, entity, (char*)"right");
+					play_animation(world, entity, "right");
 					//right
 				}
 				else if (movement->movX < 0 && abs(movement->movX) > abs(movement->movY)) {
-					play_animation(world, entity, (char*)"left");
+					play_animation(world, entity, "left");
 					//left
 				}
 				else if (movement->movY > 0 && abs(movement->movY) > abs(movement->movX)) {
-					play_animation(world, entity, (char*)"down");
+					play_animation(world, entity, "down");
 					//down
 				}
 				else if (movement->movY < 0 && abs(movement->movY) > abs(movement->movX)) {
-					play_animation(world, entity, (char*)"up");
+					play_animation(world, entity, "up");
 					//up
 				}
 				else {
