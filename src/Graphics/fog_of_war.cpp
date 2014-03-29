@@ -32,7 +32,6 @@ int fogOfWarHeight;
 int fogOfWarWidth;
 
 extern int level;
-int wall_collision(World *world, PositionComponent newposition);
 
 
 void blit_tile(SDL_Surface *surface, struct fogOfWarStruct *fow, SDL_Rect *tileRect, int y, int x, int i)
@@ -241,6 +240,7 @@ int get_tile_pos(int pos, int delta)
 	return pos;
 }
 
+
 void set_visibility_type(struct fogOfWarPlayerPosition *fowp, int yDel, int xDel, int visibility)
 {
 	struct fogOfWarStruct *fow = fowp -> fow;
@@ -268,6 +268,7 @@ void set_visibility_type(struct fogOfWarPlayerPosition *fowp, int yDel, int xDel
 	fow -> tiles[y][x].visible[ pos->level ] = visibility;
 }
 
+
 int is_wall_collision(World *world, PositionComponent newposition)
 {
 	int curlevel = -1;
@@ -286,7 +287,6 @@ int is_wall_collision(World *world, PositionComponent newposition)
 	int x = newposition.x / world->level[curlevel].tileSize;
 	int y = newposition.y / world->level[curlevel].tileSize;
 	
-	// debug statement: printf("xl: %i, xr: %i, yt: %i, yb: %i, xdts: %i, ydts: %i\n", xl, xr, yt, yb, xdts, ydts);
 	if (world->level[curlevel].map[x][y] == L_WALL) 
 	{
 			return COLLISION_WALL;
