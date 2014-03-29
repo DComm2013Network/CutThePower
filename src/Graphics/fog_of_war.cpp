@@ -25,7 +25,7 @@ extern SDL_Rect map_rect;
 int subOne(int n);
 int addOne(int n);
 
-void set_visibility_type (struct fogOfWarPlayerPosition *fowp, int yDel, int xDel, int visibility);
+int set_visibility_type (struct fogOfWarPlayerPosition *fowp, int yDel, int xDel, int visibility);
 int is_wall_collision(World *world, PositionComponent newposition);
 
 int fogOfWarHeight;
@@ -183,52 +183,82 @@ void make_surrounding_tiles_visible(struct fogOfWarPlayerPosition *fowp)
 
 	set_visibility_type(fowp, 0, 0, 0);
 
-	set_visibility_type(fowp, TOP,  0, 0);
-	set_visibility_type(fowp, BOT,  0, 0);
+	int ttl = 1;
+	int ttr = 1;
+	int llt = 1;
+	int rrt = 1;
+	
+	int ddl = 1;
+	int ddr = 1;
+	int lld = 1;
+	int rrd = 1;
 
-	set_visibility_type(fowp, 0,  LEFT, 0);
-	set_visibility_type(fowp, 0,  RGHT, 0);
-	
-	set_visibility_type(fowp, 0, (RGHT + RGHT), 0);
-	set_visibility_type(fowp, 0, (LEFT + LEFT), 0);
-	
-	set_visibility_type(fowp, TOP, LEFT, 0);
-	set_visibility_type(fowp, BOT, RGHT, 0);
-	
-	set_visibility_type(fowp, TOP, RGHT, 0);
-	set_visibility_type(fowp, BOT, LEFT, 0);
-	
-	set_visibility_type(fowp, (TOP + TOP),  0, 0);
-	set_visibility_type(fowp, (BOT + BOT),  0, 0);
-	
-	set_visibility_type(fowp, (TOP + TOP), LEFT, 0); 
-	set_visibility_type(fowp, (BOT + BOT), LEFT, 0);
-	
-	set_visibility_type(fowp, (TOP + TOP), RGHT, 0);
-	set_visibility_type(fowp, (BOT + BOT), RGHT, 0);
-	
-	set_visibility_type(fowp, TOP, (LEFT + LEFT), 0);
-	set_visibility_type(fowp, TOP, (RGHT + RGHT), 0);
-	
-	set_visibility_type(fowp, BOT, (LEFT + LEFT), 0);
-	set_visibility_type(fowp, BOT, (RGHT + RGHT), 0);
-	
-	set_visibility_type(fowp, (TOP + TOP), (LEFT + LEFT), 10);
-	set_visibility_type(fowp, (TOP + TOP), (   LEFT    ), 11);
-	set_visibility_type(fowp, (   TOP   ), (LEFT + LEFT), 12);
 
-	set_visibility_type(fowp, (BOT + BOT), (LEFT + LEFT), 13);
-	set_visibility_type(fowp, (BOT + BOT), (   LEFT    ), 14);
-	set_visibility_type(fowp, (   BOT   ), (LEFT + LEFT), 15);
+	if(set_visibility_type(fowp, TOP,  0, 0)) {
+		set_visibility_type(fowp, TOP + TOP,  0, 0);
+	}
 	
-	set_visibility_type(fowp, (TOP + TOP), (RGHT + RGHT), 16);
-	set_visibility_type(fowp, (TOP + TOP), (   RGHT    ), 17);
-	set_visibility_type(fowp, (   TOP   ), (RGHT + RGHT), 18);
+	
+	if(set_visibility_type(fowp, BOT,  0, 0)) {	
+		set_visibility_type(fowp, BOT + BOT,  0, 0);
+	}
+	else {
+		ddl = 0;
+		ddr = 0;
+	}
+
+
+	if(set_visibility_type(fowp, 0,  LEFT, 0)) {
+		set_visibility_type(fowp, 0, LEFT + LEFT, 0);
+	}
+	else {
+		llt = 0;
+		lld = 0;
+	}
+	
+	
+	if(set_visibility_type(fowp, 0, RGHT, 0)) {
+		set_visibility_type(fowp,  0, RGHT + RGHT, 0);
+	}
+	else {
+		rrt = 0;
+		rrd = 0;
+	}
+	
+	
+	if(set_visibility_type(fowp, TOP, LEFT, 0)) {
+		set_visibility_type(fowp, TOP + TOP, LEFT + LEFT, 10);
 		
-	set_visibility_type(fowp, (BOT + BOT), (RGHT + RGHT), 19);
-	set_visibility_type(fowp, (BOT + BOT), (   RGHT    ), 20);
-	set_visibility_type(fowp, (   BOT   ), (RGHT + RGHT), 21);
+		if( ttl )	set_visibility_type(fowp, TOP + TOP, LEFT, 11);
+		if( llt ) set_visibility_type(fowp, TOP, LEFT + LEFT, 12);
+
+	}
+			
+	
+	if(set_visibility_type(fowp, BOT, LEFT, 0)) {
+		set_visibility_type(fowp, BOT + BOT, LEFT + LEFT, 13);
+		
+		if( ddl ) set_visibility_type(fowp, BOT + BOT, LEFT, 14);
+		if( lld ) set_visibility_type(fowp, BOT, LEFT + LEFT, 15);
+	}
+			
+			
+	if(set_visibility_type(fowp, TOP, RGHT, 0)) {
+		set_visibility_type(fowp, TOP + TOP, RGHT + RGHT, 16);
+		
+		if( ttr ) set_visibility_type(fowp, TOP + TOP, RGHT, 17);
+		if( rrt ) set_visibility_type(fowp, TOP, (RGHT + RGHT), 18);
+	}
+
+
+	if(set_visibility_type(fowp, BOT, RGHT, 0)) {
+		set_visibility_type(fowp, BOT + BOT, RGHT + RGHT, 19);
+		
+		if( ddr ) set_visibility_type(fowp, BOT + BOT, RGHT, 20);
+		if( rrd ) set_visibility_type(fowp, BOT, RGHT + RGHT, 21);
+	}
 }
+
 
 int get_tile_pos(int pos, int delta)
 {
@@ -241,7 +271,7 @@ int get_tile_pos(int pos, int delta)
 }
 
 
-void set_visibility_type(struct fogOfWarPlayerPosition *fowp, int yDel, int xDel, int visibility)
+int set_visibility_type(struct fogOfWarPlayerPosition *fowp, int yDel, int xDel, int visibility)
 {
 	struct fogOfWarStruct *fow = fowp -> fow;
 	PositionComponent     *pos = fowp -> pos;
@@ -263,9 +293,10 @@ void set_visibility_type(struct fogOfWarPlayerPosition *fowp, int yDel, int xDel
 	newposition.width  = pos -> width;
 	newposition.level  = pos -> level;
 
-	if( is_wall_collision(world, newposition) == COLLISION_WALL ) return;
-	
 	fow -> tiles[y][x].visible[ pos->level ] = visibility;
+	
+	if( is_wall_collision(world, newposition) == COLLISION_WALL ) return 0;
+	return 1;
 }
 
 
