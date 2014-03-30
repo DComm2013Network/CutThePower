@@ -399,7 +399,49 @@ void animation_end(World *world, unsigned int entity) {
 		player_entity = create_player(world, 600, 400, true, COLLISION_HACKER);
 		
 		world->mask[player_entity] |= COMPONENT_ANIMATION;
-		load_animation("assets/Graphics/player/p0/rob_animation.txt", world, player_entity);
+		if ( player_number == 0){
+			load_animation("assets/Graphics/player/abhishek/animation.txt", world, player_entity);
+		}else if (player_number == 1) {
+			load_animation("assets/Graphics/player/aman/animation.txt", world, player_entity);
+		}else if (player_number == 2) {
+			load_animation("assets/Graphics/player/andrew/animation.txt", world, player_entity);
+		}else if (player_number == 3) {
+			load_animation("assets/Graphics/player/chris/animation.txt", world, player_entity);
+		}else if (player_number == 4) {
+			load_animation("assets/Graphics/player/clark/animation.txt", world, player_entity);
+		}else if (player_number == 5) {
+			load_animation("assets/Graphics/player/cory/animation.txt", world, player_entity);
+		}else if (player_number == 6) {
+			load_animation("assets/Graphics/player/damien/animation.txt", world, player_entity);
+		}else if (player_number == 7) {
+			load_animation("assets/Graphics/player/german/animation.txt", world, player_entity);
+		}else if (player_number == 8) {
+			load_animation("assets/Graphics/player/ian/animation.txt", world, player_entity);
+		}else if (player_number == 9) {
+			load_animation("assets/Graphics/player/jordan/animation.txt", world, player_entity);
+		}else if (player_number == 10) {
+			load_animation("assets/Graphics/player/josh/animation.txt", world, player_entity);
+		}else if (player_number == 11) {
+			load_animation("assets/Graphics/player/konst/animation.txt", world, player_entity);
+		}else if (player_number == 12) {
+			load_animation("assets/Graphics/player/mat/animation.txt", world, player_entity);
+		}else if (player_number == 13) {
+			load_animation("assets/Graphics/player/ramzi/animation.txt", world, player_entity);
+		}else if (player_number == 14) {
+			load_animation("assets/Graphics/player/robin/animation.txt", world, player_entity);
+		}else if (player_number == 15) {
+			load_animation("assets/Graphics/player/sam/animation.txt", world, player_entity);
+		}else if (player_number == 16) {
+			load_animation("assets/Graphics/player/shane/animation.txt", world, player_entity);
+		}else if (player_number == 17) {
+			load_animation("assets/Graphics/player/tim/animation.txt", world, player_entity);
+		}else if (player_number == 18) {
+			load_animation("assets/Graphics/player/vincent/animation.txt", world, player_entity);
+		}
+		else{
+			load_animation("assets/Graphics/player/p0/rob_animation.txt", world, player_entity);
+		}
+		
 		
 		
 		//PUT CLIENT START CODE HERE!!!@!@!!!!
