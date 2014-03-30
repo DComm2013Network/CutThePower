@@ -284,7 +284,6 @@ void client_update_status(World *world, void *packet)
 	            		load_animation("assets/Graphics/player/p1/cop_animation.txt", world, player_table[i]);
 	        		}
 	        		world->player[player_table[i]].teamNo = status_update->otherPlayers_teams;
-	        		player_team = status_update->otherPlayers_teams;
 	        	}
 
 	        	if(status_update->otherPlayers_teams[i] == ROBBERS)
@@ -300,7 +299,6 @@ void client_update_status(World *world, void *packet)
 			         	load_animation("assets/Graphics/player/p0/rob_animation.txt", world, player_table[i]);
 			    	}
 			    	world->player[player_table[i]].teamNo = status_update->otherPlayers_teams;
-			    	player_team = status_update->otherPlayers_teams;
 	        	}
 
 
