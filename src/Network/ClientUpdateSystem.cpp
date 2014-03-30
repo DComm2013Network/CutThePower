@@ -246,7 +246,7 @@ void client_update_objectives(World *world, void *packet)
  * @param[in] 		packet	The packet holding the update information.
  *
  * @designer Shane Spoor
- * @author Shane Spoor
+ * @author Shane Spoor & Ramzi
  */
 void client_update_status(World *world, void *packet)
 {
@@ -274,7 +274,6 @@ void client_update_status(World *world, void *packet)
 	        		change_player(world, ROBBERS, status_update, i);
 	        	}
 
-
 	        	if(status_update->otherPlayers_teams[i] == 0)
 	        	{
 			    	change_player(world, ROBBERS, status_update, i);
@@ -297,6 +296,13 @@ void change_player(World * world, int type, PKT_GAME_STATUS * pkt, int playerNo)
 	world->player[player_table[playerNo]].playerNo = playerNo;
 	world->player[player_table[playerNo]].teamNo = pkt->otherPlayers_teams[playerNo];
 	world->player[player_table[playerNo]].readyStatus = pkt->readystatus[playerNo];
+	if(type == COPS)
+	{
+		world->collision[player_table[playerNo]].type = COLLISION_GUARD;
+	}
+	else{
+		world->collision[player_table[playerNo]].type = COLLISION_HACKER;
+	}
 	char *str = (type == COPS) ? "assets/Graphics/player/p1/cop_animation.txt" : "assets/Graphics/player/p0/rob_animation.txt";
 	load_animation(str, world, player_table[playerNo]);
 }

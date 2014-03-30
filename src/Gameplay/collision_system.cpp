@@ -18,7 +18,11 @@
 
 #define COLLISION_MASK (COMPONENT_COLLISION) /**< Indicates that an entity can collide with other entities. */
 #define LEVEL_MASK (COMPONENT_LEVEL) /**< Indicates that an entity has levels (floors). */
-
+#define DIRECTION_RIGHT	1
+#define DIRECTION_LEFT	2
+#define DIRECTION_UP	3
+#define DIRECTION_DOWN	4
+#define TAG_DISTANCE	5
 
 /**
  * This is the main wrapper function for all other collision checking functions.
@@ -208,4 +212,72 @@ int handle_entity_collision(World *world, int entityIndex) {
 	} else {
 		return COLLISION_UNKNOWN;
 	}
+}
+
+int check_tag_collision(World* world, unsigned int currentEntityID) {
+	PositionComponent entity;
+	int i = 0;
+	int lastDirection = 0;
+
+	lastDirection = world->movement[currentEntityID].lastDirection;
+
+	entity.height = world->position[currentEntityID].height;
+	entity.width = world->position[currentEntityID].width;
+	entity.level = world->position[currentEntityID].level;
+	entity.x = world->position[currentEntityID].x;
+	entity.y = world->position[currentEntityID].y;
+
+	for (i = 0; i < MAX_ENTITIES; i++) {
+		if (i != currentEntityID && (world->mask[i] & COLLISION_MASK) != 0) {
+			switch(lastDirection) {
+				case DIRECTION_RIGHT:
+					if (entity.x + entity.width -1 + TAG_DISTANCE > world->position[i].x + 1 &&
+					entity.x  + 1 < world->position[i].x + world->position[i].width - 1 &&
+					entity.y + entity.height -1 > world->position[i].y + 1 &&
+					entity.y  + 1 < world->position[i].y + world->position[i].height - 1
+					&& world->collision[i].active && world->position[i].level == entity.level) {
+						return i;
+					}
+				break;
+				case DIRECTION_LEFT:
+					if (entity.x + entity.width -1 > world->position[i].x + 1 &&
+					entity.x  + 1 - TAG_DISTANCE < world->position[i].x + world->position[i].width - 1 &&
+					entity.y + entity.height -1 > world->position[i].y + 1 &&
+					entity.y  + 1< world->position[i].y + world->position[i].height - 1
+					&& world->collision[i].active && world->position[i].level == entity.level) {
+						return i;
+					}
+				break;
+				case DIRECTION_UP:
+					if (entity.x + entity.width -1 > world->position[i].x + 1 &&
+					entity.x  + 1 < world->position[i].x + world->position[i].width - 1 &&
+					entity.y + entity.height -1 + TAG_DISTANCE > world->position[i].y + 1 &&
+					entity.y  + 1 < world->position[i].y + world->position[i].height - 1
+					&& world->collision[i].active && world->position[i].level == entity.level) {
+						return i;
+					}
+				break;
+				case DIRECTION_DOWN:
+					if (entity.x + entity.width -1 > world->position[i].x + 1 &&
+					entity.x  + 1 < world->position[i].x + world->position[i].width - 1 &&
+					entity.y + entity.height -1 > world->position[i].y + 1 &&
+					entity.y  + 1 - TAG_DISTANCE < world->position[i].y + world->position[i].height - 1
+					&& world->collision[i].active && world->position[i].level == entity.level) {
+						return i;
+					}
+				break;
+				default:
+					if (entity.x + entity.width -1 > world->position[i].x + 1 &&
+					entity.x  + 1 < world->position[i].x + world->position[i].width - 1 &&
+					entity.y + entity.height -1 > world->position[i].y + 1 &&
+					entity.y  + 1 < world->position[i].y + world->position[i].height - 1
+					&& world->collision[i].active && world->position[i].level == entity.level) {
+						return i;
+					}
+				break;
+			}
+		}
+	}
+
+	return -1;
 }

@@ -15,7 +15,11 @@
 #define CONTROLLABLE_MASK (COMPONENT_POSITION | COMPONENT_MOVEMENT | COMPONENT_CONTROLLABLE)	/**< Mask for moveable entities that may be controlled. */
 #define INPUT_MASK (COMPONENT_INPUT)															/**< Mask for entities that respond to input. */
 #define COLLISION_MASK (COMPONENT_COLLISION)													/**< Mask for entities that may collide with other entities. */
-#define PI 3.14159265																			/**< An approximation of pi for vector calculations. */
+#define PI 3.14159265		
+#define DIRECTION_RIGHT	1
+#define DIRECTION_LEFT	2
+#define DIRECTION_UP	3
+#define DIRECTION_DOWN	4																	/**< An approximation of pi for vector calculations. */
 
 extern int floor_change_flag;
 extern int send_router_fd[];
@@ -267,11 +271,7 @@ int handle_entity_collision(CollisionData data, World * world, int curEntityID) 
 	case COLLISION_HACKER:
 		if (world->collision[curEntityID].type == COLLISION_GUARD) 
 		{
-			if(world->command[curEntityID].commands[C_ACTION])
-			{
-				printf("Player no %u tagged\n",world->player[data.entityID].playerNo);
-				send_tag(world, send_router_fd[WRITE], world->player[data.entityID].playerNo);
-			}
+		
 		}
 		break; 
 	case COLLISION_GUARD:
@@ -322,18 +322,21 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 				temp.width = position->width;
 				temp.height = position->height;
 				temp.level = position->level;
-				bool moved = false;
 				int collisionType = -1;
+				bool key_pressed = false;
 				
 				if (command->commands[C_UP]) {
+					key_pressed = true;
+					world->movement[entity].lastDirection = DIRECTION_UP;
 					add_force(world, entity, world->movement[entity].acceleration, -90);
-
 					play_animation(world, entity, "up");
 				}
 				else {
 					cancel_animation(world, entity);
 				}
 				if (command->commands[C_DOWN]) {
+					key_pressed = true;
+					world->movement[entity].lastDirection = DIRECTION_DOWN;
 					add_force(world, entity, world->movement[entity].acceleration, 90);
 					play_animation(world, entity, "down");
 				}
@@ -341,6 +344,8 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 					cancel_animation(world, entity);
 				}
 				if (command->commands[C_LEFT]) {
+					key_pressed = true;
+					world->movement[entity].lastDirection = DIRECTION_LEFT;
 					add_force(world, entity, world->movement[entity].acceleration, 180);
 					play_animation(world, entity, "left");
 				}
@@ -348,6 +353,8 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 					cancel_animation(world, entity);
 				}
 				if (command->commands[C_RIGHT]) {
+					key_pressed = true;
+					world->movement[entity].lastDirection = DIRECTION_RIGHT;
 					add_force(world, entity, world->movement[entity].acceleration, 0);
 					play_animation(world, entity, "right");
 				}
@@ -375,15 +382,14 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 					p.width = 60;
 					p.height = 60;
 					p.level = position->level;
-					/*int e = entity_collision(world, p, entity);
-					if(e != -1)
-					{
-						if (world->collision[entity].type == COLLISION_GUARD && world->command[entity].commands[C_ACTION] && world->collision[e].type == COLLISION_HACKER) {
-							printf("%d", world->player[e].playerNo);
-							printf("You captured a hacker\n");
-							send_tag(world, sendpipe, world->player[e].playerNo);
+					int taggedEntity = -1;
+					if (command->commands[C_ACTION] && (taggedEntity = check_tag_collision(world, entity)) != -1) {
+						if (world->collision[entity].type == COLLISION_GUARD && world->collision[taggedEntity].type == COLLISION_HACKER) 
+						{
+							printf("Player no %u tagged\n",world->player[taggedEntity].playerNo);
+							send_tag(world, send_router_fd[WRITE], world->player[taggedEntity].playerNo);
 						}
-					}*/
+					}
 				 }
 				
 				position->x = temp.x;
