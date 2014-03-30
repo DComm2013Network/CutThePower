@@ -189,6 +189,15 @@ void client_update_pos(World *world, void *packet)
 			// world->mask[player_table[i]] |= COMPONENT_RENDER_PLAYER | COMPONENT_COLLISION;
 			world->movement[player_table[i]].movX	= pos_update->xVel[i];
 			world->movement[player_table[i]].movY 	= pos_update->yVel[i];
+			if(pos_update->xVel[i] < 0)
+			{
+			//world->movement[player_table[i]].lastDirection = 
+			}
+			else
+			{
+
+			}
+			world->movement[player_table[i]].lastDirection = 
 			world->position[player_table[i]].x		= pos_update->xPos[i];
 			world->position[player_table[i]].y		= pos_update->yPos[i];
 			world->position[player_table[i]].level	= pos_update->floor;

@@ -254,7 +254,7 @@ void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp
     if(*packet_type == P_KEEPALIVE)
         return NULL;
 
-	if((*packet_type <= 0 || *packet_type > NUM_PACKETS) && *packet_type)
+	if((*packet_type == 1 || *packet_type > NUM_PACKETS) && *packet_type)
 	{
 		fprintf(stderr, "recv_tcp_packet: Received Invalid Packet Type!\n");
 		set_error(ERR_CORRUPTED);

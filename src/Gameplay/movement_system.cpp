@@ -21,6 +21,7 @@ extern int floor_change_flag;
 extern int send_router_fd[];
 extern unsigned int player_entity;
 extern int network_ready;
+extern unsigned int *player_table;
 
 bool handle_collision_target(World *world, int entityIndex) {
 	if (!world->objective[entityIndex].status) {
@@ -266,7 +267,10 @@ int handle_entity_collision(CollisionData data, World * world, int curEntityID) 
 	case COLLISION_HACKER:
 		if (world->collision[curEntityID].type == COLLISION_GUARD) 
 		{
-
+			if(world->command[curEntityID].commands[C_ACTION])
+			{
+				send_tag(world, send_router_fd[WRITE], world->player[data.entityID].playerNo);
+			}
 		}
 		break; 
 	case COLLISION_GUARD:
@@ -368,12 +372,7 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 					p.width = 60;
 					p.height = 60;
 					p.level = position->level;
-					int e = entity_collision(world, p, entity);
-					if (world->collision[entity].type == COLLISION_GUARD && world->command[entity].commands[C_ACTION] && world->collision[e].type == COLLISION_HACKER) {
-						printf("You captured a hacker\n");
-						send_tag(world, sendpipe, world->player[e].playerNo);
-					}
-				}
+				 }
 				
 				position->x = temp.x;
 				position->y = temp.y;

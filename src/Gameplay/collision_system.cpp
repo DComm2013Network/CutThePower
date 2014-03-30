@@ -155,18 +155,25 @@ bool stair_collision(World &world, PositionComponent entity) {
  * @designer Joshua Campbell
  * @author   Joshua campbell
  */
-int entity_collision(World *world, PositionComponent entity, int entityID) {
-	int i = 0;
+unsigned int entity_collision(World *world, PositionComponent entity, int entityID) {
+	unsigned int i = 0;
 
 	//entity.x += entity.width / 2;
 	//entity.y += entity.height / 2;
 	for (i = 0; i < MAX_ENTITIES; i++) {
 		if (i != entityID && IN_THIS_COMPONENT(world->mask[i], COLLISION_MASK)) {
-			if (entity.x + entity.width / 2 - 1 > world->position[i].x - world->position[i].width / 2 + 1 &&
-				entity.x - entity.width / 2 + 1 < world->position[i].x + world->position[i].width / 2 - 1 &&
-				entity.y + entity.height / 2 - 1 > world->position[i].y - world->position[i].height / 2 + 1 &&
-				entity.y - entity.height / 2 + 1 < world->position[i].y + world->position[i].height / 2 + 1
-				&& world->collision[i].active) {
+			// if (entity.x + entity.width / 2 - 1 > world->position[i].x - world->position[i].width / 2 + 1 &&
+			// 	entity.x - entity.width / 2 + 1 < world->position[i].x + world->position[i].width / 2 - 1 &&
+			// 	entity.y + entity.height / 2 - 1 > world->position[i].y - world->position[i].height / 2 + 1 &&
+			// 	entity.y - entity.height / 2 + 1 < world->position[i].y + world->position[i].height / 2 + 1
+			// 	&& world->collision[i].active) {
+			// 	return i;
+			// }
+			if (entity.x + entity.width -1 > world->position[i].x + 1 &&
+				entity.x  + 1< world->position[i].x + world->position[i].width - 1 &&
+				entity.y + entity.height -1 > world->position[i].y + 1&&
+				entity.y  + 1< world->position[i].y + world->position[i].height - 1
+				&& world->collision[i].active && world->position[i].level == entity.level) {
 				return i;
 			}
 		}
