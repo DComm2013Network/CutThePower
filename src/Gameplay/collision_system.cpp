@@ -155,8 +155,8 @@ bool stair_collision(World &world, PositionComponent entity) {
  * @designer Joshua Campbell
  * @author   Joshua campbell
  */
-unsigned int entity_collision(World *world, PositionComponent entity, int entityID) {
-	unsigned int i = 0;
+int entity_collision(World *world, PositionComponent entity, int entityID) {
+	int i = 0;
 
 	//entity.x += entity.width / 2;
 	//entity.y += entity.height / 2;
