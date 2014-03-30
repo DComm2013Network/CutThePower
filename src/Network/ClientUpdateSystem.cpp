@@ -181,12 +181,12 @@ void client_update_pos(World *world, void *packet)
 		
 		if(player_table[i] != UNASSIGNED)
 		{
-			// if(!pos_update->players_on_floor[i])
-			// {
-			// 	world->mask[player_table[i]] &= ~(COMPONENT_RENDER_PLAYER | COMPONENT_COLLISION); // If the player is no longer on the floor, turn off render and collision
-			// 	continue;
-			// }
-			// world->mask[player_table[i]] |= COMPONENT_RENDER_PLAYER | COMPONENT_COLLISION;
+			if(!pos_update->players_on_floor[i])
+			{
+				world->mask[player_table[i]] &= ~(COMPONENT_RENDER_PLAYER | COMPONENT_COLLISION); // If the player is no longer on the floor, turn off render and collision
+			 	continue;
+			}
+			world->mask[player_table[i]] |= COMPONENT_RENDER_PLAYER | COMPONENT_COLLISION;
 			world->movement[player_table[i]].movX	= pos_update->xVel[i];
 			world->movement[player_table[i]].movY 	= pos_update->yVel[i];
 			if(pos_update->xVel[i] < 0)
