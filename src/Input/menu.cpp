@@ -581,14 +581,14 @@ void create_win_screen(World *world) {
 	
 	world->position[entity].x = 0;
 	world->position[entity].y = 0;
-	world->position[entity].width = WIDTH;
-	world->position[entity].height = HEIGHT;
-
+	world->position[entity].width = 1280;
+	world->position[entity].height = 768;
 	if ((world->renderPlayer[entity].playerSurface = IMG_Load("assets/Graphics/screen/win/win_background.png")) == NULL){
 		printf("Unable to find select image\n");
 	}
 
 	world->renderPlayer[entity].width = WIDTH;
 	world->renderPlayer[entity].height = HEIGHT;
+	
 }
 

@@ -14,6 +14,9 @@
 extern bool running;
 extern unsigned int player_entity;
 
+int player_number;
+
+
 bool menu_click(World *world, unsigned int entity) {
 	
 	//printf("Clicked: %s\n", world->button[entity].label);
@@ -32,18 +35,12 @@ bool menu_click(World *world, unsigned int entity) {
 		
 		create_options_menu(world);
 	}
-	/*else if (strcmp(world->button[entity].label, "mainmenu_credits") == 0) {
+	else if (strcmp(world->button[entity].label, "mainmenu_credits") == 0) {
 		
 		destroy_menu(world);
 		
 		create_credits_menu(world);
 		
-	}*/
-	else if (strcmp(world->button[entity].label, "mainmenu_credits") == 0) {
-		
-		destroy_menu(world);
-		
-		create_win_screen(world);
 	}
 	else if (strcmp(world->button[entity].label, "mainmenu_exit") == 0) {
 		destroy_world(world);
@@ -169,140 +166,140 @@ bool menu_click(World *world, unsigned int entity) {
 	else if (strcmp(world->button[entity].label, "menu_select_abhishek") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 0;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_aman") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 1;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_andrew") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 2;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_chris") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 3;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_clark") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 4;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_cory") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 5;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_damien") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 6;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_german") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 7;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_ian") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 8;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_jordan") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 9;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_josh") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 10;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_konst") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 11;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_mat") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 12;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_ramzi") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 13;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_robin") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 14;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_sam") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 15;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_shane") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 16;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_tim") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 17;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_vincent") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 18;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_random") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = (rand() % 18) + 1; 
 		create_setup_menu(world);
 		
 	}
@@ -379,10 +376,6 @@ bool menu_click(World *world, unsigned int entity) {
 		
 		create_main_menu(world);
 	}
-	
-	
-	
-	
 	else {
 		printf("DID NOT HANDLE BUTTON: %s\n", world->button[entity].label);
 		return false;

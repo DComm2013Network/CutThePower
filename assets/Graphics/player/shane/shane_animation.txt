@@ -1,0 +1,9 @@
+1
+
+shane 6 40 -1 1                        
+assets/Graphics/objects/select/shane/shane_1.png
+assets/Graphics/objects/select/shane/shane_2.png
+assets/Graphics/objects/select/shane/shane_3.png
+assets/Graphics/objects/select/shane/shane_4.png
+assets/Graphics/objects/select/shane/shane_5.png
+assets/Graphics/objects/select/shane/shane_6.png
