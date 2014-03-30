@@ -13,7 +13,7 @@
 #include "../Input/menu.h"
 
 /*SAM**/
-void make_surrounding_tiles_visible(struct fogOfWarPlayerPosition *fowp);
+void make_surrounding_tiles_visible(FowPlayerPosition *fowp);
 /******/
 
 #define SYSTEM_MASK (COMPONENT_RENDER_PLAYER | COMPONENT_POSITION) /**< The entity must have a render player and position component
@@ -49,7 +49,7 @@ SDL_Surface *ibeam;
  *
  * @author Mat Siwoski
  */
-void render_player_system(World& world, SDL_Surface* surface, struct fogOfWarStruct *fow) {
+void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow) {
 	
 	unsigned int entity;
 	RenderPlayerComponent 	*renderPlayer;
@@ -109,7 +109,7 @@ void render_player_system(World& world, SDL_Surface* surface, struct fogOfWarStr
 			/*SAM*********************************/		
 			if (IN_THIS_COMPONENT(world.mask[entity], COMPONENT_PLAYER)) {	
 	
-				struct fogOfWarPlayerPosition fowp;
+				FowPlayerPosition fowp;
 		
 				fowp.world = &world;
 				fowp.pos   = position;

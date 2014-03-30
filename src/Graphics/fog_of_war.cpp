@@ -32,7 +32,7 @@ extern SDL_Rect map_rect;
 int subOne(int n);
 int addOne(int n);
 
-int set_visibility_type (struct fogOfWarPlayerPosition *fowp, int yDel, int xDel, int visibility);
+int set_visibility_type (FowPlayerPosition *fowp, int yDel, int xDel, int visibility);
 int is_wall_collision(World *world, PositionComponent newposition);
 
 PositionComponent set_newposition(PositionComponent *pos, int yDel, int xDel);
@@ -67,7 +67,7 @@ extern int level;
  *
  * @date March 29, 2014
  */
-void blit_tile(SDL_Surface *surface, struct fogOfWarStruct *fow, SDL_Rect *tileRect, int y, int x, int i)
+void blit_tile(SDL_Surface *surface, FowComponent *fow, SDL_Rect *tileRect, int y, int x, int i)
 {
 	SDL_BlitSurface(fow -> corners[i], NULL, surface, tileRect);
 	fow -> tiles[y][x].visible[ level ] = TRANSP_VIS;
@@ -93,7 +93,7 @@ void blit_tile(SDL_Surface *surface, struct fogOfWarStruct *fow, SDL_Rect *tileR
  *
  * @date March 29, 2014
  */
-void render_fog_of_war(SDL_Surface *surface, struct fogOfWarStruct *fow)
+void render_fog_of_war(SDL_Surface *surface, FowComponent *fow)
 {
 	int xOffset = fow -> xOffset;
 	int yOffset = fow -> yOffset;
@@ -162,7 +162,7 @@ void render_fog_of_war(SDL_Surface *surface, struct fogOfWarStruct *fow)
  *
  * @date March 29, 2014
  */
-void init_fog_of_war(struct fogOfWarStruct **fow)
+void init_fog_of_war(FowComponent **fow)
 {
 		fogOfWarWidth = 64;  // screen width (tiles/screen)
 		fogOfWarHeight = 38; // screen height (tiles/screen)
@@ -171,7 +171,7 @@ void init_fog_of_war(struct fogOfWarStruct **fow)
 		int const TOTALTILESY = 1520;
 		
 
-		(*fow) = (struct fogOfWarStruct*)malloc(sizeof(struct fogOfWarStruct));
+		(*fow) = (FowComponent*)malloc(sizeof(FowComponent));
 
 
 		// fog of war tile map
@@ -248,7 +248,7 @@ void init_fog_of_war(struct fogOfWarStruct **fow)
  *
  * @date March 29, 2014
  */
-void cleanup_fog_of_war(struct fogOfWarStruct *fow)
+void cleanup_fog_of_war(FowComponent *fow)
 {
 	for(int i = 0; i < (fogOfWarHeight * fogOfWarWidth); i++)
 	{
@@ -281,7 +281,7 @@ void cleanup_fog_of_war(struct fogOfWarStruct *fow)
  *
  * @date March 29, 2014
  */
-void make_surrounding_tiles_visible(struct fogOfWarPlayerPosition *fowp)
+void make_surrounding_tiles_visible(FowPlayerPosition *fowp)
 {
 	fowp -> fow -> xOffset = -map_rect.x;
 	fowp -> fow -> yOffset = -map_rect.y;
@@ -467,10 +467,10 @@ PositionComponent set_newposition(PositionComponent *pos, int yDel, int xDel)
  *
  * @date March 29, 2014
  */
-int *get_visibility_type(PositionComponent *newposition, struct fogOfWarPlayerPosition *fowp, int yDel, int xDel)
+int *get_visibility_type(PositionComponent *newposition, FowPlayerPosition *fowp, int yDel, int xDel)
 {
-	struct fogOfWarStruct *fow 	 = fowp -> fow;
-	PositionComponent     *pos 	 = fowp -> pos;
+	FowComponent *fow = fowp -> fow;
+	PositionComponent *pos = fowp -> pos;
 
 
 	int xPos = pos->x / TILE_WIDTH;
@@ -504,7 +504,7 @@ int *get_visibility_type(PositionComponent *newposition, struct fogOfWarPlayerPo
  *
  * @date March 29, 2014
  */
-int set_visibility_type(struct fogOfWarPlayerPosition *fowp, int yDel, int xDel, int newvis)
+int set_visibility_type(FowPlayerPosition *fowp, int yDel, int xDel, int newvis)
 {
 
 	World *world = fowp -> world;

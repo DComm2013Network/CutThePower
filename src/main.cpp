@@ -22,9 +22,9 @@ int game_ready = 0;
 
 
 /*SAM**************************/
-extern void render_fog_of_war	( SDL_Surface *surface, struct fogOfWarStruct *fow );
-extern void init_fog_of_war  	( struct fogOfWarStruct **fow );
-extern void cleanup_fog_of_war( struct fogOfWarStruct  *fow );
+extern void render_fog_of_war	( SDL_Surface *surface, FowComponent *fow );
+extern void init_fog_of_war  	( FowComponent **fow );
+extern void cleanup_fog_of_war( FowComponent  *fow );
 /******************************/
 
 
@@ -118,7 +118,7 @@ int main(int argc, char* argv[]) {
 	
 	
 	/*SAM********************************/
-	struct fogOfWarStruct *fow;
+	FowComponent *fow;
 	
 	init_fog_of_war(&fow);
 	/************************************/
