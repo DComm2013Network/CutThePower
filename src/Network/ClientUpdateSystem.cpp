@@ -183,12 +183,12 @@ void client_update_pos(World *world, void *packet)
 		
 		if(player_table[i] != UNASSIGNED)
 		{
-			if(!pos_update->players_on_floor[i])
-			{
-				world->mask[player_table[i]] &= ~(COMPONENT_RENDER_PLAYER | COMPONENT_COLLISION); // If the player is no longer on the floor, turn off render and collision
-				continue;
-			}
-			world->mask[player_table[i]] |= COMPONENT_RENDER_PLAYER | COMPONENT_COLLISION;
+			// if(!pos_update->players_on_floor[i])
+			// {
+			// 	world->mask[player_table[i]] &= ~(COMPONENT_RENDER_PLAYER | COMPONENT_COLLISION); // If the player is no longer on the floor, turn off render and collision
+			// 	continue;
+			// }
+			// world->mask[player_table[i]] |= COMPONENT_RENDER_PLAYER | COMPONENT_COLLISION;
 			world->movement[player_table[i]].movX	= pos_update->xVel[i];
 			world->movement[player_table[i]].movY 	= pos_update->yVel[i];
 			world->position[player_table[i]].x		= pos_update->xPos[i];
@@ -282,6 +282,7 @@ void client_update_status(World *world, void *packet)
 	        			player_table[i] = create_player(world, 400, 600, false, COLLISION_GUARD, i, status_update->characters[i]);
 	            		load_animation("assets/Graphics/player/p1/cop_animation.txt", world, player_table[i]);
 	        		}
+	        		world->player[player_table[i]].teamNo = status_update->otherPlayers_teams;
 	        	}
 
 	        	if(status_update->otherPlayers_teams[i] == ROBBERS)
@@ -296,6 +297,14 @@ void client_update_status(World *world, void *packet)
 			    		player_table[i] = create_player(world, 400, 600, false, COLLISION_HACKER, i, status_update->characters[i]);
 			         	load_animation("assets/Graphics/player/p0/rob_animation.txt", world, player_table[i]);
 			    	}
+			    	world->player[player_table[i]].teamNo = status_update->otherPlayers_teams;
+	        	}
+
+
+	        	if(status_update->otherPlayers_teams[i] == 0)
+	        	{
+			    	world->player[player_table[i]].teamNo = status_update->otherPlayers_teams;
+			    	load_animation("assets/Graphics/player/p0/rob_animation.txt", world, player_table[i]);
 	        	}
 	        }
 		} 
