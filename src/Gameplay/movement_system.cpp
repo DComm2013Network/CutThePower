@@ -395,6 +395,10 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 				position->x = temp.x;
 				position->y = temp.y;
 				
+				if (key_pressed == false && data.entityID != -1) {
+					anti_stuck_system(world, entity, data.entityID);
+				}
+				
 				if (movement->movX > 0 && abs(movement->movX) > abs(movement->movY)) {
 					play_animation(world, entity, "right");
 					//right

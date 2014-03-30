@@ -258,8 +258,14 @@ void client_update_status(World *world, void *packet)
 		{	
 			if(player_table[i] == UNASSIGNED) // They're on the floor but haven't yet been created
 	        {
-	            player_table[i] = create_player(world, 400, 600, false, COLLISION_HACKER, i, status_update);
-	            load_animation("assets/Graphics/player/p0/rob_animation.txt", world, player_table[i]);
+	            player_table[i] = create_player(world, 400, 600, false, COLLISION_HACKER, i, status_update);	
+	           	if(status_update->otherPlayers_teams[i] == COPS)
+				{
+					load_animation("assets/Graphics/player/p1/cop_animation.txt", world, player_table[i]);
+				}
+				else{
+					setup_character_animation(world, status_update->characters[i], player_table[i]);
+				}
 	        }
 
 	        else if(player_table[i] != UNASSIGNED && status_update->player_valid[i])
@@ -303,8 +309,78 @@ void change_player(World * world, int type, PKT_GAME_STATUS * pkt, int playerNo)
 	else{
 		world->collision[player_table[playerNo]].type = COLLISION_HACKER;
 	}
-	char *str = (type == COPS) ? "assets/Graphics/player/p1/cop_animation.txt" : "assets/Graphics/player/p0/rob_animation.txt";
-	load_animation(str, world, player_table[playerNo]);
+	if(type == COPS)
+	{
+		load_animation("assets/Graphics/player/p1/cop_animation.txt", world, player_table[playerNo]);
+	}
+	else{
+		setup_character_animation(world, pkt->characters[playerNo], player_table[playerNo]);
+	}
+}
+
+void setup_character_animation(World * world, int character, int entity)
+{
+	switch(character){
+		case ABHISHEK:
+			 load_animation("assets/Graphics/player/abhishek/animation.txt", world, entity);
+		break;
+		case AMAN:
+			 load_animation("assets/Graphics/player/aman/animation.txt", world, entity);
+		break;
+		case ANDREW:
+			 load_animation("assets/Graphics/player/andrew/animation.txt", world, entity);
+		break;
+		case CHRIS:
+			 load_animation("assets/Graphics/player/chris/animation.txt", world, entity);
+		break;
+		case CORY:
+			 load_animation("assets/Graphics/player/cory/animation.txt", world, entity);
+		break;
+		case DAMIEN:
+			 load_animation("assets/Graphics/player/damien/animation.txt", world, entity);
+		break;
+		case CLARK:
+		 	load_animation("assets/Graphics/player/clark/animation.txt", world, entity);
+		break;
+		case GERMAN:
+			 load_animation("assets/Graphics/player/german/animation.txt", world, entity);
+		break;
+		case IAN:
+			 load_animation("assets/Graphics/player/ian/animation.txt", world, entity);
+		break;
+		case JORDAN:
+			 load_animation("assets/Graphics/player/jordan/animation.txt", world, entity);
+		break;
+		case JOSH:
+			 load_animation("assets/Graphics/player/josh/animation.txt", world, entity);
+		break;
+		case KONST:
+			 load_animation("assets/Graphics/player/konst/animation.txt", world, entity);
+		break;
+		case MAT:
+			 load_animation("assets/Graphics/player/mat/animation.txt", world, entity);
+		break;
+		case RAMZI:
+			 load_animation("assets/Graphics/player/ramzi/animation.txt", world, entity);
+		break;
+		case ROBIN:
+			 load_animation("assets/Graphics/player/robin/animation.txt", world, entity);
+		break;
+		case SAM:
+			 load_animation("assets/Graphics/player/sam/animation.txt", world, entity);
+		break;
+		case SHANE:
+			 load_animation("assets/Graphics/player/shane/animation.txt", world, entity);
+		break;
+		case TIM:
+			 load_animation("assets/Graphics/player/tim/animation.txt", world, entity);
+		break;
+		case VINCENT:
+			 load_animation("assets/Graphics/player/vincent/animation.txt", world, entity);
+		break;
+		default:
+		load_animation("assets/Graphics/player/p0/rob_animation.txt", world, entity);
+	}
 }
 /**
  * Updates the client's player number and team details.

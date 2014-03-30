@@ -281,3 +281,26 @@ int check_tag_collision(World* world, unsigned int currentEntityID) {
 
 	return -1;
 }
+
+void anti_stuck_system(World *world, unsigned int curEntityID, int otherEntityID) {
+	if (otherEntityID < 0) {
+		return;
+	}
+
+	if (world->position[curEntityID].x + world->position[curEntityID].width > world->position[otherEntityID].x) {
+		world->position[curEntityID].x = world->position[otherEntityID].x - world->position[curEntityID].width - 1;
+		return;
+	}
+	if (world->position[curEntityID].x < world->position[otherEntityID].x + world->position[otherEntityID].width) {
+		world->position[curEntityID].x = world->position[otherEntityID].x + world->position[otherEntityID].width + 1;
+		return;
+	}
+	if (world->position[curEntityID].y + world->position[curEntityID].height > world->position[otherEntityID].y) {
+		world->position[curEntityID].y = world->position[otherEntityID].y - world->position[curEntityID].height - 1;
+		return;
+	}
+	if (world->position[curEntityID].y < world->position[otherEntityID].y + world->position[otherEntityID].y) {
+		world->position[curEntityID].y = world->position[otherEntityID].y + world->position[otherEntityID].height + 1;
+		return;
+	}
+}
