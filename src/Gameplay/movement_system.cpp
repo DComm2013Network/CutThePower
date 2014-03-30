@@ -269,6 +269,7 @@ int handle_entity_collision(CollisionData data, World * world, int curEntityID) 
 		{
 			if(world->command[curEntityID].commands[C_ACTION])
 			{
+				printf("Player tagged %d", world->player[data.entityID].playerNo);
 				send_tag(world, send_router_fd[WRITE], world->player[data.entityID].playerNo);
 			}
 		}
