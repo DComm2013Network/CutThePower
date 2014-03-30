@@ -235,6 +235,11 @@ void client_update_objectives(World *world, void *packet)
 {
 	PKT_OBJECTIVE_STATUS *objective_update = (PKT_OBJECTIVE_STATUS *)packet;
 
+	if(objective_update->game_status = GAME_TEAM1_WIN || objective_update->game_status = GAME_TEAM2_WIN)
+	{
+		player_team = 0;
+	}
+
 	for(int i = 0; i < MAX_OBJECTIVES; ++i)
 	{
 	    if(!objective_update->objectives_captured[i]) // If the ojective is non-existent, then all following objectives are non-existent as well
@@ -305,7 +310,6 @@ void client_update_status(World *world, void *packet)
 	        	if(status_update->otherPlayers_teams[i] == 0)
 	        	{
 			    	world->player[player_table[i]].teamNo = status_update->otherPlayers_teams;
-			    	player_team = status_update->otherPlayers_teams;
 			    	load_animation("assets/Graphics/player/p0/rob_animation.txt", world, player_table[i]);
 	        	}
 	        }
