@@ -83,9 +83,14 @@
 #define VINCENT  18
 // Game Status Definitions
 
-#define GAME_STATE_WAITING 		  0x001
-#define GAME_STATE_WAITING_ACTIVE 0x002
-#define GAME_STATE_OVER 		  0x003
+// Game Status Definitions
+#define GAME_STATE_WAITING 			0x001 // Waiting for PLAYER_STATE_READY by all players (LOBBY)
+#define GAME_STATE_ACTIVE 			0x002 // Game engine running
+#define GAME_STATE_OVER 			0x003
+
+#define GAME_TEAM1_WIN 				0x006
+#define GAME_TEAM2_WIN 				0x007
+
 #define PLAYER_STATE_READY 		  0x004
 #define PLAYER_STATE_WAITING 	  0x005
 

@@ -153,9 +153,9 @@ void client_update_chat(World *world, void *packet)
 void client_update_floor(World *world, void *packet)
 {
 	PKT_FLOOR_MOVE* floor_move = (PKT_FLOOR_MOVE*)packet;
+	world->position[player_table[controllable_playerNo]].level	= floor_move->new_floor;
 	world->position[player_table[controllable_playerNo]].x		= floor_move->xPos;
 	world->position[player_table[controllable_playerNo]].y		= floor_move->yPos;
-	world->position[player_table[controllable_playerNo]].level	= floor_move->new_floor;
 	rebuild_floor(world, floor_move->new_floor);
 	floor_change_flag = 0;
 }
@@ -233,12 +233,11 @@ void player_tag_packet(World *world, void *packet)
 void client_update_objectives(World *world, void *packet)
 {
 	PKT_OBJECTIVE_STATUS *objective_update = (PKT_OBJECTIVE_STATUS *)packet;
-	
+
 	for(int i = 0; i < MAX_OBJECTIVES; ++i)
 	{
 	    if(!objective_update->objectives_captured[i]) // If the ojective is non-existent, then all following objectives are non-existent as well
 	        break;
-	    
         world->objective[objective_table[i]].status = objective_update->objectives_captured[i]; // Otherwise, set it to the value contained in the objective update packet
 	}
 }
@@ -304,6 +303,7 @@ void client_update_status(World *world, void *packet)
 		{
 			if(player_table[i] != UNASSIGNED)
 			{
+				printf("stuff");
 				destroy_entity(world, player_table[i]);
 				player_table[i] = UNASSIGNED;
 			}
