@@ -52,6 +52,16 @@ void send_location(World *world, int fd)
     free(pkt4);
 }
 
+/**
+ * Sends a tag packet when the client tags another player.
+ *
+ * @param[in] world  A pointer to the world struct.
+ * @param[in] fd     The write end of a pipe to the network router.
+ * @param[in] taggee The player that the client tagged.
+ *
+ * @designer Ramzi Chennafi
+ * @author   Ramzi Chennafi
+ */
 void send_tag(World * world, int fd, unsigned int taggee)
 {
 	PKT_TAGGING * pkt = (PKT_TAGGING*) malloc(sizeof(PKT_TAGGING));
@@ -83,9 +93,12 @@ void send_intialization(World *world, int fd, char * username)
 	for (int j = 0; j < MAX_ENTITIES; j++) {
 		if (IN_THIS_COMPONENT(world->mask[j], COMPONENT_PLAYER | COMPONENT_CONTROLLABLE))
 		{
+			size_t name_len = strlen(username);
 			controllable_player = j;
-			memcpy(pkt1->client_player_name, username, sizeof(username));
-			memcpy(world->player[j].name, username, sizeof(username));
+			memcpy(pkt1->client_player_name, username, name_len);
+			pkt1->client_player_name[name_len] = 0;
+			memcpy(world->player[j].name, username, name_len);
+			world->player[j].name[name_len] = 0;
 			pkt1->selectedCharacter = world->player[j].character;
 			break;
 		}

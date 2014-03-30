@@ -270,7 +270,7 @@ int handle_entity_collision(CollisionData data, World * world, int curEntityID) 
 			if(world->command[curEntityID].commands[C_ACTION])
 			{
 				printf("Player no %u tagged\n",world->player[data.entityID].playerNo);
-				//send_tag(world, send_router_fd[WRITE], world->player[data.entityID].playerNo);
+				send_tag(world, send_router_fd[WRITE], world->player[data.entityID].playerNo);
 			}
 		}
 		break; 
