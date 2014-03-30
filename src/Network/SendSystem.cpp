@@ -52,6 +52,16 @@ void send_location(World *world, int fd)
     free(pkt4);
 }
 
+void send_tag(World * world, int fd, unsigned int taggee)
+{
+	PKT_TAGGING * pkt = (PKT_TAGGING*) malloc(sizeof(PKT_TAGGING));
+
+	pkt->tagger_id = world->player[controllable_player].playerNo;
+	pkt->taggee_id = taggee;
+
+	write_packet(fd, P_TAGGING, pkt);
+    free(pkt);
+}
 /**
  * Checks the world for data and sends out data updates to be passed to the server. Currently sends out\
  * only a position update.

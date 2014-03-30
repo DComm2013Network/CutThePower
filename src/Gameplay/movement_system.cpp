@@ -264,7 +264,9 @@ int handle_entity_collision(CollisionData data, World * world, int curEntityID) 
 		}
 		break;
 	case COLLISION_HACKER:
-		if (world->collision[curEntityID].type == COLLISION_GUARD) {
+		if (world->collision[curEntityID].type == COLLISION_GUARD) 
+		{
+
 		}
 		break; 
 	case COLLISION_GUARD:
@@ -369,9 +371,7 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 					int e = entity_collision(world, p, entity);
 					if (world->collision[entity].type == COLLISION_GUARD && world->command[entity].commands[C_ACTION] && world->collision[e].type == COLLISION_HACKER) {
 						printf("You captured a hacker\n");
-						int e = create_entity(world, COMPONENT_TAG);
-						world->tag[e].tagger_id = entity;
-						world->tag[e].taggee_id = e;
+						send_tag(world, sendpipe, world->player[e].playerNo);
 					}
 				}
 				

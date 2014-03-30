@@ -109,9 +109,6 @@ int client_update_system(World *world, int net_pipe) {
 				case P_FLOOR_MOVE:
 					client_update_floor(world, packet);
 					break;
-				case P_TAGGING:
-					player_tag_packet(world, packet);
-					break;
 				default:
 					break;
 			}
@@ -199,26 +196,6 @@ void client_update_pos(World *world, void *packet)
 	}
 }
 
-
-/**
- * If this function is called, it means the current player got tagged.
- * This packet is going to be passed to the gameplay and they'll manage it.
- *
- * @param[in, out]	world 	The world struct holding the data to be updated.
- * @param[in] 		packet	The packet containing update information.
- *
- * @designer Abhishek Bhardwaj
- * @author Abhishek Bhardwaj
- */
-void player_tag_packet(World *world, void *packet)
-{
-	PKT_TAGGING * pkt14 = (PKT_TAGGING*)packet;
-
-	uint32_t entity = create_entity(world, COMPONENT_TAG);
-	world->tag[entity].tagger_id = pkt14->tagger_id;
-	world->tag[entity].taggee_id = pkt14->taggee_id;
-}
-
 /**
  * Udpates the objective statuses and the game state.
  *
@@ -235,7 +212,7 @@ void client_update_objectives(World *world, void *packet)
 {
 	PKT_OBJECTIVE_STATUS *objective_update = (PKT_OBJECTIVE_STATUS *)packet;
 
-	if(objective_update->game_status = GAME_TEAM1_WIN || objective_update->game_status = GAME_TEAM2_WIN)
+	if(objective_update->game_status == GAME_TEAM1_WIN || objective_update->game_status == GAME_TEAM2_WIN)
 	{
 		player_team = 0;
 	}
