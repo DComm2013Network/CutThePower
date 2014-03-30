@@ -174,33 +174,35 @@ void client_update_floor(World *world, void *packet)
 void client_update_pos(World *world, void *packet)
 {
 	PKT_ALL_POS_UPDATE *pos_update = (PKT_ALL_POS_UPDATE *)packet;
-	for (int i = 0; i < MAX_PLAYERS; i++)
-	{
-        if(i == controllable_playerNo)
-			continue;
-		
-		if(player_table[i] != UNASSIGNED)
+	if(pos_update->floor == world->position[player_table[controllable_playerNo]].level){
+		for (int i = 0; i < MAX_PLAYERS; i++)
 		{
-			if(!pos_update->players_on_floor[i])
+	        if(i == controllable_playerNo)
+				continue;
+			
+			if(player_table[i] != UNASSIGNED)
 			{
-				world->mask[player_table[i]] &= ~(COMPONENT_RENDER_PLAYER | COMPONENT_COLLISION); // If the player is no longer on the floor, turn off render and collision
-			 	continue;
-			}
-			world->mask[player_table[i]] |= COMPONENT_RENDER_PLAYER | COMPONENT_COLLISION;
-			world->movement[player_table[i]].movX	= pos_update->xVel[i];
-			world->movement[player_table[i]].movY 	= pos_update->yVel[i];
-			if(pos_update->xVel[i] < 0)
-			{
-			//world->movement[player_table[i]].lastDirection = 
-			}
-			else
-			{
+				if(!pos_update->players_on_floor[i])
+				{
+					world->mask[player_table[i]] &= ~(COMPONENT_RENDER_PLAYER | COMPONENT_COLLISION); // If the player is no longer on the floor, turn off render and collision
+				 	continue;
+				}
+				world->mask[player_table[i]] |= COMPONENT_RENDER_PLAYER | COMPONENT_COLLISION;
+				world->movement[player_table[i]].movX	= pos_update->xVel[i];
+				world->movement[player_table[i]].movY 	= pos_update->yVel[i];
+				if(pos_update->xVel[i] < 0)
+				{
+				//world->movement[player_table[i]].lastDirection = 
+				}
+				else
+				{
 
+				}
+				world->movement[player_table[i]].lastDirection = 
+				world->position[player_table[i]].x		= pos_update->xPos[i];
+				world->position[player_table[i]].y		= pos_update->yPos[i];
+				world->position[player_table[i]].level	= pos_update->floor;
 			}
-			world->movement[player_table[i]].lastDirection = 
-			world->position[player_table[i]].x		= pos_update->xPos[i];
-			world->position[player_table[i]].y		= pos_update->yPos[i];
-			world->position[player_table[i]].level	= pos_update->floor;
 		}
 	}
 }
@@ -260,43 +262,22 @@ void client_update_status(World *world, void *packet)
 	            load_animation("assets/Graphics/player/p0/rob_animation.txt", world, player_table[i]);
 	        }
 
-	        if(player_table[i] != UNASSIGNED && status_update->player_valid[i])
+	        else if(player_table[i] != UNASSIGNED && status_update->player_valid[i])
 	        {
 	        	if(status_update->otherPlayers_teams[i] == COPS)
 	        	{
-	        		if(i == controllable_playerNo)
-	        		{
-	        			world->collision[player_table[i]].type = COLLISION_GUARD;
-	            		load_animation("assets/Graphics/player/p1/cop_animation.txt", world, player_table[i]);
-	        		}
-	        		else
-	        		{
-	        			player_table[i] = create_player(world, 400, 600, false, COLLISION_GUARD, i, status_update);
-	            		load_animation("assets/Graphics/player/p1/cop_animation.txt", world, player_table[i]);
-	        		}
-	        		world->player[player_table[i]].teamNo = status_update->otherPlayers_teams;
+	        		change_player(world, COPS, status_update, i);
 	        	}
 
 	        	if(status_update->otherPlayers_teams[i] == ROBBERS)
 	        	{
-	        		if(i == controllable_playerNo)
-	        		{
-	        			world->collision[player_table[i]].type = COLLISION_HACKER;
-	             		load_animation("assets/Graphics/player/p0/rob_animation.txt", world, player_table[i]);
-	        		}
-	        		else
-	        		{
-			    		player_table[i] = create_player(world, 400, 600, false, COLLISION_HACKER, i, status_update);
-			         	load_animation("assets/Graphics/player/p0/rob_animation.txt", world, player_table[i]);
-			    	}
-			    	world->player[player_table[i]].teamNo = status_update->otherPlayers_teams;
+	        		change_player(world, ROBBERS, status_update, i);
 	        	}
 
 
 	        	if(status_update->otherPlayers_teams[i] == 0)
 	        	{
-			    	world->player[player_table[i]].teamNo = status_update->otherPlayers_teams;
-			    	load_animation("assets/Graphics/player/p0/rob_animation.txt", world, player_table[i]);
+			    	change_player(world, ROBBERS, status_update, i);
 	        	}
 	        }
 		} 
@@ -304,7 +285,6 @@ void client_update_status(World *world, void *packet)
 		{
 			if(player_table[i] != UNASSIGNED)
 			{
-				printf("stuff");
 				destroy_entity(world, player_table[i]);
 				player_table[i] = UNASSIGNED;
 			}
@@ -312,6 +292,14 @@ void client_update_status(World *world, void *packet)
 	}
 }
 
+void change_player(World * world, int type, PKT_GAME_STATUS * pkt, int playerNo)
+{
+	world->player[player_table[playerNo]].playerNo = playerNo;
+	world->player[player_table[playerNo]].teamNo = pkt->otherPlayers_teams[playerNo];
+	world->player[player_table[playerNo]].readyStatus = pkt->readystatus[playerNo];
+	char *str = (type == COPS) ? "assets/Graphics/player/p1/cop_animation.txt" : "assets/Graphics/player/p0/rob_animation.txt";
+	load_animation(str, world, player_table[playerNo]);
+}
 /**
  * Updates the client's player number and team details.
  *
