@@ -42,12 +42,6 @@ typedef struct NETWORK_DATA
     UDPsocket   udp_sock;       /**< UDP socket for server communication */
 } WNETWORK_DATA, *NDATA;
 
-typedef struct CHAT_LIST
-{
-	CHAT_LIST * head;
-	PKT_SND_CHAT * chat_pkt;
-	CHAT_LIST * next;
-} CHAT_LIST;
 
 void *networkRouter(void *args);
 int dispatch_thread(void *(*function)(void *), void *params, pthread_t *handle);
