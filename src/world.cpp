@@ -110,7 +110,7 @@ unsigned int create_level(World* world, int** map, int width, int height, int ti
  * @designer
  * @author
  */
-unsigned int create_player(World* world, int x, int y, bool controllable, int collisiontype, playerNo_t pno, character_t character) {
+unsigned int create_player(World* world, int x, int y, bool controllable, int collisiontype, int playerNo, PKT_GAME_STATUS *status_update) {
 	unsigned int entity;
 	PositionComponent pos;
 	RenderPlayerComponent render;
@@ -162,9 +162,12 @@ unsigned int create_player(World* world, int x, int y, bool controllable, int co
 	collision.timerMax = 0;
 	collision.active = true;
 	collision.radius = 0;
-	
-	player.teamNo = pno;
-	player.character = character;
+
+	player.playerNo = playerNo;
+	player.teamNo = status_update->otherPlayers_teams[playerNo];
+	player.character = status_update->characters[playerNo];
+	player.readyStatus = status_update->readystatus[playerNo];
+	memcpy(player.name, status_update->otherPlayers_name[playerNo], MAX_NAME);
 
 	for(entity = 0; entity < MAX_ENTITIES; ++entity) {
 		if (world->mask[entity] == COMPONENT_EMPTY) {

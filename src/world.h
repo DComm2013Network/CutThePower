@@ -106,7 +106,7 @@ public:
 
 void init_world(World* world);
 unsigned int create_entity(World* world, unsigned int attributes);
-unsigned int create_player(World* world, int x, int y, bool controllable, int collisiontype, playerNo_t pno, character_t character);
+unsigned int create_player(World* world, int x, int y, bool controllable, int collisiontype, int playerNo, PKT_GAME_STATUS *status_update);
 unsigned int create_level(World* world, int** map, int width, int height, int tileSize, int floor);
 unsigned int create_stair(World* world, int targetLevel, int targetX, int targetY, int x, int y, int width, int height, int level);
 unsigned int create_objective(World* world, float x, float y, int w, int h, int id, int level);

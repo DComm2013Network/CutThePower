@@ -256,7 +256,7 @@ void client_update_status(World *world, void *packet)
 		{	
 			if(player_table[i] == UNASSIGNED) // They're on the floor but haven't yet been created
 	        {
-	            player_table[i] = create_player(world, 400, 600, false, COLLISION_HACKER, i, status_update->characters[i]);
+	            player_table[i] = create_player(world, 400, 600, false, COLLISION_HACKER, i, status_update);
 	            load_animation("assets/Graphics/player/p0/rob_animation.txt", world, player_table[i]);
 	        }
 
@@ -271,7 +271,7 @@ void client_update_status(World *world, void *packet)
 	        		}
 	        		else
 	        		{
-	        			player_table[i] = create_player(world, 400, 600, false, COLLISION_GUARD, i, status_update->characters[i]);
+	        			player_table[i] = create_player(world, 400, 600, false, COLLISION_GUARD, i, status_update);
 	            		load_animation("assets/Graphics/player/p1/cop_animation.txt", world, player_table[i]);
 	        		}
 	        		world->player[player_table[i]].teamNo = status_update->otherPlayers_teams;
@@ -286,7 +286,7 @@ void client_update_status(World *world, void *packet)
 	        		}
 	        		else
 	        		{
-			    		player_table[i] = create_player(world, 400, 600, false, COLLISION_HACKER, i, status_update->characters[i]);
+			    		player_table[i] = create_player(world, 400, 600, false, COLLISION_HACKER, i, status_update);
 			         	load_animation("assets/Graphics/player/p0/rob_animation.txt", world, player_table[i]);
 			    	}
 			    	world->player[player_table[i]].teamNo = status_update->otherPlayers_teams;

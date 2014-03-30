@@ -267,10 +267,11 @@ int handle_entity_collision(CollisionData data, World * world, int curEntityID) 
 	case COLLISION_HACKER:
 		if (world->collision[curEntityID].type == COLLISION_GUARD) 
 		{
-		// 	if(world->command[curEntityID].commands[C_ACTION])
-		// 	{
-		// 		send_tag(world, send_router_fd[WRITE], world->player[data.entityID].playerNo);
-		// 	}
+			if(world->command[curEntityID].commands[C_ACTION])
+			{
+				printf("Player no %u tagged\n",world->player[data.entityID].playerNo);
+				//send_tag(world, send_router_fd[WRITE], world->player[data.entityID].playerNo);
+			}
 		}
 		break; 
 	case COLLISION_GUARD:
@@ -360,19 +361,21 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 					//temp.x += movement->movX;
 					apply_forcex(temp, *movement, fps);
 					data = collision_system(world, temp, entity);
+					collisionType = handle_entity_collision(data, world, entity);
 					handle_x_collision(world, data, temp, *movement, entity, fps);
 					//temp.y += movement->movY;
 					apply_forcey(temp, *movement, fps);
 					data = collision_system(world, temp, entity);
-					handle_y_collision(world, data, temp, *movement, entity, fps);
 					collisionType = handle_entity_collision(data, world, entity);
+					handle_y_collision(world, data, temp, *movement, entity, fps);
+					//collisionType = handle_entity_collision(data, world, entity);
 					
 					p.x = position->x;
 					p.y = position->y;
 					p.width = 60;
 					p.height = 60;
 					p.level = position->level;
-					int e = entity_collision(world, p, entity);
+					/*int e = entity_collision(world, p, entity);
 					if(e != -1)
 					{
 						if (world->collision[entity].type == COLLISION_GUARD && world->command[entity].commands[C_ACTION] && world->collision[e].type == COLLISION_HACKER) {
@@ -380,7 +383,7 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 							printf("You captured a hacker\n");
 							send_tag(world, sendpipe, world->player[e].playerNo);
 						}
-					}
+					}*/
 				 }
 				
 				position->x = temp.x;

@@ -8,6 +8,7 @@
 #include "sound.h"
 #include "Input/menu.h"
 #include "Graphics/text.h"
+#include "Network/Packets.h"
 
 #define SHOW_MENU_INTRO 0 //1 == load intro, 0 == load straight into map
 
@@ -391,8 +392,14 @@ void animation_end(World *world, unsigned int entity) {
 		stop_music();
 		stop_effect();
 		
+		PKT_GAME_STATUS pkt;
+		memcpy(pkt.otherPlayers_name[0], username, MAX_NAME);
+		pkt.characters[0] = character;
+		pkt.readystatus[0] = 0;
+		pkt.otherPlayers_teams[0] = 0;
+
 		map_init(world, "assets/Graphics/map/map_00/map00.txt", "assets/Graphics/map/map_00/tiles.txt");
-		player_entity = create_player(world, 620, 420, true, COLLISION_HACKER, 0, character);
+		player_entity = create_player(world, 620, 420, true, COLLISION_HACKER, 0, &pkt);
 		
 		load_animation("assets/Graphics/player/p0/rob_animation.txt", world, player_entity);
 		
