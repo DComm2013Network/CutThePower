@@ -175,11 +175,11 @@ void init_fog_of_war(FowComponent **fow)
 
 
 		// fog of war tile map
-		(*fow) -> tiles = (struct fowtile**)malloc(sizeof(struct fowtile*) * TOTALTILESY);
+		(*fow) -> tiles = (FowTile**)malloc(sizeof(FowTile*) * TOTALTILESY);
 
 		for(int y = 0; y < TOTALTILESY; y++)
 		{
-			(*fow) -> tiles[y] = (struct fowtile*)malloc(sizeof(struct fowtile) * TOTALTILESX);
+			(*fow) -> tiles[y] = (FowTile*)malloc(sizeof(FowTile) * TOTALTILESX);
 
 			for(int x = 0; x < TOTALTILESX; x++)
 			{

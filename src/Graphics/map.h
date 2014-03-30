@@ -16,32 +16,6 @@
 
 
 
-struct fogOfWarPlayerPosition
-{
-	World *world;
-	PositionComponent *pos;
-	struct fogOfWarStruct *fow;
-};
-
-struct fowtile
-{
-	SDL_Rect rect;
-	int visible[NUMLEVELS];
-};
-
-struct fogOfWarStruct
-{
-	struct fowtile **tiles;
-	
-	int xOffset;
-	int yOffset;
-	
-	SDL_Surface **fogOfWar;
-	SDL_Surface **alphaFog;
-	
-	SDL_Surface  *corners[12];
-};
-
 int map_init(World* world, const char *file_map, const char *tilemap);
 void cleanup_map();
 void map_render(SDL_Surface *surface, World *world, unsigned int player_entity);
