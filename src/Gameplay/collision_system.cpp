@@ -92,28 +92,34 @@ int wall_collision(World *world, PositionComponent entity) {
 	
 	
 	// debug statement: printf("xl: %i, xr: %i, yt: %i, yb: %i, xdts: %i, ydts: %i\n", xl, xr, yt, yb, xdts, ydts);
-	for (int i = 0; i < xdts; i++) {
-		if (xl + i * world->level[curlevel].tileSize < world->level[curlevel].width &&
-			xl + i * world->level[curlevel].tileSize > 0 &&
-			world->level[curlevel].map[xl + i * world->level[curlevel].tileSize][yt] == L_WALL) {
-			return COLLISION_WALL;
-		}
-		if (xr - i * world->level[curlevel].tileSize < world->level[curlevel].width &&
-			xr - i * world->level[curlevel].tileSize > 0 &&
-			world->level[curlevel].map[xr - i * world->level[curlevel].tileSize][yb] == L_WALL) {
-			return COLLISION_WALL;
+	if (yt < world->level[curlevel].height && yt > 0 &&
+		yb < world->level[curlevel].height && yb > 0) {
+		for (int i = 0; i < xdts; i++) {
+			if (xl + i * world->level[curlevel].tileSize < world->level[curlevel].width &&
+				xl + i * world->level[curlevel].tileSize > 0 &&
+				world->level[curlevel].map[xl + i * world->level[curlevel].tileSize][yt] == L_WALL) {
+				return COLLISION_WALL;
+			}
+			if (xr - i * world->level[curlevel].tileSize < world->level[curlevel].width &&
+				xr - i * world->level[curlevel].tileSize > 0 &&
+				world->level[curlevel].map[xr - i * world->level[curlevel].tileSize][yb] == L_WALL) {
+				return COLLISION_WALL;
+			}
 		}
 	}
-	for (int i = 0; i < ydts; i++) {
-		if (yt + i * world->level[curlevel].tileSize < world->level[curlevel].height &&
-			yt + i * world->level[curlevel].tileSize > 0 &&
-			world->level[curlevel].map[xr][yt + i * world->level[curlevel].tileSize] == L_WALL) {
-			return COLLISION_WALL;
-		}
-		if (yb - i * world->level[curlevel].tileSize < world->level[curlevel].height &&
-			yb - i * world->level[curlevel].tileSize > 0 &&
-			world->level[curlevel].map[xl][yb - i * world->level[curlevel].tileSize] == L_WALL) {
-			return COLLISION_WALL;
+	if (xl < world->level[curlevel].width && xl > 0 &&
+		xr < world->level[curlevel].width && xr > 0) {
+		for (int i = 0; i < ydts; i++) {
+			if (yt + i * world->level[curlevel].tileSize < world->level[curlevel].height &&
+				yt + i * world->level[curlevel].tileSize > 0 &&
+				world->level[curlevel].map[xr][yt + i * world->level[curlevel].tileSize] == L_WALL) {
+				return COLLISION_WALL;
+			}
+			if (yb - i * world->level[curlevel].tileSize < world->level[curlevel].height &&
+				yb - i * world->level[curlevel].tileSize > 0 &&
+				world->level[curlevel].map[xl][yb - i * world->level[curlevel].tileSize] == L_WALL) {
+				return COLLISION_WALL;
+			}
 		}
 	}
 
