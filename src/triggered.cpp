@@ -482,8 +482,7 @@ void animation_end(World *world, unsigned int entity) {
 		map_init(world, "assets/Graphics/map/map_00/map00.txt", "assets/Graphics/map/map_00/tiles.txt");
 		player_entity = create_player(world, 620, 420, true, COLLISION_HACKER, 0, &pkt);
 		
-		load_animation("assets/Graphics/player/p0/rob_animation.txt", world, player_entity);
-		
+		setup_character_animation(world, character, player_entity);
 		////NETWORK CODE
 		game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
 

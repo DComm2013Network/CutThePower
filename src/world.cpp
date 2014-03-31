@@ -122,17 +122,9 @@ unsigned int create_player(World* world, int x, int y, bool controllable, int co
 
 	int lastID = -1;
 	unsigned int tempMask = 0;
-	
-	//MovementComponent movement;
-	//CollisionComponent collision;
-	
+
 	render.width = 40;
 	render.height = 40;
-	//render.playerSurface = IMG_Load("assets/Graphics/player_80px.png");
-	//render.playerSurface = IMG_Load("assets/Graphics/hacker_down.png");
-	//if (!render.playerSurface) {
-	//	printf("mat is a doof\n");
-	//}
 	
 	pos.x = x;
 	pos.y = y;
