@@ -32,8 +32,8 @@ typedef struct {
 	SDL_Surface **surfaces; //surface array
 	int index; //current surface to be drawn
 	int surface_count; //total amount of surfaces
-	int frames_to_skip; //frames in between surface changes
-	int frame_count; //current amount of frames between surface change
+	unsigned int ms_to_skip; //milliseconds in between surface changes
+	unsigned int ms_last; //current amount of frames between surface change
 	int sound_effect; //sound effect to be played
 	int loop; //-1 is no loop, 1 is loop
 	

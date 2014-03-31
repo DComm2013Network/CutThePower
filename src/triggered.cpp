@@ -14,6 +14,9 @@
 extern bool running;
 extern unsigned int player_entity;
 
+int player_number;
+
+
 bool menu_click(World *world, unsigned int entity) {
 	
 	//printf("Clicked: %s\n", world->button[entity].label);
@@ -163,140 +166,140 @@ bool menu_click(World *world, unsigned int entity) {
 	else if (strcmp(world->button[entity].label, "menu_select_abhishek") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 0;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_aman") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 1;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_andrew") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 2;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_chris") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 3;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_clark") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 4;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_cory") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 5;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_damien") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 6;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_german") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 7;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_ian") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 8;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_jordan") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 9;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_josh") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 10;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_konst") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 11;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_mat") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 12;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_ramzi") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 13;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_robin") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 14;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_sam") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 15;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_shane") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 16;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_tim") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 17;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_vincent") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = 18;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_random") == 0) {
 		
 		destroy_menu(world);
-		
+		player_number = (rand() % 18) + 1; 
 		create_setup_menu(world);
 		
 	}
@@ -373,9 +376,6 @@ bool menu_click(World *world, unsigned int entity) {
 		
 		create_main_menu(world);
 	}
-	
-	
-	
 	else {
 		printf("DID NOT HANDLE BUTTON: %s\n", world->button[entity].label);
 		return false;
@@ -396,10 +396,52 @@ void animation_end(World *world, unsigned int entity) {
 		stop_effect();
 		
 		map_init(world, "assets/Graphics/map/map_00/map00.txt", "assets/Graphics/map/map_00/tiles.txt");
-		player_entity = create_player(world, 600, 600, true, COLLISION_HACKER);
+		player_entity = create_player(world, 600, 400, true, COLLISION_HACKER);
 		
 		world->mask[player_entity] |= COMPONENT_ANIMATION;
-		load_animation("assets/Graphics/player/p0/rob_animation.txt", world, player_entity);
+		if ( player_number == 0){
+			load_animation("assets/Graphics/player/abhishek/animation.txt", world, player_entity);
+		}else if (player_number == 1) {
+			load_animation("assets/Graphics/player/aman/animation.txt", world, player_entity);
+		}else if (player_number == 2) {
+			load_animation("assets/Graphics/player/andrew/animation.txt", world, player_entity);
+		}else if (player_number == 3) {
+			load_animation("assets/Graphics/player/chris/animation.txt", world, player_entity);
+		}else if (player_number == 4) {
+			load_animation("assets/Graphics/player/clark/animation.txt", world, player_entity);
+		}else if (player_number == 5) {
+			load_animation("assets/Graphics/player/cory/animation.txt", world, player_entity);
+		}else if (player_number == 6) {
+			load_animation("assets/Graphics/player/damien/animation.txt", world, player_entity);
+		}else if (player_number == 7) {
+			load_animation("assets/Graphics/player/german/animation.txt", world, player_entity);
+		}else if (player_number == 8) {
+			load_animation("assets/Graphics/player/ian/animation.txt", world, player_entity);
+		}else if (player_number == 9) {
+			load_animation("assets/Graphics/player/jordan/animation.txt", world, player_entity);
+		}else if (player_number == 10) {
+			load_animation("assets/Graphics/player/josh/animation.txt", world, player_entity);
+		}else if (player_number == 11) {
+			load_animation("assets/Graphics/player/konst/animation.txt", world, player_entity);
+		}else if (player_number == 12) {
+			load_animation("assets/Graphics/player/mat/animation.txt", world, player_entity);
+		}else if (player_number == 13) {
+			load_animation("assets/Graphics/player/ramzi/animation.txt", world, player_entity);
+		}else if (player_number == 14) {
+			load_animation("assets/Graphics/player/robin/animation.txt", world, player_entity);
+		}else if (player_number == 15) {
+			load_animation("assets/Graphics/player/sam/animation.txt", world, player_entity);
+		}else if (player_number == 16) {
+			load_animation("assets/Graphics/player/shane/animation.txt", world, player_entity);
+		}else if (player_number == 17) {
+			load_animation("assets/Graphics/player/tim/animation.txt", world, player_entity);
+		}else if (player_number == 18) {
+			load_animation("assets/Graphics/player/vincent/animation.txt", world, player_entity);
+		}
+		else{
+			load_animation("assets/Graphics/player/p0/rob_animation.txt", world, player_entity);
+		}
+		
 		
 		
 		//PUT CLIENT START CODE HERE!!!@!@!!!!

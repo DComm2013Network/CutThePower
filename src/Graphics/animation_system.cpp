@@ -50,15 +50,13 @@ void animation_system(World *world) {
 				
 				animation = &(animationComponent->animations[animationComponent->current_animation]);
 				
-				if (animation->index == 0 && animation->frame_count == 0 && animation->sound_effect > -1) {
+				if (animation->index == 0 && animation->ms_last == 0 && animation->sound_effect > -1) {
 					play_effect(animation->sound_effect);
 				}
 				
-				animation->frame_count++;
-				
-				if (animation->frame_count > animation->frames_to_skip) {
+				if (SDL_GetTicks() - animation->ms_last > animation->ms_to_skip) {
 					
-					animation->frame_count = 0;
+					animation->ms_last = SDL_GetTicks();
 					
 					animation->index++;
 					if (animation->index >= animation->surface_count) {
@@ -122,7 +120,7 @@ int load_animation(const char *filename, World *world, unsigned int entity) {
 	FILE *fp;
 	
 	char animation_name[64];
-	int animation_frames, frames_to_skip, triggered_sound, loop_animation;
+	int animation_frames, ms_to_skip, triggered_sound, loop_animation;
 	int frame_index, animation_index;
 	int optional_features;
 	int i;
@@ -151,7 +149,7 @@ int load_animation(const char *filename, World *world, unsigned int entity) {
 	
 	for(animation_index = 0; animation_index < animationComponent->animation_count; animation_index++) {
 		
-		if (fscanf(fp, "%s %d %d %d %d", animation_name, &animation_frames, &frames_to_skip, &triggered_sound, &loop_animation) != 5) {
+		if (fscanf(fp, "%s %d %d %d %d", animation_name, &animation_frames, &ms_to_skip, &triggered_sound, &loop_animation) != 5) {
 			printf("Expected more animations!\n");
 			return -1;
 		}
@@ -161,10 +159,10 @@ int load_animation(const char *filename, World *world, unsigned int entity) {
 		animationComponent->animations[animation_index].surfaces = (SDL_Surface**)malloc(sizeof(SDL_Surface*) * animation_frames);
 		
 		animationComponent->animations[animation_index].surface_count = animation_frames;
-		animationComponent->animations[animation_index].frames_to_skip = frames_to_skip;
 		animationComponent->animations[animation_index].sound_effect = triggered_sound;
 		animationComponent->animations[animation_index].loop = loop_animation;
-		animationComponent->animations[animation_index].frame_count = 0;
+		animationComponent->animations[animation_index].ms_last = 0;
+		animationComponent->animations[animation_index].ms_to_skip = ms_to_skip;
 		animationComponent->animations[animation_index].index = 0;
 		
 		animationComponent->animations[animation_index].name = (char*)malloc(sizeof(char) * strlen(animation_name) + 1);
@@ -238,13 +236,12 @@ int load_animation(const char *filename, World *world, unsigned int entity) {
  *
  * @param world Pointer to the world structure (contains "world" info, entities / components)
  * @param entity The entity to cancel the animation for
- * @param animation_name The animation that the entity gets frozen at
  *
  * @designer Jordan Marling
  *
  * @author Jordan Marling
  */
-void cancel_animation(World *world, unsigned int entity, const char *animation_name) {
+void cancel_animation(World *world, unsigned int entity) {
 	
 	AnimationComponent *animation = &(world->animation[entity]);
 	RenderPlayerComponent *render = &(world->renderPlayer[entity]);
@@ -252,13 +249,11 @@ void cancel_animation(World *world, unsigned int entity, const char *animation_n
 	if (animation->current_animation == -1)
 		return;
 	
-	if (strcmp(animation->animations[animation->current_animation].name, animation_name) == 0) {
-		
-		render->playerSurface = animation->animations[animation->current_animation].surfaces[0];
-		
-		animation->current_animation = -1;
-		
-	}
+	
+	render->playerSurface = animation->animations[animation->current_animation].surfaces[0];
+	
+	animation->current_animation = -1;
+	
 }
 
 /**
@@ -277,20 +272,18 @@ void play_animation(World *world, unsigned int entity, const char *animation_nam
 	int i;
 	AnimationComponent *animationComponent = &(world->animation[entity]);
 	
+	//Check if the current animation is already playing.
+	if (animationComponent->current_animation > -1 && strcmp(animationComponent->animations[animationComponent->current_animation].name, animation_name) == 0) {
+		return;
+	}
+	
 	for(i = 0; i < animationComponent->animation_count; i++) {
 		
 		if (strcmp(animationComponent->animations[i].name, animation_name) == 0) {
 			
-			if (animationComponent->current_animation != -1)
-				return;
-			
 			animationComponent->current_animation = i;
-			animationComponent->animations[i].frame_count = 0;
+			animationComponent->animations[i].ms_last = SDL_GetTicks();
 			animationComponent->animations[i].index = 0;
-			
-			//printf("Playing animation: %s\n", animation_name);
-			
-			//world->renderPlayer[entity].playerSurface = animationComponent->animations[i].surfaces[1];
 			
 			return;
 		}
