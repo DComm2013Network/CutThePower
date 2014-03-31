@@ -17,7 +17,10 @@
 #define POS_UPDATE			2 	/**< Send the player's current position information. */
 #define OBJECTIVE_UPDATE	4 	/**< Send current obejctive states. */
 #define FLOOR_REQUEST		8 	/**< Request a floor change (desired floor should be specified in the World struct). */
-
+#define DIRECTION_RIGHT	1
+#define DIRECTION_LEFT	2
+#define DIRECTION_UP	3
+#define DIRECTION_DOWN	4
 
 int init_client_update(World *world);
 int client_update_system(World *world, int net_pipe);

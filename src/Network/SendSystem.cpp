@@ -166,37 +166,4 @@ void send_status(World * world, int fd, teamNo_t team, int ready_status)
 		free(pkt);
 	}
 }
-/**
- * Sets up a timer for slowing down the frequency of location updates sent by the client.
- *			
- * @param[in, out]  timer 	A pointer to an empty timer variable. The timer created will be
- *							placed in this variable.
- *
- * @return  void
- *
- * @designer    Ramzi Chennafi
- * @author      Ramzi Chennafi
- */
-void setup_send_timer(timer_t * timer)
-{
-	struct sigevent sevnt;
-	struct itimerspec its;
-	
-	sevnt.sigev_notify = SIGEV_NONE;
-    sevnt.sigev_value.sival_ptr = timer;
-    if (timer_create(CLOCK_REALTIME, &sevnt, timer) == -1)
-    {
-    	printf("Failed to create timer.\n");
-        exit(2);
-   	}
 
-	its.it_value.tv_sec = 0;
-    its.it_value.tv_nsec = SEND_FREQUENCY * NANO_SECONDS;
-   	its.it_interval.tv_sec = its.it_value.tv_sec;
-   	its.it_interval.tv_nsec = its.it_value.tv_nsec;
-   	if(timer_settime(*timer, 0, &its, NULL) == -1)
-   	{
-   		printf("Failed to set timer with errno: %d\n", errno);
-   		exit(2);
-   	}
-}

@@ -134,7 +134,7 @@ int client_update_system(World *world, int net_pipe) {
 void client_update_chat(World *world, void *packet)
 {
 	PKT_SND_CHAT *snd_chat = (PKT_SND_CHAT*)packet;
-	printf("%s", snd_chat->message);
+	printf("%s\n", snd_chat->message);
 }
 
 /**
@@ -190,15 +190,19 @@ void client_update_pos(World *world, void *packet)
 				world->mask[player_table[i]] |= COMPONENT_RENDER_PLAYER | COMPONENT_COLLISION;
 				world->movement[player_table[i]].movX	= pos_update->xVel[i];
 				world->movement[player_table[i]].movY 	= pos_update->yVel[i];
-				if(pos_update->xVel[i] < 0)
-				{
-				//world->movement[player_table[i]].lastDirection = 
+				
+				if(pos_update->xVel[i] < 0){
+				 	world->movement[player_table[i]].lastDirection = DIRECTION_LEFT;
+				}else if (pos_update->xVel[i] > 0){
+					world->movement[player_table[i]].lastDirection = DIRECTION_RIGHT;
 				}
-				else
-				{
-
+				
+				if(pos_update->yVel[i] < 0){
+					world->movement[player_table[i]].lastDirection = DIRECTION_DOWN;
+				}else if (pos_update->yVel[i] > 0){
+					world->movement[player_table[i]].lastDirection = DIRECTION_UP;
 				}
-				world->movement[player_table[i]].lastDirection = 
+				
 				world->position[player_table[i]].x		= pos_update->xPos[i];
 				world->position[player_table[i]].y		= pos_update->yPos[i];
 				world->position[player_table[i]].level	= pos_update->floor;

@@ -47,10 +47,11 @@ int main(int argc, char* argv[]) {
 	srand(time(NULL));//random initializer
 	KeyMapInit("assets/Input/keymap.txt");
 	init_render_player_system();
-   	setup_send_timer(&send_timer);
 
 	create_main_menu(world);
 	
+	unsigned int begin_time = SDL_GetTicks();
+
 	FPS fps;
 	fps.init();
 
@@ -59,7 +60,7 @@ int main(int argc, char* argv[]) {
 
 	while (running)
 	{
-		
+		unsigned int current_time;
 		//INPUT
 		KeyInputSystem(world);
 		MouseInputSystem(world);
@@ -76,11 +77,12 @@ int main(int argc, char* argv[]) {
 		
 		if(network_ready)
 		{
-			// timer_gettime(send_timer, &current_its);
-			// if(current_sits.it_value.tv_nsec == 0)
-			// {
+			current_time = SDL_GetTicks();
+			if((current_time - begin_time) >= (10 * SEND_FREQUENCY))
+			{
+				begin_time = SDL_GetTicks();
 				send_location(world, send_router_fd[WRITE]);
-			// }
+			}
 			client_update_system(world, rcv_router_fd[READ]);
 		}
 		////NETWORK CODE

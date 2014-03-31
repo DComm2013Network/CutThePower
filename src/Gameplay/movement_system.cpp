@@ -329,37 +329,24 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 					key_pressed = true;
 					world->movement[entity].lastDirection = DIRECTION_UP;
 					add_force(world, entity, world->movement[entity].acceleration, -90);
-					play_animation(world, entity, "up");
 				}
-				else {
-					cancel_animation(world, entity);
-				}
+				
 				if (command->commands[C_DOWN]) {
 					key_pressed = true;
 					world->movement[entity].lastDirection = DIRECTION_DOWN;
 					add_force(world, entity, world->movement[entity].acceleration, 90);
-					play_animation(world, entity, "down");
 				}
-				else {
-					cancel_animation(world, entity);
-				}
+				
 				if (command->commands[C_LEFT]) {
 					key_pressed = true;
 					world->movement[entity].lastDirection = DIRECTION_LEFT;
 					add_force(world, entity, world->movement[entity].acceleration, 180);
-					play_animation(world, entity, "left");
 				}
-				else {
-					cancel_animation(world, entity);
-				}
+				
 				if (command->commands[C_RIGHT]) {
 					key_pressed = true;
 					world->movement[entity].lastDirection = DIRECTION_RIGHT;
 					add_force(world, entity, world->movement[entity].acceleration, 0);
-					play_animation(world, entity, "right");
-				}
-				else {
-					cancel_animation(world, entity);
 				}
 
 				CollisionData data;
@@ -461,6 +448,37 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 			position->y = temp.y;
 			
 			handle_entity_collision(data, world, entity);
+
+			switch(world->movement[entity].lastDirection) {
+				case DIRECTION_RIGHT:
+				if (world->movement[entity].movX != 0) {
+					play_animation(world, entity, "right");
+				} else {
+					cancel_animation(world, entity);
+				}
+				break;
+				case DIRECTION_LEFT:
+				if (world->movement[entity].movX != 0) {
+					play_animation(world, entity, "left");
+				} else {
+					cancel_animation(world, entity);
+				}
+				break;
+				case DIRECTION_UP:
+				if (world->movement[entity].movY != 0) {
+					play_animation(world, entity, "down");
+				} else {
+					cancel_animation(world, entity);
+				}
+				break;
+				case DIRECTION_DOWN:
+				if (world->movement[entity].movY != 0) {
+					play_animation(world, entity, "up");
+				} else {
+					cancel_animation(world, entity);
+				}
+				break;
+			}
 		}
 	}
 }
