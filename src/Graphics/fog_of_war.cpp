@@ -114,25 +114,44 @@ void render_fog_of_war(SDL_Surface *surface, FowComponent *fow)
 			tileRect.w = TILE_WIDTH;
 			tileRect.h = TILE_HEIGHT;
 
-			switch(visible)
+			if(fow -> teamNo == COPS)
 			{
-				case CLEAR_VIS:	fow -> tiles[y][x].visible[ level ] = TRANSP_VIS;	break;
-				
-				case OPAQUE_VIS: SDL_BlitSurface(fow -> fogOfWar[count++], NULL, surface, &tileRect); break;
-				case TRANSP_VIS: SDL_BlitSurface(fow -> alphaFog[count++], NULL, surface, &tileRect); break;
+				switch(visible)
+				{
+					case CLEAR_VIS:	fow -> tiles[y][x].visible[ level ] = TRANSP_VIS;	break;
+					case OPAQUE_VIS: SDL_BlitSurface(fow -> alphaFog[count++], NULL, surface, &tileRect); break;
+					case TRANSP_VIS: SDL_BlitSurface(fow -> alphaFog[count++], NULL, surface, &tileRect); break;
+				}
+			}
 			
-				case 10: blit_tile(surface, fow, &tileRect, y, x, 0); break;
-				case 11: blit_tile(surface, fow, &tileRect, y, x, 1); break;					
-				case 12: blit_tile(surface, fow, &tileRect, y, x, 2); break;	
-				case 13: blit_tile(surface, fow, &tileRect, y, x, 3); break;
-				case 14: blit_tile(surface, fow, &tileRect, y, x, 4); break;
-				case 15: blit_tile(surface, fow, &tileRect, y, x, 5); break;
-				case 16: blit_tile(surface, fow, &tileRect, y, x, 6); break;
-				case 17: blit_tile(surface, fow, &tileRect, y, x, 7); break;
-				case 18: blit_tile(surface, fow, &tileRect, y, x, 8); break;
-				case 19: blit_tile(surface, fow, &tileRect, y, x, 9); break;
-				case 20: blit_tile(surface, fow, &tileRect, y, x, 10); break;
-				case 21: blit_tile(surface, fow, &tileRect, y, x, 11); break;
+			else if(fow -> teamNo == ROBBERS)
+			{
+				switch(visible)
+				{
+					case CLEAR_VIS:	fow -> tiles[y][x].visible[ level ] = TRANSP_VIS;	break;
+					case OPAQUE_VIS: SDL_BlitSurface(fow -> fogOfWar[count++], NULL, surface, &tileRect); break;
+					case TRANSP_VIS: SDL_BlitSurface(fow -> alphaFog[count++], NULL, surface, &tileRect); break;
+				}
+			}
+			
+
+			if(fow -> teamNo == ROBBERS || fow -> teamNo == COPS)
+			{
+				switch(visible)
+				{		
+					case 10: blit_tile(surface, fow, &tileRect, y, x, 0); break;
+					case 11: blit_tile(surface, fow, &tileRect, y, x, 1); break;					
+					case 12: blit_tile(surface, fow, &tileRect, y, x, 2); break;	
+					case 13: blit_tile(surface, fow, &tileRect, y, x, 3); break;
+					case 14: blit_tile(surface, fow, &tileRect, y, x, 4); break;
+					case 15: blit_tile(surface, fow, &tileRect, y, x, 5); break;
+					case 16: blit_tile(surface, fow, &tileRect, y, x, 6); break;
+					case 17: blit_tile(surface, fow, &tileRect, y, x, 7); break;
+					case 18: blit_tile(surface, fow, &tileRect, y, x, 8); break;
+					case 19: blit_tile(surface, fow, &tileRect, y, x, 9); break;
+					case 20: blit_tile(surface, fow, &tileRect, y, x, 10); break;
+					case 21: blit_tile(surface, fow, &tileRect, y, x, 11); break;
+				}
 			}
 		}
 	}
