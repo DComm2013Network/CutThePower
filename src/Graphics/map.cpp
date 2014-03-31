@@ -7,8 +7,9 @@
 /** @} */
 
  
- 
+
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -16,6 +17,7 @@
 #include "map.h"
 #include "systems.h"
 #include "../sound.h"
+
 
 SDL_Surface *map_surface = 0; /**< The surface on which to render the map. */
 SDL_Rect map_rect;        /**< The rectangle containing the map. */
@@ -207,11 +209,6 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 						create_block(world, x * TILE_WIDTH + TILE_WIDTH / 2, y * TILE_HEIGHT + TILE_HEIGHT - 7, TILE_WIDTH - 4, 10, floor);
 						break;
 				}
-				
-				
-				//printf("tx: %i, ty: %i\n", targetX, targetY);
-				//printf("Create stair entity %d\n", entity);
-				
 			}
 			else if (strcmp(entity_type, "object") == 0) { //animated objects
 				
@@ -279,7 +276,6 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 				}
 				
 				create_objective(world, x * TILE_WIDTH + TILE_WIDTH / 2, y * TILE_HEIGHT + TILE_HEIGHT / 2, w, h, id, level);
-				printf("Loaded objective!\n");
 			}
 			else {
 				printf("Did not deal with the entity type: %s\n", entity_type);
@@ -323,7 +319,7 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 	
 	
 	create_level(world, collision_map, width, height, TILE_WIDTH, level);
-	
+
 	for (i = 0; i < width; i++) {
 		free(map[i]);
 		free(collision_map[i]);

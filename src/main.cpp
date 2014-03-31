@@ -18,9 +18,18 @@ int send_router_fd[2];
 int rcv_router_fd[2];
 int game_net_signalfd;
 int network_ready = 0;
+
+
+/*SAM**************************/
+extern void render_fog_of_war	( SDL_Surface *surface, FowComponent *fow );
+extern void init_fog_of_war  	( FowComponent **fow );
+extern void cleanup_fog_of_war( FowComponent  *fow );
+/******************************/
+
 int window_width = WIDTH;
 int window_height = HEIGHT;
 SDL_Window *window;
+
 
 int main(int argc, char* argv[]) {
 	SDL_Surface *surface;
@@ -37,6 +46,7 @@ int main(int argc, char* argv[]) {
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
 	
 	window = SDL_CreateWindow("Cut The Power", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+	
 	if (window == NULL) {
 		printf("Error initializing the window.\n");
 		return 1;
@@ -65,8 +75,12 @@ int main(int argc, char* argv[]) {
 
 	running = true;
 	player_entity = -1;
-
-	//chat_add_line("Hello I am Jordan0!");
+	
+	/*SAM********************************/
+	FowComponent *fow;
+	
+	init_fog_of_war(&fow);
+	/************************************/
 
 	while (running)
 	{
@@ -79,8 +93,12 @@ int main(int argc, char* argv[]) {
 		if (player_entity < MAX_ENTITIES) {
 			map_render(surface, world, player_entity);
 		}
+				
+
 		animation_system(world);
-		render_player_system(*world, surface);
+
+		render_fog_of_war(surface, fow);
+		render_player_system(*world, surface, fow);
 		chat_render(surface);
 		
 		surface_texture = SDL_CreateTextureFromSurface(renderer, surface);
@@ -105,13 +123,14 @@ int main(int argc, char* argv[]) {
 		fps.update();
 	}
 	
+	
+	cleanup_fog_of_war(fow);
 	cleanup_map();
 	cleanup_sound();
 	cleanup_fonts();
 	
 	destroy_world(world);
 	free(world);
-	
 	IMG_Quit();
 	SDL_Quit();
 	

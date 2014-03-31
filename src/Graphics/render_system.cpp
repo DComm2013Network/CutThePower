@@ -12,9 +12,14 @@
 #include "text.h"
 #include "../Input/menu.h"
 
+/*SAM**/
+void make_surrounding_tiles_visible(FowPlayerPosition *fowp);
+/******/
+
 #define SYSTEM_MASK (COMPONENT_RENDER_PLAYER | COMPONENT_POSITION) /**< The entity must have a render player and position component
                                                                     * for processing by this system. */
 #define IMAGE_WIDTH			400
+
                                                                     
 extern SDL_Rect map_rect; /**< The rectangle containing the map. */
 
@@ -44,7 +49,7 @@ SDL_Surface *ibeam;
  *
  * @author Mat Siwoski
  */
-void render_player_system(World& world, SDL_Surface* surface) {
+void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow) {
 	
 	unsigned int entity;
 	RenderPlayerComponent 	*renderPlayer;
@@ -53,6 +58,7 @@ void render_player_system(World& world, SDL_Surface* surface) {
 	SDL_Rect playerRect;
 	
 	SDL_Rect clipRect;
+	teamNo_t teamNo;
 	
 	for(entity = 0; entity < MAX_ENTITIES; entity++){
 		
@@ -76,6 +82,7 @@ void render_player_system(World& world, SDL_Surface* surface) {
 				playerRect.x -= renderPlayer->width / 2;
 				playerRect.y -= renderPlayer->height / 2;
 			}
+			
 			
 			if (IN_THIS_COMPONENT(world.mask[entity], COMPONENT_BUTTON)) {
 				
@@ -106,6 +113,25 @@ void render_player_system(World& world, SDL_Surface* surface) {
 			
 			SDL_BlitScaled(renderPlayer->playerSurface, &clipRect, surface, &playerRect);
 			
+			
+			/*SAM*********************************/			
+			if(IN_THIS_COMPONENT(world.mask[entity], COMPONENT_PLAYER | COMPONENT_CONTROLLABLE)) {
+				teamNo = world.player[entity].teamNo;
+			}
+
+			if (IN_THIS_COMPONENT(world.mask[entity], COMPONENT_PLAYER)) {	
+	
+				FowPlayerPosition fowp;
+		
+				fowp.world = &world;
+				fowp.pos   = position;
+				fowp.fow   = fow;
+	
+				make_surrounding_tiles_visible(&fowp);	
+			}
+			/*************************************/		
+			
+			
 			//check if a textbox.
 			if (IN_THIS_COMPONENT(world.mask[entity], COMPONENT_TEXTFIELD)) {
 				
@@ -124,7 +150,6 @@ void render_player_system(World& world, SDL_Surface* surface) {
 					
 					SDL_BlitSurface(ibeam, NULL, surface, &playerRect);
 				}
-				
 			}
 		}
 	}

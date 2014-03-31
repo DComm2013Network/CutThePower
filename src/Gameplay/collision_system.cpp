@@ -2,22 +2,22 @@
 /** @{ */
 
 /**
- * Contains functions for detecting and handling collisions.
+ * Contains functions for detecting collisions.
  *
- * @todo Implement stair collision detection.
  * @file collision_system.cpp
  */
 /** @} */
 #include "../components.h"
 #include "../systems.h"
 #include "../world.h"
-#include "level.h"
 #include "collision.h"
+#include "level.h"
 #include <stdio.h>
 #include <math.h>
 
 #define COLLISION_MASK (COMPONENT_COLLISION) /**< Indicates that an entity can collide with other entities. */
 #define LEVEL_MASK (COMPONENT_LEVEL) /**< Indicates that an entity has levels (floors). */
+
 #define DIRECTION_RIGHT	1
 #define DIRECTION_LEFT	2
 #define DIRECTION_UP	3
@@ -27,234 +27,153 @@
 /**
  * This is the main wrapper function for all other collision checking functions.
  *
- * @param[in,out] world    A reference to the world structure.
- * @param[in]     entity   The temporary position entity used for checking for collisions. 
- * @param[in]     entityID The current entity being checked based on its position in the world struct
+ * @param[in,out] world      A pointer to the world structure.
+ * @param[in]     entity     The temporary position entity used for checking for collisions. 
+ * @param[in,out] temp       The temporary position that will be applied later.
+ * @param[out] entity_number The collision type of the entity that was hit (if any).
+ * @param[out] tile_number   The collision type of the tile that was hit (if any).
+ * @param[out] hit_entity    The identifier of the entity that was hit (if any).
  *
- * @return <ul>
- *             <li>Returns 0 for no collision</li>
- *             <li>Returns COLLISION_WALL for a collision with a wall</li>
- *             <li>Returns COLLISION_HACKER for a collision with a hacker</li>
- *             <li>Returns COLLISION_GUARD for a collision with a guard</li>
- *             <li>Returns COLLISION_STAIR for a collision with a stair</li>
- *         </ul>
- *
- * @designer Joshua Campbell
- * @author   Joshua campbell
+ * @designer Clark Allenby & Joshua Campbell
+ * @author   Clark Allenby
  */
-CollisionData collision_system(World *world, PositionComponent entity, int entityID) {
-	int entityIndex = -1;
-	CollisionData data;
-	data.map_code = COLLISION_EMPTY;
-	data.entity_code = COLLISION_EMPTY;
-	data.entityID = entityIndex;
-
-	data.map_code = wall_collision(world, entity);
-
-	if ((entityIndex = entity_collision(world, entity, entityID)) != -1) {
-		data.entity_code = handle_entity_collision(world, entityIndex);
-		data.entityID = entityIndex;
-	}
-	return data;
+void collision_system(World* world, unsigned int entity, PositionComponent* temp, unsigned int* entity_number, unsigned int* tile_number, unsigned int* hit_entity) {
+	wall_collision(world, *temp, tile_number);
+	entity_collision(world, entity, *temp, entity_number, hit_entity);
 }
 
 /**
  * Checks for collisions with walls on the map.
  *
- * @param[in,out] world    A reference to the world structure.
- * @param[in]     entity   The temporary position entity used for checking for collisions. 
+ * @param[in,out] world       A pointer to the world structure.
+ * @param[in]     temp        The temporary position used for checking for collisions.
+ * @param[out]    tile_number The collision type of the tile that was hit (if any). 
  *
- * @return True if a collision occurred, or false if there was no collision.
- *
- * @designer Joshua Campbell & Clark Allenby
- * @author   Joshua campbell & Clark Allenby
+ * @designer Clark Allenby & Joshua Campbell
+ * @author   Clark Allenby
  */
-// int wall_collision(World *world, PositionComponent entity) {
-// 	int i = 0;
-// 	int curlevel = -1;
-// 	int xl, xr, yt, yb;
-// 	int xdts, ydts;
-// 	for (i = 0; i < MAX_ENTITIES; i++) {
-// 		if (((world->mask[i] & LEVEL_MASK) != 0) && world->level[i].levelID == entity.level) {
-// 			curlevel = i;
-// 			break;
-// 		}
-// 	}
-
-// 	if (curlevel == -1) {
-// 		return false;
-// 	}
-	
-// 	xl = (entity.x - entity.width / 2) / world->level[curlevel].tileSize;
-// 	xr = (entity.x + entity.width / 2) / world->level[curlevel].tileSize;
-// 	yt = (entity.y - entity.height / 2) / world->level[curlevel].tileSize;
-// 	yb = (entity.y + entity.height / 2) / world->level[curlevel].tileSize;
-	
-// 	xdts = ceil((float)entity.width / (float)world->level[curlevel].tileSize);
-// 	ydts = ceil((float)entity.height / (float)world->level[curlevel].tileSize);
-	
-	
-	
-// 	// debug statement: printf("xl: %i, xr: %i, yt: %i, yb: %i, xdts: %i, ydts: %i\n", xl, xr, yt, yb, xdts, ydts);
-// 	if (yt < world->level[curlevel].height && yt > 0 &&
-// 		yb < world->level[curlevel].height && yb > 0) {
-// 		for (int i = 0; i < xdts; i++) {
-// 			if (xl + i * world->level[curlevel].tileSize < world->level[curlevel].width &&
-// 				xl + i * world->level[curlevel].tileSize > 0 &&
-// 				world->level[curlevel].map[xl + i * world->level[curlevel].tileSize][yt] == L_WALL) {
-// 				return COLLISION_WALL;
-// 			}
-// 			if (xr - i * world->level[curlevel].tileSize < world->level[curlevel].width &&
-// 				xr - i * world->level[curlevel].tileSize > 0 &&
-// 				world->level[curlevel].map[xr - i * world->level[curlevel].tileSize][yb] == L_WALL) {
-// 				return COLLISION_WALL;
-// 			}
-// 		}
-// 	}
-// 	if (xl < world->level[curlevel].width && xl > 0 &&
-// 		xr < world->level[curlevel].width && xr > 0) {
-// 		for (int i = 0; i < ydts; i++) {
-// 			if (yt + i * world->level[curlevel].tileSize < world->level[curlevel].height &&
-// 				yt + i * world->level[curlevel].tileSize > 0 &&
-// 				world->level[curlevel].map[xr][yt + i * world->level[curlevel].tileSize] == L_WALL) {
-// 				return COLLISION_WALL;
-// 			}
-// 			if (yb - i * world->level[curlevel].tileSize < world->level[curlevel].height &&
-// 				yb - i * world->level[curlevel].tileSize > 0 &&
-// 				world->level[curlevel].map[xl][yb - i * world->level[curlevel].tileSize] == L_WALL) {
-// 				return COLLISION_WALL;
-// 			}
-// 		}
-// 	}
-
-// 	return COLLISION_EMPTY;
-// }
-int wall_collision(World *world, PositionComponent entity) {
+void wall_collision(World* world, PositionComponent temp, unsigned int* tile_number) {
 	int i = 0;
-	int curlevel = -1;
-	int eposx = 0, eposy = 0;
+	int level = -1;
+	int xl, xr, yt, yb;
+	int xdts, ydts;
+	
 	for (i = 0; i < MAX_ENTITIES; i++) {
-		if (((world->mask[i] & LEVEL_MASK) != 0) && world->level[i].levelID == entity.level) {
-			curlevel = i;
+		if (((world->mask[i] & LEVEL_MASK) != 0) && world->level[i].levelID == temp.level) {
+			level = i;
 			break;
 		}
 	}
 
-	if (curlevel == -1) {
-		return false;
+	if (level == -1) {
+		*tile_number = COLLISION_UNKNOWN;
+		return;
 	}
-
-	eposx = (entity.x) / world->level[curlevel].tileSize;
-	eposy = (entity.y) / world->level[curlevel].tileSize;
-	int tsize = world->level[curlevel].tileSize;
-	int tiletoplayerfactor = entity.width / tsize;
-	if (tiletoplayerfactor < 0) {
-		tiletoplayerfactor = 1;
-	}
-	for (int x = eposx - 2 * tiletoplayerfactor; x <= eposx + 2 * tiletoplayerfactor && x < world->level[curlevel].width; x++) {
-		if (x < 0) {
-			x = 0;
-		} 
-		for (int y = eposy - 2 * tiletoplayerfactor; y <= eposy + 2 * tiletoplayerfactor && y < world->level[curlevel].height; y++) {
-			if (y < 0) {
-				y = 0;
+	
+	xl = (temp.x - temp.width / 2) / world->level[level].tileSize;
+	xr = (temp.x + temp.width / 2) / world->level[level].tileSize;
+	yt = (temp.y - temp.height / 2) / world->level[level].tileSize;
+	yb = (temp.y + temp.height / 2) / world->level[level].tileSize;
+	
+	xdts = ceil((float)temp.width / (float)world->level[level].tileSize);
+	ydts = ceil((float)temp.height / (float)world->level[level].tileSize);
+	
+	if (yt < world->level[level].height && yt > 0 && yb < world->level[level].height && yb > 0) {
+		for (int i = 0; i < xdts; i++) {
+			if (world->level[level].map[xl + i * world->level[level].tileSize][yt] == L_WALL) {
+				*tile_number = COLLISION_WALL;
+				return;
 			}
-			int mapx = x;
-			int mapy = y;
-			if (world->level[curlevel].map[mapx][mapy] == L_WALL) {
-				if (entity.x + entity.width - 1 > tsize * mapx + 1 &&
-					entity.x + 1 < mapx * tsize + tsize - 1 &&
-					entity.y + entity.height - 1 > mapy * tsize + 1 &&
-					entity.y + 1 < mapy * tsize + tsize - 1) {
-					return COLLISION_WALL;
-				}
+			if (world->level[level].map[xr - i * world->level[level].tileSize][yb] == L_WALL) {
+				*tile_number = COLLISION_WALL;
+				return;
 			}
 		}
 	}
-
-	return COLLISION_EMPTY;
-}
-/**
- * Checks for collisions with stairs on the map.
- *
- * @param[in,out] world    A reference to the world structure.
- * @param[in]     entity   The temporary position entity used for checking for collisions. 
- *
- * @return True if the entity collided with a set of stairs, false if they did not.
- *
- * @designer Joshua Campbell
- * @author   Joshua campbell
- */
-bool stair_collision(World &world, PositionComponent entity) {
+	if (xl < world->level[level].width && xl > 0 && xr < world->level[level].width && xr > 0) {
+		for (int i = 0; i < ydts; i++) {
+			if (world->level[level].map[xr][yt + i * world->level[level].tileSize] == L_WALL) {
+				*tile_number = COLLISION_WALL;
+				return;
+			}
+			if (world->level[level].map[xl][yb - i * world->level[level].tileSize] == L_WALL) {
+				*tile_number = COLLISION_WALL;
+				return;
+			}
+		}
+	}
 	
 	
-	return false;
+	// debug statement: printf("xl: %i, xr: %i, yt: %i, yb: %i, xdts: %i, ydts: %i\n", xl, xr, yt, yb, xdts, ydts);
+	*tile_number = COLLISION_EMPTY;
 }
 
 /**
  * Checks if there's a collision between two entities on the map.
  *
- * @param[in,out] world    A reference to the world structure.
- * @param[in]     entity   The temporary position entity used for checking for collisions. 
- * @param[in]     entityID The current entity being checked based on its position in the world struct
+ * @param[in,out] world      A pointer to the world structure.
+ * @param[in]     entity     The entity being checked for collisions with. 
+ * @param[in]     temp       The temporary position to be applied later.
+ * @param[out] entity_number The collision type of the entity that was hit (if any).
+ * @param[out] hit_entity    The identifier of the entity that was hit (if any).
  *
- * @return True if a collision occurred, or false if there was no collision.
- *
- * @designer Joshua Campbell
- * @author   Joshua campbell
+ * @designer Joshua Campbell & Clark Allenby
+ * @author   Joshua campbell & Clark Allenby
  */
-int entity_collision(World *world, PositionComponent entity, int entityID) {
+void entity_collision(World* world, unsigned int entity, PositionComponent temp, unsigned int* entity_number, unsigned int* hit_entity) {
 	int i = 0;
-
-	//entity.x += entity.width / 2;
-	//entity.y += entity.height / 2;
+	
 	for (i = 0; i < MAX_ENTITIES; i++) {
-		if (i != entityID && IN_THIS_COMPONENT(world->mask[i], COLLISION_MASK)) {
-			// if (entity.x + entity.width / 2 - 1 > world->position[i].x - world->position[i].width / 2 + 1 &&
-			// 	entity.x - entity.width / 2 + 1 < world->position[i].x + world->position[i].width / 2 - 1 &&
-			// 	entity.y + entity.height / 2 - 1 > world->position[i].y - world->position[i].height / 2 + 1 &&
-			// 	entity.y - entity.height / 2 + 1 < world->position[i].y + world->position[i].height / 2 + 1
-			// 	&& world->collision[i].active) {
-			// 	return i;
-			// }
-			if (entity.x + entity.width -1 > world->position[i].x + 1 &&
-				entity.x  + 1< world->position[i].x + world->position[i].width - 1 &&
-				entity.y + entity.height -1 > world->position[i].y + 1&&
-				entity.y  + 1< world->position[i].y + world->position[i].height - 1
-				&& world->collision[i].active && world->position[i].level == entity.level) {
-				return i;
-			}
-		}
-	}
-
-	return -1;
-}
-
-int tag_entity_collision(World *world, PositionComponent entity, int entityID) {
-	int i = 0;
-	int range = 5;
-	//entity.x += entity.width / 2;
-	//entity.y += entity.height / 2;
-	for (i = 0; i < MAX_ENTITIES; i++) {
-		if (i != entityID && IN_THIS_COMPONENT(world->mask[i], COLLISION_MASK)) {
-			if (entity.x + entity.width / 2 - (1 + range) > world->position[i].x - world->position[i].width / 2 + (1 + range) &&
-				entity.x - entity.width / 2 + (1 + range) < world->position[i].x + world->position[i].width / 2 - (1 + range) &&
-				entity.y + entity.height / 2 - (1 + range) > world->position[i].y - world->position[i].height / 2 + (1 + range) &&
-				entity.y - entity.height / 2 + (1 + range) < world->position[i].y + world->position[i].height / 2 + (1 + range)
+		if (i != entity && IN_THIS_COMPONENT(world->mask[i], COLLISION_MASK)) {
+			if (temp.x + temp.width / 2 - 1 > world->position[i].x - world->position[i].width / 2 + 1 &&
+				temp.x - temp.width / 2 + 1 < world->position[i].x + world->position[i].width / 2 - 1 &&
+				temp.y + temp.height / 2 - 1 > world->position[i].y - world->position[i].height / 2 + 1 &&
+				temp.y - temp.height / 2 + 1 < world->position[i].y + world->position[i].height / 2 + 1
 				&& world->collision[i].active) {
-				return i;
+				*entity_number = world->collision[i].type;
+				*hit_entity = i;
+				return;
 			}
 		}
 	}
-
-	return -1;
+	
+	*entity_number = COLLISION_EMPTY;
+	*hit_entity = MAX_ENTITIES;
 }
 
-int handle_entity_collision(World *world, int entityIndex) {
-	if (world->collision[entityIndex].active) {
-		return world->collision[entityIndex].type;
+void anti_stuck_system(World *world, unsigned int curEntityID, int otherEntityID) {
+	int leftDist = 0;
+	int rightDist = 0;
+	int upDist = 0;
+	int downDist = 0;
+
+	if (otherEntityID < 0) {
+		return;
+	}
+
+	rightDist = abs(world->position[curEntityID].x + world->position[curEntityID].width - world->position[otherEntityID].x);
+	leftDist = abs(world->position[otherEntityID].x + world->position[otherEntityID].width - world->position[curEntityID].x);
+	upDist = abs(world->position[curEntityID].y + world->position[curEntityID].height - world->position[otherEntityID].y);
+	downDist = abs(world->position[otherEntityID].y + world->position[otherEntityID].height - world->position[curEntityID].y);
+	
+	if (rightDist < leftDist && rightDist < upDist && rightDist < downDist) {
+		world->position[curEntityID].x = world->position[otherEntityID].x - world->position[curEntityID].width - 1;
+	} else if (leftDist < rightDist && leftDist < upDist && leftDist < downDist) {
+		world->position[curEntityID].x = world->position[otherEntityID].x + world->position[otherEntityID].width + 1;
+	} else if (upDist < leftDist && upDist < rightDist && upDist < downDist) {
+		world->position[curEntityID].y = world->position[otherEntityID].y + world->position[otherEntityID].height + 1;
+	} else if (downDist < leftDist && downDist < upDist && downDist < rightDist) {
+		world->position[curEntityID].y = world->position[otherEntityID].y - world->position[curEntityID].height - 1;
 	} else {
-		return COLLISION_UNKNOWN;
+		if (rightDist <= leftDist && rightDist <= upDist && rightDist <= downDist) {
+			world->position[curEntityID].x = world->position[otherEntityID].x - world->position[curEntityID].width - 1;
+		} else if (leftDist <= rightDist && leftDist <= upDist && leftDist <= downDist) {
+			world->position[curEntityID].x = world->position[otherEntityID].x + world->position[otherEntityID].width + 1;
+		} else if (upDist <= leftDist && upDist <= rightDist && upDist <= downDist) {
+			world->position[curEntityID].y = world->position[otherEntityID].y + world->position[otherEntityID].height + 1;
+		} else {
+			world->position[curEntityID].y = world->position[otherEntityID].y - world->position[curEntityID].height - 1;
+		}
 	}
 }
 
@@ -326,37 +245,3 @@ int check_tag_collision(World* world, unsigned int currentEntityID) {
 	return -1;
 }
 
-void anti_stuck_system(World *world, unsigned int curEntityID, int otherEntityID) {
-	int leftDist = 0;
-	int rightDist = 0;
-	int upDist = 0;
-	int downDist = 0;
-
-	if (otherEntityID < 0) {
-		return;
-	}
-
-	rightDist = abs(world->position[otherEntityID].x + world->position[otherEntityID].width - world->position[curEntityID].x);
-	leftDist = abs(world->position[curEntityID].x + world->position[curEntityID].width - world->position[otherEntityID].x);
-	upDist = abs(world->position[curEntityID].y + world->position[curEntityID].height - world->position[otherEntityID].y);
-	downDist = abs(world->position[otherEntityID].y + world->position[otherEntityID].height - world->position[curEntityID].y);
-	if (rightDist < leftDist && rightDist < upDist && rightDist < downDist) {
-		world->position[otherEntityID].x = world->position[curEntityID].x - world->position[otherEntityID].width - 1;
-	} else if (leftDist < rightDist && leftDist < upDist && leftDist < downDist) {
-		world->position[otherEntityID].x = world->position[curEntityID].x + world->position[curEntityID].width + 1;
-	} else if (upDist < leftDist && upDist < rightDist && upDist < downDist) {
-		world->position[otherEntityID].y = world->position[curEntityID].y + world->position[curEntityID].height + 1;
-	} else if (downDist < leftDist && downDist < upDist && downDist < rightDist) {
-		world->position[otherEntityID].y = world->position[curEntityID].y - world->position[otherEntityID].height - 1;
-	} else {
-		if (rightDist <= leftDist && rightDist <= upDist && rightDist <= downDist) {
-			world->position[otherEntityID].x = world->position[curEntityID].x - world->position[otherEntityID].width - 1;
-		} else if (leftDist <= rightDist && leftDist <= upDist && leftDist <= downDist) {
-			world->position[otherEntityID].x = world->position[curEntityID].x + world->position[curEntityID].width + 1;
-		} else if (upDist <= leftDist && upDist <= rightDist && upDist <= downDist) {
-			world->position[otherEntityID].y = world->position[curEntityID].y + world->position[curEntityID].height + 1;
-		} else {
-			world->position[otherEntityID].y = world->position[curEntityID].y - world->position[otherEntityID].height - 1;
-		}
-	}
-}

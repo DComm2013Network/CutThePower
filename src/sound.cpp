@@ -6,7 +6,7 @@
 Mix_Chunk *effects[MAX_EFFECTS];
 Mix_Music *music[MAX_MUSIC];
 
-bool soundon = true;
+bool soundon = false;
 
 /**
  * Loads all sound files into memory.
@@ -172,7 +172,7 @@ void play_music(unsigned int sound) {
  * @author Jordan Marling
  */
 void stop_music() {
-	Mix_HaltMusic();
+//	Mix_HaltMusic();
 }
 
 /**
