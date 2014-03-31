@@ -112,7 +112,6 @@ int main(int argc, char* argv[]) {
 	destroy_world(world);
 	free(world);
 	
-	//SDLNet_Quit();
 	IMG_Quit();
 	SDL_Quit();
 	

@@ -30,9 +30,10 @@ void init_chat() {
 }
 
 void chat_add_line(const char *text){
-	
-	//printf("added line: %s\n", text);
-	
+		
+	if(text == NULL)
+		return;
+
 	strncpy((char*)chat_text[end_text].text, text, CHAT_LINE_LENGTH);
 	chat_text[end_text].start_ticks = SDL_GetTicks();
 	

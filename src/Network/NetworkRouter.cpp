@@ -98,6 +98,13 @@ void *networkRouter(void *args)
                 set_error(ERR_IPC_FAIL);
                 break;
             }
+
+            if(type == NETWORK_SHUTDOWN)
+            {
+                net_cleanup(send_data, receive_data, gameplay, cached_packets);
+                printf("Network thread exiting.\n");
+                break; 
+            }
             
             if(type == P_CHAT)
             {

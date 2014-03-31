@@ -13,7 +13,7 @@
 #include "Packets.h" /* extern packet_sizes[] */
 #include "NetworkRouter.h"
  
-uint32_t packet_sizes[NUM_PACKETS] = {
+uint32_t packet_sizes[NUM_PACKETS + 1] = {
 	sizeof(PKT_PLAYER_NAME),         // 0
 	sizeof(PKT_PLAYER_CONNECT),      // 1
 	sizeof(PKT_GAME_STATUS),         // 2
@@ -29,7 +29,8 @@ uint32_t packet_sizes[NUM_PACKETS] = {
 	sizeof(PKT_FLOOR_MOVE),          // 12
     sizeof(PKT_TAGGING),             // 13
     sizeof(PKT_POS_UPDATE_MIN),      // 14
-    sizeof(PKT_ALL_POS_UPDATE_MIN)   // 15
+    sizeof(PKT_ALL_POS_UPDATE_MIN),  // 15
+    sizeof(uint32_t)               // Network shutdown // 16
 };
 
 /**
@@ -178,7 +179,7 @@ void *read_data(int fd, uint32_t *type){
     int read_bytes;
     void *packet;
     *type = read_type(fd);
-    if(*type <= 0 || *type > NUM_PACKETS){
+    if(*type <= 0 || *type > NUM_PACKETS + 1){
         perror("read_data: Failed to read packet type from pipe");
         return NULL;
     }

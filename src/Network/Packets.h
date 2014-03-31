@@ -58,6 +58,7 @@
 #define P_TAGGING        14
 #define P_MIN_POS        15
 #define P_MIN_POS_ALL    16
+#define NETWORK_SHUTDOWN 17
 
 #define NUM_PACKETS  16
 

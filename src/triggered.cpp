@@ -449,6 +449,9 @@ bool menu_click(World *world, unsigned int entity) {
 	}
 	else if (strcmp(world->button[entity].label, "ingame_exit") == 0) {
 		
+		uint32_t type  = 1;
+		write_packet(send_router_fd[1], NETWORK_SHUTDOWN, &type);
+
 		destroy_world(world);
 		
 		cleanup_map();
