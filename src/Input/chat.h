@@ -18,7 +18,7 @@
 #define CHAT_SURFACE_HEIGHT			(CHAT_LINES * (CHAT_LINE_HEIGHT + CHAT_LINE_GAP))
 
 typedef struct {
-	char text[MAX_MESSAGE + MAX_NAME + 3];
+	char text[MAX_MESSAGE + MAX_NAME + 2];
 	unsigned int start_ticks;
 } chat_line;
 

@@ -20,8 +20,8 @@
 extern int game_net_signalfd;
 extern int network_ready;
 extern uint32_t packet_sizes[NUM_PACKETS];
-int chat_packets_rcv = 0;
-std::list<PKT_SND_CHAT*> cached_chat;
+static int chat_packets_rcv = 0;
+static std::list<PKT_SND_CHAT*> cached_chat;
 sem_t err_sem;
 int send_failure_fd;
 
@@ -148,26 +148,6 @@ void *networkRouter(void *args)
     return NULL;
 }
 /**
- * Caches a recieved packet to the cache_chat link list.
- *
- * @param[in]   packet Chat packet recieved from the server.
- *
- * @return  <ul>
- *              <li>0 on success, or -1 on failure.</li>
- *          </ul>
- *
- * @designer Ramzi Chennafi
- * @author   Ramzi Chennafi
- */
-int clear_cache_chat(PKT_SND_CHAT * packet)
-{
-    chat_packets_rcv++;
-
-    cached_chat.push_back(packet);
-
-    return 0;
-}
-/**
  * Sends all cached chat packets down the gameplay pipe.
  *
  * Takes the linked CHAT_LIST and sends all its chat packets to gameplay for processing.
@@ -192,7 +172,6 @@ int send_cached_chat(int gameplay_write_fd)
             return -1;
         }
 
-        free(cached_chat.front());
         cached_chat.pop_front();
     }
     
