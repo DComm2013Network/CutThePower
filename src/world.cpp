@@ -4,8 +4,6 @@
  * @file world.cpp
  */
 
-//#define ANIMATION_AMOUNT 6
-
 #include "world.h"
 
 #include <SDL2/SDL.h>
@@ -15,6 +13,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+extern unsigned int background;	//this is here because we need to keep the background loaded while in the menu.
+									//this needs to be cleaned up when the destroy_world function is called.
 /**
  * This function initializes every mask to be 0, so that there are no components.
  * 
@@ -110,7 +110,7 @@ unsigned int create_level(World* world, int** map, int width, int height, int ti
  * @designer
  * @author
  */
-unsigned int create_player(World* world, int x, int y, bool controllable, int collisiontype, playerNo_t pno, character_t character) {
+unsigned int create_player(World* world, int x, int y, bool controllable, int collisiontype, int playerNo, PKT_GAME_STATUS *status_update) {
 	unsigned int entity;
 	PositionComponent pos;
 	RenderPlayerComponent render;
@@ -122,17 +122,9 @@ unsigned int create_player(World* world, int x, int y, bool controllable, int co
 
 	int lastID = -1;
 	unsigned int tempMask = 0;
-	
-	//MovementComponent movement;
-	//CollisionComponent collision;
-	
+
 	render.width = 40;
 	render.height = 40;
-	//render.playerSurface = IMG_Load("assets/Graphics/player_80px.png");
-	//render.playerSurface = IMG_Load("assets/Graphics/hacker_down.png");
-	//if (!render.playerSurface) {
-	//	printf("mat is a doof\n");
-	//}
 	
 	pos.x = x;
 	pos.y = y;
@@ -162,9 +154,12 @@ unsigned int create_player(World* world, int x, int y, bool controllable, int co
 	collision.timerMax = 0;
 	collision.active = true;
 	collision.radius = 0;
-	
-	player.teamNo = pno;
-	player.character = character;
+
+	player.playerNo = playerNo;
+	player.teamNo = status_update->otherPlayers_teams[playerNo];
+	player.character = status_update->characters[playerNo];
+	player.readyStatus = status_update->readystatus[playerNo];
+	memcpy(player.name, status_update->otherPlayers_name[playerNo], MAX_NAME);
 
 	for(entity = 0; entity < MAX_ENTITIES; ++entity) {
 		if (world->mask[entity] == COMPONENT_EMPTY) {
@@ -381,6 +376,7 @@ void destroy_world(World *world) {
 		//printf("world->mask[%3i]: 0x%08X\n", entity, world->mask[entity]);
 		destroy_entity(world, entity);
 	}
+	background = MAX_ENTITIES + 1;
 }
 
 void destroy_world_not_player(World *world) {

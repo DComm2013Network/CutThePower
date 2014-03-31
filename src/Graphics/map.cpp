@@ -51,12 +51,9 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 	
 	int width, height;
 	int x, y, i;
-	//uint8_t** map;
 	int **collision_map;
 	int **map;
-	//int **collision_map;loading
-	
-	//char entity_type[64];
+
 	char *entity_type = (char*)malloc(sizeof(char) * 128);
 	int entity_count;
 	
@@ -65,7 +62,6 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 	int *collision;
 	int num_tiles;
 	int pos = 0;
-	//char tile_filename[64];
 	char *tile_filename = (char*)malloc(sizeof(char) * 128);
 	
 	SDL_Rect tile_rect;
@@ -274,10 +270,10 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 			else if (strcmp(entity_type, "objective") == 0) {
 				
 				float x, y;
-				int level, w, h;
+				int w, h;
 				unsigned int id;
 				
-				if (fscanf(fp_map, "%f %f %d %d %u %d", &x, &y, &w, &h, &id, &level) != 6) {
+				if (fscanf(fp_map, "%f %f %d %d %u", &x, &y, &w, &h, &id) != 5) {
 					printf("Error loading objective!\n");
 					return -1;
 				}
@@ -288,17 +284,13 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 			else {
 				printf("Did not deal with the entity type: %s\n", entity_type);
 				break;
-				//return -1;
 			}
 		}
 	}
 	
 	fclose(fp_map);
-	
-	
-	//render to surface
-	
 	//cleanup_map();
+
 	map_surface = SDL_CreateRGBSurface(0, width * TILE_WIDTH, height * TILE_HEIGHT, 32, 0, 0, 0, 0);
 	
 	if (map_surface == 0) {
@@ -313,12 +305,10 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 	
 	for(y = 0; y < height; y++) {
 		for(x = 0; x < width; x++) {
-			
 			tile_rect.x = x * TILE_WIDTH;
 			tile_rect.y = y * TILE_HEIGHT;
 			
 			SDL_BlitSurface(tiles[map[x][y]], NULL, map_surface, &tile_rect);
-			
 		}
 	}
 	

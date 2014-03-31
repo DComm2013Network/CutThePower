@@ -15,12 +15,13 @@
 #include "GameplayCommunication.h"
 #include "PipeUtils.h"
 #include "NetworkRouter.h"
+#include <list>
 
 extern int game_net_signalfd;
 extern int network_ready;
 extern uint32_t packet_sizes[NUM_PACKETS];
-int chat_packets_rcv = 0;
-CHAT_LIST * cached_chat = (CHAT_LIST*)malloc(sizeof(CHAT_LIST));
+static int chat_packets_rcv = 0;
+static std::list<PKT_SND_CHAT*> cached_chat;
 sem_t err_sem;
 int send_failure_fd;
 
@@ -78,12 +79,6 @@ void *networkRouter(void *args)
     FD_SET(send_failure_fd, &listen_fds);
 
     network_ready = 1;
-    cached_chat->head = cached_chat;
-    if(cached_chat == NULL)
-    {
-        fprintf(stderr, "Failed to intialize chat cache.\n");
-        return NULL;
-    }
 
     while(1)
     {
@@ -103,10 +98,19 @@ void *networkRouter(void *args)
                 set_error(ERR_IPC_FAIL);
                 break;
             }
+
+            if(type == NETWORK_SHUTDOWN)
+            {
+                net_cleanup(send_data, receive_data, gameplay, cached_packets);
+                printf("Network thread exiting.\n");
+                break; 
+            }
             
             if(type == P_CHAT)
             {
-                cache_chat((PKT_SND_CHAT*)packet);
+                read(recvfd[READ_END], &timestamp, sizeof(timestamp));
+                chat_packets_rcv++;
+                cached_chat.push_back((PKT_SND_CHAT*)packet);
             }
             else
             {
@@ -146,36 +150,10 @@ void *networkRouter(void *args)
 
 	
     pthread_cancel(thread_receive);
+    pthread_cancel(thread_send);
     // Kill the send thread... forgot how this was supposed to happen, oops
     net_cleanup(send_data, receive_data, gameplay, cached_packets);
     return NULL;
-}
-/**
- * Caches a recieved packet to the cache_chat link list.
- *
- * @param[in]   packet Chat packet recieved from the server.
- *
- * @return  <ul>
- *              <li>0 on success, or -1 on failure.</li>
- *          </ul>
- *
- * @designer Ramzi Chennafi
- * @author   Ramzi Chennafi
- */
-int cache_chat(PKT_SND_CHAT * packet)
-{
-    chat_packets_rcv++;
-
-    cached_chat->chat_pkt = packet;
-    cached_chat->next = (CHAT_LIST*) malloc(sizeof(CHAT_LIST));
-    if(cached_chat->next == NULL)
-    {
-        return -1;
-    }
-    cached_chat->next->head = cached_chat->head;
-    cached_chat = cached_chat->next;
-
-    return 0;
 }
 /**
  * Sends all cached chat packets down the gameplay pipe.
@@ -192,22 +170,21 @@ int cache_chat(PKT_SND_CHAT * packet)
 int send_cached_chat(int gameplay_write_fd)
 {
     uint32_t type = P_CHAT;
-    CHAT_LIST * current = cached_chat;
-    CHAT_LIST * next = cached_chat;
 
     for(int i = 0; i < chat_packets_rcv; i++)
     {
         if(write(gameplay_write_fd, &type, sizeof(type)) == -1 ||
-           write(gameplay_write_fd, next->chat_pkt, packet_sizes[P_CHAT]) == -1)
+           write(gameplay_write_fd, cached_chat.front(), packet_sizes[P_CHAT]) == -1)
         {
             perror("update_gameplay: write");
             return -1;
         }
-        next = current->next;
-        free(current);
-    }
 
-    cached_chat = (CHAT_LIST*) malloc(sizeof(CHAT_LIST));
+        cached_chat.pop_front();
+    }
+    
+    chat_packets_rcv = 0;
+
     return 0;
 }
 /**

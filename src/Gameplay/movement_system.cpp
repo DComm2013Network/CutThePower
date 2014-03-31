@@ -15,12 +15,17 @@
 #define CONTROLLABLE_MASK (COMPONENT_POSITION | COMPONENT_MOVEMENT | COMPONENT_CONTROLLABLE)	/**< Mask for moveable entities that may be controlled. */
 #define INPUT_MASK (COMPONENT_INPUT)															/**< Mask for entities that respond to input. */
 #define COLLISION_MASK (COMPONENT_COLLISION)													/**< Mask for entities that may collide with other entities. */
-#define PI 3.14159265																			/**< An approximation of pi for vector calculations. */
+#define PI 3.14159265		
+#define DIRECTION_RIGHT	1
+#define DIRECTION_LEFT	2
+#define DIRECTION_UP	3
+#define DIRECTION_DOWN	4																	/**< An approximation of pi for vector calculations. */
 
 extern int floor_change_flag;
 extern int send_router_fd[];
 extern unsigned int player_entity;
 extern int network_ready;
+extern unsigned int *player_table;
 
 bool handle_collision_target(World *world, int entityIndex) {
 	if (!world->objective[entityIndex].status) {
@@ -264,7 +269,9 @@ int handle_entity_collision(CollisionData data, World * world, int curEntityID) 
 		}
 		break;
 	case COLLISION_HACKER:
-		if (world->collision[curEntityID].type == COLLISION_GUARD) {
+		if (world->collision[curEntityID].type == COLLISION_GUARD) 
+		{
+		
 		}
 		break; 
 	case COLLISION_GUARD:
@@ -315,37 +322,31 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 				temp.width = position->width;
 				temp.height = position->height;
 				temp.level = position->level;
-				bool moved = false;
 				int collisionType = -1;
+				bool key_pressed = false;
 				
 				if (command->commands[C_UP]) {
+					key_pressed = true;
+					world->movement[entity].lastDirection = DIRECTION_UP;
 					add_force(world, entity, world->movement[entity].acceleration, -90);
-
-					play_animation(world, entity, "up");
 				}
-				else {
-					cancel_animation(world, entity);
-				}
+				
 				if (command->commands[C_DOWN]) {
+					key_pressed = true;
+					world->movement[entity].lastDirection = DIRECTION_DOWN;
 					add_force(world, entity, world->movement[entity].acceleration, 90);
-					play_animation(world, entity, "down");
 				}
-				else {
-					cancel_animation(world, entity);
-				}
+				
 				if (command->commands[C_LEFT]) {
+					key_pressed = true;
+					world->movement[entity].lastDirection = DIRECTION_LEFT;
 					add_force(world, entity, world->movement[entity].acceleration, 180);
-					play_animation(world, entity, "left");
 				}
-				else {
-					cancel_animation(world, entity);
-				}
+				
 				if (command->commands[C_RIGHT]) {
+					key_pressed = true;
+					world->movement[entity].lastDirection = DIRECTION_RIGHT;
 					add_force(world, entity, world->movement[entity].acceleration, 0);
-					play_animation(world, entity, "right");
-				}
-				else {
-					cancel_animation(world, entity);
 				}
 
 				CollisionData data;
@@ -354,29 +355,36 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 					//temp.x += movement->movX;
 					apply_forcex(temp, *movement, fps);
 					data = collision_system(world, temp, entity);
+					collisionType = handle_entity_collision(data, world, entity);
 					handle_x_collision(world, data, temp, *movement, entity, fps);
 					//temp.y += movement->movY;
 					apply_forcey(temp, *movement, fps);
 					data = collision_system(world, temp, entity);
-					handle_y_collision(world, data, temp, *movement, entity, fps);
 					collisionType = handle_entity_collision(data, world, entity);
+					handle_y_collision(world, data, temp, *movement, entity, fps);
+					//collisionType = handle_entity_collision(data, world, entity);
 					
 					p.x = position->x;
 					p.y = position->y;
 					p.width = 60;
 					p.height = 60;
 					p.level = position->level;
-					int e = entity_collision(world, p, entity);
-					if (world->collision[entity].type == COLLISION_GUARD && world->command[entity].commands[C_ACTION] && world->collision[e].type == COLLISION_HACKER) {
-						printf("You captured a hacker\n");
-						int e = create_entity(world, COMPONENT_TAG);
-						world->tag[e].tagger_id = entity;
-						world->tag[e].taggee_id = e;
+					int taggedEntity = -1;
+					if (command->commands[C_ACTION] && (taggedEntity = check_tag_collision(world, entity)) != -1) {
+						if (world->collision[entity].type == COLLISION_GUARD && world->collision[taggedEntity].type == COLLISION_HACKER) 
+						{
+							printf("Player no %u tagged\n",world->player[taggedEntity].playerNo);
+							send_tag(world, send_router_fd[WRITE], world->player[taggedEntity].playerNo);
+						}
 					}
-				}
+				 }
 				
 				position->x = temp.x;
 				position->y = temp.y;
+				
+				if (key_pressed == false && data.entityID != -1) {
+					anti_stuck_system(world, entity, data.entityID);
+				}
 				
 				if (movement->movX > 0 && abs(movement->movX) > abs(movement->movY)) {
 					play_animation(world, entity, "right");
@@ -393,6 +401,14 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 				else if (movement->movY < 0 && abs(movement->movY) > abs(movement->movX)) {
 					play_animation(world, entity, "up");
 					//up
+				}
+				else if (movement->movX > 0.15 && abs(movement->movX) == abs(movement->movY)) {
+					play_animation(world, entity, "right");
+					//diagonal - up/right and down/right
+				}
+				else if (movement->movX < -0.15 && abs(movement->movX) == abs(movement->movY)) {
+					play_animation(world, entity, "left");
+					//diagonal - up/left and down/left
 				}
 				else {
 					//none
@@ -420,6 +436,7 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 			collision = &(world->collision[entity]);
 			CollisionData data;
 			PositionComponent temp;
+			
 			temp.x = position->x;
 			temp.y = position->y;
 			temp.width = position->width;
@@ -440,6 +457,37 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 			position->y = temp.y;
 			
 			handle_entity_collision(data, world, entity);
+
+			switch(world->movement[entity].lastDirection) {
+				case DIRECTION_RIGHT:
+				if (world->movement[entity].movX != 0) {
+					play_animation(world, entity, "right");
+				} else {
+					cancel_animation(world, entity);
+				}
+				break;
+				case DIRECTION_LEFT:
+				if (world->movement[entity].movX != 0) {
+					play_animation(world, entity, "left");
+				} else {
+					cancel_animation(world, entity);
+				}
+				break;
+				case DIRECTION_UP:
+				if (world->movement[entity].movY != 0) {
+					play_animation(world, entity, "down");
+				} else {
+					cancel_animation(world, entity);
+				}
+				break;
+				case DIRECTION_DOWN:
+				if (world->movement[entity].movY != 0) {
+					play_animation(world, entity, "up");
+				} else {
+					cancel_animation(world, entity);
+				}
+				break;
+			}
 		}
 	}
 }

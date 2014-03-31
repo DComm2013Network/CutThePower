@@ -23,5 +23,7 @@ int handle_target_collision(World *world, int entityIndex);
 int handle_entity_collision(World *world, int entityIndex);
 int handle_entity_collision(CollisionData data, World * world, int curEntityID);
 void rebuild_floor(World * world, int targl);
+int check_tag_collision(World* world, unsigned int currentEntityID);
+void anti_stuck_system(World *world, unsigned int curEntityID, int otherEntityID);
 
 #endif

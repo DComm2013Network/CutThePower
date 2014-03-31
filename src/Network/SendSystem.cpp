@@ -53,6 +53,26 @@ void send_location(World *world, int fd)
 }
 
 /**
+ * Sends a tag packet when the client tags another player.
+ *
+ * @param[in] world  A pointer to the world struct.
+ * @param[in] fd     The write end of a pipe to the network router.
+ * @param[in] taggee The player that the client tagged.
+ *
+ * @designer Ramzi Chennafi
+ * @author   Ramzi Chennafi
+ */
+void send_tag(World * world, int fd, unsigned int taggee)
+{
+	PKT_TAGGING * pkt = (PKT_TAGGING*) malloc(sizeof(PKT_TAGGING));
+
+	pkt->tagger_id = world->player[controllable_player].playerNo;
+	pkt->taggee_id = taggee;
+
+	write_packet(fd, P_TAGGING, pkt);
+    free(pkt);
+}
+/**
  * Checks the world for data and sends out data updates to be passed to the server. Currently sends out\
  * only a position update.
  *
@@ -74,8 +94,8 @@ void send_intialization(World *world, int fd, char * username)
 		if (IN_THIS_COMPONENT(world->mask[j], COMPONENT_PLAYER | COMPONENT_CONTROLLABLE))
 		{
 			controllable_player = j;
-			memcpy(pkt1->client_player_name, username, sizeof(username));
-			memcpy(world->player[j].name, username, sizeof(username));
+			memcpy(pkt1->client_player_name, username, MAX_NAME);
+			memcpy(world->player[j].name, username, MAX_NAME);
 			pkt1->selectedCharacter = world->player[j].character;
 			break;
 		}
@@ -144,36 +164,31 @@ void send_status(World * world, int fd, teamNo_t team, int ready_status)
 	}
 }
 /**
- * Sets up a timer for slowing down the frequency of location updates sent by the client.
- *			
- * @param[in, out]  timer 	A pointer to an empty timer variable. The timer created will be
- *							placed in this variable.
+ * Sends a chat packet with the player number when called.
  *
- * @return  void
+ * @param[in] str 	a string containing the message to be sent.
  *
- * @designer    Ramzi Chennafi
- * @author      Ramzi Chennafi
+ * @designer Ramzi Chennafi
+ * @author   Ramzi Chennafi
  */
-void setup_send_timer(timer_t * timer)
+void send_chat(World * world, int fd, char * str)
 {
-	struct sigevent sevnt;
-	struct itimerspec its;
-	
-	sevnt.sigev_notify = SIGEV_NONE;
-    sevnt.sigev_value.sival_ptr = timer;
-    if (timer_create(CLOCK_REALTIME, &sevnt, timer) == -1)
-    {
-    	printf("Failed to create timer.\n");
-        exit(2);
-   	}
+	if(str == NULL)
+		return;
 
-	its.it_value.tv_sec = 0;
-    its.it_value.tv_nsec = SEND_FREQUENCY * NANO_SECONDS;
-   	its.it_interval.tv_sec = its.it_value.tv_sec;
-   	its.it_interval.tv_nsec = its.it_value.tv_nsec;
-   	if(timer_settime(*timer, 0, &its, NULL) == -1)
-   	{
-   		printf("Failed to set timer with errno: %d\n", errno);
-   		exit(2);
-   	}
+	PKT_SND_CHAT * pkt = (PKT_SND_CHAT*) malloc(sizeof(PKT_SND_CHAT));
+
+	for (int i = 0; i < MAX_ENTITIES; i++)
+	{
+		if (IN_THIS_COMPONENT(world->mask[i], COMPONENT_MOVEMENT | COMPONENT_POSITION | COMPONENT_PLAYER | COMPONENT_CONTROLLABLE))
+		{
+			pkt->sendingPlayer_number = world->player[i].playerNo;
+			memcpy(pkt->message, str, MAX_MESSAGE);
+			break;
+		}
+	}
+
+	write_packet(fd, P_CHAT, pkt);
+	free(pkt);
 }
+
