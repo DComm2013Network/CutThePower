@@ -207,10 +207,7 @@ int handle_entity_collision(World* world, unsigned int entity, unsigned int enti
 		position.level = world->position[entity].level;
 		entity_collision(world, entity, position, &entity_number_local, &hit_entity_local);
 		if (world->collision[hit_entity_local].type == COLLISION_HACKER) {
-			unsigned int e = create_entity(world, COMPONENT_TAG);
-			world->tag[e].tagger_id = entity;
-			world->tag[e].taggee_id = hit_entity_local;
-			send_tag(world, send_router_fd[WRITE], world->tag[e].taggee_id);
+			send_tag(world, send_router_fd[WRITE], world->player[hit_entity_local].playerNo);
 		}
 	}
 	return entity_number;
