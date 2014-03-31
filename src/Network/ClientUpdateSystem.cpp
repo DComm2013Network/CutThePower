@@ -301,7 +301,7 @@ void client_update_status(World *world, void *packet)
 	            player_table[i] = create_player(world, 400, 600, false, COLLISION_HACKER, i, status_update);	
 	           	if(status_update->otherPlayers_teams[i] == COPS)
 				{
-					load_animation("assets/Graphics/player/p1/cop_animation.txt", world, player_table[i]);
+					load_animation("assets/Graphics/player/p0/rob_animation.txt", world, player_table[i]);
 				}
 				else{
 					setup_character_animation(world, status_update->characters[i], player_table[i]);
@@ -351,7 +351,7 @@ void change_player(World * world, int type, PKT_GAME_STATUS * pkt, int playerNo)
 	}
 	if(type == COPS)
 	{
-		load_animation("assets/Graphics/player/p1/cop_animation.txt", world, player_table[playerNo]);
+		load_animation("assets/Graphics/player/p0/rob_animation.txt", world, player_table[playerNo]);
 	}
 	else{
 		setup_character_animation(world, pkt->characters[playerNo], player_table[playerNo]);
