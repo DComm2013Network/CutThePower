@@ -34,7 +34,7 @@ typedef struct {
 	int surface_count; //total amount of surfaces
 	unsigned int ms_to_skip; //milliseconds in between surface changes
 	unsigned int ms_last; //current amount of frames between surface change
-	int sound_effect; //sound effect to be played
+	unsigned int sound_effect; //sound effect to be played
 	int loop; //-1 is no loop, 1 is loop
 	
 } Animation;

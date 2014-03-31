@@ -26,7 +26,7 @@ void destroy_menu(World *world) {
 	
 	for(entity = 0; entity < MAX_ENTITIES; entity++) {
 		
-		if (entity != background) {
+		if (entity != background && IN_THIS_COMPONENT(world->mask[entity], COMPONENT_MENU_ITEM)) {
 			destroy_entity(world, entity);
 		}
 		
@@ -49,7 +49,7 @@ void destroy_menu(World *world) {
 void create_button(World *world, const char *text, const char *name, int x, int y) {
 	
 	char *new_name;
-	unsigned int entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_BUTTON | COMPONENT_MOUSE);
+	unsigned int entity = create_entity(world, COMPONENT_MENU_ITEM | COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_BUTTON | COMPONENT_MOUSE);
 	/*
 	world->renderPlayer[entity].width = BUTTON_WIDTH;
 	world->renderPlayer[entity].height = BUTTON_HEIGHT;
@@ -93,7 +93,7 @@ void create_button(World *world, const char *text, const char *name, int x, int 
  */
 void create_label(World *world, const char *text, int x, int y) {
 	
-	unsigned int entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
+	unsigned int entity = create_entity(world, COMPONENT_MENU_ITEM | COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
 	
 	/*
 	world->renderPlayer[entity].width = w;
@@ -132,7 +132,7 @@ void create_label(World *world, const char *text, int x, int y) {
  */
 void create_title(World *world, const char *text, int x, int y) {
 	
-	unsigned int entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
+	unsigned int entity = create_entity(world, COMPONENT_MENU_ITEM | COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
 	
 	/*
 	world->renderPlayer[entity].width = w;
@@ -169,7 +169,7 @@ void create_title(World *world, const char *text, int x, int y) {
  */
 void create_textfield(World *world, const char *name, int x, int y, const char* text, bool big) {
 	
-	unsigned int entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_TEXTFIELD | COMPONENT_MOUSE);
+	unsigned int entity = create_entity(world, COMPONENT_MENU_ITEM | COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_TEXTFIELD | COMPONENT_MOUSE);
 	
 	
 	if(big) {
@@ -179,6 +179,7 @@ void create_textfield(World *world, const char *name, int x, int y, const char* 
 		world->renderPlayer[entity].height = BIG_TEXT_HEIGHT;
 		world->position[entity].width = BIG_TEXT_WIDTH;
 		world->position[entity].height = BIG_TEXT_HEIGHT;
+		world->text[entity].max_length = MAX_STRING;
 		
 	} else {
 		world->renderPlayer[entity].playerSurface = IMG_Load("assets/Graphics/screen/menu/small_text_field.png");
@@ -187,6 +188,7 @@ void create_textfield(World *world, const char *name, int x, int y, const char* 
 		world->renderPlayer[entity].height = SMALL_TEXT_HEIGHT;
 		world->position[entity].width = SMALL_TEXT_WIDTH;
 		world->position[entity].height = SMALL_TEXT_HEIGHT;
+		world->text[entity].max_length = MAX_KEYMAP_STRING;
 	}
 	if (!world->renderPlayer[entity].playerSurface) {
 		printf("Error loading image in create_textfield.\n");
@@ -221,7 +223,7 @@ void create_textfield(World *world, const char *name, int x, int y, const char* 
 void create_animated_button(World *world, const char* fileName, int x, int y, const char* name) {
 	
 	char *new_name;
-	unsigned int entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION | COMPONENT_BUTTON | COMPONENT_MOUSE);
+	unsigned int entity = create_entity(world, COMPONENT_MENU_ITEM | COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION | COMPONENT_BUTTON | COMPONENT_MOUSE);
 	world->position[entity].x = x;
 	world->position[entity].y = y;
 	world->position[entity].width = ANIMATED_BUTTON_WIDTH;
@@ -255,11 +257,13 @@ void create_animated_button(World *world, const char* fileName, int x, int y, co
  */
 void create_main_menu_background(World *world) {
 	
+	unsigned int music;
+	
 	if (background < MAX_ENTITIES) {
 		return;
 	}
 	
-	background = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION);
+	background = create_entity(world, COMPONENT_MENU_ITEM | COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION);
 	
 	world->position[background].x = 0;
 	world->position[background].y = 0;
@@ -271,7 +275,9 @@ void create_main_menu_background(World *world) {
 	world->renderPlayer[background].width = WIDTH;
 	world->renderPlayer[background].height = HEIGHT;
 	
-	play_music(SOUND_MUSIC_MENU_RAIN);
+	//Load and play music
+	music = load_music("assets/Sound/menu/sound_menu_bg.wav");
+	play_music(music);
 }
 
 
@@ -290,7 +296,7 @@ void create_logo_screen(World* world) {
 	unsigned int entity;
 	
 	//create black background
-	entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
+	entity = create_entity(world, COMPONENT_MENU_ITEM | COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
 	
 	world->position[entity].x = 0;
 	world->position[entity].y = 0;
@@ -306,7 +312,7 @@ void create_logo_screen(World* world) {
 	world->renderPlayer[entity].height = HEIGHT;
 	
 	//create animation
-	entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION);
+	entity = create_entity(world, COMPONENT_MENU_ITEM | COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION);
 	
 	world->position[entity].x = 440;
 	world->position[entity].y = 334;
@@ -453,7 +459,7 @@ void create_credits_menu(World *world) {
 	
 	create_main_menu_background(world);
 	
-	entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
+	entity = create_entity(world, COMPONENT_MENU_ITEM | COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
 	
 	world->renderPlayer[entity].width = WIDTH;
 	world->renderPlayer[entity].height = HEIGHT;
@@ -516,7 +522,7 @@ void create_bsod_menu(World *world) {
 	
 	unsigned int entity;
 	
-	entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
+	entity = create_entity(world, COMPONENT_MENU_ITEM | COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
 	
 	world->renderPlayer[entity].width = WIDTH;
 	world->renderPlayer[entity].height = HEIGHT;
@@ -542,35 +548,35 @@ void create_intro(World *world) {
 	
 	destroy_world(world);
 	
-	entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION);
+	entity = create_entity(world, COMPONENT_MENU_ITEM | COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION);
 	
 	world->position[entity].x = 0;
 	world->position[entity].y = 0;
 	world->position[entity].width = WIDTH;
 	world->position[entity].height = HEIGHT;
 	
-	load_animation((char*)"assets/Graphics/screen/intro/intro_animation.txt", world, entity);
+	load_animation("assets/Graphics/screen/intro/intro_animation.txt", world, entity);
 	
 	world->animation[entity].id = 0;
 	
 	world->renderPlayer[entity].width = WIDTH;
 	world->renderPlayer[entity].height = HEIGHT;
 	
-	play_animation(world, entity, (char*)"intro");
+	play_animation(world, entity, "intro");
 }
 
 void create_load_screen(World *world) {
 	
 	unsigned int entity;
 	
-	entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION);
+	entity = create_entity(world, COMPONENT_MENU_ITEM | COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION);
 	
 	world->position[entity].x = 0;
 	world->position[entity].y = 0;
 	world->position[entity].width = WIDTH;
 	world->position[entity].height = HEIGHT;
 	
-	load_animation((char*)"assets/Graphics/screen/loading/load_animation.txt", world, entity);
+	load_animation("assets/Graphics/screen/loading/load_animation.txt", world, entity);
 	
 	world->animation[entity].id = 1;
 	
@@ -578,14 +584,14 @@ void create_load_screen(World *world) {
 	world->renderPlayer[entity].height = HEIGHT;
 	
 	
-	play_animation(world, entity, (char*)"load");
+	play_animation(world, entity, "load");
 }
 
 void create_select_screen(World *world) {
 	
 	unsigned int entity;
 	
-	entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
+	entity = create_entity(world, COMPONENT_MENU_ITEM | COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
 	
 	world->position[entity].x = 0;
 	world->position[entity].y = 0;
@@ -622,4 +628,34 @@ void create_select_screen(World *world) {
 	world->renderPlayer[entity].height = HEIGHT;
 }
 
+void create_pause_screen(World *world) {
+	
+	unsigned int entity;
+	
+	entity = create_entity(world, COMPONENT_MENU_ITEM | COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
+	
+	const int w = 650;
+	const int h = 600;
+	
+	world->position[entity].x = (WIDTH / 2) - (w / 2);
+	world->position[entity].y = (HEIGHT / 2) - (h / 2);
+	world->position[entity].width = w;
+	world->position[entity].height = h;
+	
+	if ((world->renderPlayer[entity].playerSurface = IMG_Load("assets/Graphics/screen/pause/background.png")) == NULL){
+		printf("Unable to load pause image\n");
+	}
+	
+	world->renderPlayer[entity].width = w;
+	world->renderPlayer[entity].height = h;
+	
+	
+	
+	create_title(world, "OPTIONS", (WIDTH / 2), (HEIGHT / 2) - 250);
+	
+	create_button(world, "SOUND ON", "ingame_sound_on", (WIDTH / 2), (HEIGHT / 2) - 25);
+	create_button(world, "FULLSCREEN OFF", "ingame_fullscreen_off", (WIDTH / 2), (HEIGHT / 2) + 50);
+	create_button(world, "BACK", "ingame_back", (WIDTH / 2), (HEIGHT / 2) + 125);
+	create_button(world, "EXIT TO MENU", "ingame_exit", (WIDTH / 2), (HEIGHT / 2) + 200);
+}
 

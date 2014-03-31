@@ -25,6 +25,7 @@ void create_intro(World *world);
 void create_load_screen(World *world);
 void create_logo_screen(World* world);
 void create_select_screen(World *world);
+void create_pause_screen(World *world);
 
 
 #endif

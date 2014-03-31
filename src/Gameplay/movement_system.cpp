@@ -159,7 +159,6 @@ void handle_entity_collision(CollisionData data, World * world, int curEntityID)
 		break;
 	case COLLISION_STAIR:
 		if (world->collision[curEntityID].type == COLLISION_HACKER || world->collision[curEntityID].type == COLLISION_GUARD) {
-			printf("Floor changed\n");
 			int targx = world->wormhole[data.entityID].targetX, targy = world->wormhole[data.entityID].targetY, targl = world->wormhole[data.entityID].targetLevel;
 			destroy_world(world);
 			unsigned int e = create_player(world, targx, targy, true, COLLISION_HACKER);
@@ -186,7 +185,6 @@ void handle_entity_collision(CollisionData data, World * world, int curEntityID)
 					break;
 				}
 			}
-			printf("Floor changed ended\n");
 			//printf("t: %i\n", world->position[player_entity].level);
 		}
 		break;

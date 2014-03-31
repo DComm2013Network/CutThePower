@@ -50,13 +50,6 @@ void animation_system(World *world) {
 
 				animation = &(animationComponent->animations[animationComponent->current_animation]);
 				
-				//printf("index: %d ms_last: %d  sound effect: %d\n", animation->index, animation->ms_last, animation->sound_effect);
-				
-				//if (animation->index == 0 && animationComponent->first_triggered && animation->sound_effect > -1) {
-				//	play_effect(animation->sound_effect);
-				//	printf("Playing sound effect %d\n", animation->sound_effect);
-				//}
-				
 				if (SDL_GetTicks() - animation->ms_last > animation->ms_to_skip) {
 					
 					animation->ms_last = SDL_GetTicks();
@@ -70,7 +63,6 @@ void animation_system(World *world) {
 							animationComponent->current_animation = -1;
 							renderPlayer->playerSurface = animation->surfaces[0];
 
-							//printf("Animation finished\nEntity: %u\nName: %s\n", entity, animation->name);
 							animation_end(world, entity);
 							continue;
 						}
@@ -86,10 +78,6 @@ void animation_system(World *world) {
 					continue;
 				}
 				
-				//if (rand() % animationComponent->rand_occurance == 0) {
-				//	animationComponent->current_animation = animationComponent->rand_animation;
-				//}
-				
 				if (SDL_GetTicks() > animationComponent->next_random_occurance) {
 					
 					animationComponent->current_animation = animationComponent->rand_animation;
@@ -97,9 +85,8 @@ void animation_system(World *world) {
 					animationComponent->last_random_occurance = SDL_GetTicks();
 					animationComponent->next_random_occurance = (rand() % (animationComponent->rand_occurance_max - animationComponent->rand_occurance_min)) + animationComponent->rand_occurance_min + SDL_GetTicks();
 					
-					if (animationComponent->animations[animationComponent->rand_animation].sound_effect > -1) {
+					if (animationComponent->animations[animationComponent->rand_animation].sound_effect != -1) {
 						play_effect(animationComponent->animations[animationComponent->rand_animation].sound_effect);
-						//printf("Playing sound effect %d\n", animationComponent->animations[animationComponent->rand_animation].sound_effect);
 					}
 				}
 			}
@@ -126,11 +113,12 @@ int load_animation(const char *filename, World *world, unsigned int entity) {
 	FILE *fp;
 
 	char animation_name[64];
-	int animation_frames, ms_to_skip, triggered_sound, loop_animation;
+	int animation_frames, ms_to_skip, loop_animation;
 	int frame_index, animation_index;
 	int optional_features;
 	int i;
 	char feature_type[64];
+	char triggered_sound[64];
 
 	char animation_filename[64];
 
@@ -144,8 +132,6 @@ int load_animation(const char *filename, World *world, unsigned int entity) {
 		return -1;
 	}
 
-	//printf("Animation count: %d\n", animationComponent->animation_count);
-
 	animationComponent->animations = (Animation*)malloc(sizeof(Animation) * animationComponent->animation_count);
 	animationComponent->current_animation = -1;
 	animationComponent->id = -1;
@@ -154,22 +140,25 @@ int load_animation(const char *filename, World *world, unsigned int entity) {
 	animationComponent->hover_animation = -1;
 
 	for(animation_index = 0; animation_index < animationComponent->animation_count; animation_index++) {
-		if (fscanf(fp, "%s %d %d %d %d", animation_name, &animation_frames, &ms_to_skip, &triggered_sound, &loop_animation) != 5) {
+		if (fscanf(fp, "%s %d %d %s %d", animation_name, &animation_frames, &ms_to_skip, &triggered_sound, &loop_animation) != 5) {
 			printf("Expected more animations!\n");
 			return -1;
 		}
 
-		//printf("Loading animation %s\n", animation_name);
-
 		animationComponent->animations[animation_index].surfaces = (SDL_Surface**)malloc(sizeof(SDL_Surface*) * animation_frames);
 
 		animationComponent->animations[animation_index].surface_count = animation_frames;
-		animationComponent->animations[animation_index].sound_effect = triggered_sound;
+		if (strcmp(triggered_sound, "-1") == 0) {
+			animationComponent->animations[animation_index].sound_effect = -1;
+		}
+		else {
+			animationComponent->animations[animation_index].sound_effect = load_effect(triggered_sound);
+		}
 		animationComponent->animations[animation_index].loop = loop_animation;
 		animationComponent->animations[animation_index].ms_last = 0;
 		animationComponent->animations[animation_index].ms_to_skip = ms_to_skip;
 		animationComponent->animations[animation_index].index = 0;
-
+		
 		animationComponent->animations[animation_index].name = (char*)malloc(sizeof(char) * strlen(animation_name) + 1);
 		strcpy(animationComponent->animations[animation_index].name, animation_name);
 
@@ -180,17 +169,12 @@ int load_animation(const char *filename, World *world, unsigned int entity) {
 				return -1;
 			}
 
-			//printf("File: %s\n", animation_filename);
-
 			animationComponent->animations[animation_index].surfaces[frame_index] = IMG_Load(animation_filename);
 
 			if (animationComponent->animations[animation_index].surfaces[frame_index] == 0) {
 				printf("Error loading file: %s, %s\n", animation_filename, IMG_GetError());
 			}
 		}
-
-		//printf("Loaded animation: %s with %d frames\n", animationComponent->animations[animation_index].name, animation_frames);
-
 	}
 
 	renderComponent->playerSurface = animationComponent->animations[0].surfaces[0];
@@ -299,9 +283,8 @@ void play_animation(World *world, unsigned int entity, const char *animation_nam
 			
 			renderComponent->playerSurface = animationComponent->animations[i].surfaces[0];
 			
-			if (animationComponent->animations[i].sound_effect > -1) {
+			if (animationComponent->animations[i].sound_effect != -1) {
 				play_effect(animationComponent->animations[i].sound_effect);
-				//printf("Playing sound effect %d\n", animationComponent->animations[i].sound_effect);
 			}
 			
 			return;

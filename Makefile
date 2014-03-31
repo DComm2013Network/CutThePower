@@ -7,7 +7,7 @@ OBJDIR=obj
 SRCDIR=src
 
 BIN_DEFAULT=$(BINDIR)/CutThePower
-OBJ_DEFAULT=$(OBJDIR)/Gameplay/collision_system.o $(OBJDIR)/Gameplay/movement_system.o $(OBJDIR)/Graphics/render_system.o $(OBJDIR)/Graphics/animation_system.o $(OBJDIR)/Graphics/map.o $(OBJDIR)/Input/keyinputsystem.o $(OBJDIR)/Input/mouseinputsystem.o $(OBJDIR)/Input/menu.o $(OBJDIR)/main.o $(OBJDIR)/sound.o $(OBJDIR)/world.o $(OBJDIR)/triggered.o $(OBJDIR)/Graphics/text.o
+OBJ_DEFAULT=$(OBJDIR)/Gameplay/collision_system.o $(OBJDIR)/Gameplay/movement_system.o $(OBJDIR)/Graphics/render_system.o $(OBJDIR)/Graphics/animation_system.o $(OBJDIR)/Graphics/map.o $(OBJDIR)/Input/keyinputsystem.o $(OBJDIR)/Input/mouseinputsystem.o $(OBJDIR)/Input/menu.o $(OBJDIR)/main.o $(OBJDIR)/sound.o $(OBJDIR)/world.o $(OBJDIR)/triggered.o $(OBJDIR)/Graphics/text.o $(OBJDIR)/Input/chat.o
 
 CutThePower: $(OBJ_DEFAULT)
 	test -d $(BINDIR) || mkdir -p $(BINDIR)
@@ -60,6 +60,10 @@ $(OBJDIR)/Input/mouseinputsystem.o: $(SRCDIR)/Input/mouseinputsystem.cpp
 $(OBJDIR)/Input/menu.o: $(SRCDIR)/Input/menu.cpp
 	test -d $(OBJDIR)/Input || mkdir -p $(OBJDIR)/Input
 	$(CC) $(FLAGS) -c -o $(OBJDIR)/Input/menu.o $(SRCDIR)/Input/menu.cpp
+	
+$(OBJDIR)/Input/chat.o: $(SRCDIR)/Input/chat.cpp
+	test -d $(OBJDIR)/Input || mkdir -p $(OBJDIR)/Input
+	$(CC) $(FLAGS) -c -o $(OBJDIR)/Input/chat.o $(SRCDIR)/Input/chat.cpp
 
 $(OBJDIR)/main.o: $(SRCDIR)/main.cpp
 	test -d $(OBJDIR) || mkdir -p $(OBJDIR)

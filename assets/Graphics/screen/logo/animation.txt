@@ -1,6 +1,6 @@
 1
 
-load 50 70 1 -1
+load 50 70 assets/Sound/logo/logo.wav -1
 assets/Graphics/screen/logo/datacomm_0.png
 assets/Graphics/screen/logo/datacomm_0.png
 assets/Graphics/screen/logo/datacomm_0.png

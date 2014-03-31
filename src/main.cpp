@@ -5,6 +5,7 @@
 #include "world.h"
 #include "Input/menu.h"
 #include "Graphics/text.h"
+#include "Input/chat.h"
 
 #include <stdlib.h>
 #include <time.h>
@@ -92,6 +93,7 @@ int main(int argc, char* argv[]) {
 	surface = SDL_CreateRGBSurface(0, WIDTH, HEIGHT, 32, 0, 0, 0, 0);
 	
 	
+	init_chat();
 	init_sound();
 	init_fonts();
 	
@@ -101,14 +103,25 @@ int main(int argc, char* argv[]) {
 	KeyMapInit("assets/Input/keymap.txt");
 	init_render_player_system();
 	
-	//create_main_menu(world);
-	create_logo_screen(world);
-	
+	create_main_menu(world);
+	//create_logo_screen(world);
 	
 	FPS fps;
 	fps.init();
 	running = true;
 	player_entity = -1;
+	
+	//chat_add_line("Hello I am Jordan0!");
+	//chat_add_line("Hello I am Jordan1!");
+	//chat_add_line("Hello I am Jordan2!");
+	//chat_add_line("Hello I am Jordan3!");
+	//chat_add_line("Hello I am Jordan4!");
+	//chat_add_line("Hello I am Jordan5!");
+	//chat_add_line("Hello I am Jordan6!");
+	//chat_add_line("Hello I am Jordan7!");
+	//chat_add_line("Hello I am Jordan8!");
+	//chat_add_line("Hello I am Jordan9!");
+	
 	
 	while (running)
 	{
@@ -124,6 +137,7 @@ int main(int argc, char* argv[]) {
 		animation_system(world);
 		render_player_system(*world, surface);
 		
+		chat_render(surface);
 		
 		surface_texture = SDL_CreateTextureFromSurface(renderer, surface);
 		SDL_RenderClear(renderer);

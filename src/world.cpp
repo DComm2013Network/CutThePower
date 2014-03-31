@@ -13,6 +13,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+extern unsigned int background;	//this is here because we need to keep the background loaded while in the menu.
+									//this needs to be cleaned up when the destroy_world function is called.
+
 /**
  * This function initializes every mask to be 0, so that there are no components.
  * 
@@ -393,6 +396,8 @@ void destroy_world(World *world) {
 	for(entity = 0; entity < MAX_ENTITIES; entity++) {
 		destroy_entity(world, entity);
 	}
+	
+	background = MAX_ENTITIES + 1;
 }
 
 
