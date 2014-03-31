@@ -5,6 +5,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+#include "../Network/Packets.h"
 #include "chat.h"
 #include "../Graphics/text.h"
 #include "menu.h"
@@ -149,13 +150,15 @@ unsigned int create_chat(World *world) {
 	
 	world->text[entity].name = (char*)calloc(strlen("chat_text") + 1, sizeof(char));
 	strcpy(world->text[entity].name, "chat_text");
-	world->text[entity].text = (char*)calloc(MAX_STRING + 1, sizeof(char));
+	world->text[entity].text = (char*)calloc(MAX_MESSAGE + MAX_NAME + 3, sizeof(char));
 
 	
 	world->text[entity].length = 0;
 
 	world->text[entity].focused = true;
 	world->text[entity].number = false;
+
+	world->text[entity].max_length = MAX_MESSAGE + MAX_NAME + 3;//stuff
 	
 	return entity;
 }

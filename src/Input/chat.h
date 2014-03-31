@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 
 #include "../world.h"
+#include "../Network/Packets.h"
 
 #define CHAT_LINES 					5
 #define CHAT_LINE_LENGTH			64
@@ -17,7 +18,7 @@
 #define CHAT_SURFACE_HEIGHT			(CHAT_LINES * (CHAT_LINE_HEIGHT + CHAT_LINE_GAP))
 
 typedef struct {
-	char text[CHAT_LINE_LENGTH];
+	char text[MAX_MESSAGE + MAX_NAME + 3];
 	unsigned int start_ticks;
 } chat_line;
 

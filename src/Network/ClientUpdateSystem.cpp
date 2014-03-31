@@ -139,7 +139,7 @@ int client_update_system(World *world, int net_pipe) {
  */
 void client_update_chat(World *world, void *packet)
 {
-	char message[180];
+	char message[180 + MAX_NAME];
 	PKT_SND_CHAT *snd_chat = (PKT_SND_CHAT*)packet;
 	if(snd_chat->sendingPlayer_number == MAX_PLAYERS)
 	{
