@@ -208,9 +208,9 @@ int handle_entity_collision(World* world, unsigned int entity, unsigned int enti
 		entity_collision(world, entity, position, &entity_number_local, &hit_entity_local);
 		if (world->collision[hit_entity_local].type == COLLISION_HACKER) {
 			unsigned int e = create_entity(world, COMPONENT_TAG);
-			printf("You eliminated a hacker! You is the best!\n");
 			world->tag[e].tagger_id = entity;
 			world->tag[e].taggee_id = hit_entity_local;
+			send_tag(world, send_router_fd[WRITE], world->tag[e].taggee_id);
 		}
 	}
 	return entity_number;
