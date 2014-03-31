@@ -14,14 +14,20 @@
 #include "../Gameplay/collision.h"
 #include "network_systems.h"
 
-static int controllable_playerNo;
-extern int game_net_signalfd;
-extern int network_ready;
-extern int player_team;
-int floor_change_flag = 0;
+typedef struct _objective_cache
+{
+	char  obj_state;
+	short entity_no;
+} objective_cache;
 
-static unsigned int *player_table = NULL; /**< A lookup table mapping server player numbers to client entities. */
-static unsigned char *objective_table = NULL; /**< A lookup table mapping server objective numbers to client entities. */
+static int controllable_playerNo; /**< The entity number of the controllable player. */
+extern int game_net_signalfd;     /**< An eventfd allowing the gameplay thread to request data from network router. */
+extern int network_ready;         /**< Indicates whether the network has initialised. */
+extern int player_team;           /**< The player's team (0, COPS or ROBBERS). */
+int floor_change_flag = 0;        /**< Whether we just changed floors. */
+
+static unsigned int *player_table       = NULL; /**< A lookup table mapping server player numbers to client entities. */
+static objective_cache *objective_table = NULL; /**< A lookup table mapping server objective numbers to client entities. */
 
 /**
  * Receives all updates from the server and applies them to the world.
@@ -142,6 +148,10 @@ void client_update_chat(World *world, void *packet)
  * floor change occurs, will also set the floor change flag to 0 after setting the players
  * location.
  *
+ * Revisions: <ul>
+ *                <li>Shane Spoor - March 30th, 2014 - Added objective reconstruction on floor change.</li>
+ *            </ul>
+ *
  * @param[in, out]	world 	The world struct holding the data to be updated.
  * @param[in] 		packet	The packet containing update information.
  *
@@ -151,10 +161,23 @@ void client_update_chat(World *world, void *packet)
 void client_update_floor(World *world, void *packet)
 {
 	PKT_FLOOR_MOVE* floor_move = (PKT_FLOOR_MOVE*)packet;
+	int obj_idx = (floor_move->new_floor - 1) * OBJECTIVES_PER_FLOOR; // Start at the correct offset for this floor (requires fixed number of objectives/floor)
+	int i;
+
 	world->position[player_table[controllable_playerNo]].level	= floor_move->new_floor;
 	world->position[player_table[controllable_playerNo]].x		= floor_move->xPos;
 	world->position[player_table[controllable_playerNo]].y		= floor_move->yPos;
 	rebuild_floor(world, floor_move->new_floor);
+
+	for(i = 0; i < MAX_ENTITIES; i++)
+	{
+		if(IN_THIS_COMPONENT(world->mask[i], COMPONENT_OBJECTIVE))
+		{
+			objective_table[obj_idx].entity_no = i;
+			world->objective[i].status = objective_table[obj_idx].obj_state;
+		}
+	}
+
 	floor_change_flag = 0;
 }
 
@@ -226,18 +249,20 @@ void client_update_pos(World *world, void *packet)
 void client_update_objectives(World *world, void *packet)
 {
 	PKT_OBJECTIVE_STATUS *objective_update = (PKT_OBJECTIVE_STATUS *)packet;
+	int obj_idx = (world->position[controllable_playerNo].level - 1) * OBJECTIVES_PER_FLOOR;
 
 	if(objective_update->game_status == GAME_TEAM1_WIN || objective_update->game_status == GAME_TEAM2_WIN)
-	{
 		player_team = 0;
-	}
 
 	for(int i = 0; i < MAX_OBJECTIVES; ++i)
 	{
-	    if(!objective_update->objectives_captured[i]) // If the ojective is non-existent, then all following objectives are non-existent as well
+	    if(objective_update->objectives_captured[i] == 0) // If the ojective is non-existent, then all following objectives are non-existent as well
 	        break;
-        world->objective[objective_table[i]].status = objective_update->objectives_captured[i]; // Otherwise, set it to the value contained in the objective update packet
+	    objective_table[i].obj_state = objective_update->objectives_captured[i];
 	}
+	
+	for(int i = obj_idx; i < OBJECTIVES_PER_FLOOR + obj_idx; i++)
+		world->objective[objective_table[i].entity_no].status = objective_table[i].obj_state;
 }
 
 /**
@@ -386,6 +411,7 @@ void setup_character_animation(World * world, int character, int entity)
 		load_animation("assets/Graphics/player/p0/rob_animation.txt", world, entity);
 	}
 }
+
 /**
  * Updates the client's player number and team details.
  *
@@ -427,9 +453,7 @@ int client_update_info(World *world, void *packet)
  */
 int init_client_update(World *world)
 {
-	int objectives_taken = 0;
-
-	objective_table = (unsigned char *)malloc(MAX_OBJECTIVES);
+	objective_table = (objective_cache *)malloc(MAX_OBJECTIVES * sizeof(objective_cache));
 	player_table = (unsigned int *)malloc(sizeof(unsigned int) * MAX_PLAYERS);
 
 	if(!objective_table || !player_table)
@@ -437,14 +461,9 @@ int init_client_update(World *world)
 	    perror("init_client_update: malloc");
 	    return 0;
 	}
-	
-	for(int i = 0; i < MAX_ENTITIES; ++i)
-	{
-		if(IN_THIS_COMPONENT(world->mask[i], COMPONENT_OBJECTIVE))
-			objective_table[objectives_taken++] = i;
-	}
 
 	memset(player_table, 255, MAX_PLAYERS * sizeof(unsigned int));
+	memset(objective_table, 255, MAX_OBJECTIVES);
 	return 1;
 }
 

@@ -6,21 +6,23 @@
 #define NETWORK_SYSTEMS_H
 
 #include <sys/eventfd.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 #include <sys/poll.h>
+#include <climits>
 
-#define CLIENT_PLAYER 		0 			/**< The client's player's entity number (may also be passed into the function) */
-#define UNASSIGNED			4294967295	/**< The player's number has not yet been assigned. */
+#define CLIENT_PLAYER    0 			/**< The client's player's entity number (may also be passed into the function) */
+#define UNASSIGNED       4294967295	/**< The player's number has not yet been assigned. */
 
-#define STATUS_UPDATE		1	/**< Send the player's ready status. */	
-#define POS_UPDATE			2 	/**< Send the player's current position information. */
-#define OBJECTIVE_UPDATE	4 	/**< Send current obejctive states. */
-#define FLOOR_REQUEST		8 	/**< Request a floor change (desired floor should be specified in the World struct). */
-#define DIRECTION_RIGHT	1
-#define DIRECTION_LEFT	2
-#define DIRECTION_UP	3
-#define DIRECTION_DOWN	4
+#define STATUS_UPDATE    1	/**< Send the player's ready status. */	
+#define POS_UPDATE       2 	/**< Send the player's current position information. */
+#define OBJECTIVE_UPDATE 4 	/**< Send current obejctive states. */
+#define FLOOR_REQUEST    8 	/**< Request a floor change (desired floor should be specified in the World struct). */
+
+#define DIRECTION_RIGHT	 1
+#define DIRECTION_LEFT	 2
+#define DIRECTION_UP	 3
+#define DIRECTION_DOWN	 4
 
 int init_client_update(World *world);
 int client_update_system(World *world, int net_pipe);
