@@ -139,12 +139,11 @@ int client_update_system(World *world, int net_pipe) {
  */
 void client_update_chat(World *world, void *packet)
 {
-	char message[180 + MAX_NAME + 2];
+	char message[MAX_MESSAGE + MAX_NAME + 2] = {0}; // Space for the max name, max message, and ": "
 	PKT_SND_CHAT *snd_chat = (PKT_SND_CHAT*)packet;
-	if(snd_chat->sendingPlayer_number == MAX_PLAYERS)
-	{
+
+	if(snd_chat->sendingPlayer_number == MAX_PLAYERS) // Message from the server
 		strcat(message, "AMAN: ");
-	}
 	else
 	{
 		strcat(message, world->player[player_table[snd_chat->sendingPlayer_number]].name);
