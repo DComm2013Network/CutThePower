@@ -511,6 +511,14 @@ int *get_visibility_type(PositionComponent *newposition, FowPlayerPosition *fowp
 
 
 
+int iscorner(int n)
+{
+	int arr[] = { 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21 };
+	for(int i = 0; i < 12; i++) if(arr[i] == n) return 1;
+	
+	return 0;
+}
+
 /**
  * Sets a tile's visibility.
  *
@@ -537,32 +545,18 @@ int set_visibility_type(FowPlayerPosition *fowp, int yDel, int xDel, int newvis)
 
 	int *vis = get_visibility_type(&newposition, fowp, yDel, xDel);
 
-	if(newvis != *vis && *vis != 1 && *vis != 2)
-	{
-		switch(*vis)
-		{
-			case 10:
-			case 11:	
-			case 12:
-			case 13:
-			case 14:
-			case 15:
-			case 16:
-			case 17:	
-			case 18:	
-			case 19:
-			case 20:
-			case 21: *vis = CLEAR_VIS;
-								break;	
-		}
-	}
-	else if(newvis == 0)
+	if(newvis == 0)
 	{
 		*vis = CLEAR_VIS;
 	}
-	else						
+	else if(iscorner(*vis) && iscorner(newvis))
+	{
+		*vis = CLEAR_VIS;
+	}
+	else
+	{					
 		*vis = newvis;
-	
+	}
 	if( is_wall_collision(world, newposition) == COLLISION_WALL ) { 
 		*vis = TRANSP_VIS;
 		return 0; 
