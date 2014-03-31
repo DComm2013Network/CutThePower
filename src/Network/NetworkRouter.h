@@ -53,6 +53,7 @@ void net_cleanup(NDATA send_data, NDATA receive_data, PDATA gameplay, void **cac
 void write_shutdown(int gameplay_pipe, const char *err_str, int err_size);
 int cache_chat(PKT_SND_CHAT * packet);
 int send_cached_chat();
+void nonexit_net_cleanup(NDATA send_data, NDATA receive_data, PDATA gameplay, void **cached_packets);
 
 #endif
 
