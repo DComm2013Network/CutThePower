@@ -423,7 +423,7 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 						send_status(world, sendpipe, 2, PLAYER_STATE_READY);
 					}
 					else {
-						//send_status(world, sendpipe, 0, PLAYER_STATE_WAITING);
+						send_status(world, sendpipe, 0, PLAYER_STATE_WAITING);
 					}
 				}
 			}
