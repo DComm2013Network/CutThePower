@@ -368,7 +368,6 @@ bool menu_click(World *world, unsigned int entity) {
 		printf("Username: %s\n", username);
 		printf("Server IP: %s\n", serverip);
 		
-		
 		#if SHOW_MENU_INTRO 
 		destroy_world(world);
 		create_load_screen(world);
@@ -491,10 +490,7 @@ void animation_end(World *world, unsigned int entity) {
 		init_client_network(send_router_fd, rcv_router_fd, serverip);
 		init_client_update(world);
 		send_intialization(world, send_router_fd[WRITE], username);
-		create_objective(world, 620, 380, 40, 40, 0, 0);
-		
-		world->mask[player_entity] |= COMPONENT_ANIMATION;
-		load_animation("assets/Graphics/player/shane/animation.txt", world, player_entity);
+		//create_objective(world, 620, 380, 40, 40, 0, 0);
 	}
 	//LOADING SCREEN ENDED
 	else if (animationComponent->id == 1) { //1 is the loading screen

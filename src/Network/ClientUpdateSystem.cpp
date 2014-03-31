@@ -26,8 +26,8 @@ extern int network_ready;         /**< Indicates whether the network has initial
 extern int player_team;           /**< The player's team (0, COPS or ROBBERS). */
 int floor_change_flag = 0;        /**< Whether we just changed floors. */
 
-static unsigned int *player_table       = NULL; /**< A lookup table mapping server player numbers to client entities. */
-static objective_cache *objective_table = NULL; /**< A lookup table mapping server objective numbers to client entities. */
+unsigned int *player_table       = NULL; /**< A lookup table mapping server player numbers to client entities. */
+objective_cache *objective_table = NULL; /**< A lookup table mapping server objective numbers to client entities. */
 
 /**
  * Receives all updates from the server and applies them to the world.

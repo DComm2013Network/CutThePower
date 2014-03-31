@@ -93,12 +93,9 @@ void send_intialization(World *world, int fd, char * username)
 	for (int j = 0; j < MAX_ENTITIES; j++) {
 		if (IN_THIS_COMPONENT(world->mask[j], COMPONENT_PLAYER | COMPONENT_CONTROLLABLE))
 		{
-			size_t name_len = strlen(username);
 			controllable_player = j;
-			memcpy(pkt1->client_player_name, username, name_len);
-			pkt1->client_player_name[name_len] = 0;
-			memcpy(world->player[j].name, username, name_len);
-			world->player[j].name[name_len] = 0;
+			memcpy(pkt1->client_player_name, username, MAX_NAME);
+			memcpy(world->player[j].name, username, MAX_NAME);
 			pkt1->selectedCharacter = world->player[j].character;
 			break;
 		}
