@@ -23,6 +23,8 @@
 #include "components.h"
 #include "../systems.h"
 #include "../Graphics/text.h"
+#include "menu.h"
+#include "../Input/chat.h"
 
 #define SYSTEM_MASK (COMPONENT_COMMAND) /**< Entities with a command component will be processed by the system. */
 
@@ -32,6 +34,9 @@ extern int textField; /**< This references the textField variable in the mousein
 int *command_keys; /**< This is the current keycodes mapped to each command. */
 extern const char *character_map;
 extern bool running;
+extern unsigned int player_entity;
+
+extern int window_width, window_height;
 
 /**
  * Polls the keyboard for input and performs the appropriate action.
@@ -69,6 +74,30 @@ void KeyInputSystem(World *world)
         if (event.type == SDL_QUIT) {
             running = false;
         }
+        else if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
+			
+			//printf("X: %d Y: %d\n", event.window.data1, event.window.data2);
+			
+			window_width = event.window.data1;
+			window_height = event.window.data2;
+			
+		}
+		else if (event.type == SDL_TEXTINPUT) {
+			
+			if (textField != -1) {
+				
+				TextFieldComponent *text = &(world->text[textField]);
+				
+				if (text->length < text->max_length) {
+
+					strcpy(&text->text[text->length], event.text.text);
+					
+					text->length += strlen(event.text.text);
+					
+				}
+				
+			}
+		}
     }
     
     currentKeyboardState = SDL_GetKeyboardState(&numKeys);
@@ -98,24 +127,8 @@ void KeyInputSystem(World *world)
 				text->length = 0;
 			}
 		}
-		else if (text->length < MAX_STRING) {
-			
-			for(int i = 0; i <= 512; i++) {
-				
-				code = SDL_GetScancodeFromName((char*)&i);
-				
-				if (currentKeyboardState[code] &&
-					!prevKeyboardState[code]) {
-					
-					text->text[text->length] = (char)i;
-					text->length++;
-					
-					break;
-				}
-			}
-		}
     }
-
+	
     for(entity = 0; entity < MAX_ENTITIES; entity++) {
 
         if ((world->mask[entity] & SYSTEM_MASK) == SYSTEM_MASK)
@@ -127,8 +140,37 @@ void KeyInputSystem(World *world)
             command->commands[C_DOWN] = (currentKeyboardState[command_keys[C_DOWN]] != 0);
             command->commands[C_RIGHT] = (currentKeyboardState[command_keys[C_RIGHT]] != 0);
 			command->commands[C_ACTION] = (currentKeyboardState[command_keys[C_ACTION]] != 0) && (prevKeyboardState[command_keys[C_ACTION]] == 0);
+			
         }
     }
+    
+    if (player_entity != -1) {
+		//pause menu
+		if ((currentKeyboardState[SDL_SCANCODE_ESCAPE] != 0) && (prevKeyboardState[SDL_SCANCODE_ESCAPE] == 0)) {
+			world->mask[player_entity] ^= COMPONENT_COMMAND;
+			create_pause_screen(world);
+		}
+		
+		//text state
+		if ((currentKeyboardState[SDL_SCANCODE_RETURN] != 0) && (prevKeyboardState[SDL_SCANCODE_RETURN] == 0)) {
+			
+			//Enter pressed second time.
+			if (!IN_THIS_COMPONENT(world->mask[player_entity], COMPONENT_COMMAND)) {
+				
+				
+				printf("Text: %s\n", world->text[textField].text);
+				
+				chat_add_line(world->text[textField].text);
+				
+				destroy_menu(world);
+				textField = -1;
+			}
+			else {
+				textField = create_chat(world);
+			}
+			world->mask[player_entity] ^= COMPONENT_COMMAND;
+		}
+	}
     
     //set the previous to the temp. current keystate so we don't get updates we never handled.
     if (prevKeyboardState == 0) {

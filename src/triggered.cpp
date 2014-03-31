@@ -9,6 +9,7 @@
 #include "Input/menu.h"
 #include "Graphics/text.h"
 #include "Network/Packets.h"
+#include "Graphics/map.h"
 
 #define SHOW_MENU_INTRO 0 //1 == load intro, 0 == load straight into map
 
@@ -20,6 +21,7 @@ extern int game_net_signalfd;
 static int character;
 static char username[MAX_NAME];
 static char serverip[MAXIP];
+extern SDL_Window *window;
 
 bool menu_click(World *world, unsigned int entity) {
 	//printf("Clicked: %s\n", world->button[entity].label);
@@ -67,7 +69,6 @@ bool menu_click(World *world, unsigned int entity) {
 		strcpy(world->button[entity].label, "options_sound_on");
 		
 		enable_sound(true);
-		play_music(SOUND_MUSIC_MENU_RAIN);
 
 	}
 	else if (strcmp(world->button[entity].label, "options_sound_on") == 0) {
@@ -87,6 +88,28 @@ bool menu_click(World *world, unsigned int entity) {
 
 		create_keymap_menu(world);
 
+	}
+	else if (strcmp(world->button[entity].label, "options_fullscreen_off") == 0) {
+
+		world->position[entity].x = (WIDTH / 2);
+		render_small_text(world, entity, "FULLSCREEN ON");
+		
+		world->button[entity].label = (char*)realloc(world->button[entity].label, sizeof(char) * strlen("options_fullscreen_on"));
+		strcpy(world->button[entity].label, "options_fullscreen_on");
+		
+		SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+		
+	}
+	else if (strcmp(world->button[entity].label, "options_fullscreen_on") == 0) {
+
+		world->position[entity].x = (WIDTH / 2);
+		render_small_text(world, entity, "FULLSCREEN OFF");
+		
+		world->button[entity].label = (char*)realloc(world->button[entity].label, sizeof(char) * strlen("options_fullscreen_off"));
+		strcpy(world->button[entity].label, "options_fullscreen_off");
+		
+		SDL_SetWindowFullscreen(window, 0);
+		
 	}
 
 	//KEYMAP
@@ -372,8 +395,67 @@ bool menu_click(World *world, unsigned int entity) {
 
 		create_main_menu(world);
 	}
+	
+	//IN GAME PAUSE MENU
+	else if (strcmp(world->button[entity].label, "ingame_sound_off") == 0) {
+		
+		world->position[entity].x = (WIDTH / 2);
+		render_small_text(world, entity, "SOUND ON");
+		
+		world->button[entity].label = (char*)realloc(world->button[entity].label, sizeof(char) * strlen("ingame_sound_on"));
+		strcpy(world->button[entity].label, "ingame_sound_on");
+		
+		enable_sound(true);
 
+	}
+	else if (strcmp(world->button[entity].label, "ingame_sound_on") == 0) {
+		
+		world->position[entity].x = (WIDTH / 2);
+		render_small_text(world, entity, "SOUND OFF");
+		
+		world->button[entity].label = (char*)realloc(world->button[entity].label, sizeof(char) * strlen("ingame_sound_off"));
+		strcpy(world->button[entity].label, "ingame_sound_off");
+		
+		enable_sound(false);
 
+	}
+	else if (strcmp(world->button[entity].label, "ingame_fullscreen_off") == 0) {
+
+		world->position[entity].x = (WIDTH / 2);
+		render_small_text(world, entity, "FULLSCREEN ON");
+		
+		world->button[entity].label = (char*)realloc(world->button[entity].label, sizeof(char) * strlen("ingame_fullscreen_on"));
+		strcpy(world->button[entity].label, "ingame_fullscreen_on");
+		
+		SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+		
+	}
+	else if (strcmp(world->button[entity].label, "ingame_fullscreen_on") == 0) {
+
+		world->position[entity].x = (WIDTH / 2);
+		render_small_text(world, entity, "FULLSCREEN OFF");
+		
+		world->button[entity].label = (char*)realloc(world->button[entity].label, sizeof(char) * strlen("ingame_fullscreen_off"));
+		strcpy(world->button[entity].label, "ingame_fullscreen_off");
+		
+		SDL_SetWindowFullscreen(window, 0);
+		
+	}
+	else if (strcmp(world->button[entity].label, "ingame_back") == 0) {
+		
+		destroy_menu(world);
+		
+		world->mask[player_entity] ^= COMPONENT_COMMAND;
+		
+	}
+	else if (strcmp(world->button[entity].label, "ingame_exit") == 0) {
+		
+		destroy_world(world);
+		
+		cleanup_map();
+		create_main_menu(world);
+	}
+	
 
 	else {
 		printf("DID NOT HANDLE BUTTON: %s\n", world->button[entity].label);
@@ -409,6 +491,10 @@ void animation_end(World *world, unsigned int entity) {
 		init_client_network(send_router_fd, rcv_router_fd, serverip);
 		init_client_update(world);
 		send_intialization(world, send_router_fd[WRITE], username);
+		create_objective(world, 620, 380, 40, 40, 0, 0);
+		
+		world->mask[player_entity] |= COMPONENT_ANIMATION;
+		load_animation("assets/Graphics/player/shane/animation.txt", world, player_entity);
 	}
 	//LOADING SCREEN ENDED
 	else if (animationComponent->id == 1) { //1 is the loading screen
@@ -416,5 +502,11 @@ void animation_end(World *world, unsigned int entity) {
 		destroy_world(world);
 
 		create_intro(world);
+	}
+	else if (animationComponent->id == 2) { //2 is the logo loading screen
+		
+		destroy_world(world);
+		
+		create_main_menu(world);
 	}
 }

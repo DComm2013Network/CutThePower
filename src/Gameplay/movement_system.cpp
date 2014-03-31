@@ -402,6 +402,14 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 					play_animation(world, entity, "up");
 					//up
 				}
+				else if (movement->movX > 0.15 && abs(movement->movX) == abs(movement->movY)) {
+					play_animation(world, entity, "right");
+					//diagonal - up/right and down/right
+				}
+				else if (movement->movX < -0.15 && abs(movement->movX) == abs(movement->movY)) {
+					play_animation(world, entity, "left");
+					//diagonal - up/left and down/left
+				}
 				else {
 					//none
 					cancel_animation(world, entity);
@@ -428,6 +436,7 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 			collision = &(world->collision[entity]);
 			CollisionData data;
 			PositionComponent temp;
+			
 			temp.x = position->x;
 			temp.y = position->y;
 			temp.width = position->width;

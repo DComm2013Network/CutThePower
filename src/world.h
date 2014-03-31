@@ -15,7 +15,8 @@
 #define MAX_ENTITIES 256
 
 //Maximum string lengths
-#define MAX_STRING 15
+#define MAX_STRING 			15
+#define MAX_KEYMAP_STRING 	6
 
 #define IN_THIS_COMPONENT(mask, x) (((mask) & (x)) == (x))
 

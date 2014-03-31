@@ -4,8 +4,6 @@
  * @file world.cpp
  */
 
-//#define ANIMATION_AMOUNT 6
-
 #include "world.h"
 
 #include <SDL2/SDL.h>
@@ -15,6 +13,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+extern unsigned int background;	//this is here because we need to keep the background loaded while in the menu.
+									//this needs to be cleaned up when the destroy_world function is called.
 /**
  * This function initializes every mask to be 0, so that there are no components.
  * 
@@ -384,6 +384,7 @@ void destroy_world(World *world) {
 		//printf("world->mask[%3i]: 0x%08X\n", entity, world->mask[entity]);
 		destroy_entity(world, entity);
 	}
+	background = MAX_ENTITIES + 1;
 }
 
 void destroy_world_not_player(World *world) {
