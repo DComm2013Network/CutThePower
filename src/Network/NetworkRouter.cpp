@@ -150,6 +150,7 @@ void *networkRouter(void *args)
 
 	
     pthread_cancel(thread_receive);
+    pthread_cancel(thread_send);
     // Kill the send thread... forgot how this was supposed to happen, oops
     net_cleanup(send_data, receive_data, gameplay, cached_packets);
     return NULL;

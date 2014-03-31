@@ -172,7 +172,7 @@ void play_music(unsigned int sound) {
  * @author Jordan Marling
  */
 void stop_music() {
-//	Mix_HaltMusic();
+	Mix_HaltMusic();
 }
 
 /**
