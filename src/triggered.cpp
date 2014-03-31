@@ -8,11 +8,20 @@
 #include "sound.h"
 #include "Input/menu.h"
 #include "Graphics/text.h"
+#include "Network/Packets.h"
+#include "Graphics/map.h"
 
 #define SHOW_MENU_INTRO 0 //1 == load intro, 0 == load straight into map
 
 extern bool running;
 extern unsigned int player_entity;
+extern int send_router_fd[];
+extern int rcv_router_fd[];
+extern int game_net_signalfd;
+static int character;
+static char username[MAX_NAME];
+static char serverip[MAXIP];
+extern SDL_Window *window;
 
 bool menu_click(World *world, unsigned int entity) {
 	//printf("Clicked: %s\n", world->button[entity].label);
@@ -60,7 +69,6 @@ bool menu_click(World *world, unsigned int entity) {
 		strcpy(world->button[entity].label, "options_sound_on");
 		
 		enable_sound(true);
-		play_music(SOUND_MUSIC_MENU_RAIN);
 
 	}
 	else if (strcmp(world->button[entity].label, "options_sound_on") == 0) {
@@ -80,6 +88,28 @@ bool menu_click(World *world, unsigned int entity) {
 
 		create_keymap_menu(world);
 
+	}
+	else if (strcmp(world->button[entity].label, "options_fullscreen_off") == 0) {
+
+		world->position[entity].x = (WIDTH / 2);
+		render_small_text(world, entity, "FULLSCREEN ON");
+		
+		world->button[entity].label = (char*)realloc(world->button[entity].label, sizeof(char) * strlen("options_fullscreen_on"));
+		strcpy(world->button[entity].label, "options_fullscreen_on");
+		
+		SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+		
+	}
+	else if (strcmp(world->button[entity].label, "options_fullscreen_on") == 0) {
+
+		world->position[entity].x = (WIDTH / 2);
+		render_small_text(world, entity, "FULLSCREEN OFF");
+		
+		world->button[entity].label = (char*)realloc(world->button[entity].label, sizeof(char) * strlen("options_fullscreen_off"));
+		strcpy(world->button[entity].label, "options_fullscreen_off");
+		
+		SDL_SetWindowFullscreen(window, 0);
+		
 	}
 
 	//KEYMAP
@@ -160,175 +190,139 @@ bool menu_click(World *world, unsigned int entity) {
 	else if (strcmp(world->button[entity].label, "menu_select_abhishek") == 0) {
 		
 		destroy_menu(world);
-		
+		character = ABHISHEK;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_aman") == 0) {
 		
 		destroy_menu(world);
-		
+		character = AMAN;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_andrew") == 0) {
 		
 		destroy_menu(world);
-		
+		character = ANDREW;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_chris") == 0) {
 		
 		destroy_menu(world);
-		
+		character = CHRIS;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_clark") == 0) {
 		
 		destroy_menu(world);
-		
+		character = CLARK;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_cory") == 0) {
 		
 		destroy_menu(world);
-		
+		character = CORY;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_damien") == 0) {
 		
 		destroy_menu(world);
-		
+		character = DAMIEN;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_german") == 0) {
 		
 		destroy_menu(world);
-		
+		character = GERMAN;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_ian") == 0) {
 		
 		destroy_menu(world);
-		
+		character = IAN;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_jordan") == 0) {
 		
 		destroy_menu(world);
-		
+		character = JORDAN;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_josh") == 0) {
 		
 		destroy_menu(world);
-		
+		character = JOSH;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_konst") == 0) {
 		
 		destroy_menu(world);
-		
+		character = KONST;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_mat") == 0) {
 		
 		destroy_menu(world);
-		
+		character = MAT;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_ramzi") == 0) {
-		
 		destroy_menu(world);
-		
+		character = RAMZI;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_robin") == 0) {
 		
 		destroy_menu(world);
-		
+		character = ROBIN;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_sam") == 0) {
 		
 		destroy_menu(world);
-		
+		character = SAM;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_shane") == 0) {
 		
 		destroy_menu(world);
-		
+		character = SHANE;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_tim") == 0) {
 		
 		destroy_menu(world);
-		
+		character = TIM;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_vincent") == 0) {
 		
 		destroy_menu(world);
-		
+		character = VINCENT;
 		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_random") == 0) {
 		
 		destroy_menu(world);
-		
-		create_setup_menu(world);
-		
-	}
-	else if (strcmp(world->button[entity].label, "menu_select_sam") == 0) {
-
-		destroy_menu(world);
-
-		create_setup_menu(world);
-
-	}
-	else if (strcmp(world->button[entity].label, "menu_select_shane") == 0) {
-
-		destroy_menu(world);
-
-		create_setup_menu(world);
-
-	}
-	else if (strcmp(world->button[entity].label, "menu_select_tim") == 0) {
-
-		destroy_menu(world);
-
-		create_setup_menu(world);
-
-	}
-	else if (strcmp(world->button[entity].label, "menu_select_vincent") == 0) {
-
-		destroy_menu(world);
-
-		create_setup_menu(world);
-
-	}
-	else if (strcmp(world->button[entity].label, "menu_select_random") == 0) {
-
-		destroy_menu(world);
-
+		character = rand() % 18;
 		create_setup_menu(world);
 
 	}
@@ -351,8 +345,6 @@ bool menu_click(World *world, unsigned int entity) {
 
 	}
 	else if (strcmp(world->button[entity].label, "setup_play") == 0) {
-		char *username;
-		char *serverip;
 
 		unsigned int i;
 
@@ -364,10 +356,10 @@ bool menu_click(World *world, unsigned int entity) {
 			if (IN_THIS_COMPONENT(world->mask[i], COMPONENT_TEXTFIELD)) {
 
 				if (strcmp(world->text[i].name, "setup_username") == 0) {
-					username = world->text[i].text;
+					memcpy(username, world->text[i].text, MAX_NAME);
 				}
 				else if (strcmp(world->text[i].name, "setup_serverip") == 0) {
-					serverip = world->text[i].text;
+					memcpy(serverip, world->text[i].text, MAXIP);
 				}
 
 			}
@@ -375,7 +367,6 @@ bool menu_click(World *world, unsigned int entity) {
 
 		printf("Username: %s\n", username);
 		printf("Server IP: %s\n", serverip);
-		
 		
 		#if SHOW_MENU_INTRO 
 		destroy_world(world);
@@ -403,8 +394,67 @@ bool menu_click(World *world, unsigned int entity) {
 
 		create_main_menu(world);
 	}
+	
+	//IN GAME PAUSE MENU
+	else if (strcmp(world->button[entity].label, "ingame_sound_off") == 0) {
+		
+		world->position[entity].x = (WIDTH / 2);
+		render_small_text(world, entity, "SOUND ON");
+		
+		world->button[entity].label = (char*)realloc(world->button[entity].label, sizeof(char) * strlen("ingame_sound_on"));
+		strcpy(world->button[entity].label, "ingame_sound_on");
+		
+		enable_sound(true);
 
+	}
+	else if (strcmp(world->button[entity].label, "ingame_sound_on") == 0) {
+		
+		world->position[entity].x = (WIDTH / 2);
+		render_small_text(world, entity, "SOUND OFF");
+		
+		world->button[entity].label = (char*)realloc(world->button[entity].label, sizeof(char) * strlen("ingame_sound_off"));
+		strcpy(world->button[entity].label, "ingame_sound_off");
+		
+		enable_sound(false);
 
+	}
+	else if (strcmp(world->button[entity].label, "ingame_fullscreen_off") == 0) {
+
+		world->position[entity].x = (WIDTH / 2);
+		render_small_text(world, entity, "FULLSCREEN ON");
+		
+		world->button[entity].label = (char*)realloc(world->button[entity].label, sizeof(char) * strlen("ingame_fullscreen_on"));
+		strcpy(world->button[entity].label, "ingame_fullscreen_on");
+		
+		SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+		
+	}
+	else if (strcmp(world->button[entity].label, "ingame_fullscreen_on") == 0) {
+
+		world->position[entity].x = (WIDTH / 2);
+		render_small_text(world, entity, "FULLSCREEN OFF");
+		
+		world->button[entity].label = (char*)realloc(world->button[entity].label, sizeof(char) * strlen("ingame_fullscreen_off"));
+		strcpy(world->button[entity].label, "ingame_fullscreen_off");
+		
+		SDL_SetWindowFullscreen(window, 0);
+		
+	}
+	else if (strcmp(world->button[entity].label, "ingame_back") == 0) {
+		
+		destroy_menu(world);
+		
+		world->mask[player_entity] ^= COMPONENT_COMMAND;
+		
+	}
+	else if (strcmp(world->button[entity].label, "ingame_exit") == 0) {
+		
+		destroy_world(world);
+		
+		cleanup_map();
+		create_main_menu(world);
+	}
+	
 
 	else {
 		printf("DID NOT HANDLE BUTTON: %s\n", world->button[entity].label);
@@ -423,18 +473,23 @@ void animation_end(World *world, unsigned int entity) {
 		stop_music();
 		stop_effect();
 		
+		PKT_GAME_STATUS pkt;
+		memcpy(pkt.otherPlayers_name[0], username, MAX_NAME);
+		pkt.characters[0] = character;
+		pkt.readystatus[0] = 0;
+		pkt.otherPlayers_teams[0] = 0;
+
 		map_init(world, "assets/Graphics/map/map_00/map00.txt", "assets/Graphics/map/map_00/tiles.txt");
-		player_entity = create_player(world, 620, 420, true, COLLISION_GUARD);
+		player_entity = create_player(world, 620, 420, true, COLLISION_HACKER, 0, &pkt);
 		
-		
-		load_animation("assets/Graphics/player/p0/rob_animation.txt", world, player_entity);
-		unsigned int e = create_player(world, 620, 460, false, COLLISION_HACKER);
-		load_animation("assets/Graphics/player/p0/rob_animation.txt", world, e);
-		
-		
-		//PUT CLIENT START CODE HERE!!!@!@!!!!
+		setup_character_animation(world, character, player_entity);
+		////NETWORK CODE
+		game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
 
-
+		init_client_network(send_router_fd, rcv_router_fd, serverip);
+		init_client_update(world);
+		send_intialization(world, send_router_fd[WRITE], username);
+		//create_objective(world, 620, 380, 40, 40, 0, 0);
 	}
 	//LOADING SCREEN ENDED
 	else if (animationComponent->id == 1) { //1 is the loading screen
@@ -442,5 +497,11 @@ void animation_end(World *world, unsigned int entity) {
 		destroy_world(world);
 
 		create_intro(world);
+	}
+	else if (animationComponent->id == 2) { //2 is the logo loading screen
+		
+		destroy_world(world);
+		
+		create_main_menu(world);
 	}
 }

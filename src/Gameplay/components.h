@@ -79,6 +79,7 @@ typedef struct {
 	playerNo_t playerNo;
 	status_t readyStatus;
 	char name[MAX_NAME];
+	character_t character;
 } PlayerComponent;
 
 typedef struct {

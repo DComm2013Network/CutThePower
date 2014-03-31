@@ -1,3 +1,4 @@
+
 /** @ingroup Gameplay */
 /** @{ */
 /** @file movement_system.cpp */
@@ -14,9 +15,17 @@
 #define CONTROLLABLE_MASK (COMPONENT_POSITION | COMPONENT_MOVEMENT | COMPONENT_CONTROLLABLE)	/**< Mask for moveable entities that may be controlled. */
 #define INPUT_MASK (COMPONENT_INPUT)															/**< Mask for entities that respond to input. */
 #define COLLISION_MASK (COMPONENT_COLLISION)													/**< Mask for entities that may collide with other entities. */
-#define PI 3.14159265																			/**< An approximation of pi for vector calculations. */
+#define PI 3.14159265		
+#define DIRECTION_RIGHT	1
+#define DIRECTION_LEFT	2
+#define DIRECTION_UP	3
+#define DIRECTION_DOWN	4																	/**< An approximation of pi for vector calculations. */
 
+extern int floor_change_flag;
+extern int send_router_fd[];
 extern unsigned int player_entity;
+extern int network_ready;
+extern unsigned int *player_table;
 
 /**
  * Adds a vector to the entity's movement vector.
@@ -126,6 +135,41 @@ void handle_y_collision(World* world, unsigned int entity, PositionComponent* te
 			break;
 	}
 }
+/**
+ * Recreates the environment with the map specified without deleting the characters.
+ *			
+ * @param[in, out]  world  	game world, searched for updates
+ * @param[out] 		targl 	game map to load (floor level)
+ *
+ * @return  void
+ *
+ * @designer    Ramzi Chennafi
+ * @author      Ramzi Chennafi
+ */
+void rebuild_floor(World* world, int targl)
+{
+	destroy_world_not_player(world);
+    switch (targl) {
+		case 0:
+			map_init(world, "assets/Graphics/map/map_00/map00.txt", "assets/Graphics/map/map_00/tiles.txt");
+			break;
+		case 1:
+			map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/tiles.txt");
+			break;
+		case 2:
+			map_init(world, "assets/Graphics/map/map_02/map02.txt", "assets/Graphics/map/map_02/tiles.txt");
+			break;
+		case 3:
+			map_init(world, "assets/Graphics/map/map_03/map03.txt", "assets/Graphics/map/map_03/tiles.txt");
+			break;
+	}
+	for (unsigned int i = 0; i < MAX_ENTITIES; i++) {
+		if (IN_THIS_COMPONENT(world->mask[i], COMPONENT_LEVEL)) {
+			world->level[i].levelID = targl;
+			break;
+		}
+	}
+}
 
 int handle_entity_collision(World* world, unsigned int entity, unsigned int entity_number, unsigned int tile_number, unsigned int hit_entity) {
 	switch(entity_number) {
@@ -139,33 +183,17 @@ int handle_entity_collision(World* world, unsigned int entity, unsigned int enti
 			break;
 		case COLLISION_STAIR:
 			if (world->collision[entity].type == COLLISION_HACKER || world->collision[entity].type == COLLISION_GUARD) {
-				int targx = world->wormhole[hit_entity].targetX, targy = world->wormhole[hit_entity].targetY, targl = world->wormhole[hit_entity].targetLevel;
-				destroy_world(world);
-				unsigned int e = create_player(world, targx, targy, true, COLLISION_HACKER);
-				load_animation("assets/Graphics/player/p0/rob_animation.txt", world, e);
-			    world->position[e].level = targl;
-			    player_entity = e;
-			    switch (targl) {
-					case 0:
-						map_init(world, "assets/Graphics/map/map_00/map00.txt", "assets/Graphics/map/map_00/tiles.txt");
-						break;
-					case 1:
-						map_init(world, "assets/Graphics/map/map_01/map01.txt", "assets/Graphics/map/map_01/tiles.txt");
-						break;
-					case 2:
-						map_init(world, "assets/Graphics/map/map_02/map02.txt", "assets/Graphics/map/map_02/tiles.txt");
-						break;
-					case 3:
-						map_init(world, "assets/Graphics/map/map_03/map03.txt", "assets/Graphics/map/map_03/tiles.txt");
-						break;
+				int targx = world->wormhole[hit_entity].targetX;
+				int targy = world->wormhole[hit_entity].targetY;
+				int targl = world->wormhole[hit_entity].targetLevel;
+			
+				move_request(world, send_router_fd[WRITE], targl, targx, targy);
+				if(!network_ready)
+				{
+					rebuild_floor(world, targl);
+					return 1;
 				}
-				for (unsigned int i = 0; i < MAX_ENTITIES; i++) {
-					if (IN_THIS_COMPONENT(world->mask[i], COMPONENT_LEVEL)) {
-						world->level[i].levelID = targl;
-						break;
-					}
-				}
-				return MSG_ROOMCHANGE;
+				floor_change_flag = 1;
 			}
 			break;
 	}
@@ -199,7 +227,7 @@ int handle_entity_collision(World* world, unsigned int entity, unsigned int enti
  * @designer ?
  * @author   ?
  */
-void movement_system(World* world, FPS fps) {
+void movement_system(World* world, FPS fps, int sendpipe) {
 	unsigned int entity;
 	PositionComponent		*position;
 	CommandComponent		*command;
@@ -227,17 +255,29 @@ void movement_system(World* world, FPS fps) {
 				unsigned int entity_number = 0;
 				unsigned int tile_number = 0;
 				unsigned int hit_entity = 0;
+				bool key_pressed = false;
 				
 				if (command->commands[C_UP]) {
+					key_pressed = true;
+					world->movement[entity].lastDirection = DIRECTION_UP;
 					add_force(world, entity, world->movement[entity].acceleration, -90);
 				}
+				
 				if (command->commands[C_DOWN]) {
+					key_pressed = true;
+					world->movement[entity].lastDirection = DIRECTION_DOWN;
 					add_force(world, entity, world->movement[entity].acceleration, 90);
 				}
+				
 				if (command->commands[C_LEFT]) {
+					key_pressed = true;
+					world->movement[entity].lastDirection = DIRECTION_LEFT;
 					add_force(world, entity, world->movement[entity].acceleration, 180);
 				}
+				
 				if (command->commands[C_RIGHT]) {
+					key_pressed = true;
+					world->movement[entity].lastDirection = DIRECTION_RIGHT;
 					add_force(world, entity, world->movement[entity].acceleration, 0);
 				}
 				
@@ -250,10 +290,14 @@ void movement_system(World* world, FPS fps) {
 					collision_system(world, entity, &temp, &entity_number, &tile_number, &hit_entity);
 					handle_y_collision(world, entity, &temp, entity_number, tile_number, fps);
 					
-					if (handle_entity_collision(world, entity, entity_number, tile_number, hit_entity) != MSG_ROOMCHANGE) {
-						position->x = temp.x;
-						position->y = temp.y;
-					}
+					handle_entity_collision(world, entity, entity_number, tile_number, hit_entity);
+				 }
+				
+				position->x = temp.x;
+				position->y = temp.y;
+				
+				if (key_pressed == false && hit_entity != MAX_ENTITIES) {
+					anti_stuck_system(world, entity, hit_entity);
 				}
 				
 				if (movement->movX > 0 && abs(movement->movX) > abs(movement->movY)) {
@@ -268,20 +312,25 @@ void movement_system(World* world, FPS fps) {
 				else if (movement->movY < 0 && abs(movement->movY) > abs(movement->movX)) {
 					play_animation(world, entity, "up");
 				}
+				else if (movement->movX > 0.15 && abs(movement->movX) == abs(movement->movY)) {
+					play_animation(world, entity, "right");
+				}
+				else if (movement->movX < -0.15 && abs(movement->movX) == abs(movement->movY)) {
+					play_animation(world, entity, "left");
+				}
 				else {
 					cancel_animation(world, entity);
 				}
 				
-				//printf("FPS: %f\n", fps.getFPS());
 				if (position->level == 0) {
 					if (position->x < 240) {
-						world->player[entity].teamNo = 1;
+						send_status(world, sendpipe, 1, PLAYER_STATE_READY);
 					}
 					else if (position->x > 1000) {
-						world->player[entity].teamNo = 2;
+						send_status(world, sendpipe, 2, PLAYER_STATE_READY);
 					}
-					else if (world->player[entity].teamNo != 0) {
-						world->player[entity].teamNo = 0;
+					else {
+						//send_status(world, sendpipe, 0, PLAYER_STATE_WAITING);
 					}
 				}
 			}
@@ -292,6 +341,7 @@ void movement_system(World* world, FPS fps) {
 			controllable = &(world->controllable[entity]);
 			movement = &(world->movement[entity]);
 			PositionComponent temp;
+			
 			temp.x = position->x;
 			temp.y = position->y;
 			temp.width = position->width;
@@ -314,6 +364,37 @@ void movement_system(World* world, FPS fps) {
 			position->y = temp.y;
 			
 			handle_entity_collision(world, entity, entity_number, tile_number, hit_entity);
+
+			switch(world->movement[entity].lastDirection) {
+				case DIRECTION_RIGHT:
+					if (world->movement[entity].movX != 0) {
+						play_animation(world, entity, "right");
+					} else {
+						cancel_animation(world, entity);
+					}
+					break;
+				case DIRECTION_LEFT:
+					if (world->movement[entity].movX != 0) {
+						play_animation(world, entity, "left");
+					} else {
+						cancel_animation(world, entity);
+					}
+					break;
+				case DIRECTION_UP:
+					if (world->movement[entity].movY != 0) {
+						play_animation(world, entity, "down");
+					} else {
+						cancel_animation(world, entity);
+					}
+					break;
+				case DIRECTION_DOWN:
+					if (world->movement[entity].movY != 0) {
+						play_animation(world, entity, "up");
+					} else {
+						cancel_animation(world, entity);
+					}
+					break;
+			}
 		}
 	}
 }

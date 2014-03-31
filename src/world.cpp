@@ -4,8 +4,6 @@
  * @file world.cpp
  */
 
-#define ANIMATION_AMOUNT 6
-
 #include "world.h"
 
 #include <SDL2/SDL.h>
@@ -15,9 +13,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-void create_label(World *world, char *image, int x, int y, int w, int h);
-void create_button(World *world, char *image, char *name, int x, int y);
-
+extern unsigned int background;	//this is here because we need to keep the background loaded while in the menu.
+									//this needs to be cleaned up when the destroy_world function is called.
 /**
  * This function initializes every mask to be 0, so that there are no components.
  * 
@@ -113,7 +110,7 @@ unsigned int create_level(World* world, int** map, int width, int height, int ti
  * @designer
  * @author
  */
-unsigned int create_player(World* world, int x, int y, bool controllable, int collisiontype) {
+unsigned int create_player(World* world, int x, int y, bool controllable, int collisiontype, int playerNo, PKT_GAME_STATUS *status_update) {
 	unsigned int entity;
 	PositionComponent pos;
 	RenderPlayerComponent render;
@@ -121,20 +118,13 @@ unsigned int create_player(World* world, int x, int y, bool controllable, int co
 	ControllableComponent control;
 	CommandComponent command;
 	CollisionComponent collision;
+	PlayerComponent player;
 
 	int lastID = -1;
 	unsigned int tempMask = 0;
-	
-	//MovementComponent movement;
-	//CollisionComponent collision;
-	
+
 	render.width = 40;
 	render.height = 40;
-	//render.playerSurface = IMG_Load("assets/Graphics/player_80px.png");
-	//render.playerSurface = IMG_Load("assets/Graphics/hacker_down.png");
-	//if (!render.playerSurface) {
-	//	printf("mat is a doof\n");
-	//}
 	
 	pos.x = x;
 	pos.y = y;
@@ -164,7 +154,13 @@ unsigned int create_player(World* world, int x, int y, bool controllable, int co
 	collision.timerMax = 0;
 	collision.active = true;
 	collision.radius = 0;
-	
+
+	player.playerNo = playerNo;
+	player.teamNo = status_update->otherPlayers_teams[playerNo];
+	player.character = status_update->characters[playerNo];
+	player.readyStatus = status_update->readystatus[playerNo];
+	memcpy(player.name, status_update->otherPlayers_name[playerNo], MAX_NAME);
+
 	for(entity = 0; entity < MAX_ENTITIES; ++entity) {
 		if (world->mask[entity] == COMPONENT_EMPTY) {
 			if (controllable) {
@@ -173,25 +169,27 @@ unsigned int create_player(World* world, int x, int y, bool controllable, int co
 										COMPONENT_COMMAND | 
 										COMPONENT_MOVEMENT | 
 										COMPONENT_COLLISION |
-										COMPONENT_ANIMATION |
-										COMPONENT_CONTROLLABLE; //| COMPONENT_MOVEMENT | COMPONENT_COLLISION;
+										COMPONENT_CONTROLLABLE |
+										COMPONENT_PLAYER |
+										COMPONENT_ANIMATION;
 			} else {
 				world->mask[entity] =	COMPONENT_POSITION | 
 										COMPONENT_RENDER_PLAYER | 
 										COMPONENT_ANIMATION |
 										COMPONENT_COLLISION | 
-										COMPONENT_MOVEMENT;
+										COMPONENT_MOVEMENT |
+										COMPONENT_PLAYER;
 			}
 			world->position[entity] = pos;
 			world->renderPlayer[entity] = render;
 			world->command[entity] = command;
 			world->movement[entity] = movement;
 			world->collision[entity] = collision;
-			
+			world->player[entity] = player;
+
 			if (controllable) {
 				world->controllable[entity] = control;
 			}
-
 			return entity;
 		}
 	}
@@ -249,54 +247,32 @@ unsigned int create_objective(World* world, float x, float y, int w, int h, int 
  */
 unsigned int create_stair(World* world, int targetLevel, int targetX, int targetY, int x, int y, int width, int height, int level) {
 	unsigned int entity;
-	PositionComponent pos;
-	WormholeComponent target;
-	CollisionComponent collision;
-
-	int lastID = -1;
-	unsigned int tempMask = 0;
 	
-	pos.x = x;
-	pos.y = y;
-
-	pos.width = 2;
-	pos.height = 2;
-	pos.level = 0;
+	entity = create_entity(world, COMPONENT_POSITION | COMPONENT_COLLISION | COMPONENT_WORMHOLE);
 	
-	target.targetLevel = targetLevel;
-    target.targetX = targetX;
-    target.targetY = targetY;
-    
-	collision.id = 0;
-	collision.type = COLLISION_STAIR;
-	collision.timer = 0;
-	collision.timerMax = 600;
-	collision.active = true;
-	collision.radius = 0;
+	world->position[entity].x = x;
+	world->position[entity].y = y;
+	world->position[entity].width = width;
+	world->position[entity].height = height;
+	world->position[entity].level = level;
 	
-	for(entity = 0; entity < MAX_ENTITIES; ++entity) {
-		tempMask = world->mask[entity] & COMPONENT_POSITION;
-		if (tempMask == COMPONENT_MOVEMENT) {
-			lastID = world->collision[entity].id;
-		}
-		
-		if (world->mask[entity] == COMPONENT_EMPTY) {
-			world->mask[entity] =	COMPONENT_POSITION | 
-									COMPONENT_COLLISION | 
-									COMPONENT_WORMHOLE;
-
-			world->position[entity] = pos;
-			world->wormhole[entity] = target;
-			world->collision[entity] = collision;
-			
-			return entity;
-		}
-	}
-	return MAX_ENTITIES;
+	world->wormhole[entity].targetLevel = targetLevel;
+	world->wormhole[entity].targetX = targetX;
+	world->wormhole[entity].targetY = targetY;
+	
+	world->collision[entity].id = 0;
+	world->collision[entity].type = COLLISION_STAIR;
+	world->collision[entity].timer = 0;
+	world->collision[entity].timerMax = 0;
+	world->collision[entity].active = true;
+	world->collision[entity].radius = 0;
+	
+	return entity;
 }
 
 unsigned int create_block(World* world, int x, int y, int width, int height, int level) {
 	unsigned int entity = create_entity(world, COMPONENT_POSITION | COMPONENT_COLLISION);
+	
 	world->position[entity].x = x;
 	world->position[entity].y = y;
 	world->position[entity].width = width;
@@ -309,6 +285,7 @@ unsigned int create_block(World* world, int x, int y, int width, int height, int
 	world->collision[entity].timerMax = 0;
 	world->collision[entity].active = true;
 	world->collision[entity].radius = 0;
+	
 	return entity;
 }
 
@@ -396,10 +373,20 @@ void destroy_world(World *world) {
 	unsigned int entity;
 	
 	for(entity = 0; entity < MAX_ENTITIES; entity++) {
+		//printf("world->mask[%3i]: 0x%08X\n", entity, world->mask[entity]);
 		destroy_entity(world, entity);
 	}
-	memset(world, 0, sizeof(World));
+	background = MAX_ENTITIES + 1;
 }
 
+void destroy_world_not_player(World *world) {
+	unsigned int entity;
+	
+	for(entity = 0; entity < MAX_ENTITIES; entity++) {
+		if(!IN_THIS_COMPONENT(world->mask[entity], COMPONENT_PLAYER)) {
+			destroy_entity(world, entity);
+		}
+	}
+}
 
 

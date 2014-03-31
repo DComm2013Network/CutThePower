@@ -11,6 +11,7 @@
 #include <SDL2/SDL.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "map.h"
 #include "systems.h"
@@ -21,7 +22,6 @@ SDL_Rect map_rect;        /**< The rectangle containing the map. */
 int w;                    /**< The map's width. */
 int h;                    /**< The map's height. */
 int level;                /**< The current floor. */
-
 
 /**
  * Initiates the map by loading the tiles and putting it into one large texture.
@@ -51,20 +51,17 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 	
 	int width, height;
 	int x, y, i;
-	//uint8_t** map;
 	int **collision_map;
 	int **map;
-	//int **collision_map;loading
-	
-	//char entity_type[64];
+
 	char *entity_type = (char*)malloc(sizeof(char) * 128);
 	int entity_count;
+	
 	
 	SDL_Surface **tiles;
 	int *collision;
 	int num_tiles;
 	int pos = 0;
-	//char tile_filename[64];
 	char *tile_filename = (char*)malloc(sizeof(char) * 128);
 	
 	SDL_Rect tile_rect;
@@ -187,27 +184,26 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 				int x, y, floor;
 				float targetX, targetY;
 				char dir;
-				
+
 				if (fscanf(fp_map, "%d %d %f %f %d %c", &x, &y, &targetX, &targetY, &floor, &dir) != 6) {
 					printf("Error loading stair\n");
 					return -1;
 				}
-				
 				switch (dir) { // make the hitboxes for the stairs
 					case 'l':
-						create_stair(world, floor, targetX * TILE_WIDTH + TILE_WIDTH / 2, targetY * TILE_HEIGHT + TILE_HEIGHT / 2, x * TILE_WIDTH + TILE_WIDTH / 2 - 4, y * TILE_HEIGHT + TILE_HEIGHT / 2, TILE_WIDTH, TILE_HEIGHT, level);
+						entity = create_stair(world, floor, targetX * TILE_WIDTH + TILE_WIDTH / 2, targetY * TILE_HEIGHT + TILE_HEIGHT / 2, x * TILE_WIDTH + TILE_WIDTH / 2 - 5, y * TILE_HEIGHT + TILE_HEIGHT / 2, 4, 4, level);
 						create_block(world, x * TILE_WIDTH + 7, y * TILE_HEIGHT + TILE_HEIGHT / 2, 10, TILE_HEIGHT - 4, floor);
 						break;
 					case 'r':
-						create_stair(world, floor, targetX * TILE_WIDTH + TILE_WIDTH / 2, targetY * TILE_HEIGHT + TILE_HEIGHT / 2, x * TILE_WIDTH + TILE_WIDTH / 2 + 4, y * TILE_HEIGHT + TILE_HEIGHT / 2, TILE_WIDTH, TILE_HEIGHT, level);
+						entity = create_stair(world, floor, targetX * TILE_WIDTH + TILE_WIDTH / 2, targetY * TILE_HEIGHT + TILE_HEIGHT / 2, x * TILE_WIDTH + TILE_WIDTH / 2 + 5, y * TILE_HEIGHT + TILE_HEIGHT / 2, 4, 4, level);
 						create_block(world, x * TILE_WIDTH + TILE_WIDTH - 7, y * TILE_HEIGHT + TILE_HEIGHT / 2, 10, TILE_HEIGHT - 4, floor);
 						break;
 					case 'u':
-						create_stair(world, floor, targetX * TILE_WIDTH + TILE_WIDTH / 2, targetY * TILE_HEIGHT + TILE_HEIGHT / 2, x * TILE_WIDTH + TILE_WIDTH / 2, y * TILE_HEIGHT + TILE_HEIGHT / 2 - 4, TILE_WIDTH, TILE_HEIGHT, level);
+						entity = create_stair(world, floor, targetX * TILE_WIDTH + TILE_WIDTH / 2, targetY * TILE_HEIGHT + TILE_HEIGHT / 2, x * TILE_WIDTH + TILE_WIDTH / 2, y * TILE_HEIGHT + TILE_HEIGHT / 2 - 5, 4, 4, level);
 						create_block(world, x * TILE_WIDTH + TILE_WIDTH / 2, y * TILE_HEIGHT + 7, TILE_WIDTH - 4, 10, floor);
 						break;
 					case 'd':
-						create_stair(world, floor, targetX * TILE_WIDTH + TILE_WIDTH / 2, targetY * TILE_HEIGHT + TILE_HEIGHT / 2, x * TILE_WIDTH + TILE_WIDTH / 2, y * TILE_HEIGHT + TILE_HEIGHT / 2 + 4, TILE_WIDTH, TILE_HEIGHT, level);
+						entity = create_stair(world, floor, targetX * TILE_WIDTH + TILE_WIDTH / 2, targetY * TILE_HEIGHT + TILE_HEIGHT / 2, x * TILE_WIDTH + TILE_WIDTH / 2, y * TILE_HEIGHT + TILE_HEIGHT / 2 + 5, 4, 4, level);
 						create_block(world, x * TILE_WIDTH + TILE_WIDTH / 2, y * TILE_HEIGHT + TILE_HEIGHT - 7, TILE_WIDTH - 4, 10, floor);
 						break;
 				}
@@ -269,10 +265,10 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 			else if (strcmp(entity_type, "objective") == 0) {
 				
 				float x, y;
-				int level, w, h;
+				int w, h;
 				unsigned int id;
 				
-				if (fscanf(fp_map, "%f %f %d %d %u %d", &x, &y, &w, &h, &id, &level) != 6) {
+				if (fscanf(fp_map, "%f %f %d %d %u", &x, &y, &w, &h, &id) != 5) {
 					printf("Error loading objective!\n");
 					return -1;
 				}
@@ -287,11 +283,8 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 	}
 	
 	fclose(fp_map);
-	
-	
-	//render to surface
-	
-	cleanup_map();
+	//cleanup_map();
+
 	map_surface = SDL_CreateRGBSurface(0, width * TILE_WIDTH, height * TILE_HEIGHT, 32, 0, 0, 0, 0);
 	
 	if (map_surface == 0) {
@@ -306,12 +299,10 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 	
 	for(y = 0; y < height; y++) {
 		for(x = 0; x < width; x++) {
-			
 			tile_rect.x = x * TILE_WIDTH;
 			tile_rect.y = y * TILE_HEIGHT;
 			
 			SDL_BlitSurface(tiles[map[x][y]], NULL, map_surface, &tile_rect);
-			
 		}
 	}
 	
@@ -340,7 +331,7 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 	
 	free(entity_type);
 	free(tile_filename);
-	
+
 	return 0;
 }
 
@@ -420,3 +411,4 @@ void map_render(SDL_Surface *surface, World *world, unsigned int player_entity) 
 	
 	SDL_BlitSurface(map_surface, NULL, surface, &tempRect);
 }
+

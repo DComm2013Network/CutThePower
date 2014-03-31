@@ -1,4 +1,4 @@
-41
+26
 
 00	assets/Graphics/map/map_01/00_40px.bmp		0
 01	assets/Graphics/map/map_01/01_40px.bmp		0
@@ -20,24 +20,10 @@
 17	assets/Graphics/map/map_01/17_40px.bmp		2
 18	assets/Graphics/map/map_01/18_40px.bmp		2
 19	assets/Graphics/map/map_01/19_40px.bmp		2
-20	assets/Graphics/map/map_01/20_40px.bmp		2
+20	assets/Graphics/map/map_01/20_40px.bmp		1
 21	assets/Graphics/map/map_01/stairsdownleft.bmp	1
 22	assets/Graphics/map/map_01/stairsdownright.bmp	1
 23	assets/Graphics/map/map_01/stairsupleft.bmp	1
 24	assets/Graphics/map/map_01/stairsupright.bmp	1
 25  assets/Graphics/map/map_01/25_40px.bmp		1
-26	assets/Graphics/map/map_01/mainframe_topleft.bmp	2
-27	assets/Graphics/map/map_01/mainframe_topright.bmp	2
-28	assets/Graphics/map/map_01/mainframe_bottomleft.bmp	2
-29	assets/Graphics/map/map_01/mainframe_bottomright.bmp	2
-30	assets/Graphics/map/map_01/mainframe_topleft_w.bmp	2
-31	assets/Graphics/map/map_01/mainframe_topright_w.bmp	2
-32	assets/Graphics/map/map_01/mainframe_midleft.bmp	2
-33	assets/Graphics/map/map_01/mainframe_midright.bmp	2
-34	assets/Graphics/map/map_01/mainframe_bottomleft_w.bmp	1
-35	assets/Graphics/map/map_01/mainframe_bottomright_w.bmp	1
-36	assets/Graphics/map/map_01/water_cooler_bot.bmp	2
-37	assets/Graphics/map/map_01/water_cooler_top.bmp	2
-38	assets/Graphics/map/map_01/desk_mid.bmp	2
-39	assets/Graphics/map/map_01/desk_legs.bmp	1
-40	assets/Graphics/map/map_01/desk_end.bmp	2
+
