@@ -6,7 +6,7 @@
 Mix_Chunk *effects[MAX_EFFECTS];
 Mix_Music *music[MAX_MUSIC];
 
-bool soundon = true;
+bool soundon = false;
 
 /**
  * Loads all sound files into memory.

@@ -39,6 +39,7 @@ typedef struct {
 	
 } Animation;
 
+
 /**
  * Contains the components related to animation.
  *
