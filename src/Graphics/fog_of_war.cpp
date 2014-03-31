@@ -536,29 +536,35 @@ int set_visibility_type(FowPlayerPosition *fowp, int yDel, int xDel, int newvis)
 	PositionComponent newposition;
 
 	int *vis = get_visibility_type(&newposition, fowp, yDel, xDel);
-	
-	switch(*vis)
+
+	if(newvis != *vis && *vis != 1 && *vis != 2)
 	{
-		case 0:
-		case 10:
-		case 11:	
-		case 12:
-		case 13:
-		case 14:
-		case 15:
-		case 16:
-		case 17:	
-		case 18:	
-		case 19:
-		case 20:
-		case 21: *vis = CLEAR_VIS;
-							break;
-							
-		default: *vis = newvis;
+		switch(*vis)
+		{
+			case 10:
+			case 11:	
+			case 12:
+			case 13:
+			case 14:
+			case 15:
+			case 16:
+			case 17:	
+			case 18:	
+			case 19:
+			case 20:
+			case 21: *vis = CLEAR_VIS;
+								break;	
+		}
 	}
+	else if(newvis == 0)
+	{
+		*vis = CLEAR_VIS;
+	}
+	else						
+		*vis = newvis;
 	
 	if( is_wall_collision(world, newposition) == COLLISION_WALL ) { 
-		*vis = TRANSP_VIS; 
+		*vis = TRANSP_VIS;
 		return 0; 
 	}
 	return 1;
