@@ -42,8 +42,7 @@ int fogOfWarHeight;
 int fogOfWarWidth;
 
 extern int level;
-
-
+extern teamNo_t player_team;
 
 /**
  * Blits a fog of war "corner" tile to the larger window surface.
@@ -538,7 +537,25 @@ int set_visibility_type(FowPlayerPosition *fowp, int yDel, int xDel, int newvis)
 
 	int *vis = get_visibility_type(&newposition, fowp, yDel, xDel);
 	
-	*vis = (*vis == CLEAR_VIS) ? CLEAR_VIS : newvis;
+	switch(*vis)
+	{
+		case 0:
+		case 10:
+		case 11:	
+		case 12:
+		case 13:
+		case 14:
+		case 15:
+		case 16:
+		case 17:	
+		case 18:	
+		case 19:
+		case 20:
+		case 21: *vis = CLEAR_VIS;
+							break;
+							
+		default: *vis = newvis;
+	}
 	
 	if( is_wall_collision(world, newposition) == COLLISION_WALL ) { 
 		*vis = TRANSP_VIS; 

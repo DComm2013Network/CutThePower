@@ -58,6 +58,7 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 	SDL_Rect playerRect;
 	
 	SDL_Rect clipRect;
+	teamNo_t teamNo;
 	
 	for(entity = 0; entity < MAX_ENTITIES; entity++){
 		
@@ -81,6 +82,7 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 				playerRect.x -= renderPlayer->width / 2;
 				playerRect.y -= renderPlayer->height / 2;
 			}
+			
 			
 			if (IN_THIS_COMPONENT(world.mask[entity], COMPONENT_BUTTON)) {
 				
@@ -112,7 +114,11 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 			SDL_BlitScaled(renderPlayer->playerSurface, &clipRect, surface, &playerRect);
 			
 			
-			/*SAM*********************************/		
+			/*SAM*********************************/			
+			if(IN_THIS_COMPONENT(world.mask[entity], COMPONENT_PLAYER | COMPONENT_CONTROLLABLE)) {
+				teamNo = world.player[entity].teamNo;
+			}
+
 			if (IN_THIS_COMPONENT(world.mask[entity], COMPONENT_PLAYER)) {	
 	
 				FowPlayerPosition fowp;
