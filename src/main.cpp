@@ -78,7 +78,7 @@ int main(int argc, char* argv[]) {
 		if(network_ready)
 		{
 			current_time = SDL_GetTicks();
-			if((current_time - begin_time) >= (10 * SEND_FREQUENCY))
+			if((current_time - begin_time) >= (1000/SEND_FREQUENCY))
 			{
 				begin_time = SDL_GetTicks();
 				send_location(world, send_router_fd[WRITE]);

@@ -34,7 +34,7 @@
 #define CONNECT_CODE_DENIED 0x000
 
 #define TIMEOUT 5000	
-#define SEND_FREQUENCY 10
+#define SEND_FREQUENCY 60
 #define MAXIP 			20
 
 #define TCP 0
