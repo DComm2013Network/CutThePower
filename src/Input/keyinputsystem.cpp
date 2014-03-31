@@ -160,7 +160,7 @@ void KeyInputSystem(World *world)
 			if (!IN_THIS_COMPONENT(world->mask[player_entity], COMPONENT_COMMAND)) {
 				
 				chat_add_line(world->text[textField].text);
-				send_chat(send_router_fd[0], world->text[textField].text);
+				send_chat(send_router_fd[WRITE_END], world->text[textField].text);
 				destroy_menu(world);
 				textField = -1;
 			}
