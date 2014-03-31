@@ -296,6 +296,7 @@ void anti_stuck_system(World *world, unsigned int curEntityID, int otherEntityID
 	leftDist = abs(world->position[otherEntityID].x + world->position[otherEntityID].width - world->position[curEntityID].x);
 	upDist = abs(world->position[curEntityID].y + world->position[curEntityID].height - world->position[otherEntityID].y);
 	downDist = abs(world->position[otherEntityID].y + world->position[otherEntityID].height - world->position[curEntityID].y);
+	
 	if (rightDist < leftDist && rightDist < upDist && rightDist < downDist) {
 		world->position[curEntityID].x = world->position[otherEntityID].x - world->position[curEntityID].width - 1;
 	} else if (leftDist < rightDist && leftDist < upDist && leftDist < downDist) {

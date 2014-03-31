@@ -174,12 +174,12 @@ void send_status(World * world, int fd, teamNo_t team, int ready_status)
  * @designer Ramzi Chennafi
  * @author   Ramzi Chennafi
  */
-void send_chat(char * str)
+void send_chat(int fd, char * str)
 {
 	PKT_SND_CHAT * pkt = (PKT_SND_CHAT*) malloc(sizeof(PKT_SND_CHAT));
 
 	pkt->sendingPlayer_number = controllable_player;
-	memcpy(pkt->message, str);
+	memcpy(pkt->message, str, MAX_MESSAGE);
 
 	write_packet(fd, P_CHAT, pkt);
 	free(pkt);

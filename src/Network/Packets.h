@@ -34,20 +34,12 @@
 #define CONNECT_CODE_ACCEPTED 0x001
 #define CONNECT_CODE_DENIED   0x000
 
-<<<<<<< HEAD
-#define TIMEOUT 5000	
-#define SEND_FREQUENCY 60
+#define TIMEOUT 		5000	
+#define SEND_FREQUENCY 	60
 #define MAXIP 			20
-=======
-#define TIMEOUT        5000	
-#define SEND_FREQUENCY 10
-#define MAXIP          20
->>>>>>> ab0eb8cee1e4f51f3325f702ff1f09b134fa7008
-
-#define TCP   0
-#define UDP   1
-
-#define READ  0
+#define TCP   			0
+#define UDP   			1
+#define READ  			0
 #define WRITE 1
 
 #define P_NAME           1
