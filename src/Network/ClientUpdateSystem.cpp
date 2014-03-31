@@ -139,8 +139,19 @@ int client_update_system(World *world, int net_pipe) {
  */
 void client_update_chat(World *world, void *packet)
 {
+	char message[180];
 	PKT_SND_CHAT *snd_chat = (PKT_SND_CHAT*)packet;
-	chat_add_line(snd_chat->message);
+	if(snd_chat->sendingPlayer_number == MAX_PLAYERS)
+	{
+		strcat(message, "GOD: ");
+	}
+	else
+	{
+		strcat(message, world->player[player_table[snd_chat->sendingPlayer_number]].name);
+		strcat(message, ": ");
+	} 
+	strcat(message, snd_chat->message);
+	chat_add_line(message);
 }
 
 /**

@@ -171,12 +171,19 @@ void send_status(World * world, int fd, teamNo_t team, int ready_status)
  * @designer Ramzi Chennafi
  * @author   Ramzi Chennafi
  */
-void send_chat(int fd, char * str)
+void send_chat(World * world, int fd, char * str)
 {
 	PKT_SND_CHAT * pkt = (PKT_SND_CHAT*) malloc(sizeof(PKT_SND_CHAT));
 
-	pkt->sendingPlayer_number = controllable_player;
-	memcpy(pkt->message, str, MAX_MESSAGE);
+	for (int i = 0; i < MAX_ENTITIES; i++)
+	{
+		if (IN_THIS_COMPONENT(world->mask[i], COMPONENT_MOVEMENT | COMPONENT_POSITION | COMPONENT_PLAYER | COMPONENT_CONTROLLABLE))
+		{
+			pkt->sendingPlayer_number = world->player[i].playerNo;
+			memcpy(pkt->message, str, MAX_MESSAGE);
+			break;
+		}
+	}
 
 	write_packet(fd, P_CHAT, pkt);
 	free(pkt);
