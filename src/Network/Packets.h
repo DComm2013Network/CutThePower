@@ -23,23 +23,31 @@
 ----------------------------------------------------------------------*/
 
 // Limits
-#define MAX_PLAYERS 32
-#define MAX_FLOORS 8
-#define MAX_NAME 15
-#define MAX_MESSAGE 180
-#define MAX_OBJECTIVES 32
+#define MAX_PLAYERS          32
+#define MAX_FLOORS           8
+#define MAX_NAME             15
+#define MAX_MESSAGE          180
+#define MAX_OBJECTIVES       32
+#define OBJECTIVES_PER_FLOOR 4
 
 // Connect code Definitions
 #define CONNECT_CODE_ACCEPTED 0x001
-#define CONNECT_CODE_DENIED 0x000
+#define CONNECT_CODE_DENIED   0x000
 
+<<<<<<< HEAD
 #define TIMEOUT 5000	
 #define SEND_FREQUENCY 60
 #define MAXIP 			20
+=======
+#define TIMEOUT        5000	
+#define SEND_FREQUENCY 10
+#define MAXIP          20
+>>>>>>> ab0eb8cee1e4f51f3325f702ff1f09b134fa7008
 
-#define TCP 0
-#define UDP 1
-#define READ 0
+#define TCP   0
+#define UDP   1
+
+#define READ  0
 #define WRITE 1
 
 #define P_NAME           1
@@ -83,15 +91,15 @@
 // Game Status Definitions
 
 // Game Status Definitions
-#define GAME_STATE_WAITING 			0x001 // Waiting for PLAYER_STATE_READY by all players (LOBBY)
-#define GAME_STATE_ACTIVE 			0x002 // Game engine running
-#define GAME_STATE_OVER 			0x003
+#define GAME_STATE_WAITING 0x001 // Waiting for PLAYER_STATE_READY by all players (LOBBY)
+#define GAME_STATE_ACTIVE  0x002 // Game engine running
+#define GAME_STATE_OVER    0x003
 
-#define GAME_TEAM1_WIN 				0x006
-#define GAME_TEAM2_WIN 				0x007
+#define GAME_TEAM1_WIN 0x006
+#define GAME_TEAM2_WIN 0x007
 
-#define PLAYER_STATE_READY 		  0x004
-#define PLAYER_STATE_WAITING 	  0x005
+#define PLAYER_STATE_READY   0x004
+#define PLAYER_STATE_WAITING 0x005
 
 #define COPS    1
 #define ROBBERS	2
