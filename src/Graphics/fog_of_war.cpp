@@ -19,7 +19,7 @@
 #define COLLISION_MASK (COMPONENT_COLLISION)
 #define LEVEL_MASK (COMPONENT_LEVEL)
 
-#define NO_VIS		 0
+#define CLEAR_VIS		 0
 #define TRANSP_VIS 1
 #define OPAQUE_VIS 2
 		
@@ -32,7 +32,8 @@ extern SDL_Rect map_rect;
 int subOne(int n);
 int addOne(int n);
 
-int set_visibility_type (FowPlayerPosition *fowp, int yDel, int xDel, int visibility);
+int set_visibility_type_facade(FowPlayerPosition *fowp, int yDel, int xDel, int newvis);
+int set_visibility_type 			(FowPlayerPosition *fowp, int yDel, int xDel, int newvis);
 int is_wall_collision(World *world, PositionComponent newposition);
 
 PositionComponent set_newposition(PositionComponent *pos, int yDel, int xDel);
@@ -116,7 +117,7 @@ void render_fog_of_war(SDL_Surface *surface, FowComponent *fow)
 
 			switch(visible)
 			{
-				case NO_VIS:	fow -> tiles[y][x].visible[ level ] = TRANSP_VIS;	break;
+				case CLEAR_VIS:	fow -> tiles[y][x].visible[ level ] = TRANSP_VIS;	break;
 				
 				case OPAQUE_VIS: SDL_BlitSurface(fow -> fogOfWar[count++], NULL, surface, &tileRect); break;
 				case TRANSP_VIS: SDL_BlitSurface(fow -> alphaFog[count++], NULL, surface, &tileRect); break;
@@ -309,27 +310,32 @@ void make_surrounding_tiles_visible(FowPlayerPosition *fowp)
 	int b;
 	int t;
 
-	set_visibility_type(fowp, TOP + TOP,  0, NO_VIS);
 
-	if( ! (t = set_visibility_type(fowp, TOP,  0, NO_VIS))) {
+	if( ! (t = set_visibility_type(fowp, TOP,  0, CLEAR_VIS))) {
+
+		set_visibility_type				(fowp, TOP + TOP, 0, CLEAR_VIS);
+		set_visibility_type_facade(fowp, TOP,  			0, CLEAR_VIS);
 
 		PositionComponent newposition;
-		
 		newposition = set_newposition(fowp -> pos, TOP, LEFT);
 		
-		if(is_wall_collision(fowp -> world, newposition) == COLLISION_WALL) set_visibility_type(fowp, TOP,  LEFT, NO_VIS);
+		if(is_wall_collision(fowp -> world, newposition) == COLLISION_WALL) set_visibility_type_facade(fowp, TOP,  LEFT, CLEAR_VIS);
 		
 		newposition = set_newposition(fowp -> pos, TOP, RGHT);
-
-		if(is_wall_collision(fowp -> world, newposition) == COLLISION_WALL) set_visibility_type(fowp, TOP,  RGHT, NO_VIS);
+		if(is_wall_collision(fowp -> world, newposition) == COLLISION_WALL) set_visibility_type_facade(fowp, TOP,  RGHT, CLEAR_VIS);
 	
 		ttl = 0;
 		ttr = 0;
 	}
+	else {
+		if( set_visibility_type(fowp, TOP + TOP,  0, CLEAR_VIS))
+			set_visibility_type(fowp, TOP + TOP + TOP, 0, TRANSP_VIS);
+	}
 	
 	
-	if((b = set_visibility_type(fowp, BOT,  0, NO_VIS))) {	
-		set_visibility_type(fowp, BOT + BOT,  0, NO_VIS);
+	if((b = set_visibility_type(fowp, BOT,  0, CLEAR_VIS))) {	
+		if(set_visibility_type(fowp, BOT + BOT,  0, CLEAR_VIS))
+			set_visibility_type(fowp, BOT + BOT + BOT, 0, TRANSP_VIS);
 	}
 	else {
 		bbl = 0;
@@ -337,8 +343,9 @@ void make_surrounding_tiles_visible(FowPlayerPosition *fowp)
 	}
 
 
-	if((l = set_visibility_type(fowp, 0,  LEFT, NO_VIS))) {
-		set_visibility_type(fowp, 0, LEFT + LEFT, NO_VIS);
+	if((l = set_visibility_type(fowp, 0,  LEFT, CLEAR_VIS))) {
+		if(set_visibility_type(fowp, 0, LEFT + LEFT, CLEAR_VIS))
+			set_visibility_type(fowp, 0, LEFT + LEFT + LEFT, TRANSP_VIS);
 	}
 	else {	
 		llt = 0;
@@ -346,8 +353,9 @@ void make_surrounding_tiles_visible(FowPlayerPosition *fowp)
 	}
 	
 	
-	if((r = set_visibility_type(fowp, 0, RGHT, NO_VIS))) {
-		set_visibility_type(fowp,  0, RGHT + RGHT, NO_VIS);
+	if((r = set_visibility_type(fowp, 0, RGHT, CLEAR_VIS))) {
+		if(set_visibility_type(fowp, 0, RGHT + RGHT, CLEAR_VIS))
+			set_visibility_type(fowp, 0, RGHT + RGHT + RGHT, TRANSP_VIS);
 	}
 	else {	
 		rrt = 0;
@@ -355,44 +363,65 @@ void make_surrounding_tiles_visible(FowPlayerPosition *fowp)
 	}
 	
 	
-	if(t && l && set_visibility_type(fowp, TOP, LEFT, NO_VIS)) {
+	if(t && l && set_visibility_type(fowp, TOP, LEFT, CLEAR_VIS)) {
 	
 		if( l && t )
 			set_visibility_type(fowp, TOP + TOP, LEFT + LEFT, 10);
 		
-		if( ttl )	set_visibility_type(fowp, TOP + TOP, LEFT, 11);
-		if( llt ) set_visibility_type(fowp, TOP, LEFT + LEFT, 12);
+		if( ttl )	
+			if(set_visibility_type(fowp, TOP + TOP, LEFT, 11))
+				set_visibility_type(fowp, TOP + TOP + TOP, LEFT, TRANSP_VIS);
+				
+		if( llt ) 
+			if(set_visibility_type(fowp, TOP, LEFT + LEFT, 12))
+				set_visibility_type(fowp, TOP, LEFT + LEFT + LEFT, TRANSP_VIS);
 
 	}
 			
 	
-	if(b && l && set_visibility_type(fowp, BOT, LEFT, NO_VIS)) {
+	if(b && l && set_visibility_type(fowp, BOT, LEFT, CLEAR_VIS)) {
 	
 		if( l && b )
 			set_visibility_type(fowp, BOT + BOT, LEFT + LEFT, 13);
 		
-		if( bbl ) set_visibility_type(fowp, BOT + BOT, LEFT, 14);
-		if( llb ) set_visibility_type(fowp, BOT, LEFT + LEFT, 15);
+		if( bbl ) {
+			if(set_visibility_type(fowp, BOT + BOT, LEFT, 14))
+				set_visibility_type(fowp, BOT + BOT + BOT, LEFT, TRANSP_VIS);			
+		}
+		if( llb ) {
+			if(set_visibility_type(fowp, BOT, LEFT + LEFT, 15))
+				set_visibility_type(fowp, BOT, LEFT + LEFT + LEFT, TRANSP_VIS);
+		}
 	}
 			
 			
-	if(t && r && set_visibility_type(fowp, TOP, RGHT, NO_VIS)) {
+	if(t && r && set_visibility_type(fowp, TOP, RGHT, CLEAR_VIS)) {
 	
 		if( r && t )
 			set_visibility_type(fowp, TOP + TOP, RGHT + RGHT, 16);
 		
-		if( ttr ) set_visibility_type(fowp, TOP + TOP, RGHT, 17);
-		if( rrt ) set_visibility_type(fowp, TOP, (RGHT + RGHT), 18);
+		if( ttr ) 
+			if( set_visibility_type(fowp, TOP + TOP, RGHT, 17))
+					set_visibility_type(fowp, TOP + TOP + TOP, RGHT, TRANSP_VIS);
+					
+		if( rrt ) 
+			if( set_visibility_type(fowp, TOP, (RGHT + RGHT), 18))
+					set_visibility_type(fowp, TOP, (RGHT + RGHT + RGHT), TRANSP_VIS);
 	}
 
 
-	if(b && r && set_visibility_type(fowp, BOT, RGHT, NO_VIS)) {
+	if(b && r && set_visibility_type(fowp, BOT, RGHT, CLEAR_VIS)) {
 	
 		if( r && b )
 			set_visibility_type(fowp, BOT + BOT, RGHT + RGHT, 19);
 		
-		if( bbr ) set_visibility_type(fowp, BOT + BOT, RGHT, 20);
-		if( rrb ) set_visibility_type(fowp, BOT, RGHT + RGHT, 21);
+		if( bbr ) 
+			if( set_visibility_type(fowp, BOT + BOT, RGHT, 20))
+				set_visibility_type(fowp, BOT + BOT + BOT, RGHT, TRANSP_VIS);
+				
+		if( rrb ) 
+			if( set_visibility_type(fowp, BOT, RGHT + RGHT, 21))
+				set_visibility_type(fowp, BOT, RGHT + RGHT + RGHT, TRANSP_VIS);
 	}
 }
 
@@ -512,7 +541,25 @@ int set_visibility_type(FowPlayerPosition *fowp, int yDel, int xDel, int newvis)
 
 	int *vis = get_visibility_type(&newposition, fowp, yDel, xDel);
 	
-	*vis = (*vis == NO_VIS) ? NO_VIS : newvis;
+	*vis = (*vis == CLEAR_VIS) ? CLEAR_VIS : newvis;
+	
+	if( is_wall_collision(world, newposition) == COLLISION_WALL ) { 
+		*vis = TRANSP_VIS; 
+		return 0; 
+	}
+	return 1;
+}
+
+
+int set_visibility_type_facade(FowPlayerPosition *fowp, int yDel, int xDel, int newvis)
+{
+
+	World *world = fowp -> world;
+	PositionComponent newposition;
+
+	int *vis = get_visibility_type(&newposition, fowp, yDel, xDel);
+	
+	*vis = (*vis == CLEAR_VIS) ? CLEAR_VIS : newvis;
 	
 	if( is_wall_collision(world, newposition) == COLLISION_WALL ) return 0;
 	return 1;
