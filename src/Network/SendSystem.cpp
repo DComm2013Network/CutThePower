@@ -166,4 +166,22 @@ void send_status(World * world, int fd, teamNo_t team, int ready_status)
 		free(pkt);
 	}
 }
+/**
+ * Sends a chat packet with the player number when called.
+ *
+ * @param[in] str 	a string containing the message to be sent.
+ *
+ * @designer Ramzi Chennafi
+ * @author   Ramzi Chennafi
+ */
+void send_chat(char * str)
+{
+	PKT_SND_CHAT * pkt = (PKT_SND_CHAT*) malloc(sizeof(PKT_SND_CHAT));
+
+	pkt->sendingPlayer_number = controllable_player;
+	memcpy(pkt->message, str);
+
+	write_packet(fd, P_CHAT, pkt);
+	free(pkt);
+}
 
