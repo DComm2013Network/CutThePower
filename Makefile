@@ -1,14 +1,13 @@
 CC=g++
 FLAGS=-Wall -std=c++11 -O0 -g -fpermissive 
-LIBS=-lSDL2 -lSDL2_image -lSDL2_net -lSDL2_mixer -lpthread -lSDL2_ttf
+LIBS=-lrt -lSDL2 -lSDL2_image -lSDL2_net -lSDL2_mixer -lpthread -lSDL2_ttf
 
 BINDIR=bin
 OBJDIR=obj
 SRCDIR=src
 
 BIN_DEFAULT=$(BINDIR)/CutThePower
-OBJ_DEFAULT=$(OBJDIR)/Gameplay/collision_system.o $(OBJDIR)/Gameplay/movement_system.o $(OBJDIR)/Graphics/render_system.o $(OBJDIR)/Graphics/animation_system.o $(OBJDIR)/Graphics/map.o $(OBJDIR)/Graphics/fog_of_war.o $(OBJDIR)/Input/keyinputsystem.o $(OBJDIR)/Input/mouseinputsystem.o $(OBJDIR)/Input/menu.o $(OBJDIR)/main.o $(OBJDIR)/sound.o $(OBJDIR)/world.o $(OBJDIR)/triggered.o $(OBJDIR)/Graphics/text.o $(OBJDIR)/Network/GameplayCommunication.o $(OBJDIR)/Network/ServerCommunication.o $(OBJDIR)/Network/PipeUtils.o $(OBJDIR)/Network/NetworkRouter.o $(OBJDIR)/Network/ClientUpdateSystem.o $(OBJDIR)/Network/SendSystem.o
-
+OBJ_DEFAULT=$(OBJDIR)/Gameplay/collision_system.o $(OBJDIR)/Gameplay/movement_system.o $(OBJDIR)/Graphics/render_system.o $(OBJDIR)/Graphics/animation_system.o $(OBJDIR)/Graphics/map.o $(OBJDIR)/Graphics/fog_of_war.o $(OBJDIR)/Input/keyinputsystem.o $(OBJDIR)/Input/mouseinputsystem.o $(OBJDIR)/Input/menu.o $(OBJDIR)/main.o $(OBJDIR)/sound.o $(OBJDIR)/world.o $(OBJDIR)/triggered.o $(OBJDIR)/Graphics/text.o $(OBJDIR)/Network/GameplayCommunication.o $(OBJDIR)/Network/ServerCommunication.o $(OBJDIR)/Network/PipeUtils.o $(OBJDIR)/Network/NetworkRouter.o $(OBJDIR)/Network/ClientUpdateSystem.o $(OBJDIR)/Network/SendSystem.o $(OBJDIR)/Network/packet_min_utils.o $(OBJDIR)/Input/chat.o
 
 CutThePower: $(OBJ_DEFAULT)
 	test -d $(BINDIR) || mkdir -p $(BINDIR)
@@ -25,6 +24,9 @@ debug: $(OBJ_DEFAULT)
 	$(CC) $(FLAGS) -g -o $(BINDIR)/CutThePower $(OBJ_DEFAULT) $(LIBS)
 	gdb $(BINDIR)/CutThePower
 
+$(OBJDIR)/Network/packet_min_utils.o: $(SRCDIR)/Network/packet_min_utils.c
+	test -d $(OBJDIR)/Network || mkdir -p $(OBJDIR)/Network
+	$(CC) $(FLAGS) -c -o $(OBJDIR)/Network/packet_min_utils.o $(SRCDIR)/Network/packet_min_utils.c
 
 $(OBJDIR)/Gameplay/collision_system.o: $(SRCDIR)/Gameplay/collision_system.cpp
 	test -d $(OBJDIR)/Gameplay || mkdir -p $(OBJDIR)/Gameplay
@@ -65,6 +67,10 @@ $(OBJDIR)/Input/mouseinputsystem.o: $(SRCDIR)/Input/mouseinputsystem.cpp
 $(OBJDIR)/Input/menu.o: $(SRCDIR)/Input/menu.cpp
 	test -d $(OBJDIR)/Input || mkdir -p $(OBJDIR)/Input
 	$(CC) $(FLAGS) -c -o $(OBJDIR)/Input/menu.o $(SRCDIR)/Input/menu.cpp
+	
+$(OBJDIR)/Input/chat.o: $(SRCDIR)/Input/chat.cpp
+	test -d $(OBJDIR)/Input || mkdir -p $(OBJDIR)/Input
+	$(CC) $(FLAGS) -c -o $(OBJDIR)/Input/chat.o $(SRCDIR)/Input/chat.cpp
 
 $(OBJDIR)/main.o: $(SRCDIR)/main.cpp
 	test -d $(OBJDIR) || mkdir -p $(OBJDIR)

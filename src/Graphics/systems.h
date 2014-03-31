@@ -15,6 +15,6 @@ void animation_system(World *world);
 
 int load_animation(const char *filename, World *world, unsigned int entity);
 void play_animation(World *world, unsigned int entity, const char *animation_name);
-void cancel_animation(World *world, unsigned int entity, const char *animation_name);
+void cancel_animation(World *world, unsigned int entity);
 
 #endif

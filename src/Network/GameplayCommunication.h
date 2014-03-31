@@ -14,9 +14,12 @@
 #include <cstdio>
 #include <cstdint>
 #include <cerrno>
+#include <cstring>
+#include <pthread.h>
 
 #define NET_SHUTDOWN -1 /**< The network will write this to the gameplay 
                              module (possibly followed by an error message) on shutdown. */
+#define MAXIP 			20
 
 /**
  * A structure of data that will be passed on to child threads.
@@ -27,7 +30,7 @@ typedef struct THREAD_DATA
 {
     int read_pipe;  /**< pipe descriptor for reading */
     int write_pipe; /**< pipe descriptor for writing */
-    char *ip_address_string; /**< ip address of the server */
+    char ip[MAXIP]; /**< ip address of the server */
 } WTHREAD_DATA, *PDATA;
 
 /* Packet reading wrappers */
@@ -40,6 +43,6 @@ int write_packet(int write_fd, uint32_t packet_type, void *packet);
 
 /* Gameplay wrapper */
 int update_data(void* packet, int fd);
-void init_client_network(int send_router_fd[2], int rcv_router_fd[2]);
+void init_client_network(int send_router_fd[2], int rcv_router_fd[2], char * ip);
 
 #endif

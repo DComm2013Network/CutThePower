@@ -8,28 +8,29 @@
  */
 
 /** @} */
-#include <cstring>
-#include <pthread.h>
-#include "PipeUtils.h"
 #include "GameplayCommunication.h"
+#include "PipeUtils.h"
 #include "Packets.h" /* extern packet_sizes[] */
 #include "NetworkRouter.h"
-
-uint32_t packet_sizes[NUM_PACKETS] = {
-	sizeof(PKT_PLAYER_NAME),         //0
-	sizeof(PKT_PLAYER_CONNECT),      //1
-	sizeof(PKT_GAME_STATUS),         //2
-	sizeof(PKT_SND_CHAT),            //3
-	sizeof(pkt05),                   //4
-	sizeof(PKT_OBJ_LOC),             //5
-	0,                               //6
-	sizeof(PKT_OBJECTIVE_STATUS),    //7
-	0,                               //8
-    sizeof(PKT_POS_UPDATE),          //9
-    sizeof(PKT_ALL_POS_UPDATE),      //10
-	sizeof(PKT_FLOOR_MOVE_REQUEST),  //11
-	sizeof(PKT_FLOOR_MOVE),          //12
-    sizeof(PKT_TAGGING)              //13
+ 
+uint32_t packet_sizes[NUM_PACKETS + 1] = {
+	sizeof(PKT_PLAYER_NAME),         // 0
+	sizeof(PKT_PLAYER_CONNECT),      // 1
+	sizeof(PKT_GAME_STATUS),         // 2
+	sizeof(PKT_SND_CHAT),            // 3
+	sizeof(pkt05),                   // 4
+	sizeof(PKT_OBJ_LOC),             // 5
+	0,                               // 6
+	sizeof(PKT_OBJECTIVE_STATUS),    // 7
+	0,                               // 8
+    sizeof(PKT_POS_UPDATE),          // 9
+    sizeof(PKT_ALL_POS_UPDATE),      // 10
+	sizeof(PKT_FLOOR_MOVE_REQUEST),  // 11
+	sizeof(PKT_FLOOR_MOVE),          // 12
+    sizeof(PKT_TAGGING),             // 13
+    sizeof(PKT_POS_UPDATE_MIN),      // 14
+    sizeof(PKT_ALL_POS_UPDATE_MIN),  // 15
+    sizeof(uint32_t)               // Network shutdown // 16
 };
 
 /**
@@ -111,15 +112,16 @@ void* read_packet(int fd, uint32_t size)
  * @designer    Ramzi Chennafi
  * @author      Ramzi Chennafi
  */
-void init_client_network(int send_router_fd[2], int rcv_router_fd[2])
+void init_client_network(int send_router_fd[2], int rcv_router_fd[2], char * ip)
 {
     pthread_t thread;
-    NETWORK_DATA * ndata = (NETWORK_DATA*) malloc(sizeof(NETWORK_DATA));
+    PDATA pdata = (PDATA) malloc(sizeof(WTHREAD_DATA));
     
-    ndata->read_pipe = send_router_fd[READ_END];
-    ndata->write_pipe = rcv_router_fd[WRITE_END];
+    pdata->read_pipe = send_router_fd[READ_END];
+    pdata->write_pipe = rcv_router_fd[WRITE_END];
+    memcpy(pdata->ip, ip, MAXIP);
 
-    pthread_create(&thread, NULL, networkRouter, (void *)ndata);
+    pthread_create(&thread, NULL, networkRouter, (void *)pdata);
     pthread_detach(thread);
 }
 
@@ -177,7 +179,7 @@ void *read_data(int fd, uint32_t *type){
     int read_bytes;
     void *packet;
     *type = read_type(fd);
-    if(*type <= 0 || *type > 14){
+    if(*type <= 0 || *type > NUM_PACKETS){
         perror("read_data: Failed to read packet type from pipe");
         return NULL;
     }

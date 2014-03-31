@@ -66,10 +66,17 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 			position = &(world.position[entity]);
 			renderPlayer = &(world.renderPlayer[entity]);			
 			
-			playerRect.x = position->x + map_rect.x;
-			playerRect.y = position->y + map_rect.y;
+			if (!IN_THIS_COMPONENT(world.mask[entity], COMPONENT_MENU_ITEM)) {
+				playerRect.x = position->x + map_rect.x;
+				playerRect.y = position->y + map_rect.y;
+			}
+			else {
+				playerRect.x = position->x;
+				playerRect.y = position->y;
+			}
 			playerRect.w = renderPlayer->width;
 			playerRect.h = renderPlayer->height;
+			
 			if (IN_THIS_COMPONENT(world.mask[entity], COMPONENT_COLLISION)) {
 				playerRect.x -= renderPlayer->width / 2;
 				playerRect.y -= renderPlayer->height / 2;
@@ -83,7 +90,6 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 					playerRect.w += 10;
 					playerRect.h += 10;
 				}
-				
 			}
 			
 			clipRect.x = -playerRect.x;
@@ -145,29 +151,7 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 
 
 void init_render_player_system() {
-	
-	/*int i;
-	const int pos = strlen("assets/Graphics/screen/menu/keymap/keymap_");
-	//char filename[64];
-	char *filename = (char*)malloc(sizeof(char) * 128);
-	
-	strcpy(filename, "assets/Graphics/screen/menu/keymap/keymap_");
-	
-	
-	for(i = 0; i < strlen(character_map); i++) {
-		
-		strncpy((char*)(filename + pos), &character_map[i], 1);
-		strcpy((char*)(filename + pos + 1), ".png");
-		
-		text_chars[i] = IMG_Load(filename);
-		
-		if (text_chars[i] == 0) {
-			printf("Error loading %c\n", character_map[i]);
-		}
-	}*/
-	
 	if ((ibeam = IMG_Load("assets/Graphics/screen/menu/ibeam.png")) == 0) {
 		printf("Error loading ibeam image.\n");
 	}
-	//free(filename);
 }

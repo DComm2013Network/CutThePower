@@ -8,8 +8,6 @@
  */
 
 /** @} */
-#include <unistd.h>
-#include <fcntl.h>
 #include "PipeUtils.h"
 
 /**

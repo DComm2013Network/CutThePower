@@ -23,21 +23,23 @@
 ----------------------------------------------------------------------*/
 
 // Limits
-#define MAX_PLAYERS 32
-#define MAX_FLOORS 8
-#define MAX_NAME 16
-#define MAX_MESSAGE 180
-#define MAX_OBJECTIVES 16
+#define MAX_PLAYERS          32
+#define MAX_FLOORS           8
+#define MAX_NAME             15
+#define MAX_MESSAGE          180
+#define MAX_OBJECTIVES       32
+#define OBJECTIVES_PER_FLOOR 4
 
 // Connect code Definitions
 #define CONNECT_CODE_ACCEPTED 0x001
-#define CONNECT_CODE_DENIED 0x000
+#define CONNECT_CODE_DENIED   0x000
 
-#define TIMEOUT 5000	
-
-#define TCP 0
-#define UDP 1
-#define READ 0
+#define TIMEOUT 		5000	
+#define SEND_FREQUENCY 	60
+#define MAXIP 			20
+#define TCP   			0
+#define UDP   			1
+#define READ  			0
 #define WRITE 1
 
 #define P_NAME           1
@@ -54,37 +56,46 @@
 #define P_FLOOR_MOVE_REQ 12
 #define P_FLOOR_MOVE     13
 #define P_TAGGING        14
+#define P_MIN_POS        15
+#define P_MIN_POS_ALL    16
+#define NETWORK_SHUTDOWN 17
 
-#define NUM_PACKETS  14
+#define NUM_PACKETS  17
 
-#define ABHISHEK 	0
-#define AMAN		1
-#define ANDREW 		2
-#define CHRIS		3
-#define CLARK		4
-#define CORY		5
-#define DAMIEN		6
-#define GERMAN		7
-#define IAN			8
-#define JORDAN		9
-#define JOSH		10
-#define KONST		11
-#define MAT 		12
-#define RAMZI 		13
-#define ROBIN		14
-#define SAM 		15
-#define SHANE		16
-#define TIM 		17
-#define VINCENT		18
+#define ABHISHEK 0
+#define AMAN     1
+#define ANDREW   2
+#define CHRIS    3
+#define CLARK    4
+#define CORY     5
+#define DAMIEN   6
+#define GERMAN   7
+#define IAN      8
+#define JORDAN   9
+#define JOSH     10
+#define KONST    11
+#define MAT      12
+#define RAMZI    13
+#define ROBIN    14
+#define SAM      15
+#define SHANE    16
+#define TIM      17
+#define VINCENT  18
 // Game Status Definitions
 
-#define GAME_STATE_WAITING 		0x001
-#define GAME_STATE_ACTIVE 		0x002
-#define GAME_STATE_OVER 		0x003
-#define PLAYER_STATE_READY 		0x004
-#define PLAYER_STATE_WAITING 	0x005
-#define COPS					1
-#define ROBBERS					2
+// Game Status Definitions
+#define GAME_STATE_WAITING 0x001 // Waiting for PLAYER_STATE_READY by all players (LOBBY)
+#define GAME_STATE_ACTIVE  0x002 // Game engine running
+#define GAME_STATE_OVER    0x003
+
+#define GAME_TEAM1_WIN 0x006
+#define GAME_TEAM2_WIN 0x007
+
+#define PLAYER_STATE_READY   0x004
+#define PLAYER_STATE_WAITING 0x005
+
+#define COPS    1
+#define ROBBERS	2
 // Special floor Definitions
 #define FLOOR_LOBBY 0x000
 
@@ -123,7 +134,7 @@ typedef struct pkt02{
 } PKT_PLAYER_CONNECT;
 
 typedef struct pkt03{
-	int			player_valid[MAX_PLAYERS];
+	uint32_t	player_valid[MAX_PLAYERS];
 	char 		otherPlayers_name[MAX_PLAYERS][MAX_NAME];
 	teamNo_t 	otherPlayers_teams[MAX_PLAYERS];
 	character_t characters[MAX_PLAYERS];
@@ -151,7 +162,7 @@ typedef struct pkt06{
 
 typedef struct pkt08
 {
-	int	objectives_captured[MAX_OBJECTIVES];
+	status_t	objectives_captured[MAX_OBJECTIVES];
 	status_t	game_status;
 } PKT_OBJECTIVE_STATUS;
 
@@ -194,5 +205,18 @@ typedef struct pkt14 {
 	playerNo_t	tagger_id; /* the person who tagged */
 	playerNo_t  taggee_id; /* the person who got tagged */
 } PKT_TAGGING;
+
+typedef struct pkt15 {
+	uint32_t data;
+	uint8_t vel;
+} PKT_POS_UPDATE_MIN;
+
+typedef struct pkt16 {
+	uint8_t  floor;
+	uint32_t players_on_floor;
+	uint32_t xPos[11];
+	uint32_t yPos[11];
+	uint8_t vel[32];
+} PKT_ALL_POS_UPDATE_MIN;
 
 #endif

@@ -8,11 +8,15 @@
 #define WIDTH 1280
 #define HEIGHT 768
 
+//max FPS
+#define FPS_MAX 60
+
 //Maximum entities that will be used.
 #define MAX_ENTITIES 256
 
 //Maximum string lengths
-#define MAX_STRING 15
+#define MAX_STRING 			15
+#define MAX_KEYMAP_STRING 	6
 
 #define IN_THIS_COMPONENT(mask, x) (((mask) & (x)) == (x))
 
@@ -33,14 +37,80 @@ typedef struct {
 	TagComponent			tag[MAX_ENTITIES];
 	AnimationComponent		animation[MAX_ENTITIES];
 	WormholeComponent		wormhole[MAX_ENTITIES];
+	ObjectiveComponent		objective[MAX_ENTITIES];
 } World;
+
+class FPS {
+private:
+	float max_frame_ticks;
+	Uint32 last_ticks;
+	int fps;
+	int numFrames;
+	Uint32 startTime;
+
+	Uint32 current_ticks;
+	Uint32 target_ticks;
+
+public:
+	void init() {
+		startTime = SDL_GetTicks();
+		max_frame_ticks = (1000.0/(float)FPS_MAX) + 0.00001;
+		fps = 0;
+		last_ticks = SDL_GetTicks();
+		numFrames = 0; 
+	}
+
+	void limit() {
+		fps++;
+		target_ticks = last_ticks + Uint32(fps * max_frame_ticks);
+		current_ticks = SDL_GetTicks();
+
+		if (current_ticks < target_ticks) {
+			SDL_Delay(target_ticks - current_ticks);
+			current_ticks = SDL_GetTicks();
+		}
+
+		if (current_ticks - last_ticks >= 1000) {
+			fps = 0;
+			last_ticks = SDL_GetTicks();
+		}
+	}
+
+	float update() {
+		numFrames++;
+		float display_fps = ( numFrames/(float)(SDL_GetTicks() - startTime) )*1000;
+		if (numFrames >= (100.0 / ((double)60 / FPS_MAX))) {
+			startTime = SDL_GetTicks();
+			numFrames = 0;
+		}
+		return display_fps;
+	}
+
+	float getFPS() {
+		int newtime = SDL_GetTicks();
+		if (newtime - startTime != 0) {
+			float display_fps = ( numFrames/(float)(newtime - startTime) )*1000;
+			if (numFrames >= ((100.0 / ((double)60 / FPS_MAX)) + 1)) {
+				startTime = SDL_GetTicks();
+				numFrames = 0;
+			}
+			if (display_fps > 0) {
+				return display_fps;
+			} else {
+				return FPS_MAX;
+			}
+		} else {
+			return FPS_MAX;
+		}
+	}
+};
 
 void init_world(World* world);
 unsigned int create_entity(World* world, unsigned int attributes);
-unsigned int create_player(World* world, int x, int y, bool controllable, int collisiontype, playerNo_t pno, character_t character);
+unsigned int create_player(World* world, int x, int y, bool controllable, int collisiontype, int playerNo, PKT_GAME_STATUS *status_update);
 unsigned int create_level(World* world, int** map, int width, int height, int tileSize, int floor);
 unsigned int create_stair(World* world, int targetLevel, int targetX, int targetY, int x, int y, int width, int height, int level);
-unsigned int create_target(World* world, int x, int y, int collisiontype);
+unsigned int create_objective(World* world, float x, float y, int w, int h, int id, int level);
 unsigned int create_block(World* world, int x, int y, int width, int height, int level);
 void destroy_entity(World* world, const unsigned int entity);
 void destroy_world(World *world);

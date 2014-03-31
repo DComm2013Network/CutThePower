@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <cerrno>
 #include <cstring>
+#include <fcntl.h>
 
 // Function prototypes
 int create_pipe(int pipe_ends[2]);

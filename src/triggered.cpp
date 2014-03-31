@@ -8,56 +8,58 @@
 #include "sound.h"
 #include "Input/menu.h"
 #include "Graphics/text.h"
+#include "Network/Packets.h"
+#include "Graphics/map.h"
 
 #define SHOW_MENU_INTRO 0 //1 == load intro, 0 == load straight into map
 
 extern bool running;
+extern SDL_Surface *map_surface;
 extern unsigned int player_entity;
 extern int send_router_fd[];
 extern int rcv_router_fd[];
 extern int game_net_signalfd;
-int character;
-char *username;
-char *serverip;
+static int character;
+static char username[MAX_NAME];
+static char serverip[MAXIP];
+extern SDL_Window *window;
 
 bool menu_click(World *world, unsigned int entity) {
-	
 	//printf("Clicked: %s\n", world->button[entity].label);
-	
+
 	//MAIN MENU
 	if (strcmp(world->button[entity].label, "mainmenu_play") == 0) {
-		
+
 		destroy_menu(world);
 		
 		create_select_screen(world);
-		
 	}
 	else if (strcmp(world->button[entity].label, "mainmenu_options") == 0) {
-		
+
 		destroy_menu(world);
-		
+
 		create_options_menu(world);
 	}
 	else if (strcmp(world->button[entity].label, "mainmenu_credits") == 0) {
-		
+
 		destroy_menu(world);
-		
+
 		create_credits_menu(world);
-		
+
 	}
 	else if (strcmp(world->button[entity].label, "mainmenu_exit") == 0) {
 		destroy_world(world);
 		
 		running = false;
 	}
-	
+
 	//OPTIONS
 	else if (strcmp(world->button[entity].label, "options_back") == 0) {
-		
+
 		destroy_menu(world);
-		
+
 		create_main_menu(world);
-		
+
 	}
 	else if (strcmp(world->button[entity].label, "options_sound_off") == 0) {
 		
@@ -68,8 +70,7 @@ bool menu_click(World *world, unsigned int entity) {
 		strcpy(world->button[entity].label, "options_sound_on");
 		
 		enable_sound(true);
-		play_music(SOUND_MUSIC_MENU_RAIN);
-		
+
 	}
 	else if (strcmp(world->button[entity].label, "options_sound_on") == 0) {
 		
@@ -80,25 +81,47 @@ bool menu_click(World *world, unsigned int entity) {
 		strcpy(world->button[entity].label, "options_sound_off");
 		
 		enable_sound(false);
-		
+
 	}
 	else if (strcmp(world->button[entity].label, "options_keymap") == 0) {
-		
+
 		destroy_menu(world);
-		
+
 		create_keymap_menu(world);
+
+	}
+	else if (strcmp(world->button[entity].label, "options_fullscreen_off") == 0) {
+
+		world->position[entity].x = (WIDTH / 2);
+		render_small_text(world, entity, "FULLSCREEN ON");
+		
+		world->button[entity].label = (char*)realloc(world->button[entity].label, sizeof(char) * strlen("options_fullscreen_on"));
+		strcpy(world->button[entity].label, "options_fullscreen_on");
+		
+		SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
 		
 	}
-	
+	else if (strcmp(world->button[entity].label, "options_fullscreen_on") == 0) {
+
+		world->position[entity].x = (WIDTH / 2);
+		render_small_text(world, entity, "FULLSCREEN OFF");
+		
+		world->button[entity].label = (char*)realloc(world->button[entity].label, sizeof(char) * strlen("options_fullscreen_off"));
+		strcpy(world->button[entity].label, "options_fullscreen_off");
+		
+		SDL_SetWindowFullscreen(window, 0);
+		
+	}
+
 	//KEYMAP
 	else if (strcmp(world->button[entity].label, "keymap_back") == 0) {
-		
+
 		destroy_menu(world);
 		
 		KeyMapInit("assets/Input/keymap.txt");
 		
 		create_options_menu(world);
-		
+
 	}
 	else if (strcmp(world->button[entity].label, "keymap_save") == 0) {
 
@@ -138,7 +161,7 @@ bool menu_click(World *world, unsigned int entity) {
 		for(int i = 0; i < MAX_ENTITIES; i++) {
 			
 			if (IN_THIS_COMPONENT(world->mask[i], COMPONENT_TEXTFIELD)) {
-								
+							
 
 				if (strcmp(world->text[i].name, "keymap_up") == 0) {
 					fprintf(keymapFile, "C_UP W\n");
@@ -155,7 +178,6 @@ bool menu_click(World *world, unsigned int entity) {
 				else if (strcmp(world->text[i].name, "keymap_action") == 0) {
 					fprintf(keymapFile, "C_ACTION SPACE\n");
 				}
-				
 			}
 		}
 		fclose(keymapFile);
@@ -258,7 +280,6 @@ bool menu_click(World *world, unsigned int entity) {
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_ramzi") == 0) {
-		
 		destroy_menu(world);
 		character = RAMZI;
 		create_setup_menu(world);
@@ -302,60 +323,53 @@ bool menu_click(World *world, unsigned int entity) {
 	else if (strcmp(world->button[entity].label, "menu_select_random") == 0) {
 		
 		destroy_menu(world);
-		
 		character = rand() % 18;
-		
 		create_setup_menu(world);
-		
+
 	}
-	
+
 	//CREDITS
 	else if (strcmp(world->button[entity].label, "credits_back") == 0) {
-		
+
 		destroy_menu(world);
-		
+
 		create_main_menu(world);
-		
+
 	}
-	
+
 	//SETUP
 	else if (strcmp(world->button[entity].label, "setup_back") == 0) {
-		
+
 		destroy_menu(world);
-		
+
 		create_main_menu(world);
-		
+
 	}
 	else if (strcmp(world->button[entity].label, "setup_play") == 0) {
-		
-		char *username;
-		char *serverip;
-		
+
 		unsigned int i;
-		
+
 		stop_music();
 		stop_effect();
-		
+
 		for(i = 0; i < MAX_ENTITIES; i++) {
-			
+
 			if (IN_THIS_COMPONENT(world->mask[i], COMPONENT_TEXTFIELD)) {
-				
+
 				if (strcmp(world->text[i].name, "setup_username") == 0) {
-					username = world->text[i].text;
+					memcpy(username, world->text[i].text, MAX_NAME);
 				}
 				else if (strcmp(world->text[i].name, "setup_serverip") == 0) {
-					serverip = world->text[i].text;
+					memcpy(serverip, world->text[i].text, MAXIP);
 				}
-				
+
 			}
 		}
-		
+
 		printf("Username: %s\n", username);
 		printf("Server IP: %s\n", serverip);
 		
-		
 		#if SHOW_MENU_INTRO 
-		
 		destroy_world(world);
 		create_load_screen(world);
 		
@@ -365,25 +379,87 @@ bool menu_click(World *world, unsigned int entity) {
 		
 		animation_end(world, entity);
 		#endif
-		
+
 	}
-	
+
 	//BSOD
 	else if (strcmp(world->button[entity].label, "bsod_exit") == 0) {
-		
+
 		destroy_world(world);
-		
+
 		exit(0);
 	}
 	else if (strcmp(world->button[entity].label, "bsod_continue") == 0) {
-		
+
 		destroy_menu(world);
-		
+
 		create_main_menu(world);
 	}
 	
+	//IN GAME PAUSE MENU
+	else if (strcmp(world->button[entity].label, "ingame_sound_off") == 0) {
+		
+		world->position[entity].x = (WIDTH / 2);
+		render_small_text(world, entity, "SOUND ON");
+		
+		world->button[entity].label = (char*)realloc(world->button[entity].label, sizeof(char) * strlen("ingame_sound_on"));
+		strcpy(world->button[entity].label, "ingame_sound_on");
+		
+		enable_sound(true);
+
+	}
+	else if (strcmp(world->button[entity].label, "ingame_sound_on") == 0) {
+		
+		world->position[entity].x = (WIDTH / 2);
+		render_small_text(world, entity, "SOUND OFF");
+		
+		world->button[entity].label = (char*)realloc(world->button[entity].label, sizeof(char) * strlen("ingame_sound_off"));
+		strcpy(world->button[entity].label, "ingame_sound_off");
+		
+		enable_sound(false);
+
+	}
+	else if (strcmp(world->button[entity].label, "ingame_fullscreen_off") == 0) {
+
+		world->position[entity].x = (WIDTH / 2);
+		render_small_text(world, entity, "FULLSCREEN ON");
+		
+		world->button[entity].label = (char*)realloc(world->button[entity].label, sizeof(char) * strlen("ingame_fullscreen_on"));
+		strcpy(world->button[entity].label, "ingame_fullscreen_on");
+		
+		SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+		
+	}
+	else if (strcmp(world->button[entity].label, "ingame_fullscreen_on") == 0) {
+
+		world->position[entity].x = (WIDTH / 2);
+		render_small_text(world, entity, "FULLSCREEN OFF");
+		
+		world->button[entity].label = (char*)realloc(world->button[entity].label, sizeof(char) * strlen("ingame_fullscreen_off"));
+		strcpy(world->button[entity].label, "ingame_fullscreen_off");
+		
+		SDL_SetWindowFullscreen(window, 0);
+		
+	}
+	else if (strcmp(world->button[entity].label, "ingame_back") == 0) {
+		
+		destroy_menu(world);
+		
+		world->mask[player_entity] ^= COMPONENT_COMMAND;
+		
+	}
+	else if (strcmp(world->button[entity].label, "ingame_exit") == 0) {
+		
+		uint32_t type  = 1;
+		write_packet(send_router_fd[WRITE], NETWORK_SHUTDOWN, &type);
+		destroy_world(world);
+		player_entity = MAX_ENTITIES;
+		map_surface = 0;
+		cleanup_map();
+		create_main_menu(world);
+	}
 	
-	
+
 	else {
 		printf("DID NOT HANDLE BUTTON: %s\n", world->button[entity].label);
 		return false;
@@ -392,37 +468,45 @@ bool menu_click(World *world, unsigned int entity) {
 }
 
 void animation_end(World *world, unsigned int entity) {
-	
 	AnimationComponent *animationComponent = &(world->animation[entity]);
-	
+
 	//INTRO SCREEN ENDED
 	if (animationComponent->id == 0) { //0 is the intro screen
-		
 		destroy_world(world);
-		
+
 		stop_music();
 		stop_effect();
 		
+		PKT_GAME_STATUS pkt;
+		memcpy(pkt.otherPlayers_name[0], username, MAX_NAME);
+		pkt.characters[0] = character;
+		pkt.readystatus[0] = 0;
+		pkt.otherPlayers_teams[0] = 0;
+
 		map_init(world, "assets/Graphics/map/map_00/map00.txt", "assets/Graphics/map/map_00/tiles.txt");
-		player_entity = create_player(world, 620, 420, true, COLLISION_HACKER, 0, character);
-		
-		load_animation("assets/Graphics/player/p0/rob_animation.txt", world, player_entity);
-		
+		player_entity = create_player(world, 620, 420, true, COLLISION_HACKER, 0, &pkt);
+		setup_character_animation(world, character, player_entity);
 		////NETWORK CODE
 		game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
 
-		init_client_network(send_router_fd, rcv_router_fd);
-		send_intialization(world, send_router_fd[WRITE_END], username, serverip);
-		
-		
+
+
+		init_client_network(send_router_fd, rcv_router_fd, serverip);
+		init_client_update(world);
+		send_intialization(world, send_router_fd[WRITE], username);
+		create_objective(world, 620, 380, 40, 40, 0, 0);
 	}
 	//LOADING SCREEN ENDED
 	else if (animationComponent->id == 1) { //1 is the loading screen
+
+		destroy_world(world);
+
+		create_intro(world);
+	}
+	else if (animationComponent->id == 2) { //2 is the logo loading screen
 		
 		destroy_world(world);
 		
-		create_intro(world);
+		create_main_menu(world);
 	}
 }
-
-

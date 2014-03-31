@@ -10,14 +10,18 @@
  * @file NetworkRouter.cpp
  */
 /** @} */
-
+#include "Packets.h"
+#include "ServerCommunication.h"
+#include "GameplayCommunication.h"
+#include "PipeUtils.h"
 #include "NetworkRouter.h"
+#include <list>
 
 extern int game_net_signalfd;
 extern int network_ready;
 extern uint32_t packet_sizes[NUM_PACKETS];
-int chat_packets_rcv = 0;
-CHAT_LIST * cached_chat = (CHAT_LIST*)malloc(sizeof(CHAT_LIST));
+static int chat_packets_rcv = 0;
+static std::list<PKT_SND_CHAT*> cached_chat;
 sem_t err_sem;
 int send_failure_fd;
 
@@ -62,12 +66,12 @@ void *networkRouter(void *args)
 
     sem_init(&err_sem, 0, 1);
 
-    if(init_router(&max_fd, send_data, receive_data, gameplay, sendfd, recvfd, &thread_receive, &thread_send) == -1)
+    if(init_router(&max_fd, send_data, receive_data, gameplay, sendfd, recvfd, &thread_receive, &thread_send, gameplay->ip) == -1)
     {     
         net_cleanup(send_data, receive_data, gameplay, cached_packets);
     	return NULL;
     }
-
+	
     FD_ZERO(&listen_fds);
     FD_SET(recvfd[READ_END], &listen_fds);
     FD_SET(gameplay->read_pipe, &listen_fds);
@@ -75,12 +79,6 @@ void *networkRouter(void *args)
     FD_SET(send_failure_fd, &listen_fds);
 
     network_ready = 1;
-    cached_chat->head = cached_chat;
-    if(cached_chat == NULL)
-    {
-        fprintf(stderr, "Failed to intialize chat cache.\n");
-        return NULL;
-    }
 
     while(1)
     {
@@ -89,11 +87,7 @@ void *networkRouter(void *args)
         ret = select(max_fd + 1, &active, NULL, NULL, NULL);
 
         if(ret && FD_ISSET(send_failure_fd, &active))
-        {
-            pthread_cancel(thread_receive);
-            net_cleanup(send_data, receive_data, gameplay, cached_packets);
-            return NULL;
-        }
+        	break;
 
         if(ret && FD_ISSET(recvfd[READ_END], &active))
         {
@@ -107,7 +101,9 @@ void *networkRouter(void *args)
             
             if(type == P_CHAT)
             {
-                cache_chat((PKT_SND_CHAT*)packet);
+                read(recvfd[READ_END], &timestamp, sizeof(timestamp));
+                chat_packets_rcv++;
+                cached_chat.push_back((PKT_SND_CHAT*)packet);
             }
             else
             {
@@ -132,8 +128,17 @@ void *networkRouter(void *args)
                 set_error(ERR_IPC_FAIL);
                 break;
             }
-			write_packet(sendfd[WRITE_END], type, packet);
-			--ret;
+			
+            if(type == NETWORK_SHUTDOWN)
+            {
+                nonexit_net_cleanup(send_data, receive_data, gameplay, cached_packets);
+                printf("Network thread exiting.\n");
+                break; 
+            }
+
+            write_packet(sendfd[WRITE_END], type, packet);
+			
+            --ret;
         }
 
         if(ret && FD_ISSET(game_net_signalfd, &active))
@@ -144,37 +149,13 @@ void *networkRouter(void *args)
             --ret;
 		}
     }
+
+	
     pthread_cancel(thread_receive);
+    pthread_cancel(thread_send);
     // Kill the send thread... forgot how this was supposed to happen, oops
     net_cleanup(send_data, receive_data, gameplay, cached_packets);
     return NULL;
-}
-/**
- * Caches a recieved packet to the cache_chat link list.
- *
- * @param[in]   packet Chat packet recieved from the server.
- *
- * @return  <ul>
- *              <li>0 on success, or -1 on failure.</li>
- *          </ul>
- *
- * @designer Ramzi Chennafi
- * @author   Ramzi Chennafi
- */
-int cache_chat(PKT_SND_CHAT * packet)
-{
-    chat_packets_rcv++;
-
-    cached_chat->chat_pkt = packet;
-    cached_chat->next = (CHAT_LIST*) malloc(sizeof(CHAT_LIST));
-    if(cached_chat->next == NULL)
-    {
-        return -1;
-    }
-    cached_chat->next->head = cached_chat->head;
-    cached_chat = cached_chat->next;
-
-    return 0;
 }
 /**
  * Sends all cached chat packets down the gameplay pipe.
@@ -191,22 +172,21 @@ int cache_chat(PKT_SND_CHAT * packet)
 int send_cached_chat(int gameplay_write_fd)
 {
     uint32_t type = P_CHAT;
-    CHAT_LIST * current = cached_chat;
-    CHAT_LIST * next = cached_chat;
 
     for(int i = 0; i < chat_packets_rcv; i++)
     {
         if(write(gameplay_write_fd, &type, sizeof(type)) == -1 ||
-           write(gameplay_write_fd, next->chat_pkt, packet_sizes[P_CHAT]) == -1)
+           write(gameplay_write_fd, cached_chat.front(), packet_sizes[P_CHAT]) == -1)
         {
             perror("update_gameplay: write");
             return -1;
         }
-        next = current->next;
-        free(current);
-    }
 
-    cached_chat = (CHAT_LIST*) malloc(sizeof(CHAT_LIST));
+        cached_chat.pop_front();
+    }
+    
+    chat_packets_rcv = 0;
+
     return 0;
 }
 /**
@@ -323,7 +303,7 @@ void write_shutdown(int gameplay_pipe, const char *err_str)
  * @author   Shane Spoor
  */
 int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int sendfd[2], 
-				int recvfd[2], pthread_t *thread_receive, pthread_t *thread_send)
+				int recvfd[2], pthread_t *thread_receive, pthread_t *thread_send, char* ip)
 {
     IPaddress ipaddr, udpaddr;
 	TCPsocket tcp_sock;
@@ -350,8 +330,17 @@ int init_router(int *max_fd, NDATA send, NDATA receive, PDATA gameplay, int send
         return -1;
     }
 
-    resolve_host(&ipaddr, TCP_PORT, "192.168.0.49");
-    resolve_host(&udpaddr, UDP_PORT, "192.168.0.49");
+    if(resolve_host(&ipaddr, TCP_PORT, ip) == -1)
+    {
+        set_error(ERR_NO_CONN);
+        return -1;
+    }
+
+    if(resolve_host(&udpaddr, UDP_PORT, ip) == -1)
+    {
+        set_error(ERR_NO_CONN);
+        return -1;
+    }
     
     tcp_sock = SDLNet_TCP_Open(&ipaddr);
 
@@ -497,7 +486,7 @@ void net_cleanup(NDATA send_data, NDATA receive_data, PDATA gameplay, void **cac
 
     /* Free any remaining packets */
     determine_changed(cached_packets, &changed_mask);
-    for(int i = 0; i < NUM_PACKETS; ++i)
+    for(int i = 0; i < NUM_PACKETS - 1; ++i)
     {
         if(changed_mask & (1 << i))
         {
@@ -508,6 +497,34 @@ void net_cleanup(NDATA send_data, NDATA receive_data, PDATA gameplay, void **cac
 
     /* Close send thread's eventfd */
     close(send_failure_fd);
+    network_ready = 1; /* Tell the client update system to read the network error */
+}
+
+void nonexit_net_cleanup(NDATA send_data, NDATA receive_data, PDATA gameplay, void **cached_packets)
+{
+    unsigned int changed_mask = 0;
+    
+    /* Close pipes for thread communication, checking that they're valid first */
+
+    
+    /* Free NDATA */
+    free(send_data);
+    free(receive_data);
+
+    //write_shutdown(gameplay->write_pipe, get_error_string());
+
+    /* Free any remaining packets */
+    determine_changed(cached_packets, &changed_mask);
+    for(int i = 0; i < NUM_PACKETS; ++i)
+    {
+        if(changed_mask & (1 << i))
+        {
+            free(cached_packets[i]);
+            cached_packets[i] = NULL;
+        }
+    }
+
+    /* Close send thread's eventfd */
     network_ready = 1; /* Tell the client update system to read the network error */
 }
 
