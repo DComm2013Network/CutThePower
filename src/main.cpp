@@ -94,12 +94,10 @@ int main(int argc, char* argv[]) {
 			map_render(surface, world, player_entity);
 		}
 				
-		/*SAM****************/
-		render_fog_of_war(surface, fow);
-		/*****************/
 
 		animation_system(world);
 
+		render_fog_of_war(surface, fow);
 		render_player_system(*world, surface, fow);
 		chat_render(surface);
 		
