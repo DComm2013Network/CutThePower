@@ -353,6 +353,10 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 				if (IN_THIS_COMPONENT(world->mask[entity], COLLISION_MASK)) {
 					PositionComponent p;
 					//temp.x += movement->movX;
+					data = collision_system(world, temp, entity);
+					if (data.entityID != -1 && (data.entity_code == COLLISION_HACKER || data.entity_code == COLLISION_GUARD)) {
+						anti_stuck_system(world, entity, data.entityID);
+					}
 					apply_forcex(temp, *movement, fps);
 					data = collision_system(world, temp, entity);
 					collisionType = handle_entity_collision(data, world, entity);
@@ -381,10 +385,6 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 				
 				position->x = temp.x;
 				position->y = temp.y;
-				
-				if (key_pressed == false && data.entityID != -1) {
-					anti_stuck_system(world, entity, data.entityID);
-				}
 				
 				if (movement->movX > 0 && abs(movement->movX) > abs(movement->movY)) {
 					play_animation(world, entity, "right");

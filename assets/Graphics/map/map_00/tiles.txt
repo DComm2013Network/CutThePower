@@ -1,4 +1,4 @@
-53
+79
 
 00	assets/Graphics/map/map_00/00_40px.bmp		0
 01	assets/Graphics/map/map_00/01_40px.bmp		0
@@ -49,7 +49,33 @@
 46	assets/Graphics/map/map_00/wood_midright.bmp		1
 47	assets/Graphics/map/map_00/wood_botright.bmp		1
 48	assets/Graphics/map/map_00/wood_stagewall.bmp		1
-49	assets/Graphics/map/map_00/stairsdownleft.bmp	1
-50	assets/Graphics/map/map_00/stairsdownright.bmp	1
-51	assets/Graphics/map/map_00/stairsupleft.bmp	1
-52	assets/Graphics/map/map_00/stairsupright.bmp	1
+49	assets/Graphics/map/map_00/robber_floor1.bmp		1
+50	assets/Graphics/map/map_00/robber_floor2.bmp		1
+51	assets/Graphics/map/map_00/robber_floor3.bmp		1
+52	assets/Graphics/map/map_00/robber_floor4.bmp		1
+53	assets/Graphics/map/map_00/robber_floor5.bmp		1
+54	assets/Graphics/map/map_00/robber_floor6.bmp		1
+55	assets/Graphics/map/map_00/robber_floor7.bmp		1
+56	assets/Graphics/map/map_00/robber_floor8.bmp		1
+57	assets/Graphics/map/map_00/robber_floor9.bmp		1
+58	assets/Graphics/map/map_00/robber_floor10.bmp		1
+59	assets/Graphics/map/map_00/robber_floor11.bmp		1
+60	assets/Graphics/map/map_00/robber_floor12.bmp		1
+61	assets/Graphics/map/map_00/robber_floor13.bmp		1
+62	assets/Graphics/map/map_00/robber_floor14.bmp		1
+63	assets/Graphics/map/map_00/robber_floor15.bmp		1
+64	assets/Graphics/map/map_00/cop_floor1.bmp		1
+65	assets/Graphics/map/map_00/cop_floor2.bmp		1
+66	assets/Graphics/map/map_00/cop_floor3.bmp		1
+67	assets/Graphics/map/map_00/cop_floor4.bmp		1
+68	assets/Graphics/map/map_00/cop_floor5.bmp		1
+69	assets/Graphics/map/map_00/cop_floor6.bmp		1
+70	assets/Graphics/map/map_00/cop_floor7.bmp		1
+71	assets/Graphics/map/map_00/cop_floor8.bmp		1
+72	assets/Graphics/map/map_00/cop_floor9.bmp		1
+73	assets/Graphics/map/map_00/cop_floor10.bmp		1
+74	assets/Graphics/map/map_00/cop_floor11.bmp		1
+75	assets/Graphics/map/map_00/cop_floor12.bmp		1
+76	assets/Graphics/map/map_00/cop_floor13.bmp		1
+77	assets/Graphics/map/map_00/cop_floor14.bmp		1
+78	assets/Graphics/map/map_00/cop_floor15.bmp		1

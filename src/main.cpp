@@ -54,11 +54,11 @@ int main(int argc, char* argv[]) {
 	KeyMapInit("assets/Input/keymap.txt");
 	init_render_player_system();
 
-	//create_main_menu(world);
+	create_main_menu(world);
 	
 	unsigned int begin_time = SDL_GetTicks();
 
-	create_logo_screen(world);
+	//create_logo_screen(world);
 
 	FPS fps;
 	fps.init();

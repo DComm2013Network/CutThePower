@@ -163,7 +163,7 @@ void client_update_chat(World *world, void *packet)
  *                <li>Shane Spoor - March 30th, 2014 - Added objective reconstruction on floor change.</li>
  *            </ul>
  *
- * @param[in, out]	world 	The world struct holding the data to be updated.
+ * @param[in, out]	world 	The world struct holding the data to be supdated.
  * @param[in] 		packet	The packet containing update information.
  *
  * @designer Ramzi Chennafi

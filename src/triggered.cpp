@@ -450,13 +450,12 @@ bool menu_click(World *world, unsigned int entity) {
 	}
 	else if (strcmp(world->button[entity].label, "ingame_exit") == 0) {
 		
-
+		uint32_t type  = 1;
+		write_packet(send_router_fd[WRITE], NETWORK_SHUTDOWN, &type);
 		destroy_world(world);
 		player_entity = MAX_ENTITIES;
 		map_surface = 0;
 		cleanup_map();
-		uint32_t type  = 1;
-		write_packet(send_router_fd[1], NETWORK_SHUTDOWN, &type);
 		create_main_menu(world);
 	}
 	
@@ -486,10 +485,11 @@ void animation_end(World *world, unsigned int entity) {
 
 		map_init(world, "assets/Graphics/map/map_00/map00.txt", "assets/Graphics/map/map_00/tiles.txt");
 		player_entity = create_player(world, 620, 420, true, COLLISION_HACKER, 0, &pkt);
-		stop_music();
 		setup_character_animation(world, character, player_entity);
 		////NETWORK CODE
 		game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
+
+
 
 		init_client_network(send_router_fd, rcv_router_fd, serverip);
 		init_client_update(world);
