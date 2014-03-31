@@ -313,8 +313,7 @@ void make_surrounding_tiles_visible(FowPlayerPosition *fowp)
 
 	if( ! (t = set_visibility_type(fowp, TOP,  0, CLEAR_VIS))) {
 
-		set_visibility_type				(fowp, TOP + TOP, 0, CLEAR_VIS);
-		set_visibility_type_facade(fowp, TOP,  			0, CLEAR_VIS);
+		set_visibility_type_facade(fowp, TOP, 0, CLEAR_VIS);
 
 		PositionComponent newposition;
 		newposition = set_newposition(fowp -> pos, TOP, LEFT);
@@ -369,12 +368,10 @@ void make_surrounding_tiles_visible(FowPlayerPosition *fowp)
 			set_visibility_type(fowp, TOP + TOP, LEFT + LEFT, 10);
 		
 		if( ttl )	
-			if(set_visibility_type(fowp, TOP + TOP, LEFT, 11))
-				set_visibility_type(fowp, TOP + TOP + TOP, LEFT, TRANSP_VIS);
+			set_visibility_type(fowp, TOP + TOP, LEFT, 11);
 				
 		if( llt ) 
-			if(set_visibility_type(fowp, TOP, LEFT + LEFT, 12))
-				set_visibility_type(fowp, TOP, LEFT + LEFT + LEFT, TRANSP_VIS);
+			set_visibility_type(fowp, TOP, LEFT + LEFT, 12);
 
 	}
 			
