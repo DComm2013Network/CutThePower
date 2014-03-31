@@ -25,6 +25,7 @@
 #include "../Graphics/text.h"
 #include "menu.h"
 #include "../Input/chat.h"
+#include "../Network/SendSystem.h"
 
 #define SYSTEM_MASK (COMPONENT_COMMAND) /**< Entities with a command component will be processed by the system. */
 
@@ -35,6 +36,7 @@ int *command_keys; /**< This is the current keycodes mapped to each command. */
 extern const char *character_map;
 extern bool running;
 extern unsigned int player_entity;
+extern int send_router_fd[];
 
 extern int window_width, window_height;
 
@@ -157,11 +159,8 @@ void KeyInputSystem(World *world)
 			//Enter pressed second time.
 			if (!IN_THIS_COMPONENT(world->mask[player_entity], COMPONENT_COMMAND)) {
 				
-				
-				printf("Text: %s\n", world->text[textField].text);
-				
 				chat_add_line(world->text[textField].text);
-				
+				send_chat(send_router_fd[0], world->text[textField].text);
 				destroy_menu(world);
 				textField = -1;
 			}

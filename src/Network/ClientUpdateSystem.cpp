@@ -13,7 +13,7 @@
 #include "../systems.h"
 #include "../Gameplay/collision.h"
 #include "network_systems.h"
-
+#include "../Input/chat.h"
 typedef struct _objective_cache
 {
 	char  obj_state;
@@ -140,7 +140,7 @@ int client_update_system(World *world, int net_pipe) {
 void client_update_chat(World *world, void *packet)
 {
 	PKT_SND_CHAT *snd_chat = (PKT_SND_CHAT*)packet;
-	printf("%s\n", snd_chat->message);
+	chat_add_line(snd_chat->message);
 }
 
 /**
