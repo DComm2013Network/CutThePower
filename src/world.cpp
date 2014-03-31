@@ -135,11 +135,11 @@ unsigned int create_player(World* world, int x, int y, bool controllable, int co
 	
 	movement.id = 0;
 	movement.lastDirection = 0;
-	movement.acceleration = 1;
-	movement.maxSpeed = 4.0;
+	movement.acceleration = 0.5;
+	movement.maxSpeed = 2;
 	movement.movX = 0;
 	movement.movY = 0;
-	movement.friction = 0.2;
+	movement.friction = 0.15;
 	
 	command.commands[C_UP] = false;
 	command.commands[C_DOWN] = false;

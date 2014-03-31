@@ -172,7 +172,6 @@ void *networkRouter(void *args)
 int send_cached_chat(int gameplay_write_fd)
 {
     uint32_t type = P_CHAT;
-
     for(int i = 0; i < chat_packets_rcv; i++)
     {
         if(write(gameplay_write_fd, &type, sizeof(type)) == -1 ||

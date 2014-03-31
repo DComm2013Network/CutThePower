@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
 	
 	window = SDL_CreateWindow("Cut The Power", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-
+	
 	if (window == NULL) {
 		printf("Error initializing the window.\n");
 		return 1;
@@ -133,7 +133,6 @@ int main(int argc, char* argv[]) {
 	
 	destroy_world(world);
 	free(world);
-	
 	IMG_Quit();
 	SDL_Quit();
 	

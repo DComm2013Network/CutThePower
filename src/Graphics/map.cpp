@@ -25,7 +25,6 @@ int w;                    /**< The map's width. */
 int h;                    /**< The map's height. */
 int level;                /**< The current floor. */
 
-
 /**
  * Initiates the map by loading the tiles and putting it into one large texture.
  * 
@@ -210,11 +209,6 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 						create_block(world, x * TILE_WIDTH + TILE_WIDTH / 2, y * TILE_HEIGHT + TILE_HEIGHT - 7, TILE_WIDTH - 4, 10, floor);
 						break;
 				}
-				
-				
-				//printf("tx: %i, ty: %i\n", targetX, targetY);
-				//printf("Create stair entity %d\n", entity);
-				
 			}
 			else if (strcmp(entity_type, "object") == 0) { //animated objects
 				
@@ -282,7 +276,6 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 				}
 				
 				create_objective(world, x * TILE_WIDTH + TILE_WIDTH / 2, y * TILE_HEIGHT + TILE_HEIGHT / 2, w, h, id, level);
-				printf("Loaded objective!\n");
 			}
 			else {
 				printf("Did not deal with the entity type: %s\n", entity_type);
