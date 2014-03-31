@@ -281,6 +281,12 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 				}
 				
 				if (IN_THIS_COMPONENT(world->mask[entity], COLLISION_MASK)) {
+					
+					collision_system(world, entity, &temp, &entity_number, &tile_number, &hit_entity);
+					if (hit_entity != -1 && (entity_number == COLLISION_HACKER || entity_number== COLLISION_GUARD)) {
+						anti_stuck_system(world, entity, hit_entity);
+					}
+
 					apply_force_x(world, entity, &temp, fps);
 					collision_system(world, entity, &temp, &entity_number, &tile_number, &hit_entity);
 					handle_x_collision(world, entity, &temp, entity_number, tile_number, fps);
@@ -294,10 +300,6 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 				
 				position->x = temp.x;
 				position->y = temp.y;
-				
-				if (key_pressed == false && hit_entity != MAX_ENTITIES) {
-					anti_stuck_system(world, entity, hit_entity);
-				}
 				
 				if (movement->movX > 0 && abs(movement->movX) > abs(movement->movY)) {
 					play_animation(world, entity, "right");
