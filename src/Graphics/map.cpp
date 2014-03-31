@@ -211,16 +211,6 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 						create_block(world, x * TILE_WIDTH + TILE_WIDTH / 2, y * TILE_HEIGHT + TILE_HEIGHT - 7, TILE_WIDTH - 4, 10, floor);
 						break;
 				}
-				
-				printf("mx: %d\n", x * TILE_WIDTH);
-				printf("my: %d\n", y * TILE_HEIGHT);
-				printf("mw: %d\n", TILE_WIDTH);
-				printf("mh: %d\n", TILE_HEIGHT);
-				
-				
-				//printf("tx: %i, ty: %i\n", targetX, targetY);
-				//printf("Create stair entity %d\n", entity);
-				
 			}
 			else if (strcmp(entity_type, "object") == 0) { //animated objects
 				
@@ -288,12 +278,10 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 				}
 				
 				create_objective(world, x * TILE_WIDTH + TILE_WIDTH / 2, y * TILE_HEIGHT + TILE_HEIGHT / 2, w, h, id, level);
-				printf("Loaded objective!\n");
 			}
 			else {
 				printf("Did not deal with the entity type: %s\n", entity_type);
 				break;
-				//return -1;
 			}
 		}
 	}
