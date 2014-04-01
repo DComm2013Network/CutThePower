@@ -270,11 +270,17 @@ void client_update_objectives(World *world, void *packet)
 	{
 	    if(objective_update->objectives_captured[i] == 0) // If the ojective is non-existent, then all following objectives are non-existent as well
 	        break;
+
+	    if(i >= obj_idx && i < obj_idx + OBJECTIVES_PER_FLOOR)
+	    {
+    		if(objective_table[i].obj_state != objective_update->objectives_captured[i])
+    			play_animation(world, objective_table[i].entity_no, (objective_update->objectives_captured[i] == OBJECTIVE_CAP) ? "captured" : "not_captured");
+
+			world->objective[objective_table[i].entity_no].status = objective_table[i].obj_state;
+	    }
 	    objective_table[i].obj_state = objective_update->objectives_captured[i];
 	}
 	
-	for(int i = obj_idx; i < OBJECTIVES_PER_FLOOR + obj_idx; i++)
-		world->objective[objective_table[i].entity_no].status = objective_table[i].obj_state;
 }
 
 /**
