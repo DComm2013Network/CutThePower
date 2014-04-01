@@ -23,6 +23,7 @@ typedef struct FowComponent
 	SDL_Surface **fogOfWar;
 	SDL_Surface **alphaFog;
 	SDL_Surface  *corners[NUMCORNERS];
+	teamNo_t teamNo;
 } FowComponent;
 
 
