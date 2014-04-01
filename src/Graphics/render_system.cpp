@@ -14,6 +14,11 @@
 
 /*SAM**/
 void make_surrounding_tiles_visible(FowPlayerPosition *fowp);
+int opponentPlayers[32];
+int opponentPlayersCount = 0;
+extern int fogOfWarWidth;
+extern int fogOfWarHeight;
+extern int level;
 /******/
 
 #define SYSTEM_MASK (COMPONENT_RENDER_PLAYER | COMPONENT_POSITION) /**< The entity must have a render player and position component
@@ -59,7 +64,10 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 	SDL_Rect playerRect;
 	
 	SDL_Rect clipRect;
-	
+
+	opponentPlayersCount = 0;
+	memset(opponentPlayers, 0, sizeof(opponentPlayers));
+
 	for(entity = 0; entity < MAX_ENTITIES; entity++){
 
 
@@ -102,42 +110,63 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 				}
 			}
 
+			if(! IN_THIS_COMPONENT(world.mask[entity], COMPONENT_PLAYER))
+			{
+				clipRect.x = -playerRect.x;
+				clipRect.y = -playerRect.y;
+				clipRect.w = playerRect.w;
+				clipRect.h = playerRect.h;
 		
-			clipRect.x = -playerRect.x;
-			clipRect.y = -playerRect.y;
-			clipRect.w = playerRect.w;
-			clipRect.h = playerRect.h;
+				if (clipRect.x < 0)
+					clipRect.x = 0;
 		
-			if (clipRect.x < 0)
-				clipRect.x = 0;
+				if (clipRect.y < 0)
+					clipRect.y = 0;
 		
-			if (clipRect.y < 0)
-				clipRect.y = 0;
+				if (clipRect.h > HEIGHT - playerRect.y)
+					clipRect.h = HEIGHT - playerRect.y;
 		
-			if (clipRect.h > HEIGHT - playerRect.y)
-				clipRect.h = HEIGHT - playerRect.y;
-		
-			if (clipRect.w > WIDTH - playerRect.x)
-				clipRect.w = WIDTH - playerRect.x;
-		
-			SDL_BlitScaled(renderPlayer->playerSurface, &clipRect, surface, &playerRect);
+				if (clipRect.w > WIDTH - playerRect.x)
+					clipRect.w = WIDTH - playerRect.x;
 			
-
-			/*SAM*********************************/
-			if(fow->teamNo == world.player[entity].teamNo)
-			{					
-				if (IN_THIS_COMPONENT(world.mask[entity], COMPONENT_PLAYER)) {	
-	
+				SDL_BlitScaled(renderPlayer->playerSurface, &clipRect, surface, &playerRect);
+			}
+			
+			if(IN_THIS_COMPONENT(world.mask[entity], COMPONENT_PLAYER)) {
+					
+				if ((fow->teamNo == world.player[entity].teamNo)) {	
 					FowPlayerPosition fowp;
 		
 					fowp.world = &world;
 					fowp.pos   = position;
 					fowp.fow   = fow;
 	
-					make_surrounding_tiles_visible(&fowp);	
+					make_surrounding_tiles_visible(&fowp);
+
+					clipRect.x = -playerRect.x;
+					clipRect.y = -playerRect.y;
+					clipRect.w = playerRect.w;
+					clipRect.h = playerRect.h;
+		
+					if (clipRect.x < 0)
+						clipRect.x = 0;
+		
+					if (clipRect.y < 0)
+						clipRect.y = 0;
+		
+					if (clipRect.h > HEIGHT - playerRect.y)
+						clipRect.h = HEIGHT - playerRect.y;
+		
+					if (clipRect.w > WIDTH - playerRect.x)
+						clipRect.w = WIDTH - playerRect.x;
+			
+					SDL_BlitScaled(renderPlayer->playerSurface, &clipRect, surface, &playerRect);
+
+				}
+				else {
+					opponentPlayers[opponentPlayersCount++] = entity;
 				}
 			}
-			/*************************************/
 
 			//check if a textbox.
 			if (IN_THIS_COMPONENT(world.mask[entity], COMPONENT_TEXTFIELD)) {
@@ -158,6 +187,44 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 					SDL_BlitSurface(ibeam, NULL, surface, &playerRect);
 				}
 			}
+		}
+	}
+
+	for(int entity = 0; entity < opponentPlayersCount && entity < 32; entity++) {
+
+		printf("%d", level);
+
+		position = &(world.position[entity]);
+		renderPlayer = &(world.renderPlayer[entity]);
+
+		playerRect.x = position->x;
+		playerRect.y = position->y;
+		playerRect.w = renderPlayer->width;
+		playerRect.h = renderPlayer->height;
+
+		int xPos = position->x / TILE_WIDTH;
+		int yPos = position->y / TILE_HEIGHT;
+
+		if(fow -> tiles[yPos][xPos].visible[ level ] == 1)
+		{
+			clipRect.x = -playerRect.x;
+			clipRect.y = -playerRect.y;
+			clipRect.w = playerRect.w;
+			clipRect.h = playerRect.h;
+
+			if (clipRect.x < 0)
+				clipRect.x = 0;
+
+			if (clipRect.y < 0)
+				clipRect.y = 0;
+
+			if (clipRect.h > HEIGHT - playerRect.y)
+				clipRect.h = HEIGHT - playerRect.y;
+
+			if (clipRect.w > WIDTH - playerRect.x)
+				clipRect.w = WIDTH - playerRect.x;
+
+			SDL_BlitScaled(renderPlayer->playerSurface, &clipRect, surface, &playerRect);
 		}
 	}
 }
