@@ -39,6 +39,7 @@ SDL_Surface *ibeam;
  *     <li>Mateusz Siwoski - February 28, 2014: Modified to pass in the Position Component, fixed not loading the image
  *         every time the frame is drawn</li>
  *     <li>Jordan Marling/Mat Siwoski - March 6, 2014: Updated support for the camera.</li>
+ *		 <li>Sam Youssef - March 25, 2014: added full support for rendering fog of war</li>
  * </ol>
  *
  * @param[in,out] world   A reference to the world structure containing entities to render.
@@ -60,11 +61,19 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 	SDL_Rect clipRect;
 	
 	for(entity = 0; entity < MAX_ENTITIES; entity++){
-		
+
+
+		/*SAM*********************************/			
+		if(IN_THIS_COMPONENT(world.mask[entity], COMPONENT_PLAYER | COMPONENT_CONTROLLABLE)) {
+			fow->teamNo = world.player[entity].teamNo;
+		}
+		/*************************************/
+
+
 		if (IN_THIS_COMPONENT(world.mask[entity], SYSTEM_MASK)){
 			
 			position = &(world.position[entity]);
-			renderPlayer = &(world.renderPlayer[entity]);			
+			renderPlayer = &(world.renderPlayer[entity]);
 			
 			if (!IN_THIS_COMPONENT(world.mask[entity], COMPONENT_MENU_ITEM)) {
 				playerRect.x = position->x + map_rect.x;
@@ -93,6 +102,7 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 				}
 			}
 			
+			
 			clipRect.x = -playerRect.x;
 			clipRect.y = -playerRect.y;
 			clipRect.w = playerRect.w;
@@ -114,10 +124,6 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 			
 			
 			/*SAM*********************************/			
-			if(IN_THIS_COMPONENT(world.mask[entity], COMPONENT_PLAYER | COMPONENT_CONTROLLABLE)) {
-				fow->teamNo = world.player[entity].teamNo;
-			}
-
 			if (IN_THIS_COMPONENT(world.mask[entity], COMPONENT_PLAYER)) {	
 	
 				FowPlayerPosition fowp;
@@ -128,7 +134,7 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 	
 				make_surrounding_tiles_visible(&fowp);	
 			}
-			/*************************************/		
+			/*************************************/
 			
 			
 			//check if a textbox.
