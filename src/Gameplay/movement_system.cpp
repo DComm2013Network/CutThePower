@@ -172,7 +172,7 @@ void rebuild_floor(World* world, int targl)
 
 int handle_entity_collision(World* world, unsigned int entity, unsigned int entity_number, unsigned int tile_number, unsigned int hit_entity) {
 
-	switch(entity_number) {
+	switch(world->collision[hit_entity].type) {
 		case COLLISION_STAIR:
 			if (world->collision[entity].type == COLLISION_HACKER || world->collision[entity].type == COLLISION_GUARD) {
 				int targx = world->wormhole[hit_entity].targetX;

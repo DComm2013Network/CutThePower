@@ -57,13 +57,6 @@ void cleanup_sound() {
 	Mix_CloseAudio();
 }
 
-
-
-
-
-
-
-
 unsigned int load_effect(const char *file) {
 	
 	unsigned int i;
