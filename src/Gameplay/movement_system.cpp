@@ -207,10 +207,8 @@ int handle_entity_collision(World* world, unsigned int entity, unsigned int enti
 		position.level = world->position[entity].level;
 		entity_collision(world, entity, position, &entity_number_local, &hit_entity_local);
 		if (world->collision[hit_entity_local].type == COLLISION_HACKER) {
-			unsigned int e = create_entity(world, COMPONENT_TAG);
-			printf("You eliminated a hacker! You is the best!\n");
-			world->tag[e].tagger_id = entity;
-			world->tag[e].taggee_id = hit_entity_local;
+			printf("tagged\n");
+			send_tag(world, send_router_fd[WRITE], world->player[hit_entity_local].playerNo);
 		}
 	}
 	return entity_number;
@@ -281,6 +279,12 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 				}
 				
 				if (IN_THIS_COMPONENT(world->mask[entity], COLLISION_MASK)) {
+					
+					collision_system(world, entity, &temp, &entity_number, &tile_number, &hit_entity);
+					if (hit_entity != -1 && (entity_number == COLLISION_HACKER || entity_number== COLLISION_GUARD)) {
+						anti_stuck_system(world, entity, hit_entity);
+					}
+
 					apply_force_x(world, entity, &temp, fps);
 					collision_system(world, entity, &temp, &entity_number, &tile_number, &hit_entity);
 					handle_x_collision(world, entity, &temp, entity_number, tile_number, fps);
@@ -294,10 +298,6 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 				
 				position->x = temp.x;
 				position->y = temp.y;
-				
-				if (key_pressed == false && hit_entity != MAX_ENTITIES) {
-					anti_stuck_system(world, entity, hit_entity);
-				}
 				
 				if (movement->movX > 0 && abs(movement->movX) > abs(movement->movY)) {
 					play_animation(world, entity, "right");
