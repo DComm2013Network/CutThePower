@@ -24,10 +24,6 @@
 #define DIRECTION_UP	 3
 #define DIRECTION_DOWN	 4
 
-#define OBJECTIVE_NONE  0
-#define OBJECTIVE_UNCAP 1
-#define OBJECTIVE_CAP   2
-
 int init_client_update(World *world);
 int client_update_system(World *world, int net_pipe);
 void client_update_pos(World *world, void *packet);

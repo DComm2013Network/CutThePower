@@ -99,6 +99,10 @@
 // Special floor Definitions
 #define FLOOR_LOBBY 0x000
 
+#define OBJECTIVE_NONE  0
+#define OBJECTIVE_UNCAP 1
+#define OBJECTIVE_CAP   2
+
 /**
   * @property type     The type of packet to send (1 through 14).
  * @property data     The data contained in the packet.
