@@ -261,7 +261,7 @@ void client_update_pos(World *world, void *packet)
 void client_update_objectives(World *world, void *packet)
 {
 	PKT_OBJECTIVE_STATUS *objective_update = (PKT_OBJECTIVE_STATUS *)packet;
-	int obj_idx = (world->position[controllable_playerNo].level - 1) * OBJECTIVES_PER_FLOOR;
+	int obj_idx = (world->position[player_table[controllable_playerNo]].level - 1) * OBJECTIVES_PER_FLOOR;
 
 	if(objective_update->game_status == GAME_TEAM1_WIN || objective_update->game_status == GAME_TEAM2_WIN)
 		player_team = 0;
