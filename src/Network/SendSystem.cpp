@@ -78,6 +78,8 @@ void send_tag(World * world, int fd, unsigned int taggee)
  *
  * FUTURE FEATURES: - Cached location of data after first go through for called data
  *					- Ability to specify which update will be sent
+
+ q
  *					
  * @param[in, out]  world  	game world, searched for updates
  * @param[in]		fd 		write file descriptor to the gameplay thread > network router thread
@@ -192,3 +194,18 @@ void send_chat(World * world, int fd, char * str)
 	free(pkt);
 }
 
+void send_objectives(World * world, int fd)
+{
+	PKT_OBJECTIVE_STATUS * obj_status = (PKT_OBJECTIVE_STATUS*) calloc(1, sizeof(PKT_OBJECTIVE_STATUS));
+
+	for(int i = 0; i < MAX_ENTITIES; i++)
+	{
+		if(IN_THIS_COMPONENT(world->mask[i], COMPONENT_OBJECTIVE))
+		{
+			obj_status->objectives_captured[world->objective[i].objectiveID] = world->objective[i].status;
+		}
+	}
+
+	write_packet(fd, P_OBJSTATUS, obj_status);
+	free(obj_status);
+}
