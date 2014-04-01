@@ -185,7 +185,6 @@ void client_update_floor(World *world, void *packet)
 		{
 			objective_table[obj_idx].entity_no = i;
 			world->objective[i].status = objective_table[obj_idx].obj_state;
-			world->objective[i].objectiveID = obj_idx;
 			obj_idx++;
 		}
 	}
