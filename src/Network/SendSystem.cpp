@@ -193,7 +193,15 @@ void send_chat(World * world, int fd, char * str)
 	write_packet(fd, P_CHAT, pkt);
 	free(pkt);
 }
-
+/**
+ * Sends an objective packet with the status of tagged objectives..
+ *
+ * @param[in, out]  world  	game world, searched for updates
+ * @param[in]		fd 		write file descriptor to the gameplay thread > network router thread
+ *
+ * @designer Ramzi Chennafi
+ * @author   Ramzi Chennafi
+ */
 void send_objectives(World * world, int fd)
 {
 	PKT_OBJECTIVE_STATUS * obj_status = (PKT_OBJECTIVE_STATUS*) calloc(1, sizeof(PKT_OBJECTIVE_STATUS));
