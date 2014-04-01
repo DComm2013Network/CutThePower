@@ -1,4 +1,4 @@
-79
+82
 
 00	assets/Graphics/map/map_00/00_40px.bmp		0
 01	assets/Graphics/map/map_00/01_40px.bmp		0
@@ -79,3 +79,6 @@
 76	assets/Graphics/map/map_00/cop_floor13.bmp		1
 77	assets/Graphics/map/map_00/cop_floor14.bmp		1
 78	assets/Graphics/map/map_00/cop_floor15.bmp		1
+79	assets/Graphics/map/map_00/20_41px.bmp			1
+80	assets/Graphics/map/map_00/20_42px.bmp			1
+81	assets/Graphics/map/map_00/20_43px.bmp			1
