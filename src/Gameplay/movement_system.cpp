@@ -188,8 +188,10 @@ void handle_entity_collision(World* world, unsigned int entity, unsigned int ent
 			}
 			break;
 	}
-	tag_player(world, entity);
-	capture_objective(world, entity);
+	if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_CONTROLLABLE) && world->controllable[entity].active) {
+		tag_player(world, entity);
+		capture_objective(world, entity);
+	}
 }
 
 /**
