@@ -95,7 +95,7 @@ typedef struct {
 
 typedef struct {
 	unsigned int objectiveID;
-	bool status;
+	unsigned int status;
 } ObjectiveComponent;
 
 #endif
