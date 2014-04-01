@@ -58,7 +58,6 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 	SDL_Rect playerRect;
 	
 	SDL_Rect clipRect;
-	teamNo_t teamNo;
 	
 	for(entity = 0; entity < MAX_ENTITIES; entity++){
 		
@@ -116,7 +115,7 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 			
 			/*SAM*********************************/			
 			if(IN_THIS_COMPONENT(world.mask[entity], COMPONENT_PLAYER | COMPONENT_CONTROLLABLE)) {
-				teamNo = world.player[entity].teamNo;
+				fow->teamNo = world.player[entity].teamNo;
 			}
 
 			if (IN_THIS_COMPONENT(world.mask[entity], COMPONENT_PLAYER)) {	

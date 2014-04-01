@@ -114,25 +114,44 @@ void render_fog_of_war(SDL_Surface *surface, FowComponent *fow)
 			tileRect.w = TILE_WIDTH;
 			tileRect.h = TILE_HEIGHT;
 
-			switch(visible)
+			if(fow -> teamNo == COPS)
 			{
-				case CLEAR_VIS:	fow -> tiles[y][x].visible[ level ] = TRANSP_VIS;	break;
-				
-				case OPAQUE_VIS: SDL_BlitSurface(fow -> fogOfWar[count++], NULL, surface, &tileRect); break;
-				case TRANSP_VIS: SDL_BlitSurface(fow -> alphaFog[count++], NULL, surface, &tileRect); break;
+				switch(visible)
+				{
+					case CLEAR_VIS:	fow -> tiles[y][x].visible[ level ] = TRANSP_VIS;	break;
+					case OPAQUE_VIS: SDL_BlitSurface(fow -> alphaFog[count++], NULL, surface, &tileRect); break;
+					case TRANSP_VIS: SDL_BlitSurface(fow -> alphaFog[count++], NULL, surface, &tileRect); break;
+				}
+			}
 			
-				case 10: blit_tile(surface, fow, &tileRect, y, x, 0); break;
-				case 11: blit_tile(surface, fow, &tileRect, y, x, 1); break;					
-				case 12: blit_tile(surface, fow, &tileRect, y, x, 2); break;	
-				case 13: blit_tile(surface, fow, &tileRect, y, x, 3); break;
-				case 14: blit_tile(surface, fow, &tileRect, y, x, 4); break;
-				case 15: blit_tile(surface, fow, &tileRect, y, x, 5); break;
-				case 16: blit_tile(surface, fow, &tileRect, y, x, 6); break;
-				case 17: blit_tile(surface, fow, &tileRect, y, x, 7); break;
-				case 18: blit_tile(surface, fow, &tileRect, y, x, 8); break;
-				case 19: blit_tile(surface, fow, &tileRect, y, x, 9); break;
-				case 20: blit_tile(surface, fow, &tileRect, y, x, 10); break;
-				case 21: blit_tile(surface, fow, &tileRect, y, x, 11); break;
+			else if(fow -> teamNo == ROBBERS)
+			{
+				switch(visible)
+				{
+					case CLEAR_VIS:	fow -> tiles[y][x].visible[ level ] = TRANSP_VIS;	break;
+					case OPAQUE_VIS: SDL_BlitSurface(fow -> fogOfWar[count++], NULL, surface, &tileRect); break;
+					case TRANSP_VIS: SDL_BlitSurface(fow -> alphaFog[count++], NULL, surface, &tileRect); break;
+				}
+			}
+			
+
+			if(fow -> teamNo == ROBBERS || fow -> teamNo == COPS)
+			{
+				switch(visible)
+				{		
+					case 10: blit_tile(surface, fow, &tileRect, y, x, 0); break;
+					case 11: blit_tile(surface, fow, &tileRect, y, x, 1); break;					
+					case 12: blit_tile(surface, fow, &tileRect, y, x, 2); break;	
+					case 13: blit_tile(surface, fow, &tileRect, y, x, 3); break;
+					case 14: blit_tile(surface, fow, &tileRect, y, x, 4); break;
+					case 15: blit_tile(surface, fow, &tileRect, y, x, 5); break;
+					case 16: blit_tile(surface, fow, &tileRect, y, x, 6); break;
+					case 17: blit_tile(surface, fow, &tileRect, y, x, 7); break;
+					case 18: blit_tile(surface, fow, &tileRect, y, x, 8); break;
+					case 19: blit_tile(surface, fow, &tileRect, y, x, 9); break;
+					case 20: blit_tile(surface, fow, &tileRect, y, x, 10); break;
+					case 21: blit_tile(surface, fow, &tileRect, y, x, 11); break;
+				}
 			}
 		}
 	}
@@ -511,6 +530,14 @@ int *get_visibility_type(PositionComponent *newposition, FowPlayerPosition *fowp
 
 
 
+int iscorner(int n)
+{
+	int arr[] = { 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21 };
+	for(int i = 0; i < 12; i++) if(arr[i] == n) return 1;
+	
+	return 0;
+}
+
 /**
  * Sets a tile's visibility.
  *
@@ -537,32 +564,18 @@ int set_visibility_type(FowPlayerPosition *fowp, int yDel, int xDel, int newvis)
 
 	int *vis = get_visibility_type(&newposition, fowp, yDel, xDel);
 
-	if(newvis != *vis && *vis != 1 && *vis != 2)
-	{
-		switch(*vis)
-		{
-			case 10:
-			case 11:	
-			case 12:
-			case 13:
-			case 14:
-			case 15:
-			case 16:
-			case 17:	
-			case 18:	
-			case 19:
-			case 20:
-			case 21: *vis = CLEAR_VIS;
-								break;	
-		}
-	}
-	else if(newvis == 0)
+	if(newvis == 0)
 	{
 		*vis = CLEAR_VIS;
 	}
-	else						
+	else if(iscorner(*vis) && iscorner(newvis))
+	{
+		*vis = CLEAR_VIS;
+	}
+	else
+	{					
 		*vis = newvis;
-	
+	}
 	if( is_wall_collision(world, newposition) == COLLISION_WALL ) { 
 		*vis = TRANSP_VIS;
 		return 0; 
