@@ -220,7 +220,7 @@ unsigned int create_objective(World* world, float x, float y, int w, int h, int 
 	world->collision[entity].radius = 0;
 	
 	world->objective[entity].objectiveID = id;
-	world->objective[entity].status = false;
+	world->objective[entity].status = 1;
 	
 	return entity;
 }
