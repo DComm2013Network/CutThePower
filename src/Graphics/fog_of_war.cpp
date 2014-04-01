@@ -150,6 +150,8 @@ void render_fog_of_war(SDL_Surface *surface, FowComponent *fow)
 					case 19: blit_tile(surface, fow, &tileRect, y, x, 9); break;
 					case 20: blit_tile(surface, fow, &tileRect, y, x, 10); break;
 					case 21: blit_tile(surface, fow, &tileRect, y, x, 11); break;
+					case 22: blit_tile(surface, fow, &tileRect, y, x, 12); break;
+					case 23: blit_tile(surface, fow, &tileRect, y, x, 13); break;
 				}
 			}
 		}
@@ -247,6 +249,8 @@ void init_fog_of_war(FowComponent **fow)
 		(*fow)->corners[9] = IMG_Load("assets/Graphics/fow/botright/head.png");
 		(*fow)->corners[10] = IMG_Load("assets/Graphics/fow/botright/left.png");
 		(*fow)->corners[11] = IMG_Load("assets/Graphics/fow/botright/right.png");
+		(*fow)->corners[12] = IMG_Load("assets/Graphics/fow/intersects/intersect_1.png");
+		(*fow)->corners[13] = IMG_Load("assets/Graphics/fow/intersects/intersect_2.png");
 }
 
 
@@ -307,8 +311,8 @@ void make_surrounding_tiles_visible(FowPlayerPosition *fowp)
 
 	#define LEFT -1
 	#define RGHT +1
-	#define TOP	 -1
-	#define BOT	 +1
+	#define TOP  -1
+	#define BOT  +1
 
 	set_visibility_type(fowp, 0, 0, 0);
 
@@ -569,7 +573,26 @@ int set_visibility_type(FowPlayerPosition *fowp, int yDel, int xDel, int newvis)
 	}
 	else if(iscorner(*vis) && iscorner(newvis) )
 	{
-		*vis = CLEAR_VIS;
+		if((*vis == 19 && newvis == 10) || (*vis == 10 && newvis == 19))
+		{
+			*vis = 22;
+		}
+		else if((*vis == 16 && newvis == 13) || (*vis == 13 && newvis == 16))
+		{
+			*vis = 23;
+		}
+		else
+		{
+			*vis = CLEAR_VIS;
+		}
+	}
+	else if(iscorner(*vis) && newvis == 1)
+	{
+
+	}
+	else if(*vis == 1 && iscorner(newvis))
+	{
+		*vis = newvis;
 	}
 	else
 	{					
