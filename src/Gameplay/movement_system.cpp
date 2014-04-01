@@ -170,45 +170,28 @@ void rebuild_floor(World* world, int targl)
 	}
 }
 
-int handle_entity_collision(World* world, unsigned int entity, unsigned int entity_number, unsigned int tile_number, unsigned int hit_entity) {
-
-	switch(world->collision[hit_entity].type) {
+void handle_entity_collision(World* world, unsigned int entity, unsigned int entity_number, unsigned int tile_number, unsigned int hit_entity) {
+	switch(entity_number) {
 		case COLLISION_STAIR:
 			if (world->collision[entity].type == COLLISION_HACKER || world->collision[entity].type == COLLISION_GUARD) {
 				int targx = world->wormhole[hit_entity].targetX;
 				int targy = world->wormhole[hit_entity].targetY;
 				int targl = world->wormhole[hit_entity].targetLevel;
-			
+
 				move_request(world, send_router_fd[WRITE], targl, targx, targy);
 				if(!network_ready)
 				{
 					rebuild_floor(world, targl);
-					return 1;
+					return;
 				}
 				floor_change_flag = 1;
 			}
 			break;
-		case COLLISION_HACKER:
-			if(world->command[entity].commands[C_ACTION] && world->collision[entity].type == COLLISION_GUARD)	
-			{
-				printf("Tagged player no %u\n", world->player[hit_entity].playerNo);
-				send_tag(world, send_router_fd[WRITE], world->player[hit_entity].playerNo);
-			}
-		break;
-		case COLLISION_TARGET:
-			if(world->command[entity].commands[C_ACTION] && world->collision[entity].type == COLLISION_HACKER)	
-			{					
-				if (world->objective[hit_entity].status == 1) {
-					printf("You (%s) captured objective %u\n", world->player[entity].name, world->objective[hit_entity].objectiveID);
-					world->objective[hit_entity].status = 2;
-					send_objectives(world, send_router_fd[WRITE]);
-					play_animation(world, hit_entity, "captured");
-				}
-			}
-		break;
 	}
-
-	return entity_number;
+	if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_CONTROLLABLE) && world->controllable[entity].active) {
+		tag_player(world, entity);
+		capture_objective(world, entity);
+	}
 }
 
 /**

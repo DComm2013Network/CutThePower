@@ -24,6 +24,11 @@
 #define DIRECTION_DOWN	4
 #define TAG_DISTANCE	5
 
+extern int send_router_fd[];
+
+bool spacebar_collision(World* world, unsigned int entity, unsigned int** collision_list, unsigned int* num_collisions);
+void cleanup_spacebar_collision(unsigned int** collision_list);
+
 /**
  * This is the main wrapper function for all other collision checking functions.
  *
@@ -242,5 +247,80 @@ int check_tag_collision(World* world, unsigned int currentEntityID) {
 	}
 
 	return -1;
+}
+
+bool tag_player(World* world, unsigned int entity) {
+	if (world->collision[entity].type == COLLISION_GUARD && world->command[entity].commands[C_ACTION]) {
+		unsigned int* collision_list = NULL;
+		unsigned int num_collisions;
+		if (spacebar_collision(world, entity, &collision_list, &num_collisions)) {
+			unsigned int i;
+			for (i = 0; i < num_collisions; i++) {
+				if (world->collision[collision_list[i]].type == COLLISION_HACKER) {
+					printf("tagged\n");
+					send_tag(world, send_router_fd[WRITE], world->player[collision_list[i]].playerNo);
+				}
+			}
+			cleanup_spacebar_collision(&collision_list);
+		}
+	}
+	return false;
+}
+
+bool capture_objective(World* world, unsigned int entity) {
+	if (world->collision[entity].type == COLLISION_HACKER && world->command[entity].commands[C_ACTION]) {
+		unsigned int* collision_list = NULL;
+		unsigned int num_collisions;
+		if (spacebar_collision(world, entity, &collision_list, &num_collisions)) {
+			unsigned int i;
+			for (i = 0; i < num_collisions; i++) {
+				if (world->collision[collision_list[i]].type == COLLISION_TARGET && world->objective[collision_list[i]].status == 1) {
+					printf("You captured an objective[%u] %u! You is the best!\n", collision_list[i], world->objective[collision_list[i]].objectiveID);
+					world->objective[collision_list[i]].status = 2;
+					send_objectives(world, send_router_fd[WRITE]);
+					play_animation(world, collision_list[i], "captured");
+				}
+			}
+			cleanup_spacebar_collision(&collision_list);
+		}
+	}
+	return false;
+}
+
+bool spacebar_collision(World* world, unsigned int entity, unsigned int** collision_list, unsigned int* num_collisions) {
+	unsigned int i = 0;
+	PositionComponent position;
+	position.x = world->position[entity].x;
+	position.y = world->position[entity].y;
+	position.width = 60;
+	position.height = 60;
+	position.level = world->position[entity].level;
+	
+	*num_collisions = 0;
+	
+	for (i = 0; i < MAX_ENTITIES; i++) {
+		if (i != entity && IN_THIS_COMPONENT(world->mask[i], COLLISION_MASK)) {
+			if (position.x + position.width / 2 - 1 > world->position[i].x - world->position[i].width / 2 + 1 &&
+				position.x - position.width / 2 + 1 < world->position[i].x + world->position[i].width / 2 - 1 &&
+				position.y + position.height / 2 - 1 > world->position[i].y - world->position[i].height / 2 + 1 &&
+				position.y - position.height / 2 + 1 < world->position[i].y + world->position[i].height / 2 + 1
+				&& world->collision[i].active) {
+				if ((*collision_list = (unsigned int*)realloc(*collision_list, sizeof(unsigned int) * ((*num_collisions) + 1))) == NULL) {
+					return false;
+				}
+				(*collision_list)[*num_collisions] = i;
+				(*num_collisions)++;
+			}
+		}
+	}
+	
+	return ((*num_collisions) > 0);
+}
+
+void cleanup_spacebar_collision(unsigned int** collision_list) {
+	if (*collision_list != NULL) {
+		free(*collision_list);
+		*collision_list = NULL;
+	}
 }
 
