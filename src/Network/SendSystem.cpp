@@ -193,6 +193,7 @@ void send_chat(World * world, int fd, char * str)
 	write_packet(fd, P_CHAT, pkt);
 	free(pkt);
 }
+
 /**
  * Sends an objective packet with the status of tagged objectives..
  *
@@ -205,12 +206,13 @@ void send_chat(World * world, int fd, char * str)
 void send_objectives(World * world, int fd)
 {
 	PKT_OBJECTIVE_STATUS * obj_status = (PKT_OBJECTIVE_STATUS*) calloc(1, sizeof(PKT_OBJECTIVE_STATUS));
+	unsigned int obj_idx = (world->position[controllable_player].level - 1) * OBJECTIVES_PER_FLOOR; // find the offset into the objectives array
 
 	for(int i = 0; i < MAX_ENTITIES; i++)
 	{
-		if(IN_THIS_COMPONENT(world->mask[i], COMPONENT_OBJECTIVE))
+		if(IN_THIS_COMPONENT(world->mask[i], COMPONENT_OBJECTIVE) && world->objective[i].status != OBJECTIVE_CAP)
 		{
-			obj_status->objectives_captured[world->objective[i].objectiveID] = world->objective[i].status;
+			obj_status->objectives_captured[world->objective[i].objectiveID + obj_idx] = world->objective[i].status;
 		}
 	}
 
