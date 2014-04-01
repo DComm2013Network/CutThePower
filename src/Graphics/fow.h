@@ -6,7 +6,7 @@
 
 
 #define NUMLEVELS   8
-#define NUMCORNERS 12
+#define NUMCORNERS 14
 
 typedef struct FowTile
 {
