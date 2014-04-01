@@ -32,7 +32,6 @@ extern SDL_Rect map_rect;
 int subOne(int n);
 int addOne(int n);
 
-int set_visibility_type_facade(FowPlayerPosition *fowp, int yDel, int xDel, int newvis);
 int set_visibility_type 			(FowPlayerPosition *fowp, int yDel, int xDel, int newvis);
 int is_wall_collision(World *world, PositionComponent newposition);
 
@@ -331,15 +330,15 @@ void make_surrounding_tiles_visible(FowPlayerPosition *fowp)
 
 	if( ! (t = set_visibility_type(fowp, TOP,  0, CLEAR_VIS))) {
 
-		set_visibility_type_facade(fowp, TOP, 0, CLEAR_VIS);
+		set_visibility_type(fowp, TOP, 0, CLEAR_VIS);
 
 		PositionComponent newposition;
 		newposition = set_newposition(fowp -> pos, TOP, LEFT);
 		
-		if(is_wall_collision(fowp -> world, newposition) == COLLISION_WALL) set_visibility_type_facade(fowp, TOP,  LEFT, CLEAR_VIS);
+		if(is_wall_collision(fowp -> world, newposition) == COLLISION_WALL) set_visibility_type(fowp, TOP,  LEFT, CLEAR_VIS);
 		
 		newposition = set_newposition(fowp -> pos, TOP, RGHT);
-		if(is_wall_collision(fowp -> world, newposition) == COLLISION_WALL) set_visibility_type_facade(fowp, TOP,  RGHT, CLEAR_VIS);
+		if(is_wall_collision(fowp -> world, newposition) == COLLISION_WALL) set_visibility_type(fowp, TOP,  RGHT, CLEAR_VIS);
 	
 		ttl = 0;
 		ttr = 0;
@@ -564,15 +563,11 @@ int set_visibility_type(FowPlayerPosition *fowp, int yDel, int xDel, int newvis)
 
 	int *vis = get_visibility_type(&newposition, fowp, yDel, xDel);
 
-	if(iscorner(*vis) && iscorner(newvis) )
+	if(*vis == 0 || newvis == 0)
 	{
 		*vis = CLEAR_VIS;
 	}
-	else if(iscorner(*vis) && newvis == 0)
-	{
-		*vis = CLEAR_VIS;
-	}
-	else if(*vis == 0 && iscorner(newvis))
+	else if(iscorner(*vis) && iscorner(newvis) )
 	{
 		*vis = CLEAR_VIS;
 	}
@@ -584,21 +579,6 @@ int set_visibility_type(FowPlayerPosition *fowp, int yDel, int xDel, int newvis)
 		*vis = TRANSP_VIS;
 		return 0; 
 	}
-	return 1;
-}
-
-
-int set_visibility_type_facade(FowPlayerPosition *fowp, int yDel, int xDel, int newvis)
-{
-
-	World *world = fowp -> world;
-	PositionComponent newposition;
-
-	int *vis = get_visibility_type(&newposition, fowp, yDel, xDel);
-	
-	*vis = (*vis == CLEAR_VIS) ? CLEAR_VIS : newvis;
-	
-	if( is_wall_collision(world, newposition) == COLLISION_WALL ) return 0;
 	return 1;
 }
 
