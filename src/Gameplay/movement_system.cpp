@@ -172,14 +172,6 @@ void rebuild_floor(World* world, int targl)
 
 int handle_entity_collision(World* world, unsigned int entity, unsigned int entity_number, unsigned int tile_number, unsigned int hit_entity) {
 	switch(entity_number) {
-		case COLLISION_TARGET:
-			if (world->collision[entity].type == COLLISION_HACKER && world->command[entity].commands[C_ACTION]) {
-				if (!world->objective[hit_entity].status) {
-					printf("You captured an objective! You is the best!\n");
-					world->objective[hit_entity].status = true;
-				}
-			}
-			break;
 		case COLLISION_STAIR:
 			if (world->collision[entity].type == COLLISION_HACKER || world->collision[entity].type == COLLISION_GUARD) {
 				int targx = world->wormhole[hit_entity].targetX;
@@ -207,7 +199,28 @@ int handle_entity_collision(World* world, unsigned int entity, unsigned int enti
 		position.level = world->position[entity].level;
 		entity_collision(world, entity, position, &entity_number_local, &hit_entity_local);
 		if (world->collision[hit_entity_local].type == COLLISION_HACKER) {
+			printf("tagged\n");
 			send_tag(world, send_router_fd[WRITE], world->player[hit_entity_local].playerNo);
+		}
+	}
+	if (world->collision[entity].type == COLLISION_HACKER && world->command[entity].commands[C_ACTION]) {
+		unsigned int entity_number_local = 0;
+		unsigned int hit_entity_local = 0;
+		PositionComponent position;
+		position.x = world->position[entity].x;
+		position.y = world->position[entity].y;
+		position.width = 60;
+		position.height = 60;
+		position.level = world->position[entity].level;
+		entity_collision(world, entity, position, &entity_number_local, &hit_entity_local);
+		if (hit_entity_local < MAX_ENTITIES && world->collision[hit_entity_local].type == COLLISION_TARGET) {
+			
+			if (!world->objective[hit_entity_local].status) {
+				//printf("You [%u] captured an objective[%u] %u! You is the best!\n", entity_number_local, hit_entity_local, world->objective[hit_entity_local].objectiveID);
+				world->objective[hit_entity_local].status = true;
+				play_animation(world, hit_entity_local, "captured");
+			}
+			
 		}
 	}
 	return entity_number;

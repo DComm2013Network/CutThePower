@@ -121,7 +121,7 @@ void wall_collision(World* world, PositionComponent temp, unsigned int* tile_num
  * @author   Joshua campbell & Clark Allenby
  */
 void entity_collision(World* world, unsigned int entity, PositionComponent temp, unsigned int* entity_number, unsigned int* hit_entity) {
-	int i = 0;
+	unsigned int i = 0;
 	
 	for (i = 0; i < MAX_ENTITIES; i++) {
 		if (i != entity && IN_THIS_COMPONENT(world->mask[i], COLLISION_MASK)) {

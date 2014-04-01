@@ -268,14 +268,27 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 				
 				float x, y;
 				int w, h;
-				unsigned int id;
+				unsigned int id, entity = -1;
+				char *animation_filename = (char*)malloc(sizeof(char) * 64);
 				
-				if (fscanf(fp_map, "%f %f %d %d %u", &x, &y, &w, &h, &id) != 5) {
+				if (fscanf(fp_map, "%f %f %d %d %u %s", &x, &y, &w, &h, &id, animation_filename) != 6) {
 					printf("Error loading objective!\n");
 					return -1;
 				}
 				
-				create_objective(world, x * TILE_WIDTH + TILE_WIDTH / 2, y * TILE_HEIGHT + TILE_HEIGHT / 2, w, h, id, level);
+				entity = create_objective(world, x * TILE_WIDTH + TILE_WIDTH / 2, y * TILE_HEIGHT + TILE_HEIGHT / 2, w, h, id, level);
+				
+				world->mask[entity] |= COMPONENT_ANIMATION | COMPONENT_RENDER_PLAYER;
+				
+				world->renderPlayer[entity].width = w;
+				world->renderPlayer[entity].height = h;
+				
+				load_animation(animation_filename, world, entity);
+				play_animation(world, entity, "not_captured");
+				
+				//printf("Loaded objective: %u\n", entity);
+				
+				free(animation_filename);
 			}
 			else {
 				printf("Did not deal with the entity type: %s\n", entity_type);
