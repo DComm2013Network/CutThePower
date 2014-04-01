@@ -1,0 +1,218 @@
+71
+
+bookshelf_90x57 1 20 -1 1
+assets/Graphics/objects/png_object/bookshelf_90x57.png
+
+box_32x36 1 20 -1 1
+assets/Graphics/objects/png_object/box_32x36.png
+
+chair_back_35x50 1 20 -1 1
+assets/Graphics/objects/png_object/chair_back_35x50.png
+
+chair_down_36x40 1 20 -1 1
+assets/Graphics/objects/png_object/chair_down_36x40.png
+
+chair_front_35x50 1 20 -1 1
+assets/Graphics/objects/png_object/chair_front_35x50.png
+
+chair_left_31x40 1 20 -1 1
+assets/Graphics/objects/png_object/chair_left_31x40.png
+
+chair_left_35x50 1 20 -1 1
+assets/Graphics/objects/png_object/chair_left_35x50.png
+
+chair_right_31x40 1 20 -1 1
+assets/Graphics/objects/png_object/chair_right_31x40.png
+
+chair_right_35x50 1 20 -1 1
+assets/Graphics/objects/png_object/chair_right_35x50.png
+
+chair_up_40x37 1 20 -1 1
+assets/Graphics/objects/png_object/chair_up_40x37.png
+
+computer_tower_15x25 1 20 -1 1
+assets/Graphics/objects/png_object/computer_tower_15x25.png
+
+couch_95x55 1 20 -1 1
+assets/Graphics/objects/png_object/couch_95x55.png
+
+couch_down_65x35 1 20 -1 1
+assets/Graphics/objects/png_object/couch_down_65x35.png
+
+couch_left_35x84 1 20 -1 1
+assets/Graphics/objects/png_object/couch_left_35x84.png
+
+couch_right_35x76 1 20 -1 1
+assets/Graphics/objects/png_object/couch_right_35x76.png
+
+cubicle_67x67 1 20 -1 1
+assets/Graphics/objects/png_object/cubicle_67x67.png
+
+cubicle2_67x67 1 20 -1 1
+assets/Graphics/objects/png_object/cubicle2_67x67.png
+
+double_vending_70x72 1 20 -1 1
+assets/Graphics/objects/png_object/double_vending_70x72.png
+
+file_cabinet_35x55 1 20 -1 1
+assets/Graphics/objects/png_object/file_cabinet_35x55.png
+
+fire_extinguisher_20x33 1 20 -1 1
+assets/Graphics/objects/png_object/fire_extinguisher_20x33.png
+
+fishtank_65x50 1 20 -1 1
+assets/Graphics/objects/png_object/fishtank_65x50.png
+
+floor_vent_30x20 1 20 -1 1
+assets/Graphics/objects/png_object/floor_vent_30x20.png
+
+fridge_35x60 1 20 -1 1
+assets/Graphics/objects/png_object/fridge_35x60.png
+
+horizontal_bench_80x36 1 20 -1 1
+assets/Graphics/objects/png_object/horizontal_bench_80x36.png
+
+jukebox_27x33 1 20 -1 1
+assets/Graphics/objects/png_object/jukebox_27x33.png
+
+kitchen_160x53 1 20 -1 1
+assets/Graphics/objects/png_object/kitchen_160x53.png
+
+light_blue_25x35 1 20 -1 1
+assets/Graphics/objects/png_object/light_blue_25x35.png
+
+light_yellow_25x35 1 20 -1 1
+assets/Graphics/objects/png_object/light_yellow_25x35.png
+
+locker_35x55 1 20 -1 1
+assets/Graphics/objects/png_object/locker_35x55.png
+
+machine_left_30x65 1 20 -1 1
+assets/Graphics/objects/png_object/machine_left_30x65.png
+
+machine_left_35x65 1 20 -1 1
+assets/Graphics/objects/png_object/machine_left_35x65.png
+
+machine_right_30x65 1 20 -1 1
+assets/Graphics/objects/png_object/machine_right_30x65.png
+
+machine_right_35x65 1 20 -1 1
+assets/Graphics/objects/png_object/machine_right_35x65.png
+
+monitor_back_25x25 1 20 -1 1
+assets/Graphics/objects/png_object/monitor_back_25x25.png
+
+monitor_front_25x25 1 20 -1 1
+assets/Graphics/objects/png_object/monitor_front_25x25.png
+
+picture_50x40 1 20 -1 1
+assets/Graphics/objects/png_object/picture_50x40.png
+
+pictures_60x23 1 20 -1 1
+assets/Graphics/objects/png_object/pictures_60x23.png
+
+pictures_60x25 1 20 -1 1
+assets/Graphics/objects/png_object/pictures_60x25.png
+
+pillar_blue_35x65 1 20 -1 1
+assets/Graphics/objects/png_object/pillar_blue_35x65.png
+
+pillar_yellow_35x65 1 20 -1 1
+assets/Graphics/objects/png_object/pillar_yellow_35x65.png
+
+plant_20x45 1 20 -1 1
+assets/Graphics/objects/png_object/plant_20x45.png
+
+plant_25x60 1 20 -1 1
+assets/Graphics/objects/png_object/plant_25x60.png
+
+plant_30x40 1 20 -1 1
+assets/Graphics/objects/png_object/plant_30x40.png
+
+plant_35x50 1 20 -1 1
+assets/Graphics/objects/png_object/plant_35x50.png
+
+plants_63x32 1 20 -1 1
+assets/Graphics/objects/png_object/plants_63x32.png
+
+printer_25x30 1 20 -1 1
+assets/Graphics/objects/png_object/printer_25x30.png
+
+reptiletank_65x50 1 20 -1 1
+assets/Graphics/objects/png_object/reptiletank_65x50.png
+
+screen_66x60 1 20 -1 1
+assets/Graphics/objects/png_object/screen_66x60.png
+
+security_camera_left_15x12 1 20 -1 1
+assets/Graphics/objects/png_object/security_camera_left_15x12.png
+
+security_camera_right_15x12 1 20 -1 1
+assets/Graphics/objects/png_object/security_camera_right_15x12.png
+
+server_27x46 1 20 -1 1
+assets/Graphics/objects/png_object/server_27x46.png
+
+server_30x46 1 20 -1 1
+assets/Graphics/objects/png_object/server_30x46.png
+
+server1_35x65 1 20 -1 1
+assets/Graphics/objects/png_object/server1_35x65.png
+
+server2_35x65 1 20 -1 1
+assets/Graphics/objects/png_object/server2_35x65.png
+
+server3_35x65 1 20 -1 1
+assets/Graphics/objects/png_object/server3_35x65.png
+
+server4_35x65 1 20 -1 1
+assets/Graphics/objects/png_object/server4_35x65.png
+
+shelf_65x67 1 20 -1 1
+assets/Graphics/objects/png_object/shelf_65x67.png
+
+side_shelf_26x93 1 20 -1 1
+assets/Graphics/objects/png_object/side_shelf_26x93.png
+
+signal_blue_15x35 1 20 -1 1
+assets/Graphics/objects/png_object/signal_blue_15x35.png
+
+
+
+not_captured 1 20 -1 -1
+assets/Graphics/objects/png_object/signal_green_15x35.png
+
+captured 1 20 -1 -1
+assets/Graphics/objects/png_object/signal_red_15x35.png
+
+
+
+table_35x60 1 20 -1 1
+assets/Graphics/objects/png_object/table_35x60.png
+
+table_65x35 1 20 -1 1
+assets/Graphics/objects/png_object/table_65x35.png
+
+table_75x55 1 20 -1 1
+assets/Graphics/objects/png_object/table_75x55.png
+
+table_66x66 1 20 -1 1
+assets/Graphics/objects/png_object/table_66x66.png
+
+trash_18x25 1 20 -1 1
+assets/Graphics/objects/png_object/trash_18x25.png
+
+tv_35x50 1 20 -1 1
+assets/Graphics/objects/png_object/tv_35x50.png
+
+vending_35x65 1 20 -1 1
+assets/Graphics/objects/png_object/vending_35x65.png
+
+vertical_bench_34x75 1 20 -1 1
+assets/Graphics/objects/png_object/vertical_bench_34x75.png
+
+water_20x57 1 20 -1 1
+assets/Graphics/objects/png_object/water_20x57.png
+
+window_40x37 1 20 -1 1
+assets/Graphics/objects/png_object/window_40x37.png

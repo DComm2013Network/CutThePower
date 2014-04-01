@@ -1,0 +1,4 @@
+1
+
+plant 1 20 -1 1
+assets/Graphics/objects/png_object/plant_35x50.png
