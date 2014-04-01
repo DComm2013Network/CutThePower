@@ -564,11 +564,15 @@ int set_visibility_type(FowPlayerPosition *fowp, int yDel, int xDel, int newvis)
 
 	int *vis = get_visibility_type(&newposition, fowp, yDel, xDel);
 
-	if(newvis == 0)
+	if(iscorner(*vis) && iscorner(newvis) )
 	{
 		*vis = CLEAR_VIS;
 	}
-	else if(iscorner(*vis) && iscorner(newvis))
+	else if(iscorner(*vis) && newvis == 0)
+	{
+		*vis = CLEAR_VIS;
+	}
+	else if(*vis == 0 && iscorner(newvis))
 	{
 		*vis = CLEAR_VIS;
 	}
