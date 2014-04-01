@@ -40,13 +40,11 @@
 04 09 09 10 09 09 09 09 09 10 09 09 09 09 10 09 09 09 09 09 09 09 09 10 09 09 09 09 09 09 09 09 09 09 09 10 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 10 09 09 09 09 09 09 05 
 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 
 
-8
-stairs 02 17 04 02 1 l
-stairs 62 18 35 38 1 r
-stairs 02 19 04 03 3 l 
-stairs 62 20 01 02 3 r
+6
+stairs 02 16 04 02 1 l
+stairs 02 18 04 03 3 l
 
-objective 15 18 25 45 4 assets/Graphics/objects/png_object/object_animation.txt
-objective 16 18 25 45 5 assets/Graphics/objects/png_object/object_animation.txt
-objective 15 19 25 45 6 assets/Graphics/objects/png_object/object_animation.txt
-objective 16 19 25 45 7 assets/Graphics/objects/png_object/object_animation.txt
+objective 15 18 25 45 0 assets/Graphics/objects/png_object/object_animation.txt
+objective 16 18 25 45 1 assets/Graphics/objects/png_object/object_animation.txt
+objective 15 19 25 45 2 assets/Graphics/objects/png_object/object_animation.txt
+objective 16 19 25 45 3 assets/Graphics/objects/png_object/object_animation.txt

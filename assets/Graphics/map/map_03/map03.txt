@@ -41,7 +41,7 @@
 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 
 
 4
-objective 15 18 25 45 8 assets/Graphics/objects/png_object/object_animation.txt
-objective 16 18 25 45 9 assets/Graphics/objects/png_object/object_animation.txt
-objective 15 19 25 45 10 assets/Graphics/objects/png_object/object_animation.txt
-objective 16 19 25 45 11 assets/Graphics/objects/png_object/object_animation.txt
+objective 15 18 25 45 0 assets/Graphics/objects/png_object/object_animation.txt
+objective 16 18 25 45 1 assets/Graphics/objects/png_object/object_animation.txt
+objective 15 19 25 45 2 assets/Graphics/objects/png_object/object_animation.txt
+objective 16 19 25 45 3 assets/Graphics/objects/png_object/object_animation.txt

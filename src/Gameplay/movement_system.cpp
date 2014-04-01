@@ -218,8 +218,10 @@ int handle_entity_collision(World* world, unsigned int entity, unsigned int enti
 		entity_collision(world, entity, position, &entity_number_local, &hit_entity_local);
 		if (hit_entity_local < MAX_ENTITIES && world->collision[hit_entity_local].type == COLLISION_TARGET) {
 			
+			//printf("Tagged entity %u\n", hit_entity_local);
+			
 			if (world->objective[hit_entity_local].status == 1) {
-				//printf("You [%u] captured an objective[%u] %u! You is the best!\n", entity_number_local, hit_entity_local, world->objective[hit_entity_local].objectiveID);
+				printf("You [%u] captured an objective[%u] %u! You is the best!\n", entity_number_local, hit_entity_local, world->objective[hit_entity_local].objectiveID);
 				world->objective[hit_entity_local].status = 2;
 				send_objectives(world, send_router_fd[WRITE]);
 				play_animation(world, hit_entity_local, "captured");
