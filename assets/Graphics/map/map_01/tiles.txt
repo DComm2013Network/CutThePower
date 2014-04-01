@@ -20,7 +20,7 @@
 17	assets/Graphics/map/map_01/17_40px.bmp		2
 18	assets/Graphics/map/map_01/18_40px.bmp		2
 19	assets/Graphics/map/map_01/19_40px.bmp		2
-20	assets/Graphics/map/map_01/20_40px.bmp		1
+20	assets/Graphics/map/map_01/20_40px.bmp		0
 21	assets/Graphics/map/map_01/stairsdownleft.bmp	1
 22	assets/Graphics/map/map_01/stairsdownright.bmp	1
 23	assets/Graphics/map/map_01/stairsupleft.bmp	1

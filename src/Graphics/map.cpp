@@ -225,7 +225,7 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 				
 				entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION | COMPONENT_COLLISION);
 				
-				//printf("Loading object %d [%s] %s\n", entity, animation_name, animation_filename);
+				//printf("Loading object %d (%f, %f) [%s] %s\n", entity, x, y, animation_name, animation_filename);
 				
 				world->position[entity].x = x * TILE_WIDTH + TILE_WIDTH / 2;
 				world->position[entity].y = y * TILE_HEIGHT + TILE_HEIGHT / 2;
@@ -261,7 +261,7 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 				
 				play_music(sound_id);
 				
-				printf("Playing sound %d\n", sound_id);
+				//printf("Playing sound %d\n", sound_id);
 				
 			}
 			else if (strcmp(entity_type, "objective") == 0) {
@@ -277,6 +277,11 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 				}
 				
 				entity = create_objective(world, x * TILE_WIDTH + TILE_WIDTH / 2, y * TILE_HEIGHT + TILE_HEIGHT / 2, w, h, id, level);
+				
+				if (entity >= MAX_ENTITIES) {
+					printf("exceeded max entities.\n");
+					return -1;
+				}
 				
 				world->mask[entity] |= COMPONENT_ANIMATION | COMPONENT_RENDER_PLAYER;
 				

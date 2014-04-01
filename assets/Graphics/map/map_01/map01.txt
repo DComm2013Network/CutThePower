@@ -38,7 +38,7 @@
 13 00 13 00 00 00 00 00 00 13 20 00 00 20 20 20 20 20 20 20 20 20 20 20 20 20 00 00 20 20 20 20 20 20 20 20 20 13 20 00 00 20 20 20 20 20 20 20 20 20 20 20 00 00 20 20 20 20 20 20 20 20 20 13 
 13 00 13 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 13 23 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 13 
 04 09 10 09 09 09 09 09 09 10 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 10 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 05 
-20 20 20 25 20 20 25 20 20 25 20 20 25 20 20 25 20 20 25 20 20 25 20 20 25 20 20 25 20 20 25 20 20 25 20 20 25 20 20 25 20 20 25 20 20 25 20 20 25 20 20 25 20 20 25 20 20 25 20 20 25 20 20 20 
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 
 
 90
 stairs 04 02 02 17 3 r
@@ -93,7 +93,7 @@ object 7 11 35 65 assets/Graphics/objects/png_object/object_animation.txt vendin
 object 9 11 20 57 assets/Graphics/objects/png_object/object_animation.txt water_20x57
 object 4 5.8 20 33 assets/Graphics/objects/png_object/object_animation.txt fire_extinguisher_20x33
 
-objective 15 18 25 45 assets/Graphics/objects/png_object/object_animation.txt
+objective 15 18 25 45 0 assets/Graphics/objects/png_object/object_animation.txt
 
 object 15.8 10.5 15 12 assets/Graphics/objects/png_object/object_animation.txt security_camera_left_15x12
 
@@ -147,4 +147,3 @@ object 51 36.9 40 37 assets/Graphics/objects/png_object/object_animation.txt win
 object 55 36.9 40 37 assets/Graphics/objects/png_object/object_animation.txt window_40x37
 object 59 36.9 40 37 assets/Graphics/objects/png_object/object_animation.txt window_40x37
 object 23 36.9 40 37 assets/Graphics/objects/png_object/object_animation.txt window_40x37
->>>>>>> Stashed changes
