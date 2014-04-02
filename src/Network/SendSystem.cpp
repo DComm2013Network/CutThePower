@@ -179,7 +179,7 @@ void send_chat(World * world, int fd, char * str)
 	if(str == NULL)
 		return;
 
-	PKT_SND_CHAT * pkt = (PKT_SND_CHAT*) malloc(sizeof(PKT_SND_CHAT));
+	PKT_SND_CHAT * pkt = (PKT_SND_CHAT*) calloc(1, sizeof(PKT_SND_CHAT));
 
 	for (int i = 0; i < MAX_ENTITIES; i++)
 	{

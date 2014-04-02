@@ -169,6 +169,10 @@ void render_fog_of_war(SDL_Surface *surface, FowComponent *fow)
 					case 21: blit_tile(surface, fow, &tileRect, y, x, 11); break;
 					case 22: blit_tile(surface, fow, &tileRect, y, x, 12); break;
 					case 23: blit_tile(surface, fow, &tileRect, y, x, 13); break;
+					case 24: blit_tile(surface, fow, &tileRect, y, x, 14); break;
+					case 25: blit_tile(surface, fow, &tileRect, y, x, 15); break;
+					case 26: blit_tile(surface, fow, &tileRect, y, x, 16); break;
+					case 27: blit_tile(surface, fow, &tileRect, y, x, 17); break;
 				}
 			}
 		}
@@ -594,15 +598,15 @@ int set_visibility_type(FowPlayerPosition *fowp, int yDel, int xDel, int newvis)
 	}
 	
 	else if(iscorner(*vis) && iscorner(newvis) ) {
-	
-		//if     ((*vis == BOT2RGHT2 && newvis == TOP2LEFT2) || (*vis == TOP2LEFT2 && newvis == BOT2RGHT2)) *vis = 22;
-		//else if((*vis == BOT2LEFT2 && newvis == TOP2RGHT2) || (*vis == TOP2RGHT2 && newvis == BOT2LEFT2)) *vis = 23;
-		//else if((*vis == BOT2LEFT2 && newvis == TOP2LEFT2) || (*vis == TOP2LEFT2 && newvis == BOT2LEFT2)) *vis = 24;
-		//else if((*vis == BOT2RGHT2 && newvis == TOP2RGHT2) || (*vis == TOP2RGHT2 && newvis == BOT2RGHT2)) *vis = 25;
-		//else if((*vis == BOT2LEFT2 && newvis == BOT2RGHT2) || (*vis == BOT2RGHT2 && newvis == BOT2LEFT2)) *vis = 26;
-		//else if((*vis == TOP2LEFT2 && newvis == TOP2RGHT2) || (*vis == TOP2RGHT2 && newvis == TOP2LEFT2)) *vis = 27;
-		//else *vis = CLEAR_VIS;
-		*vis = CLEAR_VIS;
+
+		if     ((*vis == BOT2RGHT2 && newvis == TOP2LEFT2) || (*vis == TOP2LEFT2 && newvis == BOT2RGHT2)) *vis = 22;
+		else if((*vis == BOT2LEFT2 && newvis == TOP2RGHT2) || (*vis == TOP2RGHT2 && newvis == BOT2LEFT2)) *vis = 23;
+		else if((*vis == TOP2LEFT2 && newvis == TOP2RGHT2) || (*vis == TOP2RGHT2 && newvis == TOP2LEFT2)) *vis = 24;
+		else if((*vis == BOT2RGHT2 && newvis == BOT2LEFT2) || (*vis == BOT2LEFT2 && newvis == BOT2RGHT2)) *vis = 25;
+		else if((*vis == BOT2LEFT2 && newvis == TOP2LEFT2) || (*vis == TOP2LEFT2 && newvis == TOP2LEFT2)) *vis = 26;
+		else if((*vis == BOT2RGHT2 && newvis == TOP2RGHT2) || (*vis == TOP2RGHT2 && newvis == BOT2RGHT2)) *vis = 27;
+		else *vis = CLEAR_VIS;
+
 	}
 	else if(iscorner(*vis) && newvis == 1) {
 
