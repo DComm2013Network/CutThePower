@@ -54,7 +54,7 @@ void create_button(World *world, const char *text, const char *name, int x, int 
 	world->position[entity].x = x;
 	world->position[entity].y = y;
 	
-	render_small_text(world, entity, text);
+	render_text(world, entity, text, MENU_FONT);
 	
 	world->button[entity].prevState = false;
 	world->button[entity].currentState = false;
@@ -86,7 +86,7 @@ void create_label(World *world, const char *text, int x, int y) {
 	
 	unsigned int entity = create_entity(world, COMPONENT_MENU_ITEM | COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
 	
-	render_small_text(world, entity, text);
+	render_text(world, entity, text, MENU_FONT);
 	
 	world->position[entity].x = x;
 	world->position[entity].y = y;
@@ -116,7 +116,7 @@ void create_title(World *world, const char *text, int x, int y) {
 	world->position[entity].x = x;
 	world->position[entity].y = y;
 	
-	render_big_text(world, entity, text);
+	render_text(world, entity, text, TITLE_FONT);
 }
 
 /**
@@ -598,6 +598,10 @@ void create_pause_screen(World *world) {
 	unsigned int entity;
 	
 	entity = create_entity(world, COMPONENT_MENU_ITEM | COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
+	
+	//for(entity = MAX_ENTITIES - 1; entity >= 0; entity--) {
+		
+	//}
 	
 	const int w = 650;
 	const int h = 600;

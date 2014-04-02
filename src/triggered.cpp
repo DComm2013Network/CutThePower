@@ -64,7 +64,7 @@ bool menu_click(World *world, unsigned int entity) {
 	else if (strcmp(world->button[entity].label, "options_sound_off") == 0) {
 		
 		world->position[entity].x = (WIDTH / 2);
-		render_small_text(world, entity, "SOUND ON");
+		render_text(world, entity, "SOUND ON", MENU_FONT);
 		
 		world->button[entity].label = (char*)realloc(world->button[entity].label, sizeof(char) * strlen("options_sound_on"));
 		strcpy(world->button[entity].label, "options_sound_on");
@@ -75,7 +75,7 @@ bool menu_click(World *world, unsigned int entity) {
 	else if (strcmp(world->button[entity].label, "options_sound_on") == 0) {
 		
 		world->position[entity].x = (WIDTH / 2);
-		render_small_text(world, entity, "SOUND OFF");
+		render_text(world, entity, "SOUND OFF", MENU_FONT);
 		
 		world->button[entity].label = (char*)realloc(world->button[entity].label, sizeof(char) * strlen("options_sound_off"));
 		strcpy(world->button[entity].label, "options_sound_off");
@@ -93,7 +93,7 @@ bool menu_click(World *world, unsigned int entity) {
 	else if (strcmp(world->button[entity].label, "options_fullscreen_off") == 0) {
 
 		world->position[entity].x = (WIDTH / 2);
-		render_small_text(world, entity, "FULLSCREEN ON");
+		render_text(world, entity, "FULLSCREEN ON", MENU_FONT);
 		
 		world->button[entity].label = (char*)realloc(world->button[entity].label, sizeof(char) * strlen("options_fullscreen_on"));
 		strcpy(world->button[entity].label, "options_fullscreen_on");
@@ -104,7 +104,7 @@ bool menu_click(World *world, unsigned int entity) {
 	else if (strcmp(world->button[entity].label, "options_fullscreen_on") == 0) {
 
 		world->position[entity].x = (WIDTH / 2);
-		render_small_text(world, entity, "FULLSCREEN OFF");
+		render_text(world, entity, "FULLSCREEN OFF", MENU_FONT);
 		
 		world->button[entity].label = (char*)realloc(world->button[entity].label, sizeof(char) * strlen("options_fullscreen_off"));
 		strcpy(world->button[entity].label, "options_fullscreen_off");
@@ -400,18 +400,17 @@ bool menu_click(World *world, unsigned int entity) {
 	else if (strcmp(world->button[entity].label, "ingame_sound_off") == 0) {
 		
 		world->position[entity].x = (WIDTH / 2);
-		render_small_text(world, entity, "SOUND ON");
+		render_text(world, entity, "SOUND ON", MENU_FONT);
 		
 		world->button[entity].label = (char*)realloc(world->button[entity].label, sizeof(char) * strlen("ingame_sound_on"));
 		strcpy(world->button[entity].label, "ingame_sound_on");
 		
 		enable_sound(true);
-
 	}
 	else if (strcmp(world->button[entity].label, "ingame_sound_on") == 0) {
 		
 		world->position[entity].x = (WIDTH / 2);
-		render_small_text(world, entity, "SOUND OFF");
+		render_text(world, entity, "SOUND OFF", MENU_FONT);
 		
 		world->button[entity].label = (char*)realloc(world->button[entity].label, sizeof(char) * strlen("ingame_sound_off"));
 		strcpy(world->button[entity].label, "ingame_sound_off");
@@ -422,7 +421,7 @@ bool menu_click(World *world, unsigned int entity) {
 	else if (strcmp(world->button[entity].label, "ingame_fullscreen_off") == 0) {
 
 		world->position[entity].x = (WIDTH / 2);
-		render_small_text(world, entity, "FULLSCREEN ON");
+		render_text(world, entity, "FULLSCREEN ON", MENU_FONT);
 		
 		world->button[entity].label = (char*)realloc(world->button[entity].label, sizeof(char) * strlen("ingame_fullscreen_on"));
 		strcpy(world->button[entity].label, "ingame_fullscreen_on");
@@ -433,7 +432,7 @@ bool menu_click(World *world, unsigned int entity) {
 	else if (strcmp(world->button[entity].label, "ingame_fullscreen_on") == 0) {
 
 		world->position[entity].x = (WIDTH / 2);
-		render_small_text(world, entity, "FULLSCREEN OFF");
+		render_text(world, entity, "FULLSCREEN OFF", MENU_FONT);
 		
 		world->button[entity].label = (char*)realloc(world->button[entity].label, sizeof(char) * strlen("ingame_fullscreen_off"));
 		strcpy(world->button[entity].label, "ingame_fullscreen_off");
