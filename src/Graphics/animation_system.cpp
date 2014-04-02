@@ -67,7 +67,11 @@ void animation_system(World *world) {
 							continue;
 						}
 					}
-
+					
+					if (animation->index >= animation->surface_count) {
+						animation->index = animation->surface_count - 1;
+					}
+					
 					renderPlayer->playerSurface = animation->surfaces[animation->index];
 
 				}

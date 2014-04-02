@@ -233,8 +233,8 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 				world->position[entity].width = w;
 				world->position[entity].height = h;
 				
-				world->renderPlayer[entity].width = TILE_WIDTH;
-				world->renderPlayer[entity].height = TILE_HEIGHT;
+				world->renderPlayer[entity].width = w;
+				world->renderPlayer[entity].height = h;
 				
 				world->collision[entity].id = 0;
 				world->collision[entity].type = COLLISION_SOLID;
