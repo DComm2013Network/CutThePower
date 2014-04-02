@@ -595,13 +595,14 @@ int set_visibility_type(FowPlayerPosition *fowp, int yDel, int xDel, int newvis)
 	
 	else if(iscorner(*vis) && iscorner(newvis) ) {
 	
-		if     ((*vis == BOT2RGHT2 && newvis == TOP2LEFT2) || (*vis == TOP2LEFT2 && newvis == BOT2RGHT2)) *vis = 22;
-		else if((*vis == BOT2LEFT2 && newvis == TOP2RGHT2) || (*vis == TOP2RGHT2 && newvis == BOT2LEFT2)) *vis = 23;
-		else if((*vis == BOT2LEFT2 && newvis == TOP2LEFT2) || (*vis == TOP2LEFT2 && newvis == BOT2LEFT2)) *vis = 24;
-		else if((*vis == BOT2RGHT2 && newvis == TOP2RGHT2) || (*vis == TOP2RGHT2 && newvis == BOT2RGHT2)) *vis = 25;
-		else if((*vis == BOT2LEFT2 && newvis == BOT2RGHT2) || (*vis == BOT2RGHT2 && newvis == BOT2LEFT2)) *vis = 26;
-		else if((*vis == TOP2LEFT2 && newvis == TOP2RGHT2) || (*vis == TOP2RGHT2 && newvis == TOP2LEFT2)) *vis = 27;
-		else *vis = CLEAR_VIS;
+		//if     ((*vis == BOT2RGHT2 && newvis == TOP2LEFT2) || (*vis == TOP2LEFT2 && newvis == BOT2RGHT2)) *vis = 22;
+		//else if((*vis == BOT2LEFT2 && newvis == TOP2RGHT2) || (*vis == TOP2RGHT2 && newvis == BOT2LEFT2)) *vis = 23;
+		//else if((*vis == BOT2LEFT2 && newvis == TOP2LEFT2) || (*vis == TOP2LEFT2 && newvis == BOT2LEFT2)) *vis = 24;
+		//else if((*vis == BOT2RGHT2 && newvis == TOP2RGHT2) || (*vis == TOP2RGHT2 && newvis == BOT2RGHT2)) *vis = 25;
+		//else if((*vis == BOT2LEFT2 && newvis == BOT2RGHT2) || (*vis == BOT2RGHT2 && newvis == BOT2LEFT2)) *vis = 26;
+		//else if((*vis == TOP2LEFT2 && newvis == TOP2RGHT2) || (*vis == TOP2RGHT2 && newvis == TOP2LEFT2)) *vis = 27;
+		//else *vis = CLEAR_VIS;
+		*vis = CLEAR_VIS;
 	}
 	else if(iscorner(*vis) && newvis == 1) {
 

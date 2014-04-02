@@ -134,7 +134,7 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 			
 			if(IN_THIS_COMPONENT(world.mask[entity], COMPONENT_PLAYER)) {
 					
-				if ((fow->teamNo == world.player[entity].teamNo)) {	
+				//if ((fow->teamNo == world.player[entity].teamNo)) {	
 					FowPlayerPosition fowp;
 		
 					fowp.world = &world;
@@ -162,10 +162,10 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 			
 					SDL_BlitScaled(renderPlayer->playerSurface, &clipRect, surface, &playerRect);
 
-				}
-				else {
-					opponentPlayers[opponentPlayersCount++] = entity;
-				}
+				//}
+				//else {
+				//	opponentPlayers[opponentPlayersCount++] = entity;
+				//}
 			}
 
 			//check if a textbox.
@@ -189,7 +189,7 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 		}
 	}
 
-	for(int entity = 0; entity < opponentPlayersCount && entity < 32; entity++) {
+	for(int entity = 0; 0 && entity < opponentPlayersCount && entity < 32; entity++) {
 
 		printf("%d", level);
 
