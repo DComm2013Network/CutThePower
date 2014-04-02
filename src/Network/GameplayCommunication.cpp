@@ -82,7 +82,7 @@ uint32_t read_type(int fd)
  */
 void* read_packet(int fd, uint32_t size)
 {
-    void *temp = malloc(size);
+    void *temp = calloc(1, size);
 	int read_bytes;
 
     if((read_bytes = read_pipe(fd, temp, size)) == -1){
