@@ -130,7 +130,7 @@ void render_fog_of_war(SDL_Surface *surface, FowComponent *fow)
 			tileRect.w = TILE_WIDTH;
 			tileRect.h = TILE_HEIGHT;
 
-			if(fow -> teamNo == COPS)
+			//if(fow -> teamNo == COPS)
 			{
 				switch(visible)
 				{
@@ -140,7 +140,7 @@ void render_fog_of_war(SDL_Surface *surface, FowComponent *fow)
 				}
 			}
 			
-			else if(fow -> teamNo == ROBBERS)
+			/*else if(fow -> teamNo == ROBBERS)
 			{
 				switch(visible)
 				{
@@ -148,10 +148,10 @@ void render_fog_of_war(SDL_Surface *surface, FowComponent *fow)
 					case OPAQUE_VIS: SDL_BlitSurface(fow -> fogOfWar[count++], NULL, surface, &tileRect); break;
 					case TRANSP_VIS: SDL_BlitSurface(fow -> alphaFog[count++], NULL, surface, &tileRect); break;
 				}
-			}
+			}*/
 			
 
-			if(fow -> teamNo == ROBBERS || fow -> teamNo == COPS)
+			//if(fow -> teamNo == ROBBERS || fow -> teamNo == COPS)
 			{
 				switch(visible)
 				{		
@@ -169,6 +169,10 @@ void render_fog_of_war(SDL_Surface *surface, FowComponent *fow)
 					case 21: blit_tile(surface, fow, &tileRect, y, x, 11); break;
 					case 22: blit_tile(surface, fow, &tileRect, y, x, 12); break;
 					case 23: blit_tile(surface, fow, &tileRect, y, x, 13); break;
+					case 24: blit_tile(surface, fow, &tileRect, y, x, 14); break;
+					case 25: blit_tile(surface, fow, &tileRect, y, x, 15); break;
+					case 26: blit_tile(surface, fow, &tileRect, y, x, 16); break;
+					case 27: blit_tile(surface, fow, &tileRect, y, x, 17); break;
 				}
 			}
 		}
@@ -268,6 +272,10 @@ void init_fog_of_war(FowComponent **fow)
 		(*fow)->corners[11] = IMG_Load("assets/Graphics/fow/botright/right.png");
 		(*fow)->corners[12] = IMG_Load("assets/Graphics/fow/intersects/intersect_1.png");
 		(*fow)->corners[13] = IMG_Load("assets/Graphics/fow/intersects/intersect_2.png");
+		(*fow)->corners[14] = IMG_Load("assets/Graphics/fow/intersects/intersect_3.png");
+		(*fow)->corners[15] = IMG_Load("assets/Graphics/fow/intersects/intersect_4.png");
+		(*fow)->corners[16] = IMG_Load("assets/Graphics/fow/intersects/intersect_5.png");
+		(*fow)->corners[17] = IMG_Load("assets/Graphics/fow/intersects/intersect_6.png");
 }
 
 
@@ -590,12 +598,12 @@ int set_visibility_type(FowPlayerPosition *fowp, int yDel, int xDel, int newvis)
 	
 	else if(iscorner(*vis) && iscorner(newvis) ) {
 	
-		if		 ((*vis == BOT2RGHT2 && newvis == TOP2LEFT2) || (*vis == TOP2LEFT2 && newvis == BOT2RGHT2)) *vis = 22;
+		if     ((*vis == BOT2RGHT2 && newvis == TOP2LEFT2) || (*vis == TOP2LEFT2 && newvis == BOT2RGHT2)) *vis = 22;
 		else if((*vis == BOT2LEFT2 && newvis == TOP2RGHT2) || (*vis == TOP2RGHT2 && newvis == BOT2LEFT2)) *vis = 23;
-		//else if((*vis == BOT2LEFT && newvis == TOP2LEFT) || (*vis == TOP2LEFT && newvis == TOP2RGHT)) *vis = 24;
-		//else if((*vis == BOT2RGHT && newvis == TOP2RGHT) || (*vis == TOP2RGHT && newvis == BOT2RGHT)) *vis = 25;
-		//else if((*vis == BOT2LEFT && newvis == TOP2LEFT) || (*vis == TOP2LEFT && newvis == TOP2RGHT)) *vis = 24;
-		//else if((*vis == TOP2LEFT && newvis == TOP2RGHT) || (*vis == TOP2RGHT && newvis == TOP2LEFT)) *vis = 24;
+		else if((*vis == TOP2LEFT2 && newvis == TOP2RGHT2) || (*vis == TOP2RGHT2 && newvis == TOP2LEFT2)) *vis = 24;
+		else if((*vis == BOT2RGHT2 && newvis == BOT2LEFT2) || (*vis == BOT2LEFT2 && newvis == BOT2RGHT2)) *vis = 25;
+		else if((*vis == BOT2LEFT2 && newvis == TOP2LEFT2) || (*vis == TOP2LEFT2 && newvis == TOP2LEFT2)) *vis = 26;
+		else if((*vis == BOT2RGHT2 && newvis == TOP2RGHT2) || (*vis == TOP2RGHT2 && newvis == BOT2RGHT2)) *vis = 27;
 		else *vis = CLEAR_VIS;
 	}
 	else if(iscorner(*vis) && newvis == 1) {

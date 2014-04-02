@@ -190,7 +190,7 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 		}
 	}
 
-	for(int entity = 0; entity < opponentPlayersCount && entity < 32; entity++) {
+	/*for(int entity = 0; entity < opponentPlayersCount && entity < 32; entity++) {
 
 		printf("%d", level);
 
@@ -226,7 +226,7 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 
 			SDL_BlitScaled(renderPlayer->playerSurface, &clipRect, surface, &playerRect);
 		}
-	}
+	}*/
 }
 
 
