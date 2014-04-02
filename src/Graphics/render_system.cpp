@@ -183,7 +183,6 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 				
 				if (text->focused) {
 					playerRect.x += get_small_text_width(text->text) + 1;
-					
 					SDL_BlitSurface(ibeam, NULL, surface, &playerRect);
 				}
 			}
@@ -194,7 +193,7 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 
 		printf("%d", level);
 
-		position 			= &(world.position		[ opponentPlayers[entity] ]);
+		position 	= &(world.position    [ opponentPlayers[entity] ]);
 		renderPlayer 	= &(world.renderPlayer[ opponentPlayers[entity] ]);
 
 		playerRect.x = position->x;

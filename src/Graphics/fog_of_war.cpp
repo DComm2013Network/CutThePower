@@ -13,35 +13,35 @@
 
 #include "map.h"
 
-#define L_EMPTY			1
-#define L_WALL			2
+#define L_EMPTY		1
+#define L_WALL		2
 
 #define COLLISION_MASK (COMPONENT_COLLISION)
 #define LEVEL_MASK (COMPONENT_LEVEL)
 
-#define CLEAR_VIS		 0
-#define TRANSP_VIS 1
-#define OPAQUE_VIS 2
+#define CLEAR_VIS	0
+#define TRANSP_VIS 	1
+#define OPAQUE_VIS 	2
 		
 
 #define OPAQUE_FOG_COLOUR 0x000000
 #define TRANSP_FOG_COLOUR 0x221122
 
 #define TOP2LEFT2 	10
-#define TOP2LEFT 		11
-#define TOPLEFT2 		12
+#define TOP2LEFT 	11
+#define TOPLEFT2 	12
 
 #define BOT2LEFT2 	13
-#define BOT2LEFT		14
-#define BOTLEFT2 		15
+#define BOT2LEFT	14
+#define BOTLEFT2 	15
 
 #define TOP2RGHT2 	16
-#define TOP2RGHT 		17
-#define TOPRGHT2 		18
+#define TOP2RGHT 	17
+#define TOPRGHT2 	18
 
 #define BOT2RGHT2 	19
-#define BOT2RGHT 		20
-#define BOTRGHT2 		21
+#define BOT2RGHT 	20
+#define BOTRGHT2 	21
 
 
 extern SDL_Rect map_rect;
@@ -268,6 +268,11 @@ void init_fog_of_war(FowComponent **fow)
 		(*fow)->corners[11] = IMG_Load("assets/Graphics/fow/botright/right.png");
 		(*fow)->corners[12] = IMG_Load("assets/Graphics/fow/intersects/intersect_1.png");
 		(*fow)->corners[13] = IMG_Load("assets/Graphics/fow/intersects/intersect_2.png");
+		(*fow)->corners[14] = IMG_Load("assets/Graphics/fow/intersects/intersect_3.png");
+		(*fow)->corners[15] = IMG_Load("assets/Graphics/fow/intersects/intersect_4.png");
+		(*fow)->corners[16] = IMG_Load("assets/Graphics/fow/intersects/intersect_5.png");
+		(*fow)->corners[17] = IMG_Load("assets/Graphics/fow/intersects/intersect_6.png");
+
 }
 
 
@@ -590,12 +595,12 @@ int set_visibility_type(FowPlayerPosition *fowp, int yDel, int xDel, int newvis)
 	
 	else if(iscorner(*vis) && iscorner(newvis) ) {
 	
-		if		 ((*vis == BOT2RGHT2 && newvis == TOP2LEFT2) || (*vis == TOP2LEFT2 && newvis == BOT2RGHT2)) *vis = 22;
+		if     ((*vis == BOT2RGHT2 && newvis == TOP2LEFT2) || (*vis == TOP2LEFT2 && newvis == BOT2RGHT2)) *vis = 22;
 		else if((*vis == BOT2LEFT2 && newvis == TOP2RGHT2) || (*vis == TOP2RGHT2 && newvis == BOT2LEFT2)) *vis = 23;
-		//else if((*vis == BOT2LEFT && newvis == TOP2LEFT) || (*vis == TOP2LEFT && newvis == TOP2RGHT)) *vis = 24;
-		//else if((*vis == BOT2RGHT && newvis == TOP2RGHT) || (*vis == TOP2RGHT && newvis == BOT2RGHT)) *vis = 25;
-		//else if((*vis == BOT2LEFT && newvis == TOP2LEFT) || (*vis == TOP2LEFT && newvis == TOP2RGHT)) *vis = 24;
-		//else if((*vis == TOP2LEFT && newvis == TOP2RGHT) || (*vis == TOP2RGHT && newvis == TOP2LEFT)) *vis = 24;
+		else if((*vis == BOT2LEFT2 && newvis == TOP2LEFT2) || (*vis == TOP2LEFT2 && newvis == BOT2LEFT2)) *vis = 24;
+		else if((*vis == BOT2RGHT2 && newvis == TOP2RGHT2) || (*vis == TOP2RGHT2 && newvis == BOT2RGHT2)) *vis = 25;
+		else if((*vis == BOT2LEFT2 && newvis == BOT2RGHT2) || (*vis == BOT2RGHT2 && newvis == BOT2LEFT2)) *vis = 26;
+		else if((*vis == TOP2LEFT2 && newvis == TOP2RGHT2) || (*vis == TOP2RGHT2 && newvis == TOP2LEFT2)) *vis = 27;
 		else *vis = CLEAR_VIS;
 	}
 	else if(iscorner(*vis) && newvis == 1) {
