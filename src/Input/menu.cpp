@@ -462,10 +462,10 @@ void create_setup_menu(World *world) {
 	create_title(world, "SETUP", (WIDTH / 2), (HEIGHT / 2) - 250);
 	
 	create_label(world, "USERNAME", (WIDTH / 2) - 550, (HEIGHT / 2) - 25);
-	create_textfield(world, "setup_username", (WIDTH / 2) - 100, (HEIGHT / 2) - 30, "DEFAULT", 1);
+	create_textfield(world, "setup_username", (WIDTH / 2) - 100, (HEIGHT / 2) - 30, "", 1);
 	
 	create_label(world, "SERVER IP", (WIDTH / 2) - 550, (HEIGHT / 2) + 50);
-	create_textfield(world, "setup_serverip", (WIDTH / 2) - 100, (HEIGHT / 2) + 45, "192.168.43.215", 1);
+	create_textfield(world, "setup_serverip", (WIDTH / 2) - 100, (HEIGHT / 2) + 45, "192.168.0.49", 1);
 	
 	
 	create_button(world, "BACK", "setup_back", (WIDTH / 2) + 150, (HEIGHT / 2) + 275);
