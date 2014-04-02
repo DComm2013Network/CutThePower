@@ -185,7 +185,7 @@ void client_update_floor(World *world, void *packet)
 		{
 			objective_table[obj_idx].entity_no = i;
 			world->objective[i].status = objective_table[obj_idx].obj_state;
-    		play_animation(world, objective_table[i].entity_no, (world->objective[i].status == OBJECTIVE_CAP) ? "captured" : "not_captured");
+    		play_animation(world, objective_table[obj_idx].entity_no, (world->objective[i].status == OBJECTIVE_CAP) ? "captured" : "not_captured");
 			obj_idx++;
 		}
 	}
