@@ -110,7 +110,7 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 				}
 			}
 
-			if(! IN_THIS_COMPONENT(world.mask[entity], COMPONENT_PLAYER))
+			if(!IN_THIS_COMPONENT(world.mask[entity], COMPONENT_PLAYER))
 			{
 				clipRect.x = -playerRect.x;
 				clipRect.y = -playerRect.y;
@@ -128,7 +128,7 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 		
 				if (clipRect.w > WIDTH - playerRect.x)
 					clipRect.w = WIDTH - playerRect.x;
-			
+				
 				SDL_BlitScaled(renderPlayer->playerSurface, &clipRect, surface, &playerRect);
 			}
 			
