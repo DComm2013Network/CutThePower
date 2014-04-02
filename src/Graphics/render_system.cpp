@@ -194,8 +194,8 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 
 		printf("%d", level);
 
-		position = &(world.position[entity]);
-		renderPlayer = &(world.renderPlayer[entity]);
+		position 			= &(world.position		[ opponentPlayers[entity] ]);
+		renderPlayer 	= &(world.renderPlayer[ opponentPlayers[entity] ]);
 
 		playerRect.x = position->x;
 		playerRect.y = position->y;
@@ -205,7 +205,7 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 		int xPos = position->x / TILE_WIDTH;
 		int yPos = position->y / TILE_HEIGHT;
 
-		if(fow -> tiles[yPos][xPos].visible[ level ] == 1)
+		if(fow -> tiles[yPos][xPos].visible[ position->level ] == 1)
 		{
 			clipRect.x = -playerRect.x;
 			clipRect.y = -playerRect.y;

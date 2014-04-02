@@ -27,6 +27,23 @@
 #define OPAQUE_FOG_COLOUR 0x000000
 #define TRANSP_FOG_COLOUR 0x221122
 
+#define TOP2LEFT2 	10
+#define TOP2LEFT 		11
+#define TOPLEFT2 		12
+
+#define BOT2LEFT2 	13
+#define BOT2LEFT		14
+#define BOTLEFT2 		15
+
+#define TOP2RGHT2 	16
+#define TOP2RGHT 		17
+#define TOPRGHT2 		18
+
+#define BOT2RGHT2 	19
+#define BOT2RGHT 		20
+#define BOTRGHT2 		21
+
+
 extern SDL_Rect map_rect;
 
 int subOne(int n);
@@ -386,13 +403,13 @@ void make_surrounding_tiles_visible(FowPlayerPosition *fowp)
 	if(t && l && set_visibility_type(fowp, TOP, LEFT, CLEAR_VIS)) {
 	
 		if( l && t )
-			set_visibility_type(fowp, TOP + TOP, LEFT + LEFT, 10);
+			set_visibility_type(fowp, TOP + TOP, LEFT + LEFT, TOP2LEFT2);
 		
 		if( ttl )	
-			set_visibility_type(fowp, TOP + TOP, LEFT, 11);
+			set_visibility_type(fowp, TOP + TOP, LEFT, TOP2LEFT);
 				
 		if( llt ) 
-			set_visibility_type(fowp, TOP, LEFT + LEFT, 12);
+			set_visibility_type(fowp, TOP, LEFT + LEFT, TOPLEFT2);
 
 	}
 			
@@ -400,14 +417,14 @@ void make_surrounding_tiles_visible(FowPlayerPosition *fowp)
 	if(b && l && set_visibility_type(fowp, BOT, LEFT, CLEAR_VIS)) {
 	
 		if( l && b )
-			set_visibility_type(fowp, BOT + BOT, LEFT + LEFT, 13);
+			set_visibility_type(fowp, BOT + BOT, LEFT + LEFT, BOT2LEFT2);
 		
 		if( bbl ) {
-			if(set_visibility_type(fowp, BOT + BOT, LEFT, 14))
+			if(set_visibility_type(fowp, BOT + BOT, LEFT, BOT2LEFT))
 				set_visibility_type(fowp, BOT + BOT + BOT, LEFT, TRANSP_VIS);			
 		}
 		if( llb ) {
-			if(set_visibility_type(fowp, BOT, LEFT + LEFT, 15))
+			if(set_visibility_type(fowp, BOT, LEFT + LEFT, BOTLEFT2))
 				set_visibility_type(fowp, BOT, LEFT + LEFT + LEFT, TRANSP_VIS);
 		}
 	}
@@ -416,29 +433,29 @@ void make_surrounding_tiles_visible(FowPlayerPosition *fowp)
 	if(t && r && set_visibility_type(fowp, TOP, RGHT, CLEAR_VIS)) {
 	
 		if( r && t )
-			set_visibility_type(fowp, TOP + TOP, RGHT + RGHT, 16);
+			set_visibility_type(fowp, TOP + TOP, RGHT + RGHT, TOP2RGHT2);
 		
 		if( ttr ) 
-			if( set_visibility_type(fowp, TOP + TOP, RGHT, 17))
+			if( set_visibility_type(fowp, TOP + TOP, RGHT, TOP2RGHT))
 					set_visibility_type(fowp, TOP + TOP + TOP, RGHT, TRANSP_VIS);
 					
 		if( rrt ) 
-			if( set_visibility_type(fowp, TOP, (RGHT + RGHT), 18))
-					set_visibility_type(fowp, TOP, (RGHT + RGHT + RGHT), TRANSP_VIS);
+			if( set_visibility_type(fowp, TOP, RGHT + RGHT, TOPRGHT2))
+					set_visibility_type(fowp, TOP, RGHT + RGHT + RGHT, TRANSP_VIS);
 	}
 
 
 	if(b && r && set_visibility_type(fowp, BOT, RGHT, CLEAR_VIS)) {
 	
 		if( r && b )
-			set_visibility_type(fowp, BOT + BOT, RGHT + RGHT, 19);
+			set_visibility_type(fowp, BOT + BOT, RGHT + RGHT, BOT2RGHT2);
 		
 		if( bbr ) 
-			if( set_visibility_type(fowp, BOT + BOT, RGHT, 20))
+			if( set_visibility_type(fowp, BOT + BOT, RGHT, BOT2RGHT))
 				set_visibility_type(fowp, BOT + BOT + BOT, RGHT, TRANSP_VIS);
 				
 		if( rrb ) 
-			if( set_visibility_type(fowp, BOT, RGHT + RGHT, 21))
+			if( set_visibility_type(fowp, BOT, RGHT + RGHT, BOTRGHT2))
 				set_visibility_type(fowp, BOT, RGHT + RGHT + RGHT, TRANSP_VIS);
 	}
 }
@@ -567,37 +584,32 @@ int set_visibility_type(FowPlayerPosition *fowp, int yDel, int xDel, int newvis)
 
 	int *vis = get_visibility_type(&newposition, fowp, yDel, xDel);
 
-	if(*vis == 0 || newvis == 0)
-	{
+	if(*vis == 0 || newvis == 0) {
 		*vis = CLEAR_VIS;
 	}
-	else if(iscorner(*vis) && iscorner(newvis) )
-	{
-		if((*vis == 19 && newvis == 10) || (*vis == 10 && newvis == 19))
-		{
-			*vis = 22;
-		}
-		else if((*vis == 16 && newvis == 13) || (*vis == 13 && newvis == 16))
-		{
-			*vis = 23;
-		}
-		else
-		{
-			*vis = CLEAR_VIS;
-		}
+	
+	else if(iscorner(*vis) && iscorner(newvis) ) {
+	
+		if		 ((*vis == BOT2RGHT2 && newvis == TOP2LEFT2) || (*vis == TOP2LEFT2 && newvis == BOT2RGHT2)) *vis = 22;
+		else if((*vis == BOT2LEFT2 && newvis == TOP2RGHT2) || (*vis == TOP2RGHT2 && newvis == BOT2LEFT2)) *vis = 23;
+		//else if((*vis == BOT2LEFT && newvis == TOP2LEFT) || (*vis == TOP2LEFT && newvis == TOP2RGHT)) *vis = 24;
+		//else if((*vis == BOT2RGHT && newvis == TOP2RGHT) || (*vis == TOP2RGHT && newvis == BOT2RGHT)) *vis = 25;
+		//else if((*vis == BOT2LEFT && newvis == TOP2LEFT) || (*vis == TOP2LEFT && newvis == TOP2RGHT)) *vis = 24;
+		//else if((*vis == TOP2LEFT && newvis == TOP2RGHT) || (*vis == TOP2RGHT && newvis == TOP2LEFT)) *vis = 24;
+		else *vis = CLEAR_VIS;
 	}
-	else if(iscorner(*vis) && newvis == 1)
-	{
+	else if(iscorner(*vis) && newvis == 1) {
 
 	}
-	else if(*vis == 1 && iscorner(newvis))
-	{
+	
+	else if(*vis == 1 && iscorner(newvis)) {
 		*vis = newvis;
 	}
-	else
-	{					
+	
+	else {					
 		*vis = newvis;
 	}
+	
 	if( is_wall_collision(world, newposition) == COLLISION_WALL ) { 
 		*vis = TRANSP_VIS;
 		return 0; 
