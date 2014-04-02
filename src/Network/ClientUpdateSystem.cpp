@@ -144,17 +144,14 @@ void client_update_chat(World *world, void *packet)
 	int font_type;
 
 	if(snd_chat->sendingPlayer_number == MAX_PLAYERS) { // Message from the server
-		strcat(message, "AMAN: ");
+		snprintf(message, MAX_MESSAGE + MAX_NAME + 2,"GOD: %s", snd_chat->message);
 		font_type = SERVER_FONT;
 	}
 	else
 	{
-		strcat(message, world->player[player_table[snd_chat->sendingPlayer_number]].name);
-		strcat(message, ": ");
-		
+		snprintf(message, MAX_MESSAGE + MAX_NAME + 2,"%s: %s", world->player[player_table[snd_chat->sendingPlayer_number]].name, snd_chat->message);
 		font_type = (world->player[player_table[snd_chat->sendingPlayer_number]].teamNo == world->player[player_table[controllable_playerNo]].teamNo) ? CHAT_FONT : OTHER_TEAM_FONT;
 	} 
-	strcat(message, snd_chat->message);
 	chat_add_line(message, font_type);
 }
 
