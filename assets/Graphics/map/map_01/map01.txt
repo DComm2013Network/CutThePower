@@ -40,7 +40,7 @@
 04 09 10 09 09 09 09 09 09 10 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 10 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 05 
 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 
 
-94
+93
 stairs 01 02 2 16 2 l
 stairs 38 35 59 17 2 l
 
@@ -123,8 +123,6 @@ object 59 1.1 35 55 assets/Graphics/objects/png_object/object_animation.txt lock
 object 59.8 1.1 35 55 assets/Graphics/objects/png_object/object_animation.txt locker_35x55
 object 60.6 1.1 35 55 assets/Graphics/objects/png_object/object_animation.txt locker_35x55
 object 62 1.1 35 55 assets/Graphics/objects/png_object/object_animation.txt locker_35x55
-
-object 57 22.2 80 75 assets/Graphics/objects/png_object/object_animation.txt double_vending_80x75
 
 object 39 27.8 90 42 assets/Graphics/objects/png_object/object_animation.txt horizontal_bench_90x42
 object 39 29.5 75 70 assets/Graphics/objects/png_object/object_animation.txt table_75x70
