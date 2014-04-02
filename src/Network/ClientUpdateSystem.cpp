@@ -484,7 +484,7 @@ int init_client_update(World *world)
 	}
 
 	memset(player_table, 255, MAX_PLAYERS * sizeof(unsigned int));
-	memset(objective_table, 255, MAX_OBJECTIVES * sizeof(objective_cache));
+	memset(objective_table, 255, MAX_OBJECTIVES);
 	return 1;
 }
 
