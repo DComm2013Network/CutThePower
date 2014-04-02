@@ -42,7 +42,7 @@
 
 8
 stairs 03 16 02 02 1 r
-stairs 60 17 50 35 1 r
+stairs 60 17 39 35 1 r
 stairs 03 18 08 25 3 r
 stairs 60 19 51 31 3 r
 
