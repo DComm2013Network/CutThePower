@@ -42,7 +42,7 @@
 
 6
 stairs 01 02 2 16 2 l
-stairs 48 35 59 17 2 l
+stairs 38 35 59 17 2 l
 
 objective 15 18 25 45 0 assets/Graphics/objects/png_object/object_animation.txt
 objective 16 18 25 45 1 assets/Graphics/objects/png_object/object_animation.txt
