@@ -179,7 +179,7 @@ void send_chat(World * world, int fd, char * str)
 	if(str == NULL)
 		return;
 
-	PKT_SND_CHAT * pkt = (PKT_SND_CHAT*) malloc(sizeof(PKT_SND_CHAT));
+	PKT_SND_CHAT * pkt = (PKT_SND_CHAT*) calloc(1, sizeof(PKT_SND_CHAT));
 
 	for (int i = 0; i < MAX_ENTITIES; i++)
 	{
@@ -211,7 +211,7 @@ void send_objectives(World * world, int fd)
 
 	for(int i = 0; i < MAX_ENTITIES; i++)
 	{
-		if(IN_THIS_COMPONENT(world->mask[i], COMPONENT_OBJECTIVE) && world->objective[i].status != OBJECTIVE_CAP)
+		if(IN_THIS_COMPONENT(world->mask[i], COMPONENT_OBJECTIVE))
 		{
 			obj_status->objectives_captured[world->objective[i].objectiveID + obj_idx] = world->objective[i].status;
 		}

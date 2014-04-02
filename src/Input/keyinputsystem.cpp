@@ -149,7 +149,9 @@ void KeyInputSystem(World *world)
     if (player_entity != -1) {
 		//pause menu
 		if ((currentKeyboardState[SDL_SCANCODE_ESCAPE] != 0) && (prevKeyboardState[SDL_SCANCODE_ESCAPE] == 0)) {
-			world->mask[player_entity] ^= COMPONENT_COMMAND;
+			if (IN_THIS_COMPONENT(world->mask[player_entity], COMPONENT_COMMAND)) {
+				world->mask[player_entity] ^= COMPONENT_COMMAND;
+			}
 			create_pause_screen(world);
 		}
 		
@@ -159,8 +161,17 @@ void KeyInputSystem(World *world)
 			//Enter pressed second time.
 			if (!IN_THIS_COMPONENT(world->mask[player_entity], COMPONENT_COMMAND)) {
 				
-				chat_add_line(world->text[textField].text);
-				send_chat(world, send_router_fd[1], world->text[textField].text);
+				if (strlen(world->text[textField].text) > 0) {
+				
+					char message[MAX_MESSAGE + MAX_NAME + 2] = {0};
+				
+					strcat(message, world->player[player_entity].name);
+					strcat(message, ": ");
+					strcat(message, world->text[textField].text);
+					
+					chat_add_line(message, PLAYER_FONT);
+					send_chat(world, send_router_fd[1], world->text[textField].text);
+				}
 				destroy_menu(world);
 				textField = -1;
 			}

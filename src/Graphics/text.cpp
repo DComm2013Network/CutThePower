@@ -6,15 +6,20 @@
 #include "../world.h"
 #include "../components.h"
 
-#define BIG_FONT				83
-#define SMALL_FONT				42
+#define BIG_FONT_SIZE			83
 #define BIG_FONT_OUTLINE		3
+
+#define SMALL_FONT_SIZE			42
 #define SMALL_FONT_OUTLINE		2
 
-TTF_Font *big;
-TTF_Font *small;
+#define CHAT_FONT_SIZE			16
+#define CHAT_FONT_OUTLINE		1
 
-void render_text(World *world, unsigned int entity, const char *text, TTF_Font *font, int outline_size);
+TTF_Font *big_font;
+TTF_Font *small_font;
+TTF_Font *chat_font;
+
+int get_font(int font_type, TTF_Font **font, int *outline_size);
 
 /**
  * Loads in the font files used.
@@ -30,10 +35,11 @@ void init_fonts() {
 	
 	TTF_Init();
 	
-	big = TTF_OpenFont("assets/Graphics/font/font.ttf", BIG_FONT);
-	small = TTF_OpenFont("assets/Graphics/font/font.ttf", SMALL_FONT);
+	big_font = TTF_OpenFont("assets/Graphics/font/font.ttf", BIG_FONT_SIZE);
+	small_font = TTF_OpenFont("assets/Graphics/font/font.ttf", SMALL_FONT_SIZE);
+	chat_font = TTF_OpenFont("assets/Graphics/font/font.ttf", CHAT_FONT_SIZE);
 	
-	if (!big || !small) {
+	if (!big_font || !small_font || !chat_font) {
 		printf("Error loading font file.\n");
 	}
 	
@@ -41,8 +47,9 @@ void init_fonts() {
 
 void cleanup_fonts() {
 	
-	TTF_CloseFont(big);
-	TTF_CloseFont(small);
+	TTF_CloseFont(big_font);
+	TTF_CloseFont(small_font);
+	TTF_CloseFont(chat_font);
 	
 }
 
@@ -60,38 +67,49 @@ void cleanup_fonts() {
  * @author Vincent Lau
  * @author Jordan Marling
  */
-SDL_Surface *draw_text_surface(const char *text, TTF_Font *font, int outline_size) {
+SDL_Surface *draw_text(const char *text, int font_type) {
 	
 	SDL_Surface *outline_surface;
 	SDL_Surface *text_surface;
-	SDL_Rect size;
+	TTF_Font *font;
+	int outline_size;
 	SDL_Color outline = {0, 0, 0};
 	SDL_Color colour = {255, 0, 0};
 	
 	if (text == 0 || strlen(text) == 0)
 		return 0;
 	
-	TTF_SetFontOutline(font, outline_size);
+	if (get_font(font_type, &font, &outline_size) == 0) {
+		printf("Error loading font type in draw_text: %d\n", font_type);
+	}
 	
+	switch(font_type) {
+		case PLAYER_FONT:
+			colour = { 0xFF, 0xFF, 0xFF };
+			break;
+			
+		case OTHER_TEAM_FONT:
+			colour = { 0x88, 0x88, 0x88 };
+			break;
+		
+		case SERVER_FONT:
+			colour = { 0xFF, 0xFF, 0x00 };
+			break;
+		
+	}
+	
+	TTF_SetFontOutline(font, outline_size);
 	if ((text_surface = TTF_RenderText_Blended(font, text, outline)) == 0) {
 		printf("Error rendering the text.\n");
 	}
 	
 	TTF_SetFontOutline(font, 0);
-	
 	if ((outline_surface = TTF_RenderText_Blended(font, text, colour)) == 0) {
 		printf("Error rendering the outline of the big text.\n");
 	}
 	
 	//blit the outline onto the text
-	
-	size.x = 0;
-	size.y = 0;
-	size.w = 0;
-	size.h = 0;
-	
-	SDL_BlitSurface(outline_surface, NULL, text_surface, &size);
-	
+	SDL_BlitSurface(outline_surface, NULL, text_surface, NULL);
 	SDL_FreeSurface(outline_surface);
 	
 	return text_surface;
@@ -113,14 +131,10 @@ SDL_Surface *draw_text_surface(const char *text, TTF_Font *font, int outline_siz
  * @author Vincent Lau
  * @author Jordan Marling
  */
-void render_text(World *world, unsigned int entity, const char *text, TTF_Font *font, int outline_size) {
+void render_text(World *world, unsigned int entity, const char *text, int font_type) {
 	
-	int width, height;
-	
-	
-	if (TTF_SizeText(font, text, &width, &height)) {
-		printf("Error getting the size of the big text.\n");
-	}
+	int width = get_text_width(text, font_type);
+	int height = get_text_height(text, font_type);
 	
 	world->position[entity].x -= (width / 2);
 	world->position[entity].width = width;
@@ -128,80 +142,43 @@ void render_text(World *world, unsigned int entity, const char *text, TTF_Font *
 	
 	world->renderPlayer[entity].width = width;
 	world->renderPlayer[entity].height = height;
-	world->renderPlayer[entity].playerSurface = draw_text_surface(text, font, outline_size);
+	world->renderPlayer[entity].playerSurface = draw_text(text, font_type);
 	
 }
 
-/**
- * Draws big text to an entity
- *
- * @param world The world structure that holds all the entities
- * @param entity The entity to draw the text to
- * @param text The text to be drawn
- *
- * @designer Jordan Marling
- * @designer Cory Thomas
- * @designer Vincent Lau
- *
- * @author Jordan Marling
- */
-void render_big_text(World *world, unsigned int entity, const char *text) {
+int get_font(int font_type, TTF_Font **font, int *outline_size) {
 	
-	render_text(world, entity, text, big, BIG_FONT_OUTLINE);
+	switch(font_type) {
+		
+		case TITLE_FONT:
+			*font = big_font;
+			*outline_size = BIG_FONT_OUTLINE;
+			break;
+		
+		case MENU_FONT:
+			*font = small_font;
+			*outline_size = SMALL_FONT_OUTLINE;
+			break;
+		
+		case PLAYER_FONT:
+		case SERVER_FONT:
+		case OTHER_TEAM_FONT:
+		case CHAT_FONT:
+			*font = chat_font;
+			*outline_size = CHAT_FONT_OUTLINE;
+			break;
+		
+		default: //did not find the font.
+			printf("Did not find font %d\n", font_type);
+			return 0;
+			break;
+	}
 	
+	return 1;
 }
 
 /**
- * Draws small text to an entity
- *
- * @param world The world structure that holds all the entities
- * @param entity The entity to draw the text to
- * @param text The text to be drawn
- *
- * @designer Jordan Marling
- * @designer Cory Thomas
- * @designer Vincent Lau
- *
- * @author Jordan Marling
- */
-void render_small_text(World *world, unsigned int entity, const char *text) {
-
-	render_text(world, entity, text, small, SMALL_FONT_OUTLINE);
-	
-}
-
-/**
- * Draws big text to a surface
- *
- * @param text The text to be drawn
- *
- * @designer Vincent Lau
- *
- * @author Vincent Lau
- */
-SDL_Surface *draw_big_text(const char *text) {
-	
-	return draw_text_surface(text, big, BIG_FONT_OUTLINE);
-	
-}
-
-/**
- * Draws small text to a surface
- *
- * @param text The text to be drawn
- *
- * @designer Vincent Lau
- *
- * @author Vincent Lau
- */
-SDL_Surface *draw_small_text(const char *text) {
-	
-	return draw_text_surface(text, small, SMALL_FONT_OUTLINE);
-	
-}
-
-/**
- * Returns the width of a string drawn with small text
+ * Returns the width of a string drawn
  *
  * @param text The text to be used
  *
@@ -209,13 +186,49 @@ SDL_Surface *draw_small_text(const char *text) {
  *
  * @author Vincent Lau
  */
-int get_small_text_width(const char *text) {
+int get_text_width(const char *text, int font_type) {
 	
 	int width, height;
 	
-	if (TTF_SizeText(small, text, &width, &height)) {
+	TTF_Font *font;
+	int outline_size;
+	
+	if (get_font(font_type, &font, &outline_size) == 0) {
+		printf("Error loading font type in get_text_width: %d\n", font_type);
+	}
+	
+	
+	if (TTF_SizeText(font, text, &width, &height)) {
 		printf("Error getting the size of the big text.\n");
 	}
 	
 	return width;
+}
+
+/**
+ * Returns the height of a string drawn
+ *
+ * @param text The text to be used
+ *
+ * @designer Vincent Lau
+ *
+ * @author Vincent Lau
+ */
+int get_text_height(const char *text, int font_type) {
+	
+	int width, height;
+	
+	TTF_Font *font;
+	int outline_size;
+	
+	if (get_font(font_type, &font, &outline_size) == 0) {
+		printf("Error loading font type in get_text_width: %d\n", font_type);
+	}
+	
+	
+	if (TTF_SizeText(font, text, &width, &height)) {
+		printf("Error getting the size of the big text.\n");
+	}
+	
+	return height;
 }

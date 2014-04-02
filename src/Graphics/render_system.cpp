@@ -134,7 +134,7 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 			
 			if(IN_THIS_COMPONENT(world.mask[entity], COMPONENT_PLAYER)) {
 					
-				if ((fow->teamNo == world.player[entity].teamNo)) {	
+				//if ((fow->teamNo == world.player[entity].teamNo)) {	
 					FowPlayerPosition fowp;
 		
 					fowp.world = &world;
@@ -162,10 +162,10 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 			
 					SDL_BlitScaled(renderPlayer->playerSurface, &clipRect, surface, &playerRect);
 
-				}
-				else {
-					opponentPlayers[opponentPlayersCount++] = entity;
-				}
+				//}
+				//else {
+				//	opponentPlayers[opponentPlayersCount++] = entity;
+				//}
 			}
 
 			//check if a textbox.
@@ -179,11 +179,10 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 				//TODO: Store the text in a component instead of creating it every frame.
 				//Perhaps we should store it in the renderPlayer component and draw the
 				//textbox if it has a text field component?
-				SDL_BlitSurface(draw_small_text(text->text), NULL, surface, &playerRect);
+				SDL_BlitSurface(draw_text(text->text, MENU_FONT), NULL, surface, &playerRect);
 				
 				if (text->focused) {
-					playerRect.x += get_small_text_width(text->text) + 1;
-					
+					playerRect.x += get_text_width(text->text, MENU_FONT) + 1;
 					SDL_BlitSurface(ibeam, NULL, surface, &playerRect);
 				}
 			}
@@ -194,7 +193,7 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 
 		printf("%d", level);
 
-		position 			= &(world.position		[ opponentPlayers[entity] ]);
+		position 	= &(world.position    [ opponentPlayers[entity] ]);
 		renderPlayer 	= &(world.renderPlayer[ opponentPlayers[entity] ]);
 
 		playerRect.x = position->x;
