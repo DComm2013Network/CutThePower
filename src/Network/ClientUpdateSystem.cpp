@@ -212,6 +212,12 @@ void client_update_floor(World *world, void *packet)
 void client_update_pos(World *world, void *packet)
 {
 	PKT_ALL_POS_UPDATE *pos_update = (PKT_ALL_POS_UPDATE *)packet;
+	
+	if(player_table[controllable_playerNo] == UNASSIGNED)
+	{
+		return;
+	}
+
 	if(pos_update->floor == world->position[player_table[controllable_playerNo]].level){
 		for (int i = 0; i < MAX_PLAYERS; i++)
 		{
