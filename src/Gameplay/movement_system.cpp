@@ -61,8 +61,8 @@ void remove_force_x(World* world, unsigned int entity, PositionComponent* temp, 
 	temp->x -= world->movement[entity].movX * (FPS_MAX / fps.getFPS());
 }
 
-void apply_deceleration_x(World* world, unsigned int entity) {
-	world->movement[entity].movX *= 1 - world->movement[entity].friction;
+void apply_deceleration_x(World* world, unsigned int entity, FPS fps) {
+	world->movement[entity].movX *= 1 - world->movement[entity].friction * (FPS_MAX / fps.getFPS());
 }
 
 void apply_force_y(World* world, unsigned int entity, PositionComponent* temp, FPS fps) {
@@ -73,8 +73,8 @@ void remove_force_y(World* world, unsigned int entity, PositionComponent* temp, 
 	temp->y -= world->movement[entity].movY * (FPS_MAX / fps.getFPS());
 }
 
-void apply_deceleration_y(World* world, unsigned int entity) {
-	world->movement[entity].movY *= 1 - world->movement[entity].friction;
+void apply_deceleration_y(World* world, unsigned int entity, FPS fps) {
+	world->movement[entity].movY *= 1 - world->movement[entity].friction * (FPS_MAX / fps.getFPS());
 }
 
 void handle_x_collision(World* world, unsigned int entity, PositionComponent* temp, unsigned int entity_number, unsigned int tile_number, FPS fps) {
@@ -95,7 +95,7 @@ void handle_x_collision(World* world, unsigned int entity, PositionComponent* te
 			break;
 		default:
 			if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_CONTROLLABLE)) {
-				apply_deceleration_x(world, entity);
+				apply_deceleration_x(world, entity, fps);
 			}
 			break;
 	}
@@ -119,7 +119,7 @@ void handle_y_collision(World* world, unsigned int entity, PositionComponent* te
 			break;
 		default:
 			if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_CONTROLLABLE)) {
-				apply_deceleration_y(world, entity);
+				apply_deceleration_y(world, entity, fps);
 			}
 			break;
 	}

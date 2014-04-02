@@ -144,7 +144,7 @@ void client_update_chat(World *world, void *packet)
 	int font_type;
 
 	if(snd_chat->sendingPlayer_number == MAX_PLAYERS) { // Message from the server
-		snprintf(message, MAX_MESSAGE + MAX_NAME + 2,"GOD: %s", snd_chat->message);
+		snprintf(message, MAX_MESSAGE + MAX_NAME + 2,"%s", snd_chat->message);
 		font_type = SERVER_FONT;
 	}
 	else
