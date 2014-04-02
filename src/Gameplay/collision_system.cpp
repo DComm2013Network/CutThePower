@@ -156,28 +156,19 @@ void anti_stuck_system(World *world, unsigned int curEntityID, int otherEntityID
 		return;
 	}
 
-	rightDist = abs(world->position[otherEntityID].x + world->position[otherEntityID].width - world->position[curEntityID].x);
-	leftDist = abs(world->position[curEntityID].x + world->position[curEntityID].width - world->position[otherEntityID].x);
-	upDist = abs(world->position[curEntityID].y + world->position[curEntityID].height - world->position[otherEntityID].y);
-	downDist = abs(world->position[otherEntityID].y + world->position[otherEntityID].height - world->position[curEntityID].y);
-	if (rightDist < leftDist && rightDist < upDist && rightDist < downDist) {
+	rightDist = abs(world->position[otherEntityID].x + world->position[otherEntityID].width - world->position[curEntityID].x); //right side of other player
+	leftDist = abs(world->position[curEntityID].x + world->position[curEntityID].width - world->position[otherEntityID].x); //left side of other player
+	upDist = abs(world->position[curEntityID].y + world->position[curEntityID].height - world->position[otherEntityID].y); //bottom of other player
+	downDist = abs(world->position[otherEntityID].y + world->position[otherEntityID].height - world->position[curEntityID].y); //top of other player
+	
+	if (rightDist <= leftDist && rightDist <= upDist && rightDist <= downDist && !(world->command[curEntityID].commands[C_LEFT])) {
 		world->position[otherEntityID].x = world->position[curEntityID].x - world->position[otherEntityID].width - 1;
-	} else if (leftDist < rightDist && leftDist < upDist && leftDist < downDist) {
+	} else if (leftDist <= rightDist && leftDist <= upDist && leftDist <= downDist && !(world->command[curEntityID].commands[C_RIGHT])) {
 		world->position[otherEntityID].x = world->position[curEntityID].x + world->position[curEntityID].width + 1;
-	} else if (upDist < leftDist && upDist < rightDist && upDist < downDist) {
+	} else if (upDist <= leftDist && upDist <= rightDist && upDist <= downDist && !(world->command[curEntityID].commands[C_DOWN])) {
 		world->position[otherEntityID].y = world->position[curEntityID].y + world->position[curEntityID].height + 1;
-	} else if (downDist < leftDist && downDist < upDist && downDist < rightDist) {
+	} else if (downDist <= leftDist && downDist <= upDist && downDist <= rightDist && !(world->command[curEntityID].commands[C_UP])) {
 		world->position[otherEntityID].y = world->position[curEntityID].y - world->position[otherEntityID].height - 1;
-	} else {
-		if (rightDist <= leftDist && rightDist <= upDist && rightDist <= downDist) {
-			world->position[otherEntityID].x = world->position[curEntityID].x - world->position[otherEntityID].width - 1;
-		} else if (leftDist <= rightDist && leftDist <= upDist && leftDist <= downDist) {
-			world->position[otherEntityID].x = world->position[curEntityID].x + world->position[curEntityID].width + 1;
-		} else if (upDist <= leftDist && upDist <= rightDist && upDist <= downDist) {
-			world->position[otherEntityID].y = world->position[curEntityID].y + world->position[curEntityID].height + 1;
-		} else {
-			world->position[otherEntityID].y = world->position[curEntityID].y - world->position[otherEntityID].height - 1;
-		}
 	}
 }
 
