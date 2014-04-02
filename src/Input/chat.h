@@ -8,7 +8,7 @@
 #include "../Network/Packets.h"
 
 #define CHAT_LINES 					6
-#define CHAT_LINE_LENGTH			64
+#define CHAT_LINE_LENGTH			198
 
 #define CHAT_LINE_DISSAPEAR_TIME	10000
 #define CHAT_LINE_DISSAPEAR_LENGTH	1000
