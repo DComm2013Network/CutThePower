@@ -97,8 +97,8 @@ int main(int argc, char* argv[]) {
 
 		animation_system(world);
 
-		render_fog_of_war(surface, fow);
 		render_player_system(*world, surface, fow);
+		render_fog_of_war(surface, fow);
 		chat_render(surface);
 		
 		surface_texture = SDL_CreateTextureFromSurface(renderer, surface);
