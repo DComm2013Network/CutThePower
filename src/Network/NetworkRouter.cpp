@@ -175,13 +175,16 @@ int send_cached_chat(int gameplay_write_fd)
     for(int i = 0; i < chat_packets_rcv; i++)
     {
         if(write(gameplay_write_fd, &type, sizeof(type)) == -1 ||
-           write(gameplay_write_fd, cached_chat.front(), packet_sizes[P_CHAT]) == -1)
+           write(gameplay_write_fd, cached_chat.front(), packet_sizes[P_CHAT - 1]) == -1)
         {
             perror("update_gameplay: write");
             return -1;
         }
+        printf("send_cache: %s\n", cached_chat.front()->message);
 
+        free(cached_chat.front());
         cached_chat.pop_front();
+
     }
     
     chat_packets_rcv = 0;

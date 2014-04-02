@@ -169,7 +169,7 @@ int handle_tcp_in(int router_pipe_fd, TCPsocket tcp_sock)
         free(game_packet);
         return -1;
 	}
-
+    printf("handle tcp: %s\n", ((PKT_SND_CHAT*)game_packet)->message);
     free(game_packet);
     return 0;
 }
