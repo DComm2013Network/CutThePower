@@ -54,8 +54,8 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 	
 	unsigned int entity;
 	RenderPlayerComponent 	*renderPlayer;
-	PositionComponent 		*position;
-	TextFieldComponent		*text;
+	PositionComponent 	*position;
+	TextFieldComponent	*text;
 	SDL_Rect playerRect;
 	
 	SDL_Rect clipRect;
@@ -101,42 +101,44 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 					playerRect.h += 10;
 				}
 			}
-			
-			
+
+		
 			clipRect.x = -playerRect.x;
 			clipRect.y = -playerRect.y;
 			clipRect.w = playerRect.w;
 			clipRect.h = playerRect.h;
-			
+		
 			if (clipRect.x < 0)
 				clipRect.x = 0;
-			
+		
 			if (clipRect.y < 0)
 				clipRect.y = 0;
-			
+		
 			if (clipRect.h > HEIGHT - playerRect.y)
 				clipRect.h = HEIGHT - playerRect.y;
-			
+		
 			if (clipRect.w > WIDTH - playerRect.x)
 				clipRect.w = WIDTH - playerRect.x;
-			
+		
 			SDL_BlitScaled(renderPlayer->playerSurface, &clipRect, surface, &playerRect);
 			
-			
-			/*SAM*********************************/			
-			if (IN_THIS_COMPONENT(world.mask[entity], COMPONENT_PLAYER)) {	
+
+			/*SAM*********************************/
+			if(fow->teamNo == world.player[entity].teamNo)
+			{					
+				if (IN_THIS_COMPONENT(world.mask[entity], COMPONENT_PLAYER)) {	
 	
-				FowPlayerPosition fowp;
+					FowPlayerPosition fowp;
 		
-				fowp.world = &world;
-				fowp.pos   = position;
-				fowp.fow   = fow;
+					fowp.world = &world;
+					fowp.pos   = position;
+					fowp.fow   = fow;
 	
-				make_surrounding_tiles_visible(&fowp);	
+					make_surrounding_tiles_visible(&fowp);	
+				}
 			}
 			/*************************************/
-			
-			
+
 			//check if a textbox.
 			if (IN_THIS_COMPONENT(world.mask[entity], COMPONENT_TEXTFIELD)) {
 				
