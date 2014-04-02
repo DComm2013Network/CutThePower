@@ -169,7 +169,6 @@ int handle_tcp_in(int router_pipe_fd, TCPsocket tcp_sock)
         free(game_packet);
         return -1;
 	}
-    printf("handle tcp: %s\n", ((PKT_SND_CHAT*)game_packet)->message);
     free(game_packet);
     return 0;
 }
@@ -354,19 +353,26 @@ void *recv_udp_packet(UDPsocket sock, uint32_t *packet_type, uint64_t *timestamp
  */
 int recv_tcp(TCPsocket sock, void *buf, size_t bufsize)
 {
-	int numread = SDLNet_TCP_Recv(sock, buf, bufsize);
-	
-	if(numread == -1)
-	{
-    	fprintf(stderr, "SDLNet_TCP_Recv: %s\n", SDLNet_GetError());
-        set_error(ERR_TCP_RECV_FAIL);
-    	return -1;
-	}
-	else if(numread == 0){
-        fprintf(stderr, "recv_tcp: Connection closed or reset.\n");
-        set_error(ERR_CONN_CLOSED);
-		return -1;
-	}
+    int numread = 0;
+    int lastread = 0;
+    while(numread < bufsize)
+    {
+	    lastread = SDLNet_TCP_Recv(sock, buf, bufsize);
+
+        if(lastread == -1)
+        {
+            fprintf(stderr, "SDLNet_TCP_Recv: %s\n", SDLNet_GetError());
+            set_error(ERR_TCP_RECV_FAIL);
+            return -1;
+        }
+        else if(lastread == 0){
+            fprintf(stderr, "recv_tcp: Connection closed or reset.\n");
+            set_error(ERR_CONN_CLOSED);
+            return -1;
+        }
+
+        numread += lastread;
+    }
 	
 	return 0;
 }
@@ -570,14 +576,7 @@ void *grab_send_packet(uint32_t *type, int fd){
 
 	uint32_t size = packet_sizes[*type - 1];
 
-	void * data = (void*) malloc(sizeof(size));
-    if(data == NULL)
-    {
-        set_error(ERR_NO_MEM);
-        return NULL;
-    }
-
-	data = read_packet(fd, size); // reads data
+	void * data = read_packet(fd, size); // reads data
     if(data == NULL)
     {
         set_error(ERR_IPC_FAIL);
