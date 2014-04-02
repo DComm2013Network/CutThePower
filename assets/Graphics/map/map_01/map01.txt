@@ -40,7 +40,7 @@
 04 09 10 09 09 09 09 09 09 10 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 10 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 05 
 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 
 
-93
+6
 stairs 01 02 2 16 2 l
 stairs 48 35 59 17 2 l
 
@@ -49,102 +49,3 @@ objective 16 18 25 45 1 assets/Graphics/objects/png_object/object_animation.txt
 objective 15 19 25 45 2 assets/Graphics/objects/png_object/object_animation.txt
 objective 16 19 25 45 3 assets/Graphics/objects/png_object/object_animation.txt
 
-object 6 1.2 40 60 assets/Graphics/objects/png_object/object_animation.txt file_cabinet_40x60
-object 7 1.2 40 60 assets/Graphics/objects/png_object/object_animation.txt file_cabinet_40x60
-object 10 1.2 65 50 assets/Graphics/objects/png_object/object_animation.txt fishtank_65x50
-object 10 3.5 35 50 assets/Graphics/objects/png_object/object_animation.txt chair_left_35x50
-object 10 5 220 66 assets/Graphics/objects/png_object/object_animation.txt table_220x66
-object 8.6 4.8 31 31 assets/Graphics/objects/png_object/object_animation.txt monitor_back_31x31
-object 7.8 4.8 21 31 assets/Graphics/objects/png_object/object_animation.txt computer_tower_21x31
-object 9 6.5 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
-object 10.4 6.5 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
-
-object 24 2 140 85 assets/Graphics/objects/png_object/object_animation.txt screen_140x85
-object 21 4.5 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
-object 22.2 4.5 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
-object 23.4 4.5 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
-object 25.5 4.5 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
-object 26.7 4.5 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
-object 27.9 4.5 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
-object 21 5.7 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
-object 22.2 5.7 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
-object 23.4 5.7 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
-object 25.5 5.7 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
-object 26.7 5.7 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
-object 27.9 5.7 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
-object 21 6.9 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
-object 22.2 6.9 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
-object 23.4 6.9 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
-object 25.5 6.9 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
-object 26.7 6.9 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
-object 27.9 6.9 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
-
-object 6 15 90 90 assets/Graphics/objects/png_object/object_animation.txt cubicle_90x90
-object 8.2 15 90 90 assets/Graphics/objects/png_object/object_animation.txt cubicle2_90x90
-object 6 18.5 90 90 assets/Graphics/objects/png_object/object_animation.txt cubicle_90x90
-object 8.2 18.5 90 90 assets/Graphics/objects/png_object/object_animation.txt cubicle2_90x90
-object 6 22 90 90 assets/Graphics/objects/png_object/object_animation.txt cubicle_90x90
-object 8.2 22 90 90 assets/Graphics/objects/png_object/object_animation.txt cubicle2_90x90
-object 6 28.4 90 90 assets/Graphics/objects/png_object/object_animation.txt cubicle_90x90
-object 8.2 28.4 90 90 assets/Graphics/objects/png_object/object_animation.txt cubicle2_90x90
-
-object 36 14.5 18 25 assets/Graphics/objects/png_object/object_animation.txt trash_18x25
-object 39 14.3 180 53 assets/Graphics/objects/png_object/object_animation.txt kitchen_180x53
-object 41.6 14.1 37 69 assets/Graphics/objects/png_object/object_animation.txt fridge_37x69
-object 42.4 14.1 37 69 assets/Graphics/objects/png_object/object_animation.txt fridge_37x69
-object 45 14.3 180 53 assets/Graphics/objects/png_object/object_animation.txt kitchen_180x53
-
-object 7 11 35 65 assets/Graphics/objects/png_object/object_animation.txt vending_35x65
-object 9 11 20 57 assets/Graphics/objects/png_object/object_animation.txt water_20x57
-object 4 5.8 20 33 assets/Graphics/objects/png_object/object_animation.txt fire_extinguisher_20x33
-object 15 18 25 45 assets/Graphics/objects/png_object/object_animation.txt signal_blue_25x45
-object 15.8 10.5 15 12 assets/Graphics/objects/png_object/object_animation.txt security_camera_left_15x12
-
-object 42.9 28.8 35 55 assets/Graphics/objects/png_object/object_animation.txt machine_left_35x55
-object 42.9 27.1 35 65 assets/Graphics/objects/png_object/object_animation.txt server2_35x65
-object 45.9 27.1 35 65 assets/Graphics/objects/png_object/object_animation.txt server2_35x65
-object 46.9 27.1 35 65 assets/Graphics/objects/png_object/object_animation.txt server3_35x65
-
-object 35 24.3 40 90 assets/Graphics/objects/png_object/object_animation.txt machine_right_40x90
-
-object 38 4 35 65 assets/Graphics/objects/png_object/object_animation.txt pillar_blue_35x65
-object 41 4 35 65 assets/Graphics/objects/png_object/object_animation.txt pillar_blue_35x65
-object 44 4 35 65 assets/Graphics/objects/png_object/object_animation.txt pillar_blue_35x65
-object 38 7 35 65 assets/Graphics/objects/png_object/object_animation.txt pillar_blue_35x65
-object 41 7 35 65 assets/Graphics/objects/png_object/object_animation.txt pillar_blue_35x65
-object 44 7 35 65 assets/Graphics/objects/png_object/object_animation.txt pillar_blue_35x65
-object 38 10 35 65 assets/Graphics/objects/png_object/object_animation.txt pillar_blue_35x65
-object 41 10 35 65 assets/Graphics/objects/png_object/object_animation.txt pillar_blue_35x65
-object 44 10 35 65 assets/Graphics/objects/png_object/object_animation.txt pillar_blue_35x65
-
-object 57 1.1 35 55 assets/Graphics/objects/png_object/object_animation.txt locker_35x55
-object 57.8 1.1 35 55 assets/Graphics/objects/png_object/object_animation.txt locker_35x55
-object 59 1.1 35 55 assets/Graphics/objects/png_object/object_animation.txt locker_35x55
-object 59.8 1.1 35 55 assets/Graphics/objects/png_object/object_animation.txt locker_35x55
-object 60.6 1.1 35 55 assets/Graphics/objects/png_object/object_animation.txt locker_35x55
-object 62 1.1 35 55 assets/Graphics/objects/png_object/object_animation.txt locker_35x55
-
-object 39 27.8 90 42 assets/Graphics/objects/png_object/object_animation.txt horizontal_bench_90x42
-object 39 29.5 75 70 assets/Graphics/objects/png_object/object_animation.txt table_75x70
-object 41 27.6 25 50 assets/Graphics/objects/png_object/object_animation.txt plant_25x50
-object 41 29.8 38 80 assets/Graphics/objects/png_object/object_animation.txt vertical_bench_38x80
-
-object 44 33.7 60 23 assets/Graphics/objects/png_object/object_animation.txt pictures_60x23
-object 48 33.7 60 25 assets/Graphics/objects/png_object/object_animation.txt pictures_60x25
-
-object 3 36.9 40 37 assets/Graphics/objects/png_object/object_animation.txt window_40x37
-object 7 36.9 40 37 assets/Graphics/objects/png_object/object_animation.txt window_40x37
-object 11 36.9 40 37 assets/Graphics/objects/png_object/object_animation.txt window_40x37
-object 15 36.9 40 37 assets/Graphics/objects/png_object/object_animation.txt window_40x37
-object 19 36.9 40 37 assets/Graphics/objects/png_object/object_animation.txt window_40x37
-object 23 36.9 40 37 assets/Graphics/objects/png_object/object_animation.txt window_40x37
-object 27 36.9 40 37 assets/Graphics/objects/png_object/object_animation.txt window_40x37
-object 31 36.9 40 37 assets/Graphics/objects/png_object/object_animation.txt window_40x37
-object 35 36.9 40 37 assets/Graphics/objects/png_object/object_animation.txt window_40x37
-object 39 36.9 40 37 assets/Graphics/objects/png_object/object_animation.txt window_40x37
-object 43 36.9 40 37 assets/Graphics/objects/png_object/object_animation.txt window_40x37
-object 47 36.9 40 37 assets/Graphics/objects/png_object/object_animation.txt window_40x37
-object 51 36.9 40 37 assets/Graphics/objects/png_object/object_animation.txt window_40x37
-object 55 36.9 40 37 assets/Graphics/objects/png_object/object_animation.txt window_40x37
-object 59 36.9 40 37 assets/Graphics/objects/png_object/object_animation.txt window_40x37
-object 23 36.9 40 37 assets/Graphics/objects/png_object/object_animation.txt window_40x37
