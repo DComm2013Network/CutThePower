@@ -141,16 +141,21 @@ void client_update_chat(World *world, void *packet)
 {
 	char message[MAX_MESSAGE + MAX_NAME + 2] = {0}; // Space for the max name, max message, and ": "
 	PKT_SND_CHAT *snd_chat = (PKT_SND_CHAT*)packet;
+	int font_type;
 
-	if(snd_chat->sendingPlayer_number == MAX_PLAYERS) // Message from the server
+	if(snd_chat->sendingPlayer_number == MAX_PLAYERS) { // Message from the server
 		strcat(message, "AMAN: ");
+		font_type = SERVER_FONT;
+	}
 	else
 	{
 		strcat(message, world->player[player_table[snd_chat->sendingPlayer_number]].name);
 		strcat(message, ": ");
+		
+		font_type = (world->player[player_table[snd_chat->sendingPlayer_number]].teamNo == world->player[player_table[controllable_playerNo]].teamNo) ? CHAT_FONT : OTHER_TEAM_FONT;
 	} 
 	strcat(message, snd_chat->message);
-	chat_add_line(message);
+	chat_add_line(message, font_type);
 }
 
 /**
@@ -185,7 +190,7 @@ void client_update_floor(World *world, void *packet)
 		{
 			objective_table[obj_idx].entity_no = i;
 			world->objective[i].status = objective_table[obj_idx].obj_state;
-			world->objective[i].objectiveID = obj_idx;
+    		play_animation(world, objective_table[obj_idx].entity_no, (world->objective[i].status == OBJECTIVE_CAP) ? "captured" : "not_captured");
 			obj_idx++;
 		}
 	}

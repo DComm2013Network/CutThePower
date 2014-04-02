@@ -80,14 +80,9 @@ void apply_deceleration_y(World* world, unsigned int entity) {
 void handle_x_collision(World* world, unsigned int entity, PositionComponent* temp, unsigned int entity_number, unsigned int tile_number, FPS fps) {
 	switch(entity_number) {
 		case COLLISION_SOLID:
-			remove_force_x(world, entity, temp, fps);
-			world->movement[entity].movX = 0;
-			break;
 		case COLLISION_HACKER:
-			remove_force_x(world, entity, temp, fps);
-			world->movement[entity].movX = 0;
-			break;
 		case COLLISION_GUARD:
+		case COLLISION_TARGET:
 			remove_force_x(world, entity, temp, fps);
 			world->movement[entity].movX = 0;
 			break;
@@ -109,14 +104,9 @@ void handle_x_collision(World* world, unsigned int entity, PositionComponent* te
 void handle_y_collision(World* world, unsigned int entity, PositionComponent* temp, unsigned int entity_number, unsigned int tile_number, FPS fps) {
 	switch(entity_number) {
 		case COLLISION_SOLID:
-			remove_force_y(world, entity, temp, fps);
-			world->movement[entity].movY = 0;
-			break;
 		case COLLISION_HACKER:
-			remove_force_y(world, entity, temp, fps);
-			world->movement[entity].movY = 0;
-			break;
 		case COLLISION_GUARD:
+		case COLLISION_TARGET:
 			remove_force_y(world, entity, temp, fps);
 			world->movement[entity].movY = 0;
 			break;

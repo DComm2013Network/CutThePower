@@ -156,28 +156,19 @@ void anti_stuck_system(World *world, unsigned int curEntityID, int otherEntityID
 		return;
 	}
 
-	rightDist = abs(world->position[otherEntityID].x + world->position[otherEntityID].width - world->position[curEntityID].x);
-	leftDist = abs(world->position[curEntityID].x + world->position[curEntityID].width - world->position[otherEntityID].x);
-	upDist = abs(world->position[curEntityID].y + world->position[curEntityID].height - world->position[otherEntityID].y);
-	downDist = abs(world->position[otherEntityID].y + world->position[otherEntityID].height - world->position[curEntityID].y);
-	if (rightDist < leftDist && rightDist < upDist && rightDist < downDist) {
+	rightDist = abs(world->position[otherEntityID].x + world->position[otherEntityID].width - world->position[curEntityID].x); //right side of other player
+	leftDist = abs(world->position[curEntityID].x + world->position[curEntityID].width - world->position[otherEntityID].x); //left side of other player
+	upDist = abs(world->position[curEntityID].y + world->position[curEntityID].height - world->position[otherEntityID].y); //bottom of other player
+	downDist = abs(world->position[otherEntityID].y + world->position[otherEntityID].height - world->position[curEntityID].y); //top of other player
+	
+	if (rightDist <= leftDist && rightDist <= upDist && rightDist <= downDist && !(world->command[curEntityID].commands[C_LEFT])) {
 		world->position[otherEntityID].x = world->position[curEntityID].x - world->position[otherEntityID].width - 1;
-	} else if (leftDist < rightDist && leftDist < upDist && leftDist < downDist) {
+	} else if (leftDist <= rightDist && leftDist <= upDist && leftDist <= downDist && !(world->command[curEntityID].commands[C_RIGHT])) {
 		world->position[otherEntityID].x = world->position[curEntityID].x + world->position[curEntityID].width + 1;
-	} else if (upDist < leftDist && upDist < rightDist && upDist < downDist) {
+	} else if (upDist <= leftDist && upDist <= rightDist && upDist <= downDist && !(world->command[curEntityID].commands[C_DOWN])) {
 		world->position[otherEntityID].y = world->position[curEntityID].y + world->position[curEntityID].height + 1;
-	} else if (downDist < leftDist && downDist < upDist && downDist < rightDist) {
+	} else if (downDist <= leftDist && downDist <= upDist && downDist <= rightDist && !(world->command[curEntityID].commands[C_UP])) {
 		world->position[otherEntityID].y = world->position[curEntityID].y - world->position[otherEntityID].height - 1;
-	} else {
-		if (rightDist <= leftDist && rightDist <= upDist && rightDist <= downDist) {
-			world->position[otherEntityID].x = world->position[curEntityID].x - world->position[otherEntityID].width - 1;
-		} else if (leftDist <= rightDist && leftDist <= upDist && leftDist <= downDist) {
-			world->position[otherEntityID].x = world->position[curEntityID].x + world->position[curEntityID].width + 1;
-		} else if (upDist <= leftDist && upDist <= rightDist && upDist <= downDist) {
-			world->position[otherEntityID].y = world->position[curEntityID].y + world->position[curEntityID].height + 1;
-		} else {
-			world->position[otherEntityID].y = world->position[curEntityID].y - world->position[otherEntityID].height - 1;
-		}
 	}
 }
 
@@ -271,17 +262,21 @@ bool capture_objective(World* world, unsigned int entity) {
 	if (world->collision[entity].type == COLLISION_HACKER && world->command[entity].commands[C_ACTION]) {
 		unsigned int* collision_list = NULL;
 		unsigned int num_collisions;
+		bool captured = false;
 		if (spacebar_collision(world, entity, &collision_list, &num_collisions)) {
 			unsigned int i;
 			for (i = 0; i < num_collisions; i++) {
 				if (world->collision[collision_list[i]].type == COLLISION_TARGET && world->objective[collision_list[i]].status == 1) {
 					printf("You captured an objective[%u] %u! You is the best!\n", collision_list[i], world->objective[collision_list[i]].objectiveID);
 					world->objective[collision_list[i]].status = 2;
-					send_objectives(world, send_router_fd[WRITE]);
+					captured = true;
 					play_animation(world, collision_list[i], "captured");
 				}
 			}
 			cleanup_spacebar_collision(&collision_list);
+		}
+		if (captured) {
+			send_objectives(world, send_router_fd[WRITE]);
 		}
 	}
 	return false;
