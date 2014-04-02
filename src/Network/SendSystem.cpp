@@ -18,7 +18,7 @@
 extern int network_ready;
 static int controllable_player;
 
-static teamNo_t player_team = 0;
+teamNo_t player_team = 0;
 /**
  * Checks the world for data and sends out data updates to be passed to the server. Currently sends out\
  * only a position update.
