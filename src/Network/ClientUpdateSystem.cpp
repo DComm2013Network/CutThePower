@@ -153,7 +153,6 @@ void client_update_chat(World *world, void *packet)
 		snprintf(message, MAX_MESSAGE + MAX_NAME + 2,"%s: %s", world->player[player_table[snd_chat->sendingPlayer_number]].name, snd_chat->message);
 		font_type = (world->player[player_table[snd_chat->sendingPlayer_number]].teamNo == world->player[player_table[controllable_playerNo]].teamNo) ? CHAT_FONT : OTHER_TEAM_FONT;
 	} 
-	printf("%s\n", message);
 	chat_add_line(message, font_type);
 }
 
