@@ -21,6 +21,7 @@ typedef struct _objective_cache
 } objective_cache;
 
 static int controllable_playerNo; /**< The entity number of the controllable player. */
+extern int player_team;
 extern int game_net_signalfd;     /**< An eventfd allowing the gameplay thread to request data from network router. */
 extern int network_ready;         /**< Indicates whether the network has initialised. */
 extern int player_team;           /**< The player's team (0, COPS or ROBBERS). */
@@ -323,16 +324,19 @@ void client_update_status(World *world, void *packet)
 	        	if(status_update->otherPlayers_teams[i] == COPS)
 	        	{
 	        		change_player(world, COPS, status_update, i);
+	        		player_team = COPS;
 	        	}
 
 	        	if(status_update->otherPlayers_teams[i] == ROBBERS)
 	        	{
 	        		change_player(world, ROBBERS, status_update, i);
+	        		player_team = ROBBERS;
 	        	}
 
 	        	if(status_update->otherPlayers_teams[i] == 0)
 	        	{
 			    	change_player(world, ROBBERS, status_update, i);
+			    	player_team = 0;
 	        	}
 	        }
 		} 
@@ -366,6 +370,8 @@ void change_player(World * world, int type, PKT_GAME_STATUS * pkt, int playerNo)
 	else{
 		setup_character_animation(world, pkt->characters[playerNo], player_table[playerNo]);
 	}
+
+
 }
 
 void setup_character_animation(World * world, int character, int entity)
