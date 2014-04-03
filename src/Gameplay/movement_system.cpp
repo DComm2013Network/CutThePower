@@ -293,7 +293,7 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 	for(entity = 0; entity < MAX_ENTITIES; entity++) {
 		if(IN_THIS_COMPONENT(world->mask[entity], COMPONENT_STILE))
 		{	
-			uint64_t current_time = SDL_GetTicks();
+			unsigned int current_time = SDL_GetTicks();
 			if((current_time - world->tile[entity].start_time) >= 5000)
 			{
 				destroy_entity(world, entity);
