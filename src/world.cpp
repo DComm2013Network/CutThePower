@@ -135,11 +135,11 @@ unsigned int create_player(World* world, int x, int y, bool controllable, int co
 	
 	movement.id = 0;
 	movement.lastDirection = 0;
-	movement.acceleration = 0.75;
-	movement.maxSpeed = 4;
+	movement.acceleration = 1.50;
+	movement.maxSpeed = 8;
 	movement.movX = 0;
 	movement.movY = 0;
-	movement.friction = 0.15;
+	movement.friction = 0.30;
 	
 	command.commands[C_UP] = false;
 	command.commands[C_DOWN] = false;
@@ -383,7 +383,7 @@ void destroy_world_not_player(World *world) {
 	unsigned int entity;
 	
 	for(entity = 0; entity < MAX_ENTITIES; entity++) {
-		if(!IN_THIS_COMPONENT(world->mask[entity], COMPONENT_PLAYER) && !IN_THIS_COMPONENT(world->mask[entity], COMPONENT_STILE)) {
+		if(!IN_THIS_COMPONENT(world->mask[entity], COMPONENT_PLAYER)) {
 			destroy_entity(world, entity);
 		}
 	}

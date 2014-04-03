@@ -54,35 +54,35 @@ void add_force(World* world, unsigned int entity, float magnitude, float dir) {
 }
 
 void apply_force_x(World* world, unsigned int entity, PositionComponent* temp, FPS fps) {
-	temp->x += world->movement[entity].movX * (FPS_MAX / fps.getFPS());
+	temp->x += world->movement[entity].movX * ((double)GAME_SPEED / fps.getFPS());
 }
 
 void remove_force_x(World* world, unsigned int entity, PositionComponent* temp, FPS fps) {
-	temp->x -= world->movement[entity].movX * (FPS_MAX / fps.getFPS());
+	temp->x -= world->movement[entity].movX * ((double)GAME_SPEED / fps.getFPS());
 }
 
 void apply_deceleration_x(World* world, unsigned int entity, FPS fps) {
-	world->movement[entity].movX *= 1 - world->movement[entity].friction * (FPS_MAX / fps.getFPS());
+	world->movement[entity].movX *= 1 - world->movement[entity].friction * ((double)GAME_SPEED / fps.getFPS());
 }
 
 void apply_ice_deceleration_x(World* world, unsigned int entity, float deceleration, FPS fps) {
-	world->movement[entity].movX *= 1 - deceleration * (FPS_MAX / fps.getFPS());
+	world->movement[entity].movX *= 1 - deceleration * ((double)GAME_SPEED / fps.getFPS());
 }
 
 void apply_force_y(World* world, unsigned int entity, PositionComponent* temp, FPS fps) {
-	temp->y += world->movement[entity].movY * (FPS_MAX / fps.getFPS());
+	temp->y += world->movement[entity].movY * ((double)GAME_SPEED / fps.getFPS());
 }
 
 void remove_force_y(World* world, unsigned int entity, PositionComponent* temp, FPS fps) {
-	temp->y -= world->movement[entity].movY * (FPS_MAX / fps.getFPS());
+	temp->y -= world->movement[entity].movY * ((double)GAME_SPEED / fps.getFPS());
 }
 
 void apply_deceleration_y(World* world, unsigned int entity, FPS fps) {
-	world->movement[entity].movY *= 1 - world->movement[entity].friction * (FPS_MAX / fps.getFPS());
+	world->movement[entity].movY *= 1 - world->movement[entity].friction * ((double)GAME_SPEED / fps.getFPS());
 }
 
 void apply_ice_deceleration_y(World* world, unsigned int entity, float deceleration, FPS fps) {
-	world->movement[entity].movY *= 1 - deceleration * (FPS_MAX / fps.getFPS());
+	world->movement[entity].movY *= 1 - deceleration * ((double)GAME_SPEED / fps.getFPS());
 }
 /* SPECIAL TILES */
 void add_force_acceleration_x(MovementComponent& movement, float magnitude, float dir, float friction) {
@@ -128,6 +128,7 @@ void handle_x_collision(World* world, unsigned int entity, PositionComponent* te
 			break;
 		case COLLISION_BELTRIGHT:
 			add_force(world, entity, 0.47, 0);
+			//add_force_acceleration_x(movement, 0.47, 0, -0.000000000000000000001);
 			break;
 		default:
 			break;
@@ -292,13 +293,7 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 	//loop through each entity and see if the system can do work on it.
 	for(entity = 0; entity < MAX_ENTITIES; entity++) {
 		if(IN_THIS_COMPONENT(world->mask[entity], COMPONENT_STILE))
-		{	
-			unsigned int current_time = SDL_GetTicks();
-			if((current_time - world->tile[entity].start_time) >= 5000)
-			{
-				destroy_entity(world, entity);
-			}
-
+		{
 			switch(world->tile[entity].type)
 			{
 				case TILE_BELT_RIGHT:
@@ -312,7 +307,7 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 		}	
 
 		//For controllable entities
-		else if (IN_THIS_COMPONENT(world->mask[entity], CONTROLLABLE_MASK)) {
+		if (IN_THIS_COMPONENT(world->mask[entity], CONTROLLABLE_MASK)) {
 			command = &(world->command[entity]);
 			position = &(world->position[entity]);
 			controllable = &(world->controllable[entity]);
@@ -356,18 +351,14 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 					add_force(world, entity, world->movement[entity].acceleration, 0);
 				}
 				/* SPECIAL TILES */
+				unsigned int tile;
 				if(command->commands[C_TILE]){
-
-					unsigned int tile;
-
-					switch(world->player[entity].tilez)
-					{
-						case TILE_BELT_RIGHT:
-							tile = create_stile(world, TILE_BELT_RIGHT, world->position[entity].x, world->position[entity].y, world->position[entity].level);
-							break;
-						case TILE_BELT_LEFT:
-							tile = create_stile(world, TILE_BELT_LEFT, world->position[entity].x, world->position[entity].y, world->position[entity].level);
-							break;
+					key_pressed = true;
+					if(world->player[entity].tilez == TILE_BELT_RIGHT){
+						tile = create_stile(world, TILE_BELT_RIGHT, world->position[entity].x, world->position[entity].y, world->position[entity].level);
+					}
+					else if(world->player[entity].tilez == TILE_BELT_LEFT){
+						tile = create_stile(world, TILE_BELT_LEFT, world->position[entity].x, world->position[entity].y, world->position[entity].level);
 					}
 					send_tiles(world, tile, send_router_fd[WRITE]);
 				}
