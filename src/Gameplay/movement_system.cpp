@@ -221,6 +221,24 @@ void rebuild_floor(World* world, int targl)
 		case 3:
 			map_init(world, "assets/Graphics/map/map_03/map03.txt", "assets/Graphics/map/map_03/tiles.txt");
 			break;
+		case 4:
+			map_init(world, "assets/Graphics/map/map_04/map04.txt", "assets/Graphics/map/map_04/tiles.txt");
+			break;
+		case 5:
+			map_init(world, "assets/Graphics/map/map_05/map05.txt", "assets/Graphics/map/map_05/tiles.txt");
+			break;
+		case 6:
+			map_init(world, "assets/Graphics/map/map_06/map06.txt", "assets/Graphics/map/map_06/tiles.txt");
+			break;
+		case 7:
+			map_init(world, "assets/Graphics/map/map_07/map07.txt", "assets/Graphics/map/map_07/tiles.txt");
+			break;
+		case 8:
+			map_init(world, "assets/Graphics/map/map_08/map08.txt", "assets/Graphics/map/map_08/tiles.txt");
+			break;
+		case 9:
+			map_init(world, "assets/Graphics/map/map_09/map09.txt", "assets/Graphics/map/map_09/tiles.txt");
+			break;
 	}
 	for (unsigned int i = 0; i < MAX_ENTITIES; i++) {
 		if (IN_THIS_COMPONENT(world->mask[i], COMPONENT_LEVEL)) {
