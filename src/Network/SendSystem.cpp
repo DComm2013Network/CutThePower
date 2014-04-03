@@ -234,10 +234,12 @@ void send_tiles(World * world, unsigned int entity, int fd)
 {
 	PKT_SPECIAL_TILE * p_tile = (PKT_SPECIAL_TILE*) calloc(1, sizeof(PKT_SPECIAL_TILE));
 	
+	p_tile->playerNo = world->player[controllable_player].playerNo;
 	p_tile->floor = world->position[entity].level;
 	p_tile->xPos = world->position[entity].x;
 	p_tile->yPos = world->position[entity].y;
 	p_tile->tile = world->tile[entity].type;
 
+	write_packet(fd, P_SPECIAL_TILE, p_tile);
 	free(p_tile);
 }

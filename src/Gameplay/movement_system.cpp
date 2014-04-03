@@ -299,17 +299,6 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 			{
 				destroy_entity(world, entity);
 			}
-			
-			switch(world->tile[entity].type)
-			{
-				case TILE_BELT_RIGHT:
-					play_animation(world, entity, (char*)"speed_right");
-				break;
-
-				case TILE_BELT_LEFT:
-					play_animation(world, entity, (char*)"speed_left");
-				break;
-			}
 		}	
 
 		//For controllable entities
