@@ -65,6 +65,10 @@ void apply_deceleration_x(World* world, unsigned int entity, FPS fps) {
 	world->movement[entity].movX *= 1 - world->movement[entity].friction * (FPS_MAX / fps.getFPS());
 }
 
+void apply_ice_deceleration_x(World* world, unsigned int entity, float deceleration, FPS fps) {
+	world->movement[entity].movX *= 1 - deceleration * (FPS_MAX / fps.getFPS());
+}
+
 void apply_force_y(World* world, unsigned int entity, PositionComponent* temp, FPS fps) {
 	temp->y += world->movement[entity].movY * (FPS_MAX / fps.getFPS());
 }
@@ -77,7 +81,38 @@ void apply_deceleration_y(World* world, unsigned int entity, FPS fps) {
 	world->movement[entity].movY *= 1 - world->movement[entity].friction * (FPS_MAX / fps.getFPS());
 }
 
+void apply_ice_deceleration_y(World* world, unsigned int entity, float deceleration, FPS fps) {
+	world->movement[entity].movY *= 1 - deceleration * (FPS_MAX / fps.getFPS());
+}
+/* SPECIAL TILES */
+void add_force_acceleration_x(MovementComponent& movement, float magnitude, float dir, float friction) {
+
+	movement.movX += cos(dir * PI / 180) * magnitude;
+	movement.movY += sin(dir * PI / 180) * magnitude;
+
+	if (sqrt(pow(movement.movX, 2) + pow(movement.movY, 2)) > movement.maxSpeed) {
+		float tx = movement.movX;
+		float ty = movement.movY;
+		movement.movX *= 1 - friction;
+		movement.movY *= movement.maxSpeed / sqrt(pow(tx, 2) + pow(ty, 2));
+	}
+}
+/* SPECIAL TILES */
+void add_force_acceleration_y(MovementComponent& movement, float magnitude, float dir, float friction) {
+
+	movement.movX += cos(dir * PI / 180) * magnitude;
+	movement.movY += sin(dir * PI / 180) * magnitude;
+
+	if (sqrt(pow(movement.movX, 2) + pow(movement.movY, 2)) > movement.maxSpeed) {
+		float tx = movement.movX;
+		float ty = movement.movY;
+		movement.movX *= movement.maxSpeed / sqrt(pow(tx, 2) + pow(ty, 2));
+		movement.movY *= 1 - friction;
+	}
+}
+
 void handle_x_collision(World* world, unsigned int entity, PositionComponent* temp, unsigned int entity_number, unsigned int tile_number, FPS fps) {
+
 	switch(entity_number) {
 		case COLLISION_SOLID:
 		case COLLISION_HACKER:
@@ -86,13 +121,37 @@ void handle_x_collision(World* world, unsigned int entity, PositionComponent* te
 			remove_force_x(world, entity, temp, fps);
 			world->movement[entity].movX = 0;
 			break;
-	}
-	
+			/* SPECIAL TILES*/
+		case COLLISION_BELTLEFT:
+			//add_force(movement, 0.47, 180);
+			add_force_acceleration_x(world->movement[entity], 0.47, 180, -0.000000000000000000001);
+			break;
+		case COLLISION_BELTRIGHT:
+			add_force(world, entity, 0.47, 0);
+			//add_force_acceleration_x(movement, 0.47, 0, -0.000000000000000000001);
+			break;
+		default:
+			break;
+		}
+			/*SPECIAL TILES*/
 	switch(tile_number) {
 		case COLLISION_WALL:
 			remove_force_x(world, entity, temp, fps);
 			world->movement[entity].movX = 0;
 			break;
+			/* SPECIAL TILES*/
+		case COLLISION_BELTRIGHT:
+			add_force(world, entity, 0.47, 0);
+			//add_force_acceleration_x(movement, 0.47, 0, -0.000000000000000000001);
+			break;
+		case COLLISION_BELTLEFT:
+			//add_force(movement, 0.47, 180);
+			add_force_acceleration_x(world->movement[entity], 0.47, 180, -0.000000000000000000001);
+			break;
+		case COLLISION_ICE:
+			apply_ice_deceleration_x(world, entity, 0.005, fps);
+			break;
+			/* SPECIAL TILES*/
 		default:
 			if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_CONTROLLABLE)) {
 				apply_deceleration_x(world, entity, fps);
@@ -117,6 +176,17 @@ void handle_y_collision(World* world, unsigned int entity, PositionComponent* te
 			remove_force_y(world, entity, temp, fps);
 			world->movement[entity].movY = 0;
 			break;
+			/* SPECIAL TILES */
+		case COLLISION_BELTDOWN:
+			add_force(world, entity, 0.47, 90);
+			break;
+		case COLLISION_BELTUP:
+			add_force(world, entity, 0.47, -90);
+			break;
+		case COLLISION_ICE:
+			apply_ice_deceleration_y(world, entity, 0.005, fps);
+			break;
+			/* SPECIAL TILES */
 		default:
 			if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_CONTROLLABLE)) {
 				apply_deceleration_y(world, entity, fps);
@@ -186,6 +256,7 @@ void handle_entity_collision(World* world, unsigned int entity, unsigned int ent
 				int targy = world->wormhole[hit_entity].targetY;
 				int targl = world->wormhole[hit_entity].targetLevel;
 
+				world->player[player_entity].tilez = rand() % 2 + 1;
 				move_request(world, send_router_fd[WRITE], targl, targx, targy);
 				if(!network_ready)
 				{
@@ -265,6 +336,17 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 					world->movement[entity].lastDirection = DIRECTION_RIGHT;
 					add_force(world, entity, world->movement[entity].acceleration, 0);
 				}
+				/* SPECIAL TILES */
+				if(command->commands[C_TILE]){
+					key_pressed = true;
+					if(world->player[entity].tilez == TILE_BELT_RIGHT){
+						create_stile(world, entity, TILE_BELT_RIGHT);
+					}
+					if(world->player[entity].tilez == TILE_BELT_LEFT){
+						create_stile(world, entity, TILE_BELT_LEFT);
+					}
+				}
+				/* SPECIAL TILES */
 				
 				if (IN_THIS_COMPONENT(world->mask[entity], COLLISION_MASK)) {
 					

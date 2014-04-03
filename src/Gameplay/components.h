@@ -80,6 +80,7 @@ typedef struct {
 	status_t readyStatus;
 	char name[MAX_NAME];
 	character_t character;
+	unsigned int tilez;
 } PlayerComponent;
 
 typedef struct {

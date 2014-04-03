@@ -15,6 +15,7 @@ void apply_force(World* world, unsigned int entity);
 void movement_system(World* world, FPS fps, int sendpipe);
 void update_system(World* world);
 void handle_entity_collision(World* world, unsigned int entity, unsigned int entity_number, unsigned int tile_number, unsigned int hit_entity);
-void rebuild_floor(World * world);
+void add_force_acceleration_x(MovementComponent& movement, float magnitude, float dir, float friction);
+void add_force_acceleration_y(MovementComponent& movement, float magnitude, float dir, float friction);
 
 #endif

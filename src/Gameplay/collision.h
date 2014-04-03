@@ -14,6 +14,7 @@ void anti_stuck_system(World *world, unsigned int curEntityID, int otherEntityID
 
 bool tag_player(World* world, unsigned int entity);
 bool capture_objective(World* world, unsigned int entity);
+void create_stile(World * world, unsigned int entity, int type);
 
 #endif
 

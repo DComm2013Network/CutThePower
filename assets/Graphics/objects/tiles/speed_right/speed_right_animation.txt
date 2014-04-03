@@ -1,0 +1,6 @@
+1
+
+speed_right 3 20 -1 1
+assets/Graphics/objects/tiles/speed_right/speed_right_1.png
+assets/Graphics/objects/tiles/speed_right/speed_right_2.png
+assets/Graphics/objects/tiles/speed_right/speed_right_3.png

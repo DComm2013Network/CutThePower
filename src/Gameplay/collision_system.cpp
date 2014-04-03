@@ -13,6 +13,7 @@
 #include "collision.h"
 #include "level.h"
 #include <stdio.h>
+#include <thread>
 #include <math.h>
 
 #define COLLISION_MASK (COMPONENT_COLLISION) /**< Indicates that an entity can collide with other entities. */
@@ -319,3 +320,38 @@ void cleanup_spacebar_collision(unsigned int** collision_list) {
 	}
 }
 
+void create_stile(World * world, unsigned int entity, int type)
+{
+	unsigned int speed_tile = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION | COMPONENT_COLLISION | COMPONENT_STILE);
+	
+	int x = (int)((world->position[entity].x + world->position[entity].width / 2) / TILE_WIDTH);
+	int y = (int)((world->position[entity].y + world->position[entity].height / 2) / TILE_HEIGHT);
+	
+	world->position[speed_tile].x = (x * TILE_WIDTH) + (TILE_WIDTH / 2);
+	world->position[speed_tile].y = (y * TILE_HEIGHT) + (TILE_HEIGHT / 2);
+	
+	world->position[speed_tile].width = TILE_WIDTH;
+	world->position[speed_tile].height = TILE_HEIGHT;
+	
+	world->renderPlayer[speed_tile].width = TILE_WIDTH;
+	world->renderPlayer[speed_tile].height = TILE_HEIGHT;
+	
+	world->collision[speed_tile].active = true;
+	world->collision[speed_tile].radius = 1;
+	
+	switch(type)
+	{
+		case TILE_BELT_RIGHT:
+			world->collision[speed_tile].type = COLLISION_BELTRIGHT;
+			load_animation((char*)"assets/Graphics/objects/tiles/speed_right/speed_right_animation.txt", world, speed_tile);
+			play_animation(world, speed_tile, (char*)"speed_right");
+			break;
+
+		case TILE_BELT_LEFT:
+			world->collision[speed_tile].type = COLLISION_BELTLEFT;
+			load_animation((char*)"assets/Graphics/objects/tiles/speed_left/speed_left_animation.txt", world, speed_tile);
+			play_animation(world, speed_tile, (char*)"speed_left");
+			break;
+	}
+	std::thread (wait, world, speed_tile).detach();
+}
