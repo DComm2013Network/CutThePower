@@ -134,7 +134,7 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 			
 			if(IN_THIS_COMPONENT(world.mask[entity], COMPONENT_PLAYER)) {
 					
-				//if ((fow->teamNo == world.player[entity].teamNo)) {	
+				if ((fow->teamNo == world.player[entity].teamNo)) {	
 					FowPlayerPosition fowp;
 		
 					fowp.world = &world;
@@ -162,10 +162,10 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 			
 					SDL_BlitScaled(renderPlayer->playerSurface, &clipRect, surface, &playerRect);
 
-				//}
-				//else {
-				//	opponentPlayers[opponentPlayersCount++] = entity;
-				//}
+				}
+				else {
+					opponentPlayers[opponentPlayersCount++] = entity;
+				}
 			}
 
 			//check if a textbox.
@@ -189,22 +189,22 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 		}
 	}
 
-	/*for(int entity = 0; entity < opponentPlayersCount && entity < 32; entity++) {
+	for(int entity = 0; entity < opponentPlayersCount && entity < 32; entity++) {
 
-		printf("%d", level);
+		//printf("%d", level);
 
 		position 	= &(world.position    [ opponentPlayers[entity] ]);
 		renderPlayer 	= &(world.renderPlayer[ opponentPlayers[entity] ]);
 
-		playerRect.x = position->x;
-		playerRect.y = position->y;
+		playerRect.x = position->x + map_rect.x;
+		playerRect.y = position->y + map_rect.y;
 		playerRect.w = renderPlayer->width;
 		playerRect.h = renderPlayer->height;
 
 		int xPos = position->x / TILE_WIDTH;
 		int yPos = position->y / TILE_HEIGHT;
 
-		if(fow -> tiles[yPos][xPos].visible[ position->level ] == 1)
+		if(fow -> tiles[yPos][xPos].visible[ position->level ] == 0)
 		{
 			clipRect.x = -playerRect.x;
 			clipRect.y = -playerRect.y;
@@ -225,7 +225,7 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 
 			SDL_BlitScaled(renderPlayer->playerSurface, &clipRect, surface, &playerRect);
 		}
-	}*/
+	}
 }
 
 
