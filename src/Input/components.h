@@ -35,8 +35,7 @@ typedef struct  {
 	char *name; 	/**< The name of the text field. */
 	char *text;    /**< The text contained within this text field. */
 	bool focused;  /**< Whether the text field has focus. */
-	int length;    /**< The current length of the text. */
-	int max_length;/**< The maximum length of the field. */
+	int length;    /**< The number of characters allowed within the textfield. */
 	bool number;   /**< Whether the max number of characters has been exceeded. */
 	
 } TextFieldComponent;

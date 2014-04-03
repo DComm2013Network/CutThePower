@@ -1,4 +1,4 @@
-25
+26
 
 00	assets/Graphics/map/map_01/00_40px.bmp		0
 01	assets/Graphics/map/map_01/01_40px.bmp		0
@@ -20,8 +20,10 @@
 17	assets/Graphics/map/map_01/17_40px.bmp		2
 18	assets/Graphics/map/map_01/18_40px.bmp		2
 19	assets/Graphics/map/map_01/19_40px.bmp		2
-20	assets/Graphics/map/map_01/20_40px.bmp		0
+20	assets/Graphics/map/map_01/20_40px.bmp		1
 21	assets/Graphics/map/map_01/stairsdownleft.bmp	1
 22	assets/Graphics/map/map_01/stairsdownright.bmp	1
 23	assets/Graphics/map/map_01/stairsupleft.bmp	1
 24	assets/Graphics/map/map_01/stairsupright.bmp	1
+25  assets/Graphics/map/map_01/25_40px.bmp		1
+

@@ -1,4 +1,4 @@
-38
+39
 
 00	assets/Graphics/map/map_02/00_40px.bmp		1
 01	assets/Graphics/map/map_02/01_40px.bmp		1
@@ -38,3 +38,4 @@
 35  assets/Graphics/map/map_02/cabinet_bottom.bmp   2
 36  assets/Graphics/map/map_02/glass_table_left.bmp   2
 37  assets/Graphics/map/map_02/glass_table_right.bmp   2
+38  assets/Graphics/map/map_02/tile_ice.bmp   4

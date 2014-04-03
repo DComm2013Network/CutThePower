@@ -1,25 +1,21 @@
 #ifndef SOUND_H
 #define SOUND_H
 
-#include <SDL2/SDL_mixer.h>
+#define SOUND_EFFECT_NUM 			1
+#define SOUND_EFFECT_MENU_THUNDER 	0
 
-#define MAX_EFFECTS			16
-#define MAX_MUSIC			2
+#define SOUND_MUSIC_NUM 			2
+#define SOUND_MUSIC_MENU_RAIN 		0
+#define SOUND_MAP_LOBBY_BACKGROUND 	1
 
 void init_sound();
 void cleanup_sound();
-
-unsigned int load_effect(const char *file);
-void cleanup_effect(unsigned int index);
-
-unsigned int load_music(const char *file);
-void cleanup_music(unsigned int index);
 
 void enable_sound(bool enabled);
 void stop_music();
 void stop_effect();
 
-void play_music(unsigned int sound);
-void play_effect(unsigned int sound);
+void play_music(int sound);
+void play_effect(int sound);
 
 #endif

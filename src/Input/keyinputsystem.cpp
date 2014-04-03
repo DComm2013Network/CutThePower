@@ -13,6 +13,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <thread> 
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_keyboard.h>
@@ -23,22 +25,16 @@
 #include "components.h"
 #include "../systems.h"
 #include "../Graphics/text.h"
-#include "menu.h"
-#include "../Input/chat.h"
-#include "../Network/SendSystem.h"
 
 #define SYSTEM_MASK (COMPONENT_COMMAND) /**< Entities with a command component will be processed by the system. */
 
 int GetScancode(char *character);
+void wait(World* world, const unsigned int entity);
 
 extern int textField; /**< This references the textField variable in the mouseinputsystem for the currently active textfield. */
 int *command_keys; /**< This is the current keycodes mapped to each command. */
 extern const char *character_map;
 extern bool running;
-extern unsigned int player_entity;
-extern int send_router_fd[];
-
-extern int window_width, window_height;
 
 /**
  * Polls the keyboard for input and performs the appropriate action.
@@ -76,30 +72,6 @@ void KeyInputSystem(World *world)
         if (event.type == SDL_QUIT) {
             running = false;
         }
-        else if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
-			
-			//printf("X: %d Y: %d\n", event.window.data1, event.window.data2);
-			
-			window_width = event.window.data1;
-			window_height = event.window.data2;
-			
-		}
-		else if (event.type == SDL_TEXTINPUT) {
-			
-			if (textField != -1) {
-				
-				TextFieldComponent *text = &(world->text[textField]);
-				
-				if (text->length < text->max_length) {
-
-					strcpy(&text->text[text->length], event.text.text);
-					
-					text->length += strlen(event.text.text);
-					
-				}
-				
-			}
-		}
     }
     
     currentKeyboardState = SDL_GetKeyboardState(&numKeys);
@@ -129,8 +101,68 @@ void KeyInputSystem(World *world)
 				text->length = 0;
 			}
 		}
+		else if (text->length < MAX_STRING) {
+			
+			for(int i = 0; i <= 512; i++) {
+				
+				code = SDL_GetScancodeFromName((char*)&i);
+				
+				if (currentKeyboardState[code] &&
+					!prevKeyboardState[code]) {
+					
+					text->text[text->length] = (char)i;
+					text->length++;
+					
+					break;
+				}
+			}
+		}
+		/*if (text->length < MAX_STRING) {
+			
+			if (currentKeyboardState[SDL_SCANCODE_SPACE] &&
+				!prevKeyboardState[SDL_SCANCODE_SPACE]) {
+					
+				text->text[text->length] = '\0';
+				text->length++;
+				
+			}
+			
+			if (currentKeyboardState[SDL_SCANCODE_PERIOD] &&
+				!prevKeyboardState[SDL_SCANCODE_PERIOD]) {
+					
+				text->text[text->length] = '.';
+				text->length++;
+				
+			}
+			
+			for(int i = 'A'; i <= 'Z'; i++) {
+				
+				code = SDL_GetScancodeFromName((char*)&i);
+				
+				if (currentKeyboardState[code] &&
+					!prevKeyboardState[code]) {
+					
+					text->text[text->length] = (char)i;
+					text->length++;
+					
+				}
+			}
+			
+			for(int i = '0'; i <= '9'; i++) {
+				
+				code = SDL_GetScancodeFromName((char*)&i);
+				
+				if (currentKeyboardState[code] &&
+					!prevKeyboardState[code]) {
+					
+					text->text[text->length] = (char)i;
+					text->length++;
+					
+				}
+			}
+		}*/
     }
-	
+
     for(entity = 0; entity < MAX_ENTITIES; entity++) {
 
         if ((world->mask[entity] & SYSTEM_MASK) == SYSTEM_MASK)
@@ -141,46 +173,90 @@ void KeyInputSystem(World *world)
             command->commands[C_LEFT] = (currentKeyboardState[command_keys[C_LEFT]] != 0);
             command->commands[C_DOWN] = (currentKeyboardState[command_keys[C_DOWN]] != 0);
             command->commands[C_RIGHT] = (currentKeyboardState[command_keys[C_RIGHT]] != 0);
+
+			
 			command->commands[C_ACTION] = (currentKeyboardState[command_keys[C_ACTION]] != 0) && (prevKeyboardState[command_keys[C_ACTION]] == 0);
+			
+			//THIS IS VENDING MACHINE SIMULIATOR CODE
+			//DELETE IF YOU DO NOT WANT TO PLACE VENDING MACHINES!!!!!
+			if (command->commands[C_ACTION]) {
+			    if(world->player[entity].tilez == 1){
+				    unsigned int speed_right = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION | COMPONENT_COLLISION);
+				    
+				    int x = (int)((world->position[entity].x + world->position[entity].width / 2) / TILE_WIDTH);
+				    int y = (int)((world->position[entity].y + world->position[entity].height / 2) / TILE_HEIGHT);
+				    
+				    world->position[speed_right].x = (x * TILE_WIDTH) + (TILE_WIDTH / 2);
+				    world->position[speed_right].y = (y * TILE_HEIGHT) + (TILE_HEIGHT / 2);
+				    
+				    world->position[speed_right].width = TILE_WIDTH;
+				    world->position[speed_right].height = TILE_HEIGHT;
+				    
+				    world->renderPlayer[speed_right].width = TILE_WIDTH;
+				    world->renderPlayer[speed_right].height = TILE_HEIGHT;
+				    
+				    world->collision[speed_right].type = COLLISION_BELTRIGHT;
+				    world->collision[speed_right].active = true;
+				    world->collision[speed_right].radius = 1;
+				    
+				    load_animation((char*)"assets/Graphics/objects/tiles/speed_right/speed_right_animation.txt", world, speed_right);
+				    play_animation(world, speed_right, (char*)"speed_right");
+				    
+				    std::thread (wait, world, speed_right).detach();
+				}
+				if(world->player[entity].tilez == 2){
+				    unsigned int speed_left = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION | COMPONENT_COLLISION);
+				    
+				    int x = (int)((world->position[entity].x + world->position[entity].width / 2) / TILE_WIDTH);
+				    int y = (int)((world->position[entity].y + world->position[entity].height / 2) / TILE_HEIGHT);
+				    
+				    world->position[speed_left].x = (x * TILE_WIDTH) + (TILE_WIDTH / 2);
+				    world->position[speed_left].y = (y * TILE_HEIGHT) + (TILE_HEIGHT / 2);
+				    
+				    world->position[speed_left].width = TILE_WIDTH;
+				    world->position[speed_left].height = TILE_HEIGHT;
+				    
+				    world->renderPlayer[speed_left].width = TILE_WIDTH;
+				    world->renderPlayer[speed_left].height = TILE_HEIGHT;
+				    
+				    world->collision[speed_left].type = COLLISION_BELTLEFT;
+				    world->collision[speed_left].active = true;
+				    world->collision[speed_left].radius = 1;
+				    
+				    load_animation((char*)"assets/Graphics/objects/tiles/speed_left/speed_left_animation.txt", world, speed_left);
+				    play_animation(world, speed_left, (char*)"speed_left");
+				    
+				    std::thread (wait, world, speed_left).detach();
+				}
+				if(world->player[entity].tilez == 3){
+				    unsigned int ice = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION | COMPONENT_COLLISION);
+				    
+				    int x = (int)((world->position[entity].x + world->position[entity].width / 2) / TILE_WIDTH);
+				    int y = (int)((world->position[entity].y + world->position[entity].height / 2) / TILE_HEIGHT);
+				    
+				    world->position[ice].x = (x * TILE_WIDTH) + (TILE_WIDTH / 2);
+				    world->position[ice].y = (y * TILE_HEIGHT) + (TILE_HEIGHT / 2);
+				    
+				    world->position[ice].width = TILE_WIDTH;
+				    world->position[ice].height = TILE_HEIGHT;
+				    
+				    world->renderPlayer[ice].width = TILE_WIDTH;
+				    world->renderPlayer[ice].height = TILE_HEIGHT;
+				    
+				    world->collision[ice].type = COLLISION_ICE;
+				    world->collision[ice].active = true;
+				    world->collision[ice].radius = 1;
+				    
+				    load_animation((char*)"assets/Graphics/objects/tiles/ice/ice_animation.txt", world, ice);
+				    play_animation(world, ice, (char*)"ice");
+				    
+				    std::thread (wait, world, ice).detach();
+				}
+			}
+			//END DELETE
 			
         }
     }
-    
-    if (player_entity != -1) {
-		//pause menu
-		if ((currentKeyboardState[SDL_SCANCODE_ESCAPE] != 0) && (prevKeyboardState[SDL_SCANCODE_ESCAPE] == 0)) {
-			if (IN_THIS_COMPONENT(world->mask[player_entity], COMPONENT_COMMAND)) {
-				world->mask[player_entity] ^= COMPONENT_COMMAND;
-			}
-			create_pause_screen(world);
-		}
-		
-		//text state
-		if ((currentKeyboardState[SDL_SCANCODE_RETURN] != 0) && (prevKeyboardState[SDL_SCANCODE_RETURN] == 0)) {
-			
-			//Enter pressed second time.
-			if (!IN_THIS_COMPONENT(world->mask[player_entity], COMPONENT_COMMAND)) {
-				
-				if (strlen(world->text[textField].text) > 0) {
-				
-					char message[MAX_MESSAGE + MAX_NAME + 2] = {0};
-				
-					strcat(message, world->player[player_entity].name);
-					strcat(message, ": ");
-					strcat(message, world->text[textField].text);
-					
-					chat_add_line(message, PLAYER_FONT);
-					send_chat(world, send_router_fd[1], world->text[textField].text);
-				}
-				destroy_menu(world);
-				textField = -1;
-			}
-			else {
-				textField = create_chat(world);
-			}
-			world->mask[player_entity] ^= COMPONENT_COMMAND;
-		}
-	}
     
     //set the previous to the temp. current keystate so we don't get updates we never handled.
     if (prevKeyboardState == 0) {
@@ -190,6 +266,11 @@ void KeyInputSystem(World *world)
 	free(p);
 }
 
+void wait(World* world, const unsigned int entity)
+{
+    sleep(5);
+    destroy_entity(world, entity);
+}
 /**
  * Loads the desired keyboard commands into the game array.
  *
