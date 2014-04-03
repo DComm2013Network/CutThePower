@@ -1,6 +1,6 @@
 CC=g++
 FLAGS=-Wall -std=c++11 -O0 -g -fpermissive 
-LIBS=-lrt -lSDL2 -lSDL2_image -lSDL2_net -lSDL2_mixer -lpthread -lSDL2_ttf
+LIBS=-L/usr/local/lib -lrt -lSDL2 -lSDL2_image -lSDL2_net -lSDL2_mixer -lpthread -lSDL2_ttf
 
 BINDIR=bin
 OBJDIR=obj

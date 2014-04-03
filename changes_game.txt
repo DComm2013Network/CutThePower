@@ -1,0 +1,176 @@
+/src/Gameplay/system.h
+	9 void movement_system(World* world, unsigned int player_entity);
+
+
+/src/main.cpp
+	111 movement_system(world, player_entity);
+
+
+/src/Gameplay/movement_system.cpp
+	287 handle_entity_collision(data, world, entity, player_entity);
+
+
+	201 case COLLISION_STAIR:
+		world->player[player_entity].tilez = rand() % 2 + 1;
+		break;
+		
+
+	124 void handle_x_collision(CollisionData data, PositionComponent& position, MovementComponent &movement) {
+			switch(data.entity_code) {
+			case COLLISION_SOLID:
+				remove_forcex(position, movement);
+				movement.movX = 0;
+				break;
+			case COLLISION_BELTLEFT:
+				//add_force(movement, 0.47, 180);
+				add_force_acceleration_x(movement, 0.47, 180, -0.000000000000000000001);
+				break;
+			case COLLISION_BELTRIGHT:
+				add_force(movement, 0.47, 0);
+				//add_force_acceleration_x(movement, 0.47, 0, -0.000000000000000000001);
+				break;
+			default:
+				break;
+			}
+
+			switch(data.map_code) {
+			case COLLISION_WALL:
+				remove_forcex(position, movement);
+				movement.movX = 0;
+				break;
+			case COLLISION_BELTRIGHT:
+				add_force(movement, 0.47, 0);
+				//add_force_acceleration_x(movement, 0.47, 0, -0.000000000000000000001);
+				break;
+			case COLLISION_BELTLEFT:
+				//add_force(movement, 0.47, 180);
+				add_force_acceleration_x(movement, 0.47, 180, -0.000000000000000000001);
+				break;
+			case COLLISION_ICE:
+				apply_deceleration_x(movement, 0.005);
+				break;
+			default:
+				apply_deceleration_x(movement);
+				break;
+			}
+		}
+
+		void handle_y_collision(CollisionData data, PositionComponent& position, MovementComponent &movement) {
+			switch(data.entity_code) {
+			case COLLISION_SOLID:
+				remove_forcey(position, movement);
+				movement.movY = 0;
+				break;
+			default:
+				break;
+			}
+
+			switch(data.map_code) {
+			case COLLISION_WALL:
+				remove_forcey(position, movement);
+				movement.movY = 0;
+				break;
+			case COLLISION_BELTDOWN:
+				add_force(movement, 0.47, 90);
+				break;
+			case COLLISION_BELTUP:
+				add_force(movement, 0.47, -90);
+				break;
+			case COLLISION_ICE:
+				apply_deceleration_y(movement, 0.005);
+				break;
+			default:
+				apply_deceleration_y(movement);
+				break;
+			}
+		}
+		
+		
+	54 void add_force_acceleration_x(MovementComponent& movement, float magnitude, float dir, float friction) {
+
+			movement.movX += cos(dir * PI / 180) * magnitude;
+			movement.movY += sin(dir * PI / 180) * magnitude;
+
+			if (sqrt(pow(movement.movX, 2) + pow(movement.movY, 2)) > movement.maxSpeed) {
+				float tx = movement.movX;
+				float ty = movement.movY;
+				movement.movX *= 1 - friction;
+				movement.movY *= movement.maxSpeed / sqrt(pow(tx, 2) + pow(ty, 2));
+			}
+		}
+
+		void add_force_acceleration_y(MovementComponent& movement, float magnitude, float dir, float friction) {
+
+			movement.movX += cos(dir * PI / 180) * magnitude;
+			movement.movY += sin(dir * PI / 180) * magnitude;
+
+			if (sqrt(pow(movement.movX, 2) + pow(movement.movY, 2)) > movement.maxSpeed) {
+				float tx = movement.movX;
+				float ty = movement.movY;
+				movement.movX *= movement.maxSpeed / sqrt(pow(tx, 2) + pow(ty, 2));
+				movement.movY *= 1 - friction;
+			}
+		}
+		
+		
+	15 void handle_entity_collision(CollisionData data, World * world, int curEntityID, unsigned int player_entity);
+	
+	
+/src/Input/keyinputsystem.cpp
+	32 void wait(World* world, const unsigned int entity);
+	
+	
+	183 if(world->player[entity].tilez == 1){
+			unsigned int speed_right = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION | COMPONENT_COLLISION);
+			
+			int x = (int)((world->position[entity].x + world->position[entity].width / 2) / TILE_WIDTH);
+			int y = (int)((world->position[entity].y + world->position[entity].height / 2) / TILE_HEIGHT);
+			
+			world->position[speed_right].x = (x * TILE_WIDTH) + (TILE_WIDTH / 2);
+			world->position[speed_right].y = (y * TILE_HEIGHT) + (TILE_HEIGHT / 2);
+			
+			world->position[speed_right].width = TILE_WIDTH;
+			world->position[speed_right].height = TILE_HEIGHT;
+			
+			world->renderPlayer[speed_right].width = TILE_WIDTH;
+			world->renderPlayer[speed_right].height = TILE_HEIGHT;
+			
+			world->collision[speed_right].type = COLLISION_BELTRIGHT;
+			world->collision[speed_right].active = true;
+			world->collision[speed_right].radius = 1;
+			
+			load_animation((char*)"assets/Graphics/objects/tiles/speed_right/speed_right_animation.txt", world, speed_right);
+			play_animation(world, speed_right, (char*)"speed_right");
+			
+			std::thread (wait, world, speed_right).detach();
+		}
+		if(world->player[entity].tilez == 2){
+			unsigned int speed_left = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION | COMPONENT_COLLISION);
+			
+			int x = (int)((world->position[entity].x + world->position[entity].width / 2) / TILE_WIDTH);
+			int y = (int)((world->position[entity].y + world->position[entity].height / 2) / TILE_HEIGHT);
+			
+			world->position[speed_left].x = (x * TILE_WIDTH) + (TILE_WIDTH / 2);
+			world->position[speed_left].y = (y * TILE_HEIGHT) + (TILE_HEIGHT / 2);
+			
+			world->position[speed_left].width = TILE_WIDTH;
+			world->position[speed_left].height = TILE_HEIGHT;
+			
+			world->renderPlayer[speed_left].width = TILE_WIDTH;
+			world->renderPlayer[speed_left].height = TILE_HEIGHT;
+			
+			world->collision[speed_left].type = COLLISION_BELTLEFT;
+			world->collision[speed_left].active = true;
+			world->collision[speed_left].radius = 1;
+			
+			load_animation((char*)"assets/Graphics/objects/tiles/speed_left/speed_left_animation.txt", world, speed_left);
+			play_animation(world, speed_left, (char*)"speed_left");
+			
+			std::thread (wait, world, speed_left).detach();
+		}
+		
+	245 void wait(World* world, const unsigned int entity)
+		{
+			sleep(5);
+			destroy_entity(world, entity);
+		}
