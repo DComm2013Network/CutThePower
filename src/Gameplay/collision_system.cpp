@@ -13,7 +13,6 @@
 #include "collision.h"
 #include "level.h"
 #include <stdio.h>
-#include <thread>
 #include <math.h>
 
 #define COLLISION_MASK (COMPONENT_COLLISION) /**< Indicates that an entity can collide with other entities. */
@@ -86,25 +85,37 @@ void wall_collision(World* world, PositionComponent temp, unsigned int* tile_num
 	
 	if (yt < world->level[level].height && yt > 0 && yb < world->level[level].height && yb > 0) {
 		for (int i = 0; i < xdts; i++) {
-			if (world->level[level].map[xl + i * world->level[level].tileSize][yt] == L_WALL) {
-				*tile_number = COLLISION_WALL;
-				return;
+			if (xl + i * world->level[level].tileSize < world->level[level].width &&
+				xl + i * world->level[level].tileSize >= 0) {
+				if (world->level[level].map[xl + i * world->level[level].tileSize][yt] == L_WALL) {
+					*tile_number = COLLISION_WALL;
+					return;
+				}
 			}
-			if (world->level[level].map[xr - i * world->level[level].tileSize][yb] == L_WALL) {
-				*tile_number = COLLISION_WALL;
-				return;
+			if (xr - i * world->level[level].tileSize < world->level[level].width &&
+				xr - i * world->level[level].tileSize >= 0) {
+				if (world->level[level].map[xr - i * world->level[level].tileSize][yb] == L_WALL) {
+					*tile_number = COLLISION_WALL;
+					return;
+				}
 			}
 		}
 	}
 	if (xl < world->level[level].width && xl > 0 && xr < world->level[level].width && xr > 0) {
 		for (int i = 0; i < ydts; i++) {
-			if (world->level[level].map[xr][yt + i * world->level[level].tileSize] == L_WALL) {
-				*tile_number = COLLISION_WALL;
-				return;
+			if (yt + i * world->level[level].tileSize < world->level[level].height &&
+				yt + i * world->level[level].tileSize >= 0) {
+				if (world->level[level].map[xr][yt + i * world->level[level].tileSize] == L_WALL) {
+					*tile_number = COLLISION_WALL;
+					return;
+				}
 			}
-			if (world->level[level].map[xl][yb - i * world->level[level].tileSize] == L_WALL) {
-				*tile_number = COLLISION_WALL;
-				return;
+			if (yb - i * world->level[level].tileSize < world->level[level].height &&
+				yb - i * world->level[level].tileSize >= 0) {
+				if (world->level[level].map[xl][yb - i * world->level[level].tileSize] == L_WALL) {
+					*tile_number = COLLISION_WALL;
+					return;
+				}
 			}
 		}
 	}
@@ -345,18 +356,18 @@ unsigned int create_stile(World * world, int type, int xPos, int yPos, int level
 		case TILE_BELT_RIGHT:
 			world->tile[speed_tile].type = TILE_BELT_RIGHT;
 			world->collision[speed_tile].type = COLLISION_BELTRIGHT;
-			load_animation((char*)"assets/Graphics/objects/tiles/speed_right/speed_right_animation.txt", world, speed_tile);
+			load_animation("assets/Graphics/objects/tiles/speed_right/speed_right_animation.txt", world, speed_tile);
 			play_animation(world, speed_tile, (char*)"speed_right");
 			break;
 
 		case TILE_BELT_LEFT:
 			world->tile[speed_tile].type = TILE_BELT_RIGHT;
 			world->collision[speed_tile].type = COLLISION_BELTLEFT;
-			load_animation((char*)"assets/Graphics/objects/tiles/speed_left/speed_left_animation.txt", world, speed_tile);
+			load_animation("assets/Graphics/objects/tiles/speed_left/speed_left_animation.txt", world, speed_tile);
 			play_animation(world, speed_tile, (char*)"speed_left");
 			break;
 	}
 
-	std::thread (wait, world, speed_tile).detach();
+	world->tile[speed_tile].start_time = SDL_GetTicks();
 	return speed_tile;
 }

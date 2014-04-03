@@ -101,6 +101,7 @@ typedef struct {
 
 typedef struct {
 	unsigned int type;
+	unsigned int start_time;
 } TileComponent;
 
 #endif

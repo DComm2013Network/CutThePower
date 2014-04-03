@@ -135,11 +135,11 @@ unsigned int create_player(World* world, int x, int y, bool controllable, int co
 	
 	movement.id = 0;
 	movement.lastDirection = 0;
-	movement.acceleration = 0.75;
-	movement.maxSpeed = 4;
+	movement.acceleration = 1.50;
+	movement.maxSpeed = 8;
 	movement.movX = 0;
 	movement.movY = 0;
-	movement.friction = 0.15;
+	movement.friction = 0.30;
 	
 	command.commands[C_UP] = false;
 	command.commands[C_DOWN] = false;
@@ -373,7 +373,6 @@ void destroy_world(World *world) {
 	unsigned int entity;
 	
 	for(entity = 0; entity < MAX_ENTITIES; entity++) {
-		//printf("world->mask[%3i]: 0x%08X\n", entity, world->mask[entity]);
 		destroy_entity(world, entity);
 	}
 	background = MAX_ENTITIES + 1;
