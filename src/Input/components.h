@@ -56,13 +56,14 @@ typedef struct  {
 } ButtonComponent;
 
 //list of commands
-#define NUM_COMMANDS	5 /**< Total number of commands that an entity can do */
+#define NUM_COMMANDS	6 /**< Total number of commands that an entity can do */
 
 #define C_UP 			0 /**< Commands an entity to move up */
 #define C_DOWN 			1 /**< Commands an entity to move down */
 #define C_LEFT 			2 /**< Commands an entity to move left */
 #define C_RIGHT 		3 /**< Commands an entity to move right */
 #define C_ACTION 		4 /**< Commands an entity to perform an action */
+#define C_TILE			5 /**< Commands an entity to place a special tile */
 
 /**
  * Contains the commands that are currently active for an entity.

@@ -142,7 +142,7 @@ void KeyInputSystem(World *world)
             command->commands[C_DOWN] = (currentKeyboardState[command_keys[C_DOWN]] != 0);
             command->commands[C_RIGHT] = (currentKeyboardState[command_keys[C_RIGHT]] != 0);
 			command->commands[C_ACTION] = (currentKeyboardState[command_keys[C_ACTION]] != 0) && (prevKeyboardState[command_keys[C_ACTION]] == 0);
-			
+			command->commands[C_TILE] = (currentKeyboardState[command_keys[C_TILE]] != 0);
         }
     }
     
@@ -251,6 +251,7 @@ int KeyMapInitArray(const char *file, int **command_array)
 	(*command_array)[C_DOWN] = SDL_SCANCODE_S;
 	(*command_array)[C_RIGHT] = SDL_SCANCODE_D;
 	(*command_array)[C_ACTION] = SDL_SCANCODE_SPACE;
+	(*command_array)[C_TILE] = SDL_SCANCODE_E;
 	
 	while (!feof(fp)) {
 		
@@ -278,6 +279,9 @@ int KeyMapInitArray(const char *file, int **command_array)
 		}
 		else if (strcmp(command, "C_ACTION") == 0) { //C_ACTION
 			(*command_array)[C_ACTION] = GetScancode(value);
+		}
+		else if(strcmp(command, "C_TILE") == 0){
+			(*command_array)[C_TILE] = GetScancode(value);
 		}
 		else {
 			printf("Unable to load command: %s\n", command);
@@ -322,3 +326,9 @@ int KeyMapInitArray(const char *file, int **command_array)
 	
 	return SDL_GetScancodeFromName(character);
  }
+
+void wait(World* world, const unsigned int entity)
+{
+	sleep(5);
+	destroy_entity(world, entity);
+}
