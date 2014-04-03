@@ -349,11 +349,13 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 				unsigned int tile;
 				if(command->commands[C_TILE]){
 					key_pressed = true;
-					if(world->player[entity].tilez == TILE_BELT_RIGHT){
-						tile = create_stile(world, TILE_BELT_RIGHT, world->position[entity].x, world->position[entity].y, world->position[entity].level);
-					}
-					else if(world->player[entity].tilez == TILE_BELT_LEFT){
-						tile = create_stile(world, TILE_BELT_LEFT, world->position[entity].x, world->position[entity].y, world->position[entity].level);
+					switch(world->player[entity].tilez){
+						case TILE_BELT_RIGHT:
+							tile = create_stile(world, TILE_BELT_RIGHT, world->position[entity].x, world->position[entity].y, world->position[entity].level);
+							break;
+						case TILE_BELT_LEFT: 
+							tile = create_stile(world, TILE_BELT_LEFT, world->position[entity].x, world->position[entity].y, world->position[entity].level);
+							break;
 					}
 					send_tiles(world, tile, send_router_fd[WRITE]);
 				}
