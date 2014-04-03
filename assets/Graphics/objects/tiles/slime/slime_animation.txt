@@ -1,0 +1,7 @@
+1
+
+slime 4 20 -1 1
+assets/Graphics/objects/tiles/slime/slime_1.png
+assets/Graphics/objects/tiles/slime/slime_2.png
+assets/Graphics/objects/tiles/slime/slime_3.png
+assets/Graphics/objects/tiles/slime/slime_2.png
