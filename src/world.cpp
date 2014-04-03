@@ -373,7 +373,6 @@ void destroy_world(World *world) {
 	unsigned int entity;
 	
 	for(entity = 0; entity < MAX_ENTITIES; entity++) {
-		//printf("world->mask[%3i]: 0x%08X\n", entity, world->mask[entity]);
 		destroy_entity(world, entity);
 	}
 	background = MAX_ENTITIES + 1;

@@ -533,6 +533,11 @@ int init_client_update(World *world)
 void update_special_tile(World *world, void * packet)
 {
 	PKT_SPECIAL_TILE * pkt = (PKT_SPECIAL_TILE*) packet;
-
-	create_stile(world, pkt->tile, pkt->xPos, pkt->yPos, pkt->floor);
+			
+	unsigned int tile = create_stile(world, pkt->tile, pkt->xPos, pkt->yPos, pkt->floor);
+	
+	if(pkt->floor != world->position[player_table[controllable_playerNo]].level)
+	{
+		world->mask[tile] &= ~(COMPONENT_RENDER_PLAYER | COMPONENT_COLLISION);
+	}
 }

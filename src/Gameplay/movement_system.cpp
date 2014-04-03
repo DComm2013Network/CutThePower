@@ -299,6 +299,10 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 			{
 				destroy_entity(world, entity);
 			}
+			if(world->position[entity].level == world->position[player_entity].level)
+			{
+				world->mask[entity] |= COMPONENT_RENDER_PLAYER | COMPONENT_COLLISION;
+			}
 		}	
 
 		//For controllable entities
