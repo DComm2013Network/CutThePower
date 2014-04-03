@@ -46,7 +46,7 @@ stairs 60 17 39 35 1 r
 stairs 03 18 08 25 3 r
 stairs 60 19 51 31 3 r
 
-objective 15 18 25 45 0 assets/Graphics/objects/png_object/object_animation.txt
-objective 16 18 25 45 1 assets/Graphics/objects/png_object/object_animation.txt
-objective 15 19 25 45 2 assets/Graphics/objects/png_object/object_animation.txt
-objective 16 19 25 45 3 assets/Graphics/objects/png_object/object_animation.txt
+objective 15 20 25 45 0 assets/Graphics/objects/png_object/object_animation.txt
+objective 27 34 25 45 1 assets/Graphics/objects/png_object/object_animation.txt
+objective 44 17 25 45 2 assets/Graphics/objects/png_object/object_animation.txt
+objective 39 06 25 45 3 assets/Graphics/objects/png_object/object_animation.txt
