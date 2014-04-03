@@ -161,6 +161,7 @@ typedef struct pkt05{
 } PKT_READY_STATUS;
 
 typedef struct pkt06{
+	playerNo_t playerNo;
     floorNo_t floor;
     pos_t xPos;
     pos_t yPos;
