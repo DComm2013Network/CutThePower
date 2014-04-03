@@ -293,7 +293,13 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 	//loop through each entity and see if the system can do work on it.
 	for(entity = 0; entity < MAX_ENTITIES; entity++) {
 		if(IN_THIS_COMPONENT(world->mask[entity], COMPONENT_STILE))
-		{
+		{	
+			long long current_time = SDL_GetTicks();
+			if((current_time - world->tile[entity].start_time) >= 5000)
+			{
+				destroy_entity(world, entity);
+			}
+
 			switch(world->tile[entity].type)
 			{
 				case TILE_BELT_RIGHT:
