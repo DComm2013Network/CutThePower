@@ -344,13 +344,13 @@ unsigned int create_stile(World * world, int type, int xPos, int yPos, int level
 		case TILE_BELT_RIGHT:
 			world->tile[speed_tile].type = TILE_BELT_RIGHT;
 			world->collision[speed_tile].type = COLLISION_BELTRIGHT;
-			load_animation((char*)"assets/Graphics/objects/tiles/speed_right/speed_right_animation.txt", world, speed_tile);
+			load_animation("assets/Graphics/objects/tiles/speed_right/speed_right_animation.txt", world, speed_tile);
 			break;
 
 		case TILE_BELT_LEFT:
 			world->tile[speed_tile].type = TILE_BELT_RIGHT;
 			world->collision[speed_tile].type = COLLISION_BELTLEFT;
-			load_animation((char*)"assets/Graphics/objects/tiles/speed_left/speed_left_animation.txt", world, speed_tile);
+			load_animation("assets/Graphics/objects/tiles/speed_left/speed_left_animation.txt", world, speed_tile);
 			break;
 	}
 
