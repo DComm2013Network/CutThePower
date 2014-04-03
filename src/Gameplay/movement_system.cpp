@@ -128,7 +128,6 @@ void handle_x_collision(World* world, unsigned int entity, PositionComponent* te
 			break;
 		case COLLISION_BELTRIGHT:
 			add_force(world, entity, 0.47, 0);
-			//add_force_acceleration_x(movement, 0.47, 0, -0.000000000000000000001);
 			break;
 		default:
 			break;
@@ -294,7 +293,7 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 	for(entity = 0; entity < MAX_ENTITIES; entity++) {
 		if(IN_THIS_COMPONENT(world->mask[entity], COMPONENT_STILE))
 		{	
-			long long current_time = SDL_GetTicks();
+			uint64_t current_time = SDL_GetTicks();
 			if((current_time - world->tile[entity].start_time) >= 5000)
 			{
 				destroy_entity(world, entity);
@@ -313,7 +312,7 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 		}	
 
 		//For controllable entities
-		if (IN_THIS_COMPONENT(world->mask[entity], CONTROLLABLE_MASK)) {
+		else if (IN_THIS_COMPONENT(world->mask[entity], CONTROLLABLE_MASK)) {
 			command = &(world->command[entity]);
 			position = &(world->position[entity]);
 			controllable = &(world->controllable[entity]);
@@ -357,14 +356,18 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 					add_force(world, entity, world->movement[entity].acceleration, 0);
 				}
 				/* SPECIAL TILES */
-				unsigned int tile;
 				if(command->commands[C_TILE]){
-					key_pressed = true;
-					if(world->player[entity].tilez == TILE_BELT_RIGHT){
-						tile = create_stile(world, TILE_BELT_RIGHT, world->position[entity].x, world->position[entity].y, world->position[entity].level);
-					}
-					else if(world->player[entity].tilez == TILE_BELT_LEFT){
-						tile = create_stile(world, TILE_BELT_LEFT, world->position[entity].x, world->position[entity].y, world->position[entity].level);
+
+					unsigned int tile;
+
+					switch(world->player[entity].tilez)
+					{
+						case TILE_BELT_RIGHT:
+							tile = create_stile(world, TILE_BELT_RIGHT, world->position[entity].x, world->position[entity].y, world->position[entity].level);
+							break;
+						case TILE_BELT_LEFT:
+							tile = create_stile(world, TILE_BELT_LEFT, world->position[entity].x, world->position[entity].y, world->position[entity].level);
+							break;
 					}
 					send_tiles(world, tile, send_router_fd[WRITE]);
 				}

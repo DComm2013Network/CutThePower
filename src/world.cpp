@@ -384,7 +384,7 @@ void destroy_world_not_player(World *world) {
 	
 	for(entity = 0; entity < MAX_ENTITIES; entity++) {
 		if(!IN_THIS_COMPONENT(world->mask[entity], COMPONENT_PLAYER)
-			||!IN_THIS_COMPONENT(world->mask[entity], COMPONENT_STILE)) {
+			|| !IN_THIS_COMPONENT(world->mask[entity], COMPONENT_STILE)) {
 			destroy_entity(world, entity);
 		}
 	}
