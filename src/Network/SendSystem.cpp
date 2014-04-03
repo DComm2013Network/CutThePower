@@ -220,3 +220,24 @@ void send_objectives(World * world, int fd)
 	write_packet(fd, P_OBJSTATUS, obj_status);
 	free(obj_status);
 }
+/**
+ * Sends a special tile packet containing the most recently placed special tile.
+ *
+ * @param[in, out]  world  	game world, searched for updates
+ * @param[in]		entity	entity of the special tile
+ * @param[in]		fd 		write file descriptor to the gameplay thread > network router thread
+ *
+ * @designer Ramzi Chennafi
+ * @author   Ramzi Chennafi
+ */
+void send_tiles(World * world, unsigned int entity, int fd)
+{
+	PKT_SPECIAL_TILE * p_tile = (PKT_SPECIAL_TILE*) calloc(1, sizeof(PKT_SPECIAL_TILE));
+	
+	p_tile->floor = world->position[entity].level;
+	p_tile->xPos = world->position[entity].x;
+	p_tile->yPos = world->position[entity].y;
+	p_tile->tile = world->tile[entity].type;
+
+	free(p_tile);
+}

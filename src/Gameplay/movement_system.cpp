@@ -292,6 +292,20 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 
 	//loop through each entity and see if the system can do work on it.
 	for(entity = 0; entity < MAX_ENTITIES; entity++) {
+		if(IN_THIS_COMPONENT(world->mask[entity], COMPONENT_STILE))
+		{
+			switch(world->tile[entity].type)
+			{
+				case TILE_BELT_RIGHT:
+					play_animation(world, entity, (char*)"speed_right");
+				break;
+
+				case TILE_BELT_LEFT:
+					play_animation(world, entity, (char*)"speed_left");
+				break;
+			}
+		}	
+
 		//For controllable entities
 		if (IN_THIS_COMPONENT(world->mask[entity], CONTROLLABLE_MASK)) {
 			command = &(world->command[entity]);
@@ -337,14 +351,16 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 					add_force(world, entity, world->movement[entity].acceleration, 0);
 				}
 				/* SPECIAL TILES */
+				unsigned int tile;
 				if(command->commands[C_TILE]){
 					key_pressed = true;
 					if(world->player[entity].tilez == TILE_BELT_RIGHT){
-						create_stile(world, entity, TILE_BELT_RIGHT);
+						tile = create_stile(world, TILE_BELT_RIGHT, world->position[entity].x, world->position[entity].y, world->position[entity].level);
 					}
-					if(world->player[entity].tilez == TILE_BELT_LEFT){
-						create_stile(world, entity, TILE_BELT_LEFT);
+					else if(world->player[entity].tilez == TILE_BELT_LEFT){
+						tile = create_stile(world, TILE_BELT_LEFT, world->position[entity].x, world->position[entity].y, world->position[entity].level);
 					}
+					send_tiles(world, tile, send_router_fd[WRITE]);
 				}
 				/* SPECIAL TILES */
 				
@@ -368,7 +384,7 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 				
 				position->x = temp.x;
 				position->y = temp.y;
-				
+
 				if (movement->movX > 0 && abs(movement->movX) > abs(movement->movY)) {
 					play_animation(world, entity, "right");
 				}

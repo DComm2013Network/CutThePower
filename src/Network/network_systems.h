@@ -35,7 +35,7 @@ void client_update_objectives(World *world, void *packet);
 void player_tag_packet(World *world, void *packet);
 void change_player(World * world, int type, PKT_GAME_STATUS * pkt, int playerNo);
 void setup_character_animation(World * world, int character, int entity);
-void update_special_tiles(World *world, void * packet);
+void update_special_tile(World *world, void * packet);
 
 #endif
 

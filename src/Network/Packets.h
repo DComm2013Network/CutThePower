@@ -41,6 +41,8 @@
 #define UDP   			1
 #define READ  			0
 #define WRITE 1
+#define NEEDS_UPDATE	1
+#define UPDATED			2
 
 #define P_NAME           1
 #define P_CONNECT        2

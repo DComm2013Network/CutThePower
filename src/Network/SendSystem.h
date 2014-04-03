@@ -15,5 +15,6 @@ void send_status(World * world, int fd, teamNo_t team, int ready_status);
 void send_tag(World * world, int fd, unsigned int tagger);
 void send_chat(World * world, int fd, char * str);
 void send_objectives(World * world, int fd);
+void send_tiles(World * world, unsigned int entity, int fd);
 
 #endif

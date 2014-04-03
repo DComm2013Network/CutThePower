@@ -99,4 +99,8 @@ typedef struct {
 	unsigned int status;
 } ObjectiveComponent;
 
+typedef struct {
+	unsigned int type;
+} TileComponent;
+
 #endif

@@ -38,6 +38,7 @@ typedef struct {
 	AnimationComponent		animation[MAX_ENTITIES];
 	WormholeComponent		wormhole[MAX_ENTITIES];
 	ObjectiveComponent		objective[MAX_ENTITIES];
+	TileComponent			tile[MAX_ENTITIES];
 } World;
 
 class FPS {

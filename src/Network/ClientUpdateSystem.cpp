@@ -102,7 +102,7 @@ int client_update_system(World *world, int net_pipe) {
 					client_update_chat(world, packet);
 					break;
 				case P_SPECIAL_TILE:
-					update_special_tiles(world, packet);
+					update_special_tile(world, packet);
 					break;
 				case P_OBJSTATUS:
 					client_update_objectives(world, packet);
@@ -352,7 +352,19 @@ void client_update_status(World *world, void *packet)
 		}
 	}
 }
-
+/**
+ * Updates a player's team based on the recieved packet.
+ *
+ * Will set their collision, animation, player number, player team and ready status.
+ *
+ * @param[out]	world 	The world struct containing the ojective states to be updated.
+ * @param[in]   type 	The team to change the player to.
+ * @param[in]	packet	The packet containing objective update information.
+ * @param[in]   playerNo The player number of the entity.
+ *
+ * @designer Ramzi Chennafi
+ * @author   Ramzi Chennafi
+ */
 void change_player(World * world, int type, PKT_GAME_STATUS * pkt, int playerNo)
 {
 	world->player[player_table[playerNo]].playerNo = playerNo;
@@ -375,7 +387,16 @@ void change_player(World * world, int type, PKT_GAME_STATUS * pkt, int playerNo)
 
 
 }
-
+/**
+ * Gives a player entity the proper character animation.
+ *
+ * @param[out]	world 	The world struct containing the ojective states to be updated.
+ * @param[in]	character The character model to load.
+ * @param[in]   entity  The player entity to add the animation to.
+ *
+ * @designer Shane Spoor
+ * @author   Shane Spoor
+ */
 void setup_character_animation(World * world, int character, int entity)
 {
 	switch(character){
@@ -497,10 +518,22 @@ int init_client_update(World *world)
 	memset(tile_cache, 255, MAX_ENTITIES * sizeof(unsigned int));
 	return 1;
 }
-
-void update_special_tiles(World *world, void * packet)
+/**
+ * Udpates the game for any special tiles.
+ *
+ * Creates a new special tile in the world based on data from the packet.
+ *
+ * @param[out]	world 	The world struct containing the ojective states to be updated.
+ * @param[in]	packet	The packet containing objective update information.
+ *
+ * @designer Ramzi Chennafi
+ * @author   Ramzi Chennafi
+ */
+void update_special_tile(World *world, void * packet)
 {
+	PKT_SPECIAL_TILE * pkt = (PKT_SPECIAL_TILE*) packet;
 
+	create_stile(world, pkt->tile, pkt->xPos, pkt->yPos, pkt->floor);
+
+	free(pkt);
 }
-
-
