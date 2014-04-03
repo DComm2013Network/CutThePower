@@ -142,7 +142,7 @@ void KeyInputSystem(World *world)
             command->commands[C_DOWN] = (currentKeyboardState[command_keys[C_DOWN]] != 0);
             command->commands[C_RIGHT] = (currentKeyboardState[command_keys[C_RIGHT]] != 0);
 			command->commands[C_ACTION] = (currentKeyboardState[command_keys[C_ACTION]] != 0) && (prevKeyboardState[command_keys[C_ACTION]] == 0);
-			command->commands[C_TILE] = (currentKeyboardState[command_keys[C_TILE]] != 0);
+			command->commands[C_TILE] = (currentKeyboardState[command_keys[C_TILE]] != 0) && (prevKeyboardState[command_keys[C_TILE]] == 0);
         }
     }
     
