@@ -19,7 +19,7 @@ uint32_t packet_sizes[NUM_PACKETS + 1] = {
 	sizeof(PKT_GAME_STATUS),         // 2
 	sizeof(PKT_SND_CHAT),            // 3
 	sizeof(pkt05),                   // 4
-	sizeof(PKT_OBJ_LOC),             // 5
+	sizeof(PKT_SPECIAL_TILE),        // 5
 	0,                               // 6
 	sizeof(PKT_OBJECTIVE_STATUS),    // 7
 	0,                               // 8

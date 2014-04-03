@@ -723,7 +723,7 @@ int get_protocol(uint32_t type)
 		case G_STATUS:
 		case P_CHAT:
 		case P_READY_STAT:
-		case P_OBJCTV_LOC:
+		case P_SPECIAL_TILE:
 		case P_UNDEF:
 		case P_KEEPALIVE:
 		case P_OBJSTATUS:

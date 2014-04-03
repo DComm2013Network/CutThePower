@@ -29,7 +29,7 @@ int floor_change_flag = 0;        /**< Whether we just changed floors. */
 
 unsigned int *player_table       = NULL; /**< A lookup table mapping server player numbers to client entities. */
 objective_cache *objective_table = NULL; /**< A lookup table mapping server objective numbers to client entities. */
-
+unsigned int *tile_cache 		 = NULL;
 /**
  * Receives all updates from the server and applies them to the world.
  *
@@ -101,11 +101,8 @@ int client_update_system(World *world, int net_pipe) {
 				case P_CHAT:
 					client_update_chat(world, packet);
 					break;
-				case P_OBJCTV_LOC:
-					client_update_objectives(world, packet);
-					break;
-				case 7: // undefined
-					// Floor stuff
+				case P_SPECIAL_TILE:
+					update_special_tiles(world, packet);
 					break;
 				case P_OBJSTATUS:
 					client_update_objectives(world, packet);
@@ -487,6 +484,7 @@ int init_client_update(World *world)
 {
 	objective_table = (objective_cache *)malloc(MAX_OBJECTIVES * sizeof(objective_cache));
 	player_table = (unsigned int *)malloc(sizeof(unsigned int) * MAX_PLAYERS);
+	tile_cache = (unsigned int *)malloc(sizeof(unsigned int) * MAX_ENTITIES);
 
 	if(!objective_table || !player_table)
 	{
@@ -496,7 +494,13 @@ int init_client_update(World *world)
 
 	memset(player_table, 255, MAX_PLAYERS * sizeof(unsigned int));
 	memset(objective_table, 0, MAX_OBJECTIVES * sizeof(objective_cache));
+	memset(tile_cache, 255, MAX_ENTITIES * sizeof(unsigned int));
 	return 1;
+}
+
+void update_special_tiles(World *world, void * packet)
+{
+
 }
 
 
