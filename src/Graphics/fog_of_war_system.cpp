@@ -500,23 +500,7 @@ int set_tile_pos(int pos, int delta)
 }
 
 
-/**
- * Fills a PositionComponent struct with a tile position that will be checked for wall collision
- *
- * Revisions:
- *     None.
- *loading
- * @param pos   		The relative position along the x or y axis
- * @param yDel			The offset along y axis
- * @param xDel			The offset along x axis
- *
- * @return PositionComponent. The filled-in struct
- * 
- * @designer Sam Youssef
- * @author Sam Youssef
- *
- * @date March 29, 2014
- */
+
 PositionComponent set_newposition(PositionComponent *pos, int yDel, int xDel)
 {
 	PositionComponent newposition;
@@ -576,21 +560,7 @@ int *get_visibility_type(PositionComponent *newposition, FowPlayerPosition *fowp
 }
 
 
-/**
- * Checks a tile's visibility type to see if it's a corner tile.
- *
- * Revisions:
- *     None.
- *loading
- * @param n		a tile's visibility type
- *
- * @return int. 1 if corner. 0 otherwise.
- * 
- * @designer Sam Youssef
- * @author Sam Youssef
- *
- * @date March 29, 2014
- */
+
 int iscorner(int n)
 {
 	int arr[] = { 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21 };
