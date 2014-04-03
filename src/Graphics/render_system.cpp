@@ -12,14 +12,9 @@
 #include "text.h"
 #include "../Input/menu.h"
 
-/*SAM**/
 void make_surrounding_tiles_visible(FowPlayerPosition *fowp);
-int opponentPlayers[32];
-int opponentPlayersCount = 0;
-extern int fogOfWarWidth;
-extern int fogOfWarHeight;
-extern int level;
-/******/
+static int opponentPlayers[32];
+static int opponentPlayersCount = 0;
 
 #define SYSTEM_MASK (COMPONENT_RENDER_PLAYER | COMPONENT_POSITION) /**< The entity must have a render player and position component
                                                                     * for processing by this system. */
@@ -45,6 +40,7 @@ SDL_Surface *ibeam;
  *         every time the frame is drawn</li>
  *     <li>Jordan Marling/Mat Siwoski - March 6, 2014: Updated support for the camera.</li>
  *		 <li>Sam Youssef - March 25, 2014: added full support for rendering fog of war</li>
+ *		 <li>Sam Youssef - April 3, 2014: fog of war hides enemy team, full functionality</li>
  * </ol>
  *
  * @param[in,out] world   A reference to the world structure containing entities to render.
@@ -70,12 +66,10 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 
 	for(entity = 0; entity < MAX_ENTITIES; entity++){
 
-
-		/*SAM*********************************/			
+		
 		if(IN_THIS_COMPONENT(world.mask[entity], COMPONENT_PLAYER | COMPONENT_CONTROLLABLE)) {
 			fow->teamNo = world.player[entity].teamNo;
 		}
-		/*************************************/
 
 
 		if (IN_THIS_COMPONENT(world.mask[entity], SYSTEM_MASK)){
@@ -134,6 +128,7 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 			
 			if(IN_THIS_COMPONENT(world.mask[entity], COMPONENT_PLAYER)) {
 					
+				// only render players on my team
 				if ((fow->teamNo == world.player[entity].teamNo)) {	
 					FowPlayerPosition fowp;
 		
@@ -163,6 +158,7 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 					SDL_BlitScaled(renderPlayer->playerSurface, &clipRect, surface, &playerRect);
 
 				}
+				// found an enemy, add it to the array
 				else {
 					opponentPlayers[opponentPlayersCount++] = entity;
 				}
@@ -189,9 +185,8 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 		}
 	}
 
+	// only render enemy players that are inside the visibility circles
 	for(int entity = 0; entity < opponentPlayersCount && entity < 32; entity++) {
-
-		//printf("%d", level);
 
 		position 	= &(world.position    [ opponentPlayers[entity] ]);
 		renderPlayer 	= &(world.renderPlayer[ opponentPlayers[entity] ]);

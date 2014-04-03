@@ -20,12 +20,6 @@ int game_net_signalfd;
 int network_ready = 0;
 
 
-/*SAM**************************/
-extern void render_fog_of_war	( SDL_Surface *surface, FowComponent *fow );
-extern void init_fog_of_war  	( FowComponent **fow );
-extern void cleanup_fog_of_war( FowComponent  *fow );
-/******************************/
-
 int window_width = WIDTH;
 int window_height = HEIGHT;
 SDL_Window *window;
@@ -76,11 +70,9 @@ int main(int argc, char* argv[]) {
 	running = true;
 	player_entity = -1;
 	
-	/*SAM********************************/
-	FowComponent *fow;
 	
-	init_fog_of_war(&fow);
-	/************************************/
+	FowComponent *fow;
+	init_fog_of_war_system(&fow);
 
 	while (running)
 	{
@@ -98,7 +90,7 @@ int main(int argc, char* argv[]) {
 		animation_system(world);
 
 		render_player_system(*world, surface, fow);
-		render_fog_of_war(surface, fow);
+		render_fog_of_war_system(surface, fow);
 		chat_render(surface);
 		
 		surface_texture = SDL_CreateTextureFromSurface(renderer, surface);
