@@ -47,7 +47,7 @@
 #define G_STATUS         3
 #define P_CHAT           4
 #define P_READY_STAT     5
-#define P_OBJCTV_LOC     6
+#define P_SPECIAL_TILE   6
 #define P_UNDEF          7 // NOT DEFINED
 #define P_OBJSTATUS      8
 #define P_KEEPALIVE      9 /**< Sent from client to server or vice versa if there has been no activity for @a TIMEOUT ms. */
@@ -122,6 +122,7 @@ typedef uint32_t teamNo_t;
 typedef uint32_t status_t;
 typedef uint32_t character_t;
 typedef uint32_t pos_t;
+typedef uint32_t tile_t;
 typedef float	 vel_t;
 
 // Packet Definitions
@@ -158,9 +159,11 @@ typedef struct pkt05{
 } PKT_READY_STATUS;
 
 typedef struct pkt06{
-	floorNo_t	map_data[MAX_FLOORS];
-	int	objective_locations[MAX_OBJECTIVES];
-} PKT_OBJ_LOC;
+    floorNo_t floor;
+    pos_t xPos;
+    pos_t yPos;
+    tile_t tile;
+} PKT_SPECIAL_TILE;
 //Packet 7: 0x0007
 // << UNPURPOSED >>
 
