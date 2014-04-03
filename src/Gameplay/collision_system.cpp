@@ -85,25 +85,37 @@ void wall_collision(World* world, PositionComponent temp, unsigned int* tile_num
 	
 	if (yt < world->level[level].height && yt > 0 && yb < world->level[level].height && yb > 0) {
 		for (int i = 0; i < xdts; i++) {
-			if (world->level[level].map[xl + i * world->level[level].tileSize][yt] == L_WALL) {
-				*tile_number = COLLISION_WALL;
-				return;
+			if (xl + i * world->level[level].tileSize < world->level[level].width &&
+				xl + i * world->level[level].tileSize >= 0) {
+				if (world->level[level].map[xl + i * world->level[level].tileSize][yt] == L_WALL) {
+					*tile_number = COLLISION_WALL;
+					return;
+				}
 			}
-			if (world->level[level].map[xr - i * world->level[level].tileSize][yb] == L_WALL) {
-				*tile_number = COLLISION_WALL;
-				return;
+			if (xr - i * world->level[level].tileSize < world->level[level].width &&
+				xr - i * world->level[level].tileSize >= 0) {
+				if (world->level[level].map[xr - i * world->level[level].tileSize][yb] == L_WALL) {
+					*tile_number = COLLISION_WALL;
+					return;
+				}
 			}
 		}
 	}
 	if (xl < world->level[level].width && xl > 0 && xr < world->level[level].width && xr > 0) {
 		for (int i = 0; i < ydts; i++) {
-			if (world->level[level].map[xr][yt + i * world->level[level].tileSize] == L_WALL) {
-				*tile_number = COLLISION_WALL;
-				return;
+			if (yt + i * world->level[level].tileSize < world->level[level].height &&
+				yt + i * world->level[level].tileSize >= 0) {
+				if (world->level[level].map[xr][yt + i * world->level[level].tileSize] == L_WALL) {
+					*tile_number = COLLISION_WALL;
+					return;
+				}
 			}
-			if (world->level[level].map[xl][yb - i * world->level[level].tileSize] == L_WALL) {
-				*tile_number = COLLISION_WALL;
-				return;
+			if (yb - i * world->level[level].tileSize < world->level[level].height &&
+				yb - i * world->level[level].tileSize >= 0) {
+				if (world->level[level].map[xl][yb - i * world->level[level].tileSize] == L_WALL) {
+					*tile_number = COLLISION_WALL;
+					return;
+				}
 			}
 		}
 	}
