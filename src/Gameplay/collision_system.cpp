@@ -13,7 +13,6 @@
 #include "collision.h"
 #include "level.h"
 #include <stdio.h>
-#include <thread>
 #include <math.h>
 
 #define COLLISION_MASK (COMPONENT_COLLISION) /**< Indicates that an entity can collide with other entities. */
@@ -345,18 +344,18 @@ unsigned int create_stile(World * world, int type, int xPos, int yPos, int level
 		case TILE_BELT_RIGHT:
 			world->tile[speed_tile].type = TILE_BELT_RIGHT;
 			world->collision[speed_tile].type = COLLISION_BELTRIGHT;
-			load_animation((char*)"assets/Graphics/objects/tiles/speed_right/speed_right_animation.txt", world, speed_tile);
+			load_animation("assets/Graphics/objects/tiles/speed_right/speed_right_animation.txt", world, speed_tile);
 			play_animation(world, speed_tile, (char*)"speed_right");
 			break;
 
 		case TILE_BELT_LEFT:
 			world->tile[speed_tile].type = TILE_BELT_RIGHT;
 			world->collision[speed_tile].type = COLLISION_BELTLEFT;
-			load_animation((char*)"assets/Graphics/objects/tiles/speed_left/speed_left_animation.txt", world, speed_tile);
+			load_animation("assets/Graphics/objects/tiles/speed_left/speed_left_animation.txt", world, speed_tile);
 			play_animation(world, speed_tile, (char*)"speed_left");
 			break;
 	}
 
-	std::thread (wait, world, speed_tile).detach();
+	world->tile[speed_tile].start_time = SDL_GetTicks();
 	return speed_tile;
 }

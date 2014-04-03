@@ -5,7 +5,7 @@
 #include "../world.h"
 
 
-#define NUMLEVELS   8
+#define NUMLEVELS   9
 #define NUMCORNERS 18
 
 typedef struct FowTile
@@ -33,5 +33,9 @@ typedef struct FowPlayerPosition
 	FowComponent *fow;
 	PositionComponent *pos;
 } FowPlayerPosition;
+
+void render_fog_of_war_system(SDL_Surface *surface, FowComponent *fow);
+void init_fog_of_war_system  (FowComponent **fow);
+void cleanup_fog_of_war      (FowComponent  *fow);
 
 #endif

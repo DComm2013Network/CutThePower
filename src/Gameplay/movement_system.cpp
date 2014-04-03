@@ -54,35 +54,35 @@ void add_force(World* world, unsigned int entity, float magnitude, float dir) {
 }
 
 void apply_force_x(World* world, unsigned int entity, PositionComponent* temp, FPS fps) {
-	temp->x += world->movement[entity].movX * (FPS_MAX / fps.getFPS());
+	temp->x += world->movement[entity].movX * ((double)GAME_SPEED / fps.getFPS());
 }
 
 void remove_force_x(World* world, unsigned int entity, PositionComponent* temp, FPS fps) {
-	temp->x -= world->movement[entity].movX * (FPS_MAX / fps.getFPS());
+	temp->x -= world->movement[entity].movX * ((double)GAME_SPEED / fps.getFPS());
 }
 
 void apply_deceleration_x(World* world, unsigned int entity, FPS fps) {
-	world->movement[entity].movX *= 1 - world->movement[entity].friction * (FPS_MAX / fps.getFPS());
+	world->movement[entity].movX *= 1 - world->movement[entity].friction * ((double)GAME_SPEED / fps.getFPS());
 }
 
 void apply_ice_deceleration_x(World* world, unsigned int entity, float deceleration, FPS fps) {
-	world->movement[entity].movX *= 1 - deceleration * (FPS_MAX / fps.getFPS());
+	world->movement[entity].movX *= 1 - deceleration * ((double)GAME_SPEED / fps.getFPS());
 }
 
 void apply_force_y(World* world, unsigned int entity, PositionComponent* temp, FPS fps) {
-	temp->y += world->movement[entity].movY * (FPS_MAX / fps.getFPS());
+	temp->y += world->movement[entity].movY * ((double)GAME_SPEED / fps.getFPS());
 }
 
 void remove_force_y(World* world, unsigned int entity, PositionComponent* temp, FPS fps) {
-	temp->y -= world->movement[entity].movY * (FPS_MAX / fps.getFPS());
+	temp->y -= world->movement[entity].movY * ((double)GAME_SPEED / fps.getFPS());
 }
 
 void apply_deceleration_y(World* world, unsigned int entity, FPS fps) {
-	world->movement[entity].movY *= 1 - world->movement[entity].friction * (FPS_MAX / fps.getFPS());
+	world->movement[entity].movY *= 1 - world->movement[entity].friction * ((double)GAME_SPEED / fps.getFPS());
 }
 
 void apply_ice_deceleration_y(World* world, unsigned int entity, float deceleration, FPS fps) {
-	world->movement[entity].movY *= 1 - deceleration * (FPS_MAX / fps.getFPS());
+	world->movement[entity].movY *= 1 - deceleration * ((double)GAME_SPEED / fps.getFPS());
 }
 /* SPECIAL TILES */
 void add_force_acceleration_x(MovementComponent& movement, float magnitude, float dir, float friction) {
@@ -294,15 +294,10 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 	for(entity = 0; entity < MAX_ENTITIES; entity++) {
 		if(IN_THIS_COMPONENT(world->mask[entity], COMPONENT_STILE))
 		{
-			switch(world->tile[entity].type)
+			unsigned int current_time = SDL_GetTicks();
+			if((current_time - world->tile[entity].start_time) >= 5000)
 			{
-				case TILE_BELT_RIGHT:
-					play_animation(world, entity, (char*)"speed_right");
-				break;
-
-				case TILE_BELT_LEFT:
-					play_animation(world, entity, (char*)"speed_left");
-				break;
+				destroy_entity(world, entity);
 			}
 		}	
 

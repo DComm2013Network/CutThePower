@@ -8,8 +8,10 @@
 #define WIDTH 1280
 #define HEIGHT 768
 
+#define GAME_SPEED 30
+
 //max FPS
-#define FPS_MAX 60
+#define FPS_MAX 120
 
 //Maximum entities that will be used.
 #define MAX_ENTITIES 256
@@ -80,7 +82,7 @@ public:
 	float update() {
 		numFrames++;
 		float display_fps = ( numFrames/(float)(SDL_GetTicks() - startTime) )*1000;
-		if (numFrames >= (100.0 / ((double)60 / FPS_MAX))) {
+		if (numFrames >= (100.0 / ((double)60 / GAME_SPEED))) {
 			startTime = SDL_GetTicks();
 			numFrames = 0;
 		}
@@ -91,7 +93,7 @@ public:
 		int newtime = SDL_GetTicks();
 		if (newtime - startTime != 0) {
 			float display_fps = ( numFrames/(float)(newtime - startTime) )*1000;
-			if (numFrames >= ((100.0 / ((double)60 / FPS_MAX)) + 1)) {
+			if (numFrames >= ((100.0 / ((double)60 / GAME_SPEED)) + 1)) {
 				startTime = SDL_GetTicks();
 				numFrames = 0;
 			}

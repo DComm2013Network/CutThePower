@@ -79,7 +79,7 @@ int main(int argc, char* argv[]) {
 	/*SAM********************************/
 	FowComponent *fow;
 	
-	init_fog_of_war(&fow);
+	init_fog_of_war_system(&fow);
 	/************************************/
 
 	while (running)
@@ -98,7 +98,7 @@ int main(int argc, char* argv[]) {
 		animation_system(world);
 
 		render_player_system(*world, surface, fow);
-		render_fog_of_war(surface, fow);
+		render_fog_of_war_system(surface, fow);
 		chat_render(surface);
 		
 		surface_texture = SDL_CreateTextureFromSurface(renderer, surface);
@@ -121,6 +121,8 @@ int main(int argc, char* argv[]) {
 
 		fps.limit();
 		fps.update();
+		
+		//printf("FPS: %f\n", fps.getFPS());
 	}
 	
 	
