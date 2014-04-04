@@ -335,8 +335,8 @@ unsigned int create_stile(World * world, int type, int xPos, int yPos, int level
 {
 	unsigned int speed_tile = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION | COMPONENT_COLLISION | COMPONENT_STILE);
 	
-	int x = (int)((xPos + TILE_WIDTH / 2) / TILE_WIDTH);
-	int y = (int)((yPos + TILE_HEIGHT / 2) / TILE_HEIGHT);
+	int x = xPos / TILE_WIDTH;
+	int y = yPos / TILE_HEIGHT;
 	
 	world->position[speed_tile].x = (x * TILE_WIDTH) + (TILE_WIDTH / 2);
 	world->position[speed_tile].y = (y * TILE_HEIGHT) + (TILE_HEIGHT / 2);
@@ -348,8 +348,11 @@ unsigned int create_stile(World * world, int type, int xPos, int yPos, int level
 	world->renderPlayer[speed_tile].width = TILE_WIDTH;
 	world->renderPlayer[speed_tile].height = TILE_HEIGHT;
 	
+	world->collision[speed_tile].id = 0;
+	world->collision[speed_tile].timer = 0;
+	world->collision[speed_tile].timerMax = 0;
 	world->collision[speed_tile].active = true;
-	world->collision[speed_tile].radius = 1;
+	world->collision[speed_tile].radius = 0;
 	
 	switch(type)
 	{

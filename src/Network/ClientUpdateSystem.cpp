@@ -488,6 +488,7 @@ int client_update_info(World *world, void *packet)
 		{
 			world->player[i].teamNo							= client_info->clients_team_number;
 			world->player[i].playerNo						= client_info->clients_player_number;
+			memcpy(world->player[i].name, client_info->name, MAX_NAME);
 			controllable_playerNo 							= client_info->clients_player_number;
 			player_table[client_info->clients_player_number] = i;	
 			world->player[i].tilez 							 = 2;

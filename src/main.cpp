@@ -85,7 +85,6 @@ int main(int argc, char* argv[]) {
 	while (running)
 	{
 		unsigned int current_time;
-		//INPUT
 		KeyInputSystem(world);
 		MouseInputSystem(world);
 		movement_system(world, fps, send_router_fd[WRITE]);
@@ -98,7 +97,7 @@ int main(int argc, char* argv[]) {
 		animation_system(world);
 
 		render_player_system(*world, surface, fow);
-		render_fog_of_war_system(surface, fow);
+		//render_fog_of_war_system(surface, fow);
 		chat_render(surface);
 		
 		surface_texture = SDL_CreateTextureFromSurface(renderer, surface);
@@ -121,8 +120,6 @@ int main(int argc, char* argv[]) {
 
 		fps.limit();
 		fps.update();
-		
-		//printf("FPS: %f\n", fps.getFPS());
 	}
 	
 	

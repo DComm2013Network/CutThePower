@@ -129,7 +129,7 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 			if(IN_THIS_COMPONENT(world.mask[entity], COMPONENT_PLAYER)) {
 					
 				// only render players on my team
-				if ((fow->teamNo == world.player[entity].teamNo)) {	
+				// if ((fow->teamNo == world.player[entity].teamNo)) {	
 					FowPlayerPosition fowp;
 		
 					fowp.world = &world;
@@ -159,10 +159,10 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 
 				}
 				// found an enemy, add it to the array
-				else {
-					opponentPlayers[opponentPlayersCount++] = entity;
-				}
-			}
+				// else {
+				// 	opponentPlayers[opponentPlayersCount++] = entity;
+				// }
+			// }
 
 			//check if a textbox.
 			if (IN_THIS_COMPONENT(world.mask[entity], COMPONENT_TEXTFIELD)) {
@@ -186,41 +186,41 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 	}
 
 	// only render enemy players that are inside the visibility circles
-	for(int entity = 0; entity < opponentPlayersCount && entity < 32; entity++) {
+	// for(int entity = 0; entity < opponentPlayersCount && entity < 32; entity++) {
 
-		position 	= &(world.position    [ opponentPlayers[entity] ]);
-		renderPlayer 	= &(world.renderPlayer[ opponentPlayers[entity] ]);
+	// 	position 	= &(world.position    [ opponentPlayers[entity] ]);
+	// 	renderPlayer 	= &(world.renderPlayer[ opponentPlayers[entity] ]);
 
-		playerRect.x = position->x + map_rect.x;
-		playerRect.y = position->y + map_rect.y;
-		playerRect.w = renderPlayer->width;
-		playerRect.h = renderPlayer->height;
+	// 	playerRect.x = position->x + map_rect.x;
+	// 	playerRect.y = position->y + map_rect.y;
+	// 	playerRect.w = renderPlayer->width;
+	// 	playerRect.h = renderPlayer->height;
 
-		int xPos = position->x / TILE_WIDTH;
-		int yPos = position->y / TILE_HEIGHT;
+	// 	int xPos = position->x / TILE_WIDTH;
+	// 	int yPos = position->y / TILE_HEIGHT;
 
-		if(fow -> tiles[yPos][xPos].visible[ position->level ] == 0)
-		{
-			clipRect.x = -playerRect.x;
-			clipRect.y = -playerRect.y;
-			clipRect.w = playerRect.w;
-			clipRect.h = playerRect.h;
+	// 	if(fow -> tiles[yPos][xPos].visible[ position->level ] == 0)
+	// 	{
+	// 		clipRect.x = -playerRect.x;
+	// 		clipRect.y = -playerRect.y;
+	// 		clipRect.w = playerRect.w;
+	// 		clipRect.h = playerRect.h;
 
-			if (clipRect.x < 0)
-				clipRect.x = 0;
+	// 		if (clipRect.x < 0)
+	// 			clipRect.x = 0;
 
-			if (clipRect.y < 0)
-				clipRect.y = 0;
+	// 		if (clipRect.y < 0)
+	// 			clipRect.y = 0;
 
-			if (clipRect.h > HEIGHT - playerRect.y)
-				clipRect.h = HEIGHT - playerRect.y;
+	// 		if (clipRect.h > HEIGHT - playerRect.y)
+	// 			clipRect.h = HEIGHT - playerRect.y;
 
-			if (clipRect.w > WIDTH - playerRect.x)
-				clipRect.w = WIDTH - playerRect.x;
+	// 		if (clipRect.w > WIDTH - playerRect.x)
+	// 			clipRect.w = WIDTH - playerRect.x;
 
-			SDL_BlitScaled(renderPlayer->playerSurface, &clipRect, surface, &playerRect);
-		}
-	}
+	// 		SDL_BlitScaled(renderPlayer->playerSurface, &clipRect, surface, &playerRect);
+	// 	}
+	// }
 }
 
 
