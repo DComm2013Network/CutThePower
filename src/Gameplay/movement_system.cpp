@@ -273,6 +273,30 @@ void handle_entity_collision(World* world, unsigned int entity, unsigned int ent
 	}
 }
 
+int manage_special_tiles(World * world, unsigned int entity)
+{
+	if(IN_THIS_COMPONENT(world->mask[entity], COMPONENT_STILE))
+	{
+		unsigned int current_time = SDL_GetTicks();
+		if((current_time - world->tile[entity].start_time) >= 5000)
+		{
+			destroy_entity(world, entity);
+		}
+		else if(world->position[entity].level == world->position[player_entity].level)
+		{
+			world->mask[entity] |= COMPONENT_RENDER_PLAYER | COMPONENT_COLLISION;
+		}
+		else if(world->position[entity].level != world->position[player_entity].level)
+		{
+			world->mask[entity] &= ~(COMPONENT_RENDER_PLAYER | COMPONENT_COLLISION);
+		}
+
+		return 1;
+	}	
+
+	return 0;
+}
+
 /**
  * Determines the inputs applied to the entity and adds forces in
  * the specified directions.
@@ -292,19 +316,9 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 
 	//loop through each entity and see if the system can do work on it.
 	for(entity = 0; entity < MAX_ENTITIES; entity++) {
-		if(IN_THIS_COMPONENT(world->mask[entity], COMPONENT_STILE))
-		{
-			unsigned int current_time = SDL_GetTicks();
-			if((current_time - world->tile[entity].start_time) >= 5000)
-			{
-				destroy_entity(world, entity);
-				continue;
-			}
-			if(world->position[entity].level == world->position[player_entity].level)
-			{
-				world->mask[entity] |= COMPONENT_RENDER_PLAYER | COMPONENT_COLLISION;
-			}
-		}	
+
+		if(manage_special_tiles(world, entity))
+			continue;
 
 		//For controllable entities
 		if (IN_THIS_COMPONENT(world->mask[entity], CONTROLLABLE_MASK)) {
@@ -325,35 +339,29 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 				unsigned int entity_number = 0;
 				unsigned int tile_number = 0;
 				unsigned int hit_entity = 0;
-				bool key_pressed = false;
 				
 				if (command->commands[C_UP]) {
-					key_pressed = true;
 					world->movement[entity].lastDirection = DIRECTION_UP;
 					add_force(world, entity, world->movement[entity].acceleration, -90);
 				}
 				
 				if (command->commands[C_DOWN]) {
-					key_pressed = true;
 					world->movement[entity].lastDirection = DIRECTION_DOWN;
 					add_force(world, entity, world->movement[entity].acceleration, 90);
 				}
 				
 				if (command->commands[C_LEFT]) {
-					key_pressed = true;
 					world->movement[entity].lastDirection = DIRECTION_LEFT;
 					add_force(world, entity, world->movement[entity].acceleration, 180);
 				}
 				
 				if (command->commands[C_RIGHT]) {
-					key_pressed = true;
 					world->movement[entity].lastDirection = DIRECTION_RIGHT;
 					add_force(world, entity, world->movement[entity].acceleration, 0);
 				}
 				/* SPECIAL TILES */
 				unsigned int tile;
 				if(command->commands[C_TILE]){
-					key_pressed = true;
 					switch(world->player[entity].tilez){
 						case TILE_BELT_RIGHT:
 							tile = create_stile(world, TILE_BELT_RIGHT, world->position[entity].x, world->position[entity].y, world->position[entity].level);
@@ -417,7 +425,7 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 					cancel_animation(world, entity);
 				}
 				
-				if (position->level == 0) {
+				if (position->level == 0) { // sends ready statuses from the lobby
 					if (position->x < 240) {
 						send_status(world, sendpipe, 1, PLAYER_STATE_READY);
 					}
