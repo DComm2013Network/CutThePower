@@ -128,8 +128,8 @@ object 39 29.5 75 70 assets/Graphics/objects/png_object/object_animation.txt tab
 object 41 27.6 25 50 assets/Graphics/objects/png_object/object_animation.txt plant_25x50
 object 41 29.8 38 80 assets/Graphics/objects/png_object/object_animation.txt vertical_bench_38x80
 
-object 44 32.7 60 23 assets/Graphics/objects/png_object/object_animation.txt pictures_60x23
-object 48 32.7 60 25 assets/Graphics/objects/png_object/object_animation.txt pictures_60x25
+object 44 33.5 60 23 assets/Graphics/objects/png_object/object_animation.txt pictures_60x23
+object 48 33.5 60 25 assets/Graphics/objects/png_object/object_animation.txt pictures_60x25
 
 object 3 36.9 40 37 assets/Graphics/objects/png_object/object_animation.txt window_40x37
 object 7 36.9 40 37 assets/Graphics/objects/png_object/object_animation.txt window_40x37
