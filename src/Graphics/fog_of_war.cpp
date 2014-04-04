@@ -311,7 +311,38 @@ void cleanup_fog_of_war(FowComponent *fow)
 }
 
 
+/**
+ * Resets all fog of war to opqaue
+ *
+ * Revisions:
+ *     None.
+ *loading
+ * @param fow   		A pointer to the fow struct, which contains the fog of war tile value-map
+ *
+ * @return void.
+ * 
+ * @designer Sam Youssef
+ * @author Sam Youssef
+ *
+ * @date March 29, 2014
+ */
+void reset_fog_of_war(FowComponent *fow)
+{
 
+	int const TOTALTILESX = 2560;
+	int const TOTALTILESY = 1520;
+
+	for(int y = 0; y < TOTALTILESY; y++)
+	{
+		for(int x = 0; x < TOTALTILESX; x++)
+		{
+			for(int lev = 0; lev < NUMLEVELS; lev++)
+			{
+				fow -> tiles[y][x].visible[ lev ] = OPAQUE_VIS;			
+			}
+		}	
+	}
+}
 
 
 /**
