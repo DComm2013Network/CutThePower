@@ -44,7 +44,7 @@
 stairs 57 05 21 03 5 r
 stairs 29 18 49 34 5 r
 stairs 16 24 09 06 7 r
-stairs 48 32 42 15 7 r
+stairs 48 32 33 15 7 r
 
 objective 29 03 25 45 0 assets/Graphics/objects/png_object/object_animation.txt
 objective 07 06 25 45 1 assets/Graphics/objects/png_object/object_animation.txt
