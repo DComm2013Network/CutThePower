@@ -62,4 +62,26 @@ typedef struct {
 	unsigned int next_random_occurance; //the next time the random animation is played
 } AnimationComponent;
 
+
+typedef struct {
+	
+	float x_end;
+	float y_end;
+	unsigned int total_ms;
+	unsigned int start_ms;
+	char *animation_name;
+	
+} CutsceneSection;
+
+typedef struct {
+	
+	CutsceneSection *sections;
+	int num_sections;
+	
+	int current_section;
+	
+	float xpos, ypos;
+	
+} CutsceneComponent;
+
 #endif

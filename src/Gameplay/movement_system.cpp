@@ -348,6 +348,7 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 				/* SPECIAL TILES */
 				unsigned int tile;
 				if(command->commands[C_TILE]){
+					printf("C_TILE\n");
 					key_pressed = true;
 					if(world->player[entity].tilez == TILE_BELT_RIGHT){
 						tile = create_stile(world, TILE_BELT_RIGHT, world->position[entity].x, world->position[entity].y, world->position[entity].level);

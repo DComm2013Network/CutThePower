@@ -69,6 +69,11 @@ int main(int argc, char* argv[]) {
 	unsigned int begin_time = SDL_GetTicks();
 
 	//create_logo_screen(world);
+	//if (load_cutscene("assets/Graphics/cutscene/van_intro/cutscene.txt", world) == -1) {
+		//printf("Error loading cutscene!\n");
+		//return 1;
+	//}
+	
 
 	FPS fps;
 	fps.init();
@@ -96,6 +101,7 @@ int main(int argc, char* argv[]) {
 				
 
 		animation_system(world);
+		cutscene_system(world);
 
 		render_player_system(*world, surface, fow);
 		render_fog_of_war_system(surface, fow);
