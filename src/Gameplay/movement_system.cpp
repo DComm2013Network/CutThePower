@@ -298,6 +298,7 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 			if((current_time - world->tile[entity].start_time) >= 5000)
 			{
 				destroy_entity(world, entity);
+				continue;
 			}
 			if(world->position[entity].level == world->position[player_entity].level)
 			{
