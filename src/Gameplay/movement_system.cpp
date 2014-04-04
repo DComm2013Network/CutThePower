@@ -141,12 +141,12 @@ void handle_x_collision(World* world, unsigned int entity, PositionComponent* te
 			break;
 			/* SPECIAL TILES*/
 		case COLLISION_BELTRIGHT:
-			add_force(world, entity, 0.47, 0);
+			add_force(world, entity, 0.90, 0);
 			//add_force_acceleration_x(movement, 0.47, 0, -0.000000000000000000001);
 			break;
 		case COLLISION_BELTLEFT:
 			//add_force(movement, 0.47, 180);
-			add_force_acceleration_x(world->movement[entity], 0.47, 180, -0.000000000000000000001);
+			add_force_acceleration_x(world->movement[entity], 0.90, 180, -0.000000000000000000001);
 			break;
 		case COLLISION_ICE:
 			apply_ice_deceleration_x(world, entity, 0.005, fps);
@@ -178,10 +178,10 @@ void handle_y_collision(World* world, unsigned int entity, PositionComponent* te
 			break;
 			/* SPECIAL TILES */
 		case COLLISION_BELTDOWN:
-			add_force(world, entity, 0.47, 90);
+			add_force(world, entity, 0.90, 90);
 			break;
 		case COLLISION_BELTUP:
-			add_force(world, entity, 0.47, -90);
+			add_force(world, entity, 0.90, -90);
 			break;
 		case COLLISION_ICE:
 			apply_ice_deceleration_y(world, entity, 0.005, fps);
@@ -266,13 +266,28 @@ void handle_entity_collision(World* world, unsigned int entity, unsigned int ent
 				floor_change_flag = 1;
 			}
 			break;
+		case COLLISION_TILEPOWER:
+			if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_CONTROLLABLE) && (world->collision[entity].type == COLLISION_HACKER || world->collision[entity].type == COLLISION_GUARD)) {
+				world->player[player_entity].tilez = rand() % 2 + 1;
+			break;
 	}
 	if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_CONTROLLABLE) && world->controllable[entity].active) {
 		tag_player(world, entity);
 		capture_objective(world, entity);
 	}
 }
-
+/**
+ * Updates the visibility of a tile based on player position and destroys it based on
+ * the status of the tile timer.
+ *
+ * The tile timer is currently set to 5 seconds. Returns 1 if a special tile is found.
+ *
+ * @param[out]	world 	The world struct containing the ojective states to be updated.
+ * @param[in]	entity	The entity to be checked for a special tile.
+ *
+ * @designer Ramzi Chennafi
+ * @author   Ramzi Chennafi
+ */
 int manage_special_tiles(World * world, unsigned int entity)
 {
 	if(IN_THIS_COMPONENT(world->mask[entity], COMPONENT_STILE))
@@ -293,7 +308,6 @@ int manage_special_tiles(World * world, unsigned int entity)
 
 		return 1;
 	}	
-
 	return 0;
 }
 
