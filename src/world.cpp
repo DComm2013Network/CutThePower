@@ -121,9 +121,6 @@ unsigned int create_player(World* world, int x, int y, bool controllable, int co
 	CollisionComponent collision;
 	PlayerComponent player;
 
-	int lastID = -1;
-	unsigned int tempMask = 0;
-
 	render.width = 40;
 	render.height = 40;
 	

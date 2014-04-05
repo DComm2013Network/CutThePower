@@ -24,6 +24,12 @@
 #define DIRECTION_UP	 3
 #define DIRECTION_DOWN	 4
 
+typedef struct _objective_cache
+{
+	char  obj_state;
+	short entity_no;
+} objective_cache;
+
 int init_client_update(World *world);
 int client_update_system(World *world, int net_pipe);
 void client_update_pos(World *world, void *packet);
