@@ -1,0 +1,11 @@
+1
+
+bounce 8 150 -1 1
+assets/Graphics/powerups/powerup_speedup/power_up_speedup_1.png
+assets/Graphics/powerups/powerup_speedup/power_up_speedup_2.png
+assets/Graphics/powerups/powerup_speedup/power_up_speedup_3.png
+assets/Graphics/powerups/powerup_speedup/power_up_speedup_4.png
+assets/Graphics/powerups/powerup_speedup/power_up_speedup_4.png
+assets/Graphics/powerups/powerup_speedup/power_up_speedup_3.png
+assets/Graphics/powerups/powerup_speedup/power_up_speedup_2.png
+assets/Graphics/powerups/powerup_speedup/power_up_speedup_1.png
