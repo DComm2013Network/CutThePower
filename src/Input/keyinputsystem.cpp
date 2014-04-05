@@ -147,7 +147,7 @@ void KeyInputSystem(World *world)
         }
     }
     
-    if (player_entity != -1) {
+    if (player_entity != MAX_ENTITIES) {
 		//pause menu
 		if ((currentKeyboardState[SDL_SCANCODE_ESCAPE] != 0) && (prevKeyboardState[SDL_SCANCODE_ESCAPE] == 0)) {
 			if (IN_THIS_COMPONENT(world->mask[player_entity], COMPONENT_COMMAND)) {

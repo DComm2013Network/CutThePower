@@ -14,7 +14,7 @@
 
 #include <stdlib.h>
 
-#define SYSTEM_MASK (COMPONENT_POSITION | COMPONENT_RENDER_PLAYER | COMPONENT_ANIMATION | COMPONENT_CUTSCENE) /**< The entity must have a animation and render component */
+#define SYSTEM_MASK (COMPONENT_POSITION | COMPONENT_ANIMATION | COMPONENT_CUTSCENE) /**< The entity must have a animation and render component */
 
 void start_cutscene_section(int id, World *world, unsigned int entity);
 
@@ -47,16 +47,25 @@ void cutscene_system(World *world) {
 				
 				cutscene->current_section++;
 				//check to see if the cutscene is over
-				if (cutscene->current_section > cutscene->num_sections) {
+				if (cutscene->current_section >= cutscene->num_sections) {
 					
+					cutscene_end(world, entity);
 					destroy_entity(world, entity);
-					
-					printf("Destroyed entity\n");
+					//printf("Destroyed entity\n");
 					
 					continue;
 				}
 				
-				play_animation(world, entity, cutscene->sections[cutscene->current_section].animation_name);
+				//printf("Playing cutscene %s\n", cutscene->sections[cutscene->current_section].animation_name);
+				
+				//If the animation name is 0, don't render
+				if (strcmp(cutscene->sections[cutscene->current_section].animation_name, "0") == 0) {
+					disable_component(world, entity, COMPONENT_RENDER_PLAYER);
+				}
+				else {
+					enable_component(world, entity, COMPONENT_RENDER_PLAYER);
+					play_animation(world, entity, cutscene->sections[cutscene->current_section].animation_name);
+				}
 				cutscene->sections[cutscene->current_section].start_ms = SDL_GetTicks();
 			}
 			else {
@@ -89,7 +98,7 @@ void cutscene_system(World *world) {
 }
 
 
-int load_cutscene(const char *filename, World *world) {
+unsigned int load_cutscene(const char *filename, World *world, int id) {
 	
 	unsigned int entity = create_entity(world, COMPONENT_POSITION | COMPONENT_RENDER_PLAYER | COMPONENT_ANIMATION | COMPONENT_CUTSCENE);
 	CutsceneComponent *cutscene = &world->cutscene[entity];
@@ -97,8 +106,9 @@ int load_cutscene(const char *filename, World *world) {
 	FILE *fp;
 	
 	float xpos, ypos;
-	char animation_filename[64] = {0};
-	char animation_name[64] = {0};
+	int width, height;
+	char animation_filename[128] = {0};
+	char animation_name[128] = {0};
 	
 	int i;
 	
@@ -107,7 +117,7 @@ int load_cutscene(const char *filename, World *world) {
 		return -1;
 	}
 	
-	if (fscanf(fp, "%d %f %f %s", &cutscene->num_sections, &xpos, &ypos, animation_filename) != 4) {
+	if (fscanf(fp, "%d %f %f %d %d %s", &cutscene->num_sections, &xpos, &ypos, &width, &height, animation_filename) != 6) {
 		printf("Error loading number of sections and initial position.\n");
 		return -1;
 	}
@@ -123,7 +133,7 @@ int load_cutscene(const char *filename, World *world) {
 			break;
 		}
 		
-		printf("Loaded animation %s go for %u to (%f, %f)\n", animation_name, cutscene->sections[i].total_ms, cutscene->sections[i].x_end, cutscene->sections[i].y_end);
+		//printf("Loaded animation %s go for %u to (%f, %f)\n", animation_name, cutscene->sections[i].total_ms, cutscene->sections[i].x_end, cutscene->sections[i].y_end);
 		
 		cutscene->sections[i].animation_name = (char*)malloc((sizeof(char) * strlen(animation_name)) + 1);
 		strcpy(cutscene->sections[i].animation_name, animation_name);
@@ -136,17 +146,30 @@ int load_cutscene(const char *filename, World *world) {
 	cutscene->xpos = xpos;
 	cutscene->ypos = ypos;
 	
+	cutscene->id = id;
+	
 	world->position[entity].x = xpos;
 	world->position[entity].y = ypos;
 	
-	world->position[entity].width = 600;
-	world->position[entity].height = 400;
+	world->position[entity].width = width;
+	world->position[entity].height = height;
 	
-	world->renderPlayer[entity].width = 600;
-	world->renderPlayer[entity].height = 400;
+	world->renderPlayer[entity].width = width;
+	world->renderPlayer[entity].height = height;
 	
-	load_animation(animation_filename, world, entity);
-	play_animation(world, entity, cutscene->sections[0].animation_name);
+	if (strcmp(animation_filename, "0") != 0) {
+		load_animation(animation_filename, world, entity);
+	}
 	
-	return 0;
+	//printf("Created cutscene %u: %s\n", entity, filename);
+	
+	//If the animation name is 0, don't render
+	if (strcmp(cutscene->sections[cutscene->current_section].animation_name, "0") == 0) {
+		disable_component(world, entity, COMPONENT_RENDER_PLAYER);
+	}
+	else {
+		play_animation(world, entity, cutscene->sections[cutscene->current_section].animation_name);
+	}
+	
+	return entity;
 }

@@ -1,4 +1,0 @@
-2 500 500 assets/Graphics/cutscene/van_intro/van/animation.txt
-
-5000 100 100 van_still
-5000 500 100 van_open

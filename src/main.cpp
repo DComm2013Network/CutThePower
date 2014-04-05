@@ -36,7 +36,7 @@ int main(int argc, char* argv[]) {
 
 	SDL_Renderer *renderer;
 	SDL_Texture *surface_texture;
-
+	
 	create_pipe(send_router_fd);
 	create_pipe(rcv_router_fd);
 
@@ -52,9 +52,12 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-	SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 0xff);
+	SDL_SetRenderDrawColor(renderer, 0x0, 0x0, 0x0, 0xff);
 	surface = SDL_CreateRGBSurface(0, WIDTH, HEIGHT, 32, 0, 0, 0, 0);
-
+	
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear"); 
+	SDL_RenderSetLogicalSize(renderer, WIDTH, HEIGHT);
+	
 	init_chat();
 	init_sound();
 	init_fonts();
@@ -64,15 +67,17 @@ int main(int argc, char* argv[]) {
 	KeyMapInit("assets/Input/keymap.txt");
 	init_render_player_system();
 
+	unsigned int begin_time = SDL_GetTicks();
+	
+	#if DISPLAY_CUTSCENES
+	
+	create_logo_screen(world);
+	
+	#else
+	
 	create_main_menu(world);
 	
-	unsigned int begin_time = SDL_GetTicks();
-
-	//create_logo_screen(world);
-	//if (load_cutscene("assets/Graphics/cutscene/van_intro/cutscene.txt", world) == -1) {
-		//printf("Error loading cutscene!\n");
-		//return 1;
-	//}
+	#endif
 	
 
 	FPS fps;
@@ -107,12 +112,16 @@ int main(int argc, char* argv[]) {
 		render_fog_of_war_system(surface, fow);
 		chat_render(surface);
 		
+		
+		
 		surface_texture = SDL_CreateTextureFromSurface(renderer, surface);
 		SDL_RenderClear(renderer);
 		SDL_RenderCopy(renderer, surface_texture, NULL, NULL);
 		
 		SDL_DestroyTexture(surface_texture);
 		SDL_RenderPresent(renderer);
+
+
 
 		if(network_ready)
 		{

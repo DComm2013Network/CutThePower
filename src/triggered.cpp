@@ -11,8 +11,6 @@
 #include "Network/Packets.h"
 #include "Graphics/map.h"
 
-#define SHOW_MENU_INTRO 0 //1 == load intro, 0 == load straight into map
-
 extern bool running;
 extern SDL_Surface *map_surface;
 extern unsigned int player_entity;
@@ -350,7 +348,7 @@ bool menu_click(World *world, unsigned int entity) {
 		unsigned int i;
 
 		stop_music();
-		stop_effect();
+		stop_all_effects();
 
 		for(i = 0; i < MAX_ENTITIES; i++) {
 
@@ -369,15 +367,17 @@ bool menu_click(World *world, unsigned int entity) {
 		printf("Username: %s\n", username);
 		printf("Server IP: %s\n", serverip);
 		
-		#if SHOW_MENU_INTRO 
+		#if DISPLAY_CUTSCENES 
+		
 		destroy_world(world);
-		create_load_screen(world);
+		stop_music();
+		create_van_intro(world, character);
 		
 		#else
 		
 		world->animation[entity].id = 0;
-		
 		animation_end(world, entity);
+		
 		#endif
 
 	}
@@ -468,13 +468,13 @@ bool menu_click(World *world, unsigned int entity) {
 
 void animation_end(World *world, unsigned int entity) {
 	AnimationComponent *animationComponent = &(world->animation[entity]);
-
+	
 	//INTRO SCREEN ENDED
 	if (animationComponent->id == 0) { //0 is the intro screen
 		destroy_world(world);
 
 		stop_music();
-		stop_effect();
+		stop_all_effects();
 		
 		PKT_GAME_STATUS pkt;
 		memcpy(pkt.otherPlayers_name[0], username, MAX_NAME);
@@ -508,4 +508,65 @@ void animation_end(World *world, unsigned int entity) {
 		
 		create_main_menu(world);
 	}
+	else if (animationComponent->id == ANIMATION_FADE_TO_BLACK) {
+		
+		destroy_world(world);
+		
+		create_load_screen(world);
+		
+		//world->animation[entity].id = CUTSCENE_GAME_INTRO;
+		//animation_end(world, entity);
+		
+	}
+}
+
+void cutscene_end(World *world, unsigned int entity) {
+	
+	CutsceneComponent *cutscene = &world->cutscene[entity];
+	
+	if (cutscene->id == CUTSCENE_GAME_INTRO) {
+		
+		destroy_world(world);
+
+		stop_music();
+		stop_all_effects();
+		
+		PKT_GAME_STATUS pkt;
+		memcpy(pkt.otherPlayers_name[0], username, MAX_NAME);
+		pkt.characters[0] = character;
+		pkt.readystatus[0] = 0;
+		pkt.otherPlayers_teams[0] = 0;
+
+		map_init(world, "assets/Graphics/map/map_00/map00.txt", "assets/Graphics/map/map_00/tiles.txt");
+		player_entity = create_player(world, 620, 420, true, COLLISION_HACKER, 0, &pkt);
+		setup_character_animation(world, character, player_entity);
+		////NETWORK CODE
+		game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
+
+
+
+		init_client_network(send_router_fd, rcv_router_fd, serverip);
+		init_client_update(world);
+		send_intialization(world, send_router_fd[WRITE], username);
+		
+	}
+	else if (cutscene->id == CUTSCENE_VAN_INTRO) {
+		
+		unsigned int e = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION);
+		
+		world->position[e].x = 0;
+		world->position[e].y = 0;
+		
+		world->position[e].width = WIDTH;
+		world->position[e].height = HEIGHT;
+		
+		world->renderPlayer[e].width = WIDTH;
+		world->renderPlayer[e].height = HEIGHT;
+		
+		load_animation("assets/Graphics/cutscene/fade_to_black/animation.txt", world, e);
+		play_animation(world, e, "fade");
+		
+		world->animation[e].id = ANIMATION_FADE_TO_BLACK;
+	}
+	
 }

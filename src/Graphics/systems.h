@@ -18,6 +18,6 @@ int load_animation(const char *filename, World *world, unsigned int entity);
 void play_animation(World *world, unsigned int entity, const char *animation_name);
 void cancel_animation(World *world, unsigned int entity);
 
-int load_cutscene(const char *filename, World *world);
+unsigned int load_cutscene(const char *filename, World *world, int id);
 
 #endif

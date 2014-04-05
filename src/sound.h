@@ -17,7 +17,8 @@ void cleanup_music(unsigned int index);
 
 void enable_sound(bool enabled);
 void stop_music();
-void stop_effect();
+void stop_all_effects();
+void stop_effect(unsigned int sound);
 
 void play_music(unsigned int sound);
 void play_effect(unsigned int sound);

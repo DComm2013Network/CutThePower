@@ -13,6 +13,20 @@
 
 #include "../components.h"
 
+typedef enum {
+	
+	ANIMATION_LOADING_SCREEN = 1,
+	ANIMATION_FADE_TO_BLACK = 3
+	
+} AnimationID;
+
+typedef enum {
+	
+	CUTSCENE_VAN_INTRO = 1,
+	CUTSCENE_GAME_INTRO = 2
+	
+} CutsceneID;
+
 /**
  * Contains the components related to rendering.
  *
@@ -77,10 +91,12 @@ typedef struct {
 	
 	CutsceneSection *sections;
 	int num_sections;
-	
 	int current_section;
 	
+	int id;
+	
 	float xpos, ypos;
+	
 	
 } CutsceneComponent;
 

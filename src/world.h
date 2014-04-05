@@ -10,6 +10,9 @@
 
 #define GAME_SPEED 30
 
+//0 is off, 1 is on. Remember to make clean to get it to work.
+#define DISPLAY_CUTSCENES 1
+
 //max FPS
 #define FPS_MAX 120
 
@@ -119,5 +122,8 @@ unsigned int create_block(World* world, int x, int y, int width, int height, int
 void destroy_entity(World* world, const unsigned int entity);
 void destroy_world(World *world);
 void destroy_world_not_player(World *world);
+
+void disable_component(World *world, unsigned int entity, unsigned int component);
+void enable_component(World *world, unsigned int entity, unsigned int component);
 
 #endif
