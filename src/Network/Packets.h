@@ -219,7 +219,7 @@ typedef struct pkt14 {
 
 typedef struct pkt15 {
 	uint32_t data;
-	uint8_t vel;
+	uint16_t vel;
 } PKT_POS_UPDATE_MIN;
 
 typedef struct pkt16 {
@@ -227,7 +227,7 @@ typedef struct pkt16 {
 	uint32_t players_on_floor;
 	uint32_t xPos[11];
 	uint32_t yPos[11];
-	uint8_t vel[32];
+	uint16_t vel[32];
 } PKT_ALL_POS_UPDATE_MIN;
 
 #endif
