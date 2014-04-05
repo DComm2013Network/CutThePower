@@ -64,25 +64,27 @@
 
 #define NUM_PACKETS  17
 
-#define ABHISHEK 0
-#define AMAN     1
-#define ANDREW   2
-#define CHRIS    3
-#define CLARK    4
-#define CORY     5
-#define DAMIEN   6
-#define GERMAN   7
-#define IAN      8
-#define JORDAN   9
-#define JOSH     10
-#define KONST    11
-#define MAT      12
-#define RAMZI    13
-#define ROBIN    14
-#define SAM      15
-#define SHANE    16
-#define TIM      17
-#define VINCENT  18
+#define ABHISHEK 	0
+#define AMAN     	1
+#define ANDREW   	2
+#define CHRIS    	3
+#define CLARK    	4
+#define CORY     	5
+#define DAMIEN   	6
+#define GERMAN   	7
+#define IAN      	8
+#define JORDAN   	9
+#define JOSH     	10
+#define KONST    	11
+#define MAT      	12
+#define RAMZI    	13
+#define ROBIN    	14
+#define SAM      	15
+#define SHANE    	16
+#define TIM      	17
+#define VINCENT  	18
+#define JOSH_ALT1	19
+#define IAN_ALT1	20
 // Game Status Definitions
 
 // Game Status Definitions

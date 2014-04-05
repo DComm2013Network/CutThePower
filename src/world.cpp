@@ -5,6 +5,7 @@
  */
 
 #include "world.h"
+#include "Gameplay/powerups.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_keycode.h>
@@ -119,9 +120,6 @@ unsigned int create_player(World* world, int x, int y, bool controllable, int co
 	CommandComponent command;
 	CollisionComponent collision;
 	PlayerComponent player;
-
-	int lastID = -1;
-	unsigned int tempMask = 0;
 
 	render.width = 40;
 	render.height = 40;
@@ -281,6 +279,27 @@ unsigned int create_block(World* world, int x, int y, int width, int height, int
 	
 	world->collision[entity].id = 0;
 	world->collision[entity].type = COLLISION_SOLID;
+	world->collision[entity].timer = 0;
+	world->collision[entity].timerMax = 0;
+	world->collision[entity].active = true;
+	world->collision[entity].radius = 0;
+	
+	return entity;
+}
+
+unsigned int create_powerup(World * world, float x, float y, int width, int height, int type, int level) {
+	unsigned int entity;
+	
+	entity = create_entity(world, COMPONENT_POSITION | COMPONENT_COLLISION);
+	
+	world->position[entity].x = x;
+	world->position[entity].y = y;
+	world->position[entity].width = width;
+	world->position[entity].height = height;
+	world->position[entity].level = level;
+	
+	world->collision[entity].id = 0;
+	world->collision[entity].type = type;
 	world->collision[entity].timer = 0;
 	world->collision[entity].timerMax = 0;
 	world->collision[entity].active = true;

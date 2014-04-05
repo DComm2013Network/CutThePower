@@ -30,7 +30,6 @@
 int create_pipe(int pipe_ends[2])
 {
 	int ret = pipe(pipe_ends);
-	int flags[2];
 	if(ret < 0)
     {
         fprintf(stderr, "create_pipe (pipe_ends[0] = %d, pipe_ends[1] = %d): %s\n", pipe_ends[0], pipe_ends[1], strerror(errno));

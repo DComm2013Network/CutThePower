@@ -89,7 +89,7 @@ void animation_system(World *world) {
 					animationComponent->last_random_occurance = SDL_GetTicks();
 					animationComponent->next_random_occurance = (rand() % (animationComponent->rand_occurance_max - animationComponent->rand_occurance_min)) + animationComponent->rand_occurance_min + SDL_GetTicks();
 					
-					if (animationComponent->animations[animationComponent->rand_animation].sound_effect != -1) {
+					if (animationComponent->animations[animationComponent->rand_animation].sound_effect != (unsigned int)-1) {
 						play_effect(animationComponent->animations[animationComponent->rand_animation].sound_effect);
 					}
 				}
@@ -144,7 +144,7 @@ int load_animation(const char *filename, World *world, unsigned int entity) {
 	animationComponent->hover_animation = -1;
 
 	for(animation_index = 0; animation_index < animationComponent->animation_count; animation_index++) {
-		if (fscanf(fp, "%s %d %d %s %d", animation_name, &animation_frames, &ms_to_skip, &triggered_sound, &loop_animation) != 5) {
+		if (fscanf(fp, "%s %d %d %s %d", animation_name, &animation_frames, &ms_to_skip, triggered_sound, &loop_animation) != 5) {
 			printf("Expected more animations!\n");
 			return -1;
 		}
@@ -287,7 +287,7 @@ void play_animation(World *world, unsigned int entity, const char *animation_nam
 			
 			renderComponent->playerSurface = animationComponent->animations[i].surfaces[0];
 			
-			if (animationComponent->animations[i].sound_effect != -1) {
+			if (animationComponent->animations[i].sound_effect != (unsigned int)-1) {
 				play_effect(animationComponent->animations[i].sound_effect);
 			}
 			

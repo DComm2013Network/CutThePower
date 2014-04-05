@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
 	SDL_Texture *surface_texture;
 
 	World *world = (World*)malloc(sizeof(World));
-	printf("Current World size: %i\n", sizeof(World));
+	printf("Current World size: %lu\n", sizeof(World));
 	
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
 	

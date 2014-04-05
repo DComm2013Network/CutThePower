@@ -178,7 +178,6 @@ int send_cached_chat(int gameplay_write_fd)
             perror("update_gameplay: write");
             return -1;
         }
-        printf("send_cache: %s\n", cached_chat.front()->message);
 
         free(cached_chat.front());
         cached_chat.pop_front();
@@ -497,7 +496,6 @@ void net_cleanup(NDATA send_data, NDATA receive_data, PDATA gameplay, void **cac
 
     /* Close send thread's eventfd */
     close(send_failure_fd);
-    network_ready = 1; /* Tell the client update system to read the network error */
 }
 /*
 
