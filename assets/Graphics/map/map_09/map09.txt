@@ -21,8 +21,8 @@
 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 
 
 14
-stairs 28 03 2 16 1 r
-stairs 28 15 59 17 1 l
+stairs 28 15 61	32 1 l
+stairs 28 03 57 32 1 r
 
 object 2 3.5 120 160 assets/Graphics/objects/png_object/object_animation.txt empty_parkinglot_120x160
 

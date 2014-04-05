@@ -41,7 +41,9 @@
 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 
 
 92
-stairs 01 02 2 16 2 l
+stairs 56 32 29 03 9 l
+stairs 62 32 27 15 9 r
+stairs 01 02 02 16 2 l
 stairs 38 35 59 17 2 l
 
 objective 09 02 25 45 0 assets/Graphics/objects/png_object/object_animation.txt
