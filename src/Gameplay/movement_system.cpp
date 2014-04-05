@@ -124,10 +124,10 @@ void handle_x_collision(World* world, unsigned int entity, PositionComponent* te
 			/* SPECIAL TILES*/
 		case COLLISION_BELTLEFT:
 			//add_force(movement, 0.47, 180);
-			add_force_acceleration_x(world->movement[entity], 0.47, 180, -0.000000000000000000001);
+			add_force_acceleration_x(world->movement[entity], 2.0, 180, -0.000000000000000000001);
 			break;
 		case COLLISION_BELTRIGHT:
-			add_force(world, entity, 0.47, 0);
+			add_force(world, entity, 2.0, 0);
 			//add_force_acceleration_x(movement, 0.47, 0, -0.000000000000000000001);
 			break;
 		default:
@@ -141,12 +141,12 @@ void handle_x_collision(World* world, unsigned int entity, PositionComponent* te
 			break;
 			/* SPECIAL TILES*/
 		case COLLISION_BELTRIGHT:
-			add_force(world, entity, 0.90, 0);
+			add_force(world, entity, 2.0, 0);
 			//add_force_acceleration_x(movement, 0.47, 0, -0.000000000000000000001);
 			break;
 		case COLLISION_BELTLEFT:
 			//add_force(movement, 0.47, 180);
-			add_force_acceleration_x(world->movement[entity], 0.90, 180, -0.000000000000000000001);
+			add_force_acceleration_x(world->movement[entity], 2.0, 180, -0.000000000000000000001);
 			break;
 		case COLLISION_ICE:
 			apply_ice_deceleration_x(world, entity, 0.005, fps);
