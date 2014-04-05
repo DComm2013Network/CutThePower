@@ -45,6 +45,7 @@ void send_location(World *world, int fd)
 			pkt4->yPos = world->position[i].y;
 			pkt4->xVel = world->movement[i].movX;
 			pkt4->yVel = world->movement[i].movY;
+			//printf("x: %f, y: %f\n", world->movement[i].movX, world->movement[i].movY);
 			pkt4->floor = world->position[i].level;
 			pkt4->player_number = world->player[i].playerNo;
 		}

@@ -98,6 +98,12 @@ void *networkRouter(void *args)
                 set_error(ERR_IPC_FAIL);
                 break;
             }
+
+            if(type == NETWORK_SHUTDOWN)
+            {
+                printf("Recv thread failed, exiting.\n");
+                break;
+            }
             
             if(type == P_CHAT)
             {

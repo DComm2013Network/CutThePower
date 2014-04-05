@@ -50,6 +50,7 @@ extern int send_failure_fd;
  	int 				numready;
  	SDLNet_SocketSet 	set = make_socket_set(2, recv_data->tcp_sock, recv_data->udp_sock);
 	int 				res = 0;
+    uint32_t            type;
     recv_cleanup_args   *clean_args;
 
     if(!set)
@@ -110,6 +111,8 @@ extern int send_failure_fd;
             pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, &oldstate);
     	}
  	}
+    type = 0;
+    write_packet(recv_data->write_pipe, NETWORK_SHUTDOWN, &type);
     pthread_cleanup_pop(1); // Calls the cleanup handler
     return NULL;
 }
@@ -159,7 +162,7 @@ int handle_tcp_in(int router_pipe_fd, TCPsocket tcp_sock)
     uint64_t timestamp;
     
     if((game_packet = recv_tcp_packet(tcp_sock, &packet_type, &timestamp)) == NULL)
-        return (packet_type == P_KEEPALIVE) - 1; // If it's a keep alive, ignore and return 0. 
+        return -1; // If it's a keep alive, ignore and return 0. 
 
     if(write_packet(router_pipe_fd, packet_type, game_packet) == -1 ||
         write_pipe(router_pipe_fd, &timestamp, sizeof(timestamp)) == -1)
