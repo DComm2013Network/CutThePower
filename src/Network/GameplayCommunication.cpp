@@ -116,6 +116,9 @@ void init_client_network(int send_router_fd[2], int rcv_router_fd[2], char * ip)
 {
     pthread_t thread;
     PDATA pdata = (PDATA) malloc(sizeof(WTHREAD_DATA));
+   
+    create_pipe(send_router_fd);
+    create_pipe(rcv_router_fd);
     
     pdata->read_pipe = send_router_fd[READ_END];
     pdata->write_pipe = rcv_router_fd[WRITE_END];

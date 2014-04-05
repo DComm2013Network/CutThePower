@@ -37,9 +37,6 @@ int main(int argc, char* argv[]) {
 	SDL_Renderer *renderer;
 	SDL_Texture *surface_texture;
 
-	create_pipe(send_router_fd);
-	create_pipe(rcv_router_fd);
-
 	World *world = (World*)malloc(sizeof(World));
 	printf("Current World size: %i\n", sizeof(World));
 	
@@ -97,7 +94,7 @@ int main(int argc, char* argv[]) {
 		animation_system(world);
 
 		render_player_system(*world, surface, fow);
-		//render_fog_of_war_system(surface, fow);
+		render_fog_of_war_system(surface, fow);
 		chat_render(surface);
 		
 		surface_texture = SDL_CreateTextureFromSurface(renderer, surface);
