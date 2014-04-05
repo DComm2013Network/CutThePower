@@ -12,6 +12,7 @@
 #include "Graphics/map.h"
 
 #define SHOW_MENU_INTRO 0 //1 == load intro, 0 == load straight into map
+#define ALT_SKIN_CHANCE 5 //chance to roll an alternate skin
 
 extern bool running;
 extern SDL_Surface *map_surface;
@@ -23,10 +24,11 @@ static int character;
 static char username[MAX_NAME];
 static char serverip[MAXIP];
 extern SDL_Window *window;
+static unsigned int altSong = 0;
 
 bool menu_click(World *world, unsigned int entity) {
 	//printf("Clicked: %s\n", world->button[entity].label);
-
+	unsigned int alternateSkin = 0;
 	//MAIN MENU
 	if (strcmp(world->button[entity].label, "mainmenu_play") == 0) {
 
@@ -248,6 +250,15 @@ bool menu_click(World *world, unsigned int entity) {
 		
 		destroy_menu(world);
 		character = IAN;
+		alternateSkin = rand() % (ALT_SKIN_CHANCE + 1);
+		if (alternateSkin == ALT_SKIN_CHANCE) {
+			character = IAN_ALT1;
+			stop_music();
+			altSong = load_music("assets/Sound/players/ian_dovakiin/Dovak-Ian.wav");
+			if (altSong != 0) {
+				play_music(altSong);
+			}
+		}
 		create_setup_menu(world);
 		
 	}
@@ -262,6 +273,15 @@ bool menu_click(World *world, unsigned int entity) {
 		
 		destroy_menu(world);
 		character = JOSH;
+		alternateSkin = rand() % (ALT_SKIN_CHANCE + 1);
+		if (alternateSkin == ALT_SKIN_CHANCE) {
+			character = JOSH_ALT1;
+			stop_music();
+			altSong = load_music("assets/Sound/players/josh_link/LoZ_MainThemeShort.wav");
+			if (altSong != 0) {
+				play_music(altSong);
+			}
+		}
 		create_setup_menu(world);
 		
 	}
@@ -322,8 +342,25 @@ bool menu_click(World *world, unsigned int entity) {
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_random") == 0) {
 		
+		altSong = 0;
 		destroy_menu(world);
-		character = rand() % 18;
+		character = rand() % 21;
+		switch(character) {
+			case JOSH_ALT1:
+				stop_music();
+				altSong = load_music("assets/Sound/players/josh_link/LoZ_MainThemeShort.wav");
+				if (altSong != 0) { 
+					play_music(altSong);
+				}
+			break;
+			case IAN_ALT1:
+				stop_music();
+				altSong = load_music("assets/Sound/players/josh_dovakiin/Dovak-Ian.wav");
+				if (altSong != 0) { 
+					play_music(altSong);
+				}
+			break;
+		}
 		create_setup_menu(world);
 
 	}
@@ -339,7 +376,13 @@ bool menu_click(World *world, unsigned int entity) {
 
 	//SETUP
 	else if (strcmp(world->button[entity].label, "setup_back") == 0) {
-
+		
+		if (altSong != 0) {
+			stop_music();
+			cleanup_music(altSong);
+			altSong = 0;
+		}
+		
 		destroy_menu(world);
 
 		create_main_menu(world);

@@ -40,7 +40,7 @@
 04 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 05 
 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 
 
-8
+16
 stairs 57 05 21 03 5 r
 stairs 29 18 49 34 5 r
 stairs 16 24 09 06 7 r
@@ -50,3 +50,12 @@ objective 29 03 25 45 0 assets/Graphics/objects/png_object/object_animation.txt
 objective 07 06 25 45 1 assets/Graphics/objects/png_object/object_animation.txt
 objective 55 20 25 45 2 assets/Graphics/objects/png_object/object_animation.txt
 objective 06 34 25 45 3 assets/Graphics/objects/png_object/object_animation.txt
+
+object 37 13 100 116 assets/Graphics/objects/png_object/object_animation.txt cubicle12_100x116
+object 41 13 100 116 assets/Graphics/objects/png_object/object_animation.txt cubicle4_100x116
+object 37 17 100 116 assets/Graphics/objects/png_object/object_animation.txt cubicle12_100x116
+object 41 17 100 116 assets/Graphics/objects/png_object/object_animation.txt cubicle4_100x116
+object 37 21 100 116 assets/Graphics/objects/png_object/object_animation.txt cubicle12_100x116
+object 41 21 100 116 assets/Graphics/objects/png_object/object_animation.txt cubicle4_100x116
+object 37 25 100 116 assets/Graphics/objects/png_object/object_animation.txt cubicle12_100x116
+object 41 25 100 116 assets/Graphics/objects/png_object/object_animation.txt cubicle4_100x116
