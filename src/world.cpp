@@ -120,6 +120,10 @@ unsigned int create_player(World* world, int x, int y, bool controllable, int co
 	CommandComponent command;
 	CollisionComponent collision;
 	PlayerComponent player;
+	PowerUpComponent powerup;
+
+	int lastID = -1;
+	unsigned int tempMask = 0;
 
 	render.width = 40;
 	render.height = 40;
@@ -134,6 +138,7 @@ unsigned int create_player(World* world, int x, int y, bool controllable, int co
 	movement.id = 0;
 	movement.lastDirection = 0;
 	movement.acceleration = 1.50;
+	movement.defMaxSpeed = 8;
 	movement.maxSpeed = 8;
 	movement.movX = 0;
 	movement.movY = 0;
@@ -158,6 +163,10 @@ unsigned int create_player(World* world, int x, int y, bool controllable, int co
 	player.character = status_update->characters[playerNo];
 	player.readyStatus = status_update->readystatus[playerNo];
 	memcpy(player.name, status_update->otherPlayers_name[playerNo], MAX_NAME);
+	
+	powerup.captureTime = 0;
+	powerup.duration = 0;
+	powerup.type = PU_NONE;
 
 	for(entity = 0; entity < MAX_ENTITIES; ++entity) {
 		if (world->mask[entity] == COMPONENT_EMPTY) {
@@ -169,14 +178,16 @@ unsigned int create_player(World* world, int x, int y, bool controllable, int co
 										COMPONENT_COLLISION |
 										COMPONENT_CONTROLLABLE |
 										COMPONENT_PLAYER |
-										COMPONENT_ANIMATION;
+										COMPONENT_ANIMATION |
+										COMPONENT_POWERUP;
 			} else {
 				world->mask[entity] =	COMPONENT_POSITION | 
 										COMPONENT_RENDER_PLAYER | 
 										COMPONENT_ANIMATION |
 										COMPONENT_COLLISION | 
 										COMPONENT_MOVEMENT |
-										COMPONENT_PLAYER;
+										COMPONENT_PLAYER |
+										COMPONENT_POWERUP;
 			}
 			world->position[entity] = pos;
 			world->renderPlayer[entity] = render;
@@ -184,6 +195,7 @@ unsigned int create_player(World* world, int x, int y, bool controllable, int co
 			world->movement[entity] = movement;
 			world->collision[entity] = collision;
 			world->player[entity] = player;
+			world->powerup[entity] = powerup;
 
 			if (controllable) {
 				world->controllable[entity] = control;
