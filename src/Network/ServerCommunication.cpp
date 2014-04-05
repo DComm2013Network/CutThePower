@@ -355,7 +355,7 @@ int recv_tcp(TCPsocket sock, void *buf, size_t bufsize)
 {
     int numread = 0;
     int lastread = 0;
-    while(numread < bufsize)
+    while((unsigned int)numread < bufsize)
     {
 	    lastread = SDLNet_TCP_Recv(sock, buf, bufsize);
 

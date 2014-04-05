@@ -393,7 +393,7 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 				if (IN_THIS_COMPONENT(world->mask[entity], COLLISION_MASK)) {
 					
 					collision_system(world, entity, &temp, &entity_number, &tile_number, &hit_entity);
-					if (hit_entity != -1 && (entity_number == COLLISION_HACKER || entity_number== COLLISION_GUARD)) {
+					if (hit_entity != (unsigned int)-1 && (entity_number == COLLISION_HACKER || entity_number== COLLISION_GUARD)) {
 						anti_stuck_system(world, entity, hit_entity);
 					}
 

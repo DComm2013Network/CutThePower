@@ -223,7 +223,7 @@ PKT_ALL_POS_UPDATE_MIN *encapsulate_all_pos_update(PKT_ALL_POS_UPDATE *old_pkt) 
  * @author   Clark Allenby
  */
 PKT_ALL_POS_UPDATE *decapsulate_all_pos_update(PKT_ALL_POS_UPDATE_MIN *pkt) {
-	PKT_ALL_POS_UPDATE *old_pkt = malloc(sizeof(PKT_ALL_POS_UPDATE));
+	PKT_ALL_POS_UPDATE *old_pkt = (PKT_ALL_POS_UPDATE*)malloc(sizeof(PKT_ALL_POS_UPDATE));
 	int i, j;
 	uint32_t temp, and_mask;
 	

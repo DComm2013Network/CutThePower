@@ -14,14 +14,8 @@
 #include "../Gameplay/collision.h"
 #include "network_systems.h"
 #include "../Input/chat.h"
-typedef struct _objective_cache
-{
-	char  obj_state;
-	short entity_no;
-} objective_cache;
 
-static int controllable_playerNo; /**< The entity number of the controllable player. */
-extern int player_team;
+extern unsigned int player_entity;
 extern int game_net_signalfd;     /**< An eventfd allowing the gameplay thread to request data from network router. */
 extern int network_ready;         /**< Indicates whether the network has initialised. */
 extern int player_team;           /**< The player's team (0, COPS or ROBBERS). */
@@ -29,7 +23,6 @@ int floor_change_flag = 0;        /**< Whether we just changed floors. */
 
 unsigned int *player_table       = NULL; /**< A lookup table mapping server player numbers to client entities. */
 objective_cache *objective_table = NULL; /**< A lookup table mapping server objective numbers to client entities. */
-unsigned int *tile_cache 		 = NULL;
 /**
  * Receives all updates from the server and applies them to the world.
  *
@@ -57,7 +50,7 @@ int client_update_system(World *world, int net_pipe) {
 	write(game_net_signalfd, &signal, sizeof(uint64_t));
 	num_packets = read_type(net_pipe); // the function just reads a 32 bit value, so this works; semantically, not ideal
 
-    if(num_packets == NET_SHUTDOWN) // network is shutting down; this is the only packet
+    if(num_packets == (unsigned int)NET_SHUTDOWN) // network is shutting down; this is the only packet
     {
         char err_buf[128];
         uint32_t str_size;
@@ -148,7 +141,7 @@ void client_update_chat(World *world, void *packet)
 	else
 	{
 		snprintf(message, MAX_MESSAGE + MAX_NAME + 2,"%s: %s", world->player[player_table[snd_chat->sendingPlayer_number]].name, snd_chat->message);
-		font_type = (world->player[player_table[snd_chat->sendingPlayer_number]].teamNo == world->player[player_table[controllable_playerNo]].teamNo) ? CHAT_FONT : OTHER_TEAM_FONT;
+		font_type = (world->player[player_table[snd_chat->sendingPlayer_number]].teamNo == world->player[player_entity].teamNo) ? CHAT_FONT : OTHER_TEAM_FONT;
 	} 
 	chat_add_line(message, font_type);
 }
@@ -174,9 +167,9 @@ void client_update_floor(World *world, void *packet)
 	int obj_idx = (floor_move->new_floor - 1) * OBJECTIVES_PER_FLOOR; // Start at the correct offset for this floor (requires fixed number of objectives/floor)
 	int i;
 
-	world->position[player_table[controllable_playerNo]].level	= floor_move->new_floor;
-	world->position[player_table[controllable_playerNo]].x		= floor_move->xPos;
-	world->position[player_table[controllable_playerNo]].y		= floor_move->yPos;
+	world->position[player_entity].level	= floor_move->new_floor;
+	world->position[player_entity].x		= floor_move->xPos;
+	world->position[player_entity].y		= floor_move->yPos;
 	rebuild_floor(world, floor_move->new_floor);
 
 	for(i = 0; i < MAX_ENTITIES; i++)
@@ -210,15 +203,15 @@ void client_update_pos(World *world, void *packet)
 {
 	PKT_ALL_POS_UPDATE *pos_update = (PKT_ALL_POS_UPDATE *)packet;
 	
-	if(player_table[controllable_playerNo] == UNASSIGNED)
+	if(player_entity == UNASSIGNED)
 	{
 		return;
 	}
 
-	if(pos_update->floor == world->position[player_table[controllable_playerNo]].level){
-		for (int i = 0; i < MAX_PLAYERS; i++)
+	if(pos_update->floor == (unsigned int)world->position[player_entity].level){
+		for (unsigned int i = 0; i < MAX_PLAYERS; i++)
 		{
-	        if(i == controllable_playerNo)
+	        if(i == world->player[player_entity].playerNo)
 				continue;
 			
 			if(player_table[i] != UNASSIGNED)
@@ -267,7 +260,7 @@ void client_update_pos(World *world, void *packet)
 void client_update_objectives(World *world, void *packet)
 {
 	PKT_OBJECTIVE_STATUS *objective_update = (PKT_OBJECTIVE_STATUS *)packet;
-	int obj_idx = (world->position[player_table[controllable_playerNo]].level - 1) * OBJECTIVES_PER_FLOOR;
+	int obj_idx = (world->position[player_entity].level - 1) * OBJECTIVES_PER_FLOOR;
 
 	if(objective_update->game_status == GAME_TEAM1_WIN || objective_update->game_status == GAME_TEAM2_WIN)
 		player_team = 0;
@@ -279,7 +272,7 @@ void client_update_objectives(World *world, void *packet)
 
 	    if(i >= obj_idx && i < obj_idx + OBJECTIVES_PER_FLOOR)
 	    {
-    		if(objective_table[i].obj_state != objective_update->objectives_captured[i])
+    		if((unsigned int)objective_table[i].obj_state != objective_update->objectives_captured[i])
     			play_animation(world, objective_table[i].entity_no, (objective_update->objectives_captured[i] == OBJECTIVE_CAP) ? "captured" : "not_captured");
 
 			world->objective[objective_table[i].entity_no].status = objective_table[i].obj_state;
@@ -489,7 +482,6 @@ int client_update_info(World *world, void *packet)
 			world->player[i].teamNo							= client_info->clients_team_number;
 			world->player[i].playerNo						= client_info->clients_player_number;
 			memcpy(world->player[i].name, client_info->name, MAX_NAME);
-			controllable_playerNo 							= client_info->clients_player_number;
 			player_table[client_info->clients_player_number] = i;	
 			world->player[i].tilez 							 = 2;
 		}
@@ -507,7 +499,6 @@ int init_client_update(World *world)
 {
 	objective_table = (objective_cache *)malloc(MAX_OBJECTIVES * sizeof(objective_cache));
 	player_table = (unsigned int *)malloc(sizeof(unsigned int) * MAX_PLAYERS);
-	tile_cache = (unsigned int *)malloc(sizeof(unsigned int) * MAX_ENTITIES);
 
 	if(!objective_table || !player_table)
 	{
@@ -517,7 +508,6 @@ int init_client_update(World *world)
 
 	memset(player_table, 255, MAX_PLAYERS * sizeof(unsigned int));
 	memset(objective_table, 0, MAX_OBJECTIVES * sizeof(objective_cache));
-	memset(tile_cache, 255, MAX_ENTITIES * sizeof(unsigned int));
 	return 1;
 }
 /**
@@ -537,7 +527,7 @@ void update_special_tile(World *world, void * packet)
 			
 	unsigned int tile = create_stile(world, pkt->tile, pkt->xPos, pkt->yPos, pkt->floor);
 	
-	if(pkt->floor != world->position[player_table[controllable_playerNo]].level)
+	if(pkt->floor != (unsigned int) world->position[player_entity].level)
 	{
 		world->mask[tile] &= ~(COMPONENT_RENDER_PLAYER | COMPONENT_COLLISION);
 	}
