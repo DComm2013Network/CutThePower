@@ -1,4 +1,4 @@
-78
+84
 
 bookshelf_90x57 1 20 -1 1
 assets/Graphics/objects/png_object/bookshelf_90x57.png
@@ -6,17 +6,32 @@ assets/Graphics/objects/png_object/bookshelf_90x57.png
 box_32x36 1 20 -1 1
 assets/Graphics/objects/png_object/box_32x36.png
 
-car_robber_200x130 1 20 -1 1
-assets/Graphics/objects/png_object/car_robber_200x130.png
+car1_68x106 1 20 -1 1
+assets/Graphics/objects/png_object/car1_68x106.png
 
-car1_100x140 1 20 -1 1
-assets/Graphics/objects/png_object/car1_100x140.png
+car2_68x106 1 20 -1 1
+assets/Graphics/objects/png_object/car2_68x106.png
 
-car2_100x120 1 20 -1 1
-assets/Graphics/objects/png_object/car2_100x120.png
+car3_68x106 1 20 -1 1
+assets/Graphics/objects/png_object/car3_68x106.png
 
-car3_100x140 1 20 -1 1
-assets/Graphics/objects/png_object/car3_100x140.png
+car4_68x106 1 20 -1 1
+assets/Graphics/objects/png_object/car4_68x106.png
+
+car5_68x106 1 20 -1 1
+assets/Graphics/objects/png_object/car5_68x106.png
+
+car6_68x106 1 20 -1 1
+assets/Graphics/objects/png_object/car6_68x106.png
+
+car7_68x106 1 20 -1 1
+assets/Graphics/objects/png_object/car7_68x106.png
+
+car8_68x106 1 20 -1 1
+assets/Graphics/objects/png_object/car8_68x106.png
+
+car9_68x106 1 20 -1 1
+assets/Graphics/objects/png_object/car9_68x106.png
 
 chair_back_35x50 1 20 -1 1
 assets/Graphics/objects/png_object/chair_back_35x50.png
@@ -221,6 +236,9 @@ assets/Graphics/objects/png_object/trash_18x25.png
 
 tv_35x50 1 20 -1 1
 assets/Graphics/objects/png_object/tv_35x50.png
+
+van_160x80 1 20 -1 1
+assets/Graphics/objects/png_object/van_160x80.png
 
 vending_35x65 1 20 -1 1
 assets/Graphics/objects/png_object/vending_35x65.png

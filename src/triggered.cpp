@@ -482,7 +482,7 @@ void animation_end(World *world, unsigned int entity) {
 		pkt.readystatus[0] = 0;
 		pkt.otherPlayers_teams[0] = 0;
 
-		map_init(world, "assets/Graphics/map/map_00/map00.txt", "assets/Graphics/map/map_00/tiles.txt");
+		map_init(world, "assets/Graphics/map/map_09/map09.txt", "assets/Graphics/map/map_09/tiles.txt");
 		player_entity = create_player(world, 620, 420, true, COLLISION_HACKER, 0, &pkt);
 		setup_character_animation(world, character, player_entity);
 		////NETWORK CODE
