@@ -457,6 +457,12 @@ void setup_character_animation(World * world, int character, int entity)
 		case VINCENT:
 			 load_animation("assets/Graphics/player/vincent/animation.txt", world, entity);
 		break;
+		case JOSH_ALT1:
+			 load_animation("assets/Graphics/player/josh_link/animation.txt", world, entity);
+		break;
+		case IAN_ALT1:
+			 load_animation("assets/Graphics/player/ian_dovakiin/animation.txt", world, entity);
+		break;
 		default:
 		load_animation("assets/Graphics/player/p0/rob_animation.txt", world, entity);
 	}

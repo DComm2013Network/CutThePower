@@ -7,7 +7,7 @@ OBJDIR=obj
 SRCDIR=src
 
 BIN_DEFAULT=$(BINDIR)/CutThePower
-OBJ_DEFAULT=$(OBJDIR)/Gameplay/collision_system.o $(OBJDIR)/Gameplay/movement_system.o $(OBJDIR)/Graphics/render_system.o $(OBJDIR)/Graphics/animation_system.o $(OBJDIR)/Graphics/map.o $(OBJDIR)/Graphics/fog_of_war_system.o $(OBJDIR)/Input/keyinputsystem.o $(OBJDIR)/Input/mouseinputsystem.o $(OBJDIR)/Input/menu.o $(OBJDIR)/main.o $(OBJDIR)/sound.o $(OBJDIR)/world.o $(OBJDIR)/triggered.o $(OBJDIR)/Graphics/text.o $(OBJDIR)/Network/GameplayCommunication.o $(OBJDIR)/Network/ServerCommunication.o $(OBJDIR)/Network/PipeUtils.o $(OBJDIR)/Network/NetworkRouter.o $(OBJDIR)/Network/ClientUpdateSystem.o $(OBJDIR)/Network/SendSystem.o $(OBJDIR)/Network/packet_min_utils.o $(OBJDIR)/Input/chat.o
+OBJ_DEFAULT=$(OBJDIR)/Gameplay/collision_system.o $(OBJDIR)/Gameplay/powerups.o $(OBJDIR)/Gameplay/movement_system.o $(OBJDIR)/Graphics/render_system.o $(OBJDIR)/Graphics/animation_system.o $(OBJDIR)/Graphics/map.o $(OBJDIR)/Graphics/fog_of_war_system.o $(OBJDIR)/Input/keyinputsystem.o $(OBJDIR)/Input/mouseinputsystem.o $(OBJDIR)/Input/menu.o $(OBJDIR)/main.o $(OBJDIR)/sound.o $(OBJDIR)/world.o $(OBJDIR)/triggered.o $(OBJDIR)/Graphics/text.o $(OBJDIR)/Network/GameplayCommunication.o $(OBJDIR)/Network/ServerCommunication.o $(OBJDIR)/Network/PipeUtils.o $(OBJDIR)/Network/NetworkRouter.o $(OBJDIR)/Network/ClientUpdateSystem.o $(OBJDIR)/Network/SendSystem.o $(OBJDIR)/Network/packet_min_utils.o $(OBJDIR)/Input/chat.o
 
 CutThePower: $(OBJ_DEFAULT)
 	test -d $(BINDIR) || mkdir -p $(BINDIR)
@@ -27,6 +27,10 @@ debug: $(OBJ_DEFAULT)
 $(OBJDIR)/Network/packet_min_utils.o: $(SRCDIR)/Network/packet_min_utils.c
 	test -d $(OBJDIR)/Network || mkdir -p $(OBJDIR)/Network
 	$(CC) $(FLAGS) -c -o $(OBJDIR)/Network/packet_min_utils.o $(SRCDIR)/Network/packet_min_utils.c
+	
+$(OBJDIR)/Gameplay/powerups.o: $(SRCDIR)/Gameplay/powerups.cpp
+	test -d $(OBJDIR)/Gameplay || mkdir -p $(OBJDIR)/Gameplay
+	$(CC) $(FLAGS) -c -o $(OBJDIR)/Gameplay/powerups.o $(SRCDIR)/Gameplay/powerups.cpp
 
 $(OBJDIR)/Gameplay/collision_system.o: $(SRCDIR)/Gameplay/collision_system.cpp
 	test -d $(OBJDIR)/Gameplay || mkdir -p $(OBJDIR)/Gameplay
