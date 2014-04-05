@@ -116,15 +116,15 @@ int load_animation(const char *filename, World *world, unsigned int entity) {
 
 	FILE *fp;
 
-	char animation_name[64];
+	char animation_name[128];
 	int animation_frames, ms_to_skip, loop_animation;
 	int frame_index, animation_index;
 	int optional_features;
 	int i;
-	char feature_type[64];
-	char triggered_sound[64];
+	char feature_type[128];
+	char triggered_sound[128];
 
-	char animation_filename[64];
+	char animation_filename[128];
 
 	if ((fp = fopen(filename, "r")) == 0) {
 		printf("Error opening animation file: %s\n", filename);

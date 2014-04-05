@@ -295,6 +295,31 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 				
 				free(animation_filename);
 			}
+			else if (strcmp(entity_type, "powerup") == 0) {
+				float x, y;
+				int w, h, type;
+				unsigned int entity = -1;
+				char *animation_filename = (char*)malloc(sizeof(char) * 128);
+				
+				if (fscanf(fp_map, "%f %f %d %d %d %s", &x, &y, &w, &h, &type, animation_filename) != 6) {
+					printf("Error loading powerup!\n");
+					return -1;
+				}
+				entity = create_powerup(world, x * TILE_WIDTH + TILE_WIDTH / 2, y * TILE_HEIGHT + TILE_HEIGHT / 2, w, h, type, level);
+				
+				if (entity >= MAX_ENTITIES) {
+					printf("exceeded max entities.\n");
+					return -1;
+				}
+				world->mask[entity] |= COMPONENT_ANIMATION | COMPONENT_RENDER_PLAYER;
+				world->renderPlayer[entity].width = w;
+				world->renderPlayer[entity].height = h;
+				
+				load_animation(animation_filename, world, entity);
+				play_animation(world, entity, "bounce");
+				
+				free(animation_filename);
+			}
 			else {
 				printf("Did not deal with the entity type: %s\n", entity_type);
 				break;
