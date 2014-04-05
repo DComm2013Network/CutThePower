@@ -1,4 +1,4 @@
-84
+86
 
 bookshelf_90x57 1 20 -1 1
 assets/Graphics/objects/png_object/bookshelf_90x57.png
@@ -80,6 +80,12 @@ assets/Graphics/objects/png_object/cubicle_90x90.png
 
 cubicle2_90x90 1 20 -1 1
 assets/Graphics/objects/png_object/cubicle2_90x90.png
+
+cubicle4_100x116 1 20 -1 1
+assets/Graphics/objects/png_object/cubicle4_100x116.png
+
+cubicle12_100x116 1 20 -1 1
+assets/Graphics/objects/png_object/cubicle2_100x116.png
 
 double_vending_80x75 1 20 -1 1
 assets/Graphics/objects/png_object/double_vending_80x75.png
