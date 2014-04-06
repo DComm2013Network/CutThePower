@@ -29,8 +29,7 @@ uint32_t packet_sizes[NUM_PACKETS + 1] = {
 	sizeof(PKT_FLOOR_MOVE),          // 12
     sizeof(PKT_TAGGING),             // 13
     sizeof(PKT_POS_UPDATE_MIN),      // 14
-    sizeof(PKT_ALL_POS_UPDATE_MIN),  // 15
-    sizeof(uint32_t)               // Network shutdown // 16
+    sizeof(PKT_ALL_POS_UPDATE_MIN)   // 15
 };
 
 /**

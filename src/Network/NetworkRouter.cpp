@@ -128,13 +128,7 @@ void *networkRouter(void *args)
                 set_error(ERR_IPC_FAIL);
                 break;
             }
-			
-            if(type == NETWORK_SHUTDOWN)
-            {
-                printf("Network thread exiting.\n");
-                break; 
-            }
-
+            
             write_packet(sendfd[WRITE_END], type, packet);
 			
             --ret;
