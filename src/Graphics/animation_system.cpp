@@ -62,6 +62,7 @@ void animation_system(World *world) {
 
 							animationComponent->current_animation = -1;
 							renderPlayer->playerSurface = animation->surfaces[0];
+							//stop_effect(animation->sound_effect);
 
 							animation_end(world, entity);
 							continue;
@@ -89,7 +90,7 @@ void animation_system(World *world) {
 					animationComponent->last_random_occurance = SDL_GetTicks();
 					animationComponent->next_random_occurance = (rand() % (animationComponent->rand_occurance_max - animationComponent->rand_occurance_min)) + animationComponent->rand_occurance_min + SDL_GetTicks();
 					
-					if (animationComponent->animations[animationComponent->rand_animation].sound_effect != (unsigned int)-1) {
+					if (animationComponent->animations[animationComponent->rand_animation].sound_effect != MAX_EFFECTS) {
 						play_effect(animationComponent->animations[animationComponent->rand_animation].sound_effect);
 					}
 				}
@@ -153,7 +154,7 @@ int load_animation(const char *filename, World *world, unsigned int entity) {
 
 		animationComponent->animations[animation_index].surface_count = animation_frames;
 		if (strcmp(triggered_sound, "-1") == 0) {
-			animationComponent->animations[animation_index].sound_effect = -1;
+			animationComponent->animations[animation_index].sound_effect = MAX_EFFECTS;
 		}
 		else {
 			animationComponent->animations[animation_index].sound_effect = load_effect(triggered_sound);
@@ -287,7 +288,7 @@ void play_animation(World *world, unsigned int entity, const char *animation_nam
 			
 			renderComponent->playerSurface = animationComponent->animations[i].surfaces[0];
 			
-			if (animationComponent->animations[i].sound_effect != (unsigned int)-1) {
+			if (animationComponent->animations[i].sound_effect != MAX_EFFECTS) {
 				play_effect(animationComponent->animations[i].sound_effect);
 			}
 			

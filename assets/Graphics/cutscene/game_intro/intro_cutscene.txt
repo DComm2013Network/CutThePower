@@ -1,0 +1,4 @@
+2 0 0 1280 768 assets/Graphics/cutscene/game_intro/cityscape/cityscape_animation.txt
+
+7000	0	0	normal
+4800	0	0	shutdown

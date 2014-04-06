@@ -8,6 +8,7 @@
 #include "../components.h"
 #include "../systems.h"
 #include "../sound.h"
+#include "../Network/network_systems.h"
 
 unsigned int background = MAX_ENTITIES + 1;
 
@@ -514,21 +515,24 @@ void create_intro(World *world) {
 	
 	destroy_world(world);
 	
-	entity = create_entity(world, COMPONENT_MENU_ITEM | COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION);
+	//entity = create_entity(world, COMPONENT_MENU_ITEM | COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION);
 	
-	world->position[entity].x = 0;
-	world->position[entity].y = 0;
-	world->position[entity].width = WIDTH;
-	world->position[entity].height = HEIGHT;
+	//world->position[entity].x = 0;
+	//world->position[entity].y = 0;
+	//world->position[entity].width = WIDTH;
+	//world->position[entity].height = HEIGHT;
 	
-	load_animation("assets/Graphics/screen/intro/intro_animation.txt", world, entity);
+	//load_animation("assets/Graphics/screen/intro/intro_animation.txt", world, entity);
 	
-	world->animation[entity].id = 0;
+	//world->animation[entity].id = 0;
 	
-	world->renderPlayer[entity].width = WIDTH;
-	world->renderPlayer[entity].height = HEIGHT;
+	//world->renderPlayer[entity].width = WIDTH;
+	//world->renderPlayer[entity].height = HEIGHT;
 	
-	play_animation(world, entity, "intro");
+	//play_animation(world, entity, "intro");
+	
+	entity = load_cutscene("assets/Graphics/cutscene/game_intro/intro_cutscene.txt", world, CUTSCENE_GAME_INTRO);
+	entity = load_cutscene("assets/Graphics/cutscene/game_intro/box_cutscene.txt", world, -1);
 }
 
 void create_load_screen(World *world) {
@@ -599,10 +603,6 @@ void create_pause_screen(World *world) {
 	
 	entity = create_entity(world, COMPONENT_MENU_ITEM | COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
 	
-	//for(entity = MAX_ENTITIES - 1; entity >= 0; entity--) {
-		
-	//}
-	
 	const int w = 650;
 	const int h = 600;
 	
@@ -626,4 +626,40 @@ void create_pause_screen(World *world) {
 	create_button(world, "FULLSCREEN OFF", "ingame_fullscreen_off", (WIDTH / 2), (HEIGHT / 2) + 50);
 	create_button(world, "BACK", "ingame_back", (WIDTH / 2), (HEIGHT / 2) + 125);
 	create_button(world, "EXIT TO MENU", "ingame_exit", (WIDTH / 2), (HEIGHT / 2) + 200);
+}
+
+void create_van_intro(World *world, int character) {
+	
+	unsigned int entity = create_entity(world, COMPONENT_MENU_ITEM | COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
+	
+	const int w = 1280;
+	const int h = 768;
+	
+	world->position[entity].x = (WIDTH / 2) - (w / 2);
+	world->position[entity].y = (HEIGHT / 2) - (h / 2);
+	world->position[entity].width = w;
+	world->position[entity].height = h;
+	
+	if ((world->renderPlayer[entity].playerSurface = IMG_Load("assets/Graphics/cutscene/van_intro/background_enter.png")) == NULL){
+		printf("Unable to load van background image\n");
+	}
+	
+	world->renderPlayer[entity].width = w;
+	world->renderPlayer[entity].height = h;
+	
+	
+	
+	if (load_cutscene("assets/Graphics/cutscene/van_intro/van_cutscene.txt", world, -1) == -1) {
+		printf("Error loading van cutscene!\n");
+		return;
+	}
+	
+	if ((entity = load_cutscene("assets/Graphics/cutscene/van_intro/player_cutscene.txt", world, CUTSCENE_VAN_INTRO)) == -1) {
+		printf("Error loading player cutscene!\n");
+		return;
+	}
+	
+	setup_character_animation(world, character, entity);
+	
+	
 }
