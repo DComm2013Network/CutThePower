@@ -1,0 +1,12 @@
+1
+
+bounce 8 150 -1 1
+assets/Graphics/powerups/powerup_beltleft/power_up_belt_left_1.png
+assets/Graphics/powerups/powerup_beltleft/power_up_belt_left_2.png
+assets/Graphics/powerups/powerup_beltleft/power_up_belt_left_3.png
+assets/Graphics/powerups/powerup_beltleft/power_up_belt_left_4.png
+assets/Graphics/powerups/powerup_beltleft/power_up_belt_left_4.png
+assets/Graphics/powerups/powerup_beltleft/power_up_belt_left_3.png
+assets/Graphics/powerups/powerup_beltleft/power_up_belt_left_2.png
+assets/Graphics/powerups/powerup_beltleft/power_up_belt_left_1.png
+
