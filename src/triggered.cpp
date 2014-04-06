@@ -24,6 +24,7 @@ extern int game_net_signalfd;
 static int character;
 static char username[MAX_NAME];
 static char serverip[MAXIP];
+extern FowComponent *fow;
 extern SDL_Window *window;
 static unsigned int altSong = 0;
 
@@ -438,7 +439,7 @@ bool menu_click(World *world, unsigned int entity) {
 		printf("Roll: %u\n", alternateSkin);
 		#endif
 		if (alternateSkin == ALT_SKIN_CHANCE) {
-			character = SAM_ALT1;
+			character = TIM_ALT1;
 			stop_music();
 			altSong = load_music("assets/Sound/players/tim_yoshi/yoshiTrack.wav");
 			if (altSong != 0) {
@@ -459,7 +460,7 @@ bool menu_click(World *world, unsigned int entity) {
 		
 		altSong = 0;
 		destroy_menu(world);
-		character = rand() % 29;
+		character = rand() % 30;
 		switch(character) {
 			case JOSH_ALT1:
 				stop_music();

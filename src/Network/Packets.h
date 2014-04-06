@@ -92,7 +92,7 @@
 #define MAT_ALT1		26
 #define RAMZI_ALT1		27
 #define SAM_ALT1		28
-#define TIM_ALT1		28
+#define TIM_ALT1		29
 // Game Status Definitions
 
 // Game Status Definitions
