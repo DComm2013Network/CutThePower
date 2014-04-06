@@ -455,21 +455,21 @@ void make_surrounding_tiles_visible(FowPlayerPosition *fowp)
 	
 	memset(visMap, 0, sizeof(int) * 7 * 7);
 
-	visMap[0][0] = 1;
-	visMap[0][1] = 1;
-	visMap[1][0] = 1;
+	visMap[0][0] = 3;
+	visMap[0][1] = 3;
+	visMap[1][0] = 3;
 
-	visMap[0][5] = 1;
-	visMap[0][6] = 1;
-	visMap[1][6] = 1;
+	visMap[0][5] = 3;
+	visMap[0][6] = 3;
+	visMap[1][6] = 3;
 
-	visMap[5][6] = 1;
-	visMap[6][5] = 1;
-	visMap[6][6] = 1;
+	visMap[5][6] = 3;
+	visMap[6][5] = 3;
+	visMap[6][6] = 3;
 
-	visMap[5][0] = 1;
-	visMap[6][0] = 1;
-	visMap[6][1] = 1;
+	visMap[5][0] = 3;
+	visMap[6][0] = 3;
+	visMap[6][1] = 3;
 
 
 	for(int y = 0; y < 7; y++) 
@@ -487,6 +487,134 @@ void make_surrounding_tiles_visible(FowPlayerPosition *fowp)
 				}
 			}		
 		}
+	}
+
+
+	// grey out the walls
+	for(int y = 3, x = 3; x >= 0; --x) {
+		if(visMap[y][x] == 1) {
+			visMap[y][x] = 2;
+			break;
+		}
+	}
+
+
+	for(int y = 3, x = 3; x <= 6; ++x) {
+		if(visMap[y][x] == 1) {
+			visMap[y][x] = 2;
+			break;
+		}
+	}
+
+	for(int y = 3, x = 3; y >= 0; --y) {
+		if(visMap[y][x] == 1) {
+			visMap[y][x] = 2;
+			break;
+		}
+	}
+
+	for(int y = 3, x = 3; y <= 6; ++y) {
+		if(visMap[y][x] == 1) {
+			visMap[y][x] = 2;
+			break;
+		}
+	}
+
+
+	for(int y = 3, x = 3; y <= 6; ++y, ++x) {
+
+		if(visMap[y][x] == 1) {
+			visMap[y][x] = 2;
+			break;
+		}
+	}
+
+	for(int y = 3, x = 3; y >= 0; --y, --x) {
+		if(visMap[y][x] == 1) {
+			visMap[y][x] = 2;
+			break;
+		}
+	}
+
+
+	for(int y = 3, x = 3; y >= 0; --y, ++x) {
+		if(visMap[y][x] == 1) {
+			visMap[y][x] = 2;
+			break;
+		}
+	}
+
+
+	for(int y = 3, x = 3; y <= 6; ++y, --x) {
+		if(visMap[y][x] == 1) {
+			visMap[y][x] = 2;
+			break;
+		}
+	}
+
+
+
+	if(visMap[2][4] == 0) 
+	{
+		if(visMap[2][5] == 1) 
+			visMap[2][5] = 2;
+
+		else if(visMap[2][6] == 1) 
+			visMap[2][6] = 2;
+
+		if(visMap[1][4] == 1) 
+			visMap[1][4] = 2;
+
+		else if(visMap[0][4] == 1) 
+			visMap[0][4] = 2;
+	}
+
+
+	if(visMap[2][2] == 0) 
+	{
+		if(visMap[2][1] == 1) 
+			visMap[2][1] = 2;
+
+		else if(visMap[2][0] == 1) 
+			visMap[2][0] = 2;
+
+		if(visMap[1][2] == 1) 
+			visMap[1][2] = 2;
+
+		else if(visMap[0][2] == 1) 
+			visMap[0][2] = 2;
+	}
+
+
+	if(visMap[4][2] == 0) 
+	{
+		if(visMap[5][2] == 1) 
+			visMap[5][2] = 2;
+
+		else if(visMap[6][2] == 1) 
+			visMap[6][2] = 2;
+
+		if(visMap[4][1] == 1) 
+			visMap[4][1] = 2;
+
+		else if(visMap[4][0] == 1) 
+			visMap[4][0] = 2;
+	}
+
+
+	if(visMap[4][4] == 0) 
+	{
+		if(visMap[4][5] == 1) 
+			visMap[4][5] = 2;
+
+		else if(visMap[4][6] == 1) 
+			visMap[4][6] = 2;
+
+		if(visMap[5][4] == 1) 
+			visMap[5][4] = 2;
+
+		else if(visMap[6][4] == 1) 
+			visMap[6][4] = 2;
 	}
 
 	for(int y = 0; y < 7; y++) 
@@ -643,7 +771,12 @@ int set_visibility_type(FowPlayerPosition *fowp, int y, int x)
 	{
 		int *vis = get_visibility_ptr(&newposition, fowp, yd, xd);
 		(*vis) =  CLEAR_VIS;
-	}	
+	}
+	else if(visMap[y][x] == 2)
+	{
+		int *vis = get_visibility_ptr(&newposition, fowp, yd, xd);
+		(*vis) =  TRANSP_VIS;
+	}
 	return 1;
 }
 

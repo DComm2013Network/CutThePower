@@ -87,9 +87,9 @@ PKT_POS_UPDATE_MIN *encapsulate_pos_update(PKT_POS_UPDATE *old_pkt) {
 	pkt->data |= n_yPos & 0x7FF;
 	
 	pkt->vel = 0;
-	pkt->vel |= n_xVel & 0xF;
-	pkt->vel <<= 4;
-	pkt->vel |= n_yVel & 0xF;
+	pkt->vel |= n_xVel & 0xFF;
+	pkt->vel <<= 8;
+	pkt->vel |= n_yVel & 0xFF;
 	
 	free(old_pkt);
 	return pkt;
@@ -121,8 +121,8 @@ PKT_POS_UPDATE *decapsulate_pos_update(PKT_POS_UPDATE_MIN *pkt) {
 	old_pkt->xPos = (float)(GRANULARITY_POS * ((pkt->data >> 11) & 0x7FF));
 	old_pkt->yPos = (float)(GRANULARITY_POS * (pkt->data & 0x7FF));
 	
-	old_pkt->xVel = (float)((((pkt->vel >> 4) & 0xF) - FACTOR) / GRANULARITY_VEL);
-	old_pkt->yVel = (float)(((pkt->vel & 0xF) - FACTOR) / GRANULARITY_VEL);
+	old_pkt->xVel = (float)((((pkt->vel >> 8) & 0xFF) - FACTOR) / GRANULARITY_VEL);
+	old_pkt->yVel = (float)(((pkt->vel & 0xFF) - FACTOR) / GRANULARITY_VEL);
 	
 	free(pkt);
 	
@@ -165,9 +165,9 @@ PKT_ALL_POS_UPDATE_MIN *encapsulate_all_pos_update(PKT_ALL_POS_UPDATE *old_pkt) 
 		n_xPos[i] = (uint32_t)round(old_pkt->xPos[i] / GRANULARITY_POS);
 		n_yPos[i] = (uint32_t)round(old_pkt->yPos[i] / GRANULARITY_POS);
 		pkt->vel[i] = 0;
-		pkt->vel[i] |= n_xVel & 0xF;
-		pkt->vel[i] <<= 4;
-		pkt->vel[i] |= n_yVel & 0xF;
+		pkt->vel[i] |= n_xVel & 0xFF;
+		pkt->vel[i] <<= 8;
+		pkt->vel[i] |= n_yVel & 0xFF;
 		pkt->players_on_floor |= (old_pkt->players_on_floor[i]) << i;
 	}
 	
@@ -234,8 +234,8 @@ PKT_ALL_POS_UPDATE *decapsulate_all_pos_update(PKT_ALL_POS_UPDATE_MIN *pkt) {
 	
 	for (i = 0; i < 32; i++) {
 		old_pkt->players_on_floor[i] = (pkt->players_on_floor >> i) & 0x1;
-		old_pkt->xVel[i] = (float)((((pkt->vel[i] >> 4) & 0xF) - FACTOR) / GRANULARITY_VEL);
-		old_pkt->yVel[i] = (float)(((pkt->vel[i] & 0xF) - FACTOR) / GRANULARITY_VEL);
+		old_pkt->xVel[i] = (float)((((pkt->vel[i] >> 8) & 0xFF) - FACTOR) / GRANULARITY_VEL);
+		old_pkt->yVel[i] = (float)(((pkt->vel[i] & 0xFF) - FACTOR) / GRANULARITY_VEL);
 	}
 	
 	old_pkt->xPos[0] = (float)(GRANULARITY_POS * ((pkt->xPos[0] >> 21) & 0x7FF));
