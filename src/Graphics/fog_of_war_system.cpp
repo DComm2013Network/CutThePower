@@ -799,8 +799,8 @@ void render_player_speech(FowComponent *fow, int xPos, int yPos) {
 			{		
 				switch(fow->teamNo)
 				{
-					case 1: Mix_PlayChannel( -1, fow->speech.rob[rand() % NUMSPEECH], 0 );
-					case 2: Mix_PlayChannel( -1, fow->speech.cop[rand() % NUMSPEECH], 0 );
+					case 1: Mix_PlayChannel( -1, fow->speech.rob[rand() % NUMSPEECH], 0 ); break;
+					case 2: Mix_PlayChannel( -1, fow->speech.cop[rand() % NUMSPEECH], 0 ); break;
 				}
 				time(&fow->speech.played);
 			}
