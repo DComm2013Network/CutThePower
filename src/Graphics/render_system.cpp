@@ -236,7 +236,7 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 				for(int i = 0; i < nTilesInLos; i++)
 				{
 					if(fow -> tilesVisibleToControllablePlayer[i][0] == yPos &&
-						 fow -> tilesVisibleToControllablePlayer[i][0] == xPos) 
+						 fow -> tilesVisibleToControllablePlayer[i][1] == xPos) 
 					{		 
 						Mix_PlayChannel( -1, fow->copSpeech.speech[rand() % NUMSPEECH], 0 );
 						time(&fow->copSpeech.played);
@@ -248,8 +248,6 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 	
 	fow->tilesVisibleToControllablePlayerCount = 0;
 	memset(fow->tilesVisibleToControllablePlayer, 0, sizeof(fow->tilesVisibleToControllablePlayer));
-
-	
 }
 
 void init_players_speech(FowComponent *fow) {
