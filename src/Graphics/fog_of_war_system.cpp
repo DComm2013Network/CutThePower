@@ -73,7 +73,7 @@ void render_fog_of_war_system(SDL_Surface *surface, FowComponent *fow)
 			tileRect.w = TILE_WIDTH;
 			tileRect.h = TILE_HEIGHT;
 
-			//if(fow -> teamNo == COPS)
+			if(fow -> teamNo == COPS)
 			{
 				switch(visible)
 				{
@@ -83,15 +83,15 @@ void render_fog_of_war_system(SDL_Surface *surface, FowComponent *fow)
 				}
 			}
 			
-			//else if(fow -> teamNo == ROBBERS)
-			//{
-			//	switch(visible)
-			//	{
-			//		case CLEAR_VIS:	fow -> tiles[y][x].visible[ level ] = TRANSP_VIS;	break;
-			//		case OPAQUE_VIS: SDL_BlitSurface(fow -> fogOfWar[count++], NULL, surface, &tileRect); break;
-			//		case TRANSP_VIS: SDL_BlitSurface(fow -> alphaFog[count++], NULL, surface, &tileRect); break;
-			//	}
-			//}
+			else if(fow -> teamNo == ROBBERS)
+			{
+				switch(visible)
+				{
+					case CLEAR_VIS:	fow -> tiles[y][x].visible[ level ] = TRANSP_VIS;	break;
+					case OPAQUE_VIS: SDL_BlitSurface(fow -> fogOfWar[count++], NULL, surface, &tileRect); break;
+					case TRANSP_VIS: SDL_BlitSurface(fow -> alphaFog[count++], NULL, surface, &tileRect); break;
+				}
+			}
 		}
 	}
 }
