@@ -40,7 +40,7 @@
 04 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 05 
 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 
 
-166
+131
 stairs 57 05 21 03 5 r
 stairs 29 18 49 34 5 r
 stairs 16 24 09 06 7 r
@@ -177,7 +177,7 @@ object 14 22 20 45 assets/Graphics/objects/png_object/object_animation.txt plant
 object 19 23 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
 object 20 23 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
 
-object 10 31 395 203 assets/Graphics/objects/png_object/object_animation.txt cubicles_x_6_2_359x203
+object 10 31 359 203 assets/Graphics/objects/png_object/object_animation.txt cubicles_x_6_2_359x203
 
 object 28 12.5 40 37 assets/Graphics/objects/png_object/object_animation.txt window_40x37
 object 59 13.5 40 37 assets/Graphics/objects/png_object/object_animation.txt window_40x37
@@ -185,46 +185,12 @@ object 33 0.5 40 37 assets/Graphics/objects/png_object/object_animation.txt wind
 object 9 0.5 40 37 assets/Graphics/objects/png_object/object_animation.txt window_40x37
 
 object 18 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 19 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 20 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 21 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 22 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
 object 23 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 24 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 25 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 26 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 27 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
 object 28 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 29 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 30 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 31 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 32 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
 object 33 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 34 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 35 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 36 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 37 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
 object 38 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 39 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 40 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 41 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 42 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
 object 43 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 44 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 45 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 46 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 47 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
 object 48 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 49 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 50 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 51 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 52 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
 object 53 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 54 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 55 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 56 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 57 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
 object 58 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 59 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 60 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 61 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
+
