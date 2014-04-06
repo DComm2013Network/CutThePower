@@ -140,9 +140,8 @@ object 4 22.5 35 65 assets/Graphics/objects/png_object/object_animation.txt mach
 object 4 24 35 65 assets/Graphics/objects/png_object/object_animation.txt machine_right_35x65
 
 object 4 1 80 75 assets/Graphics/objects/png_object/object_animation.txt double_vending_80x75
-object 7 1 80 75 assets/Graphics/objects/png_object/object_animation.txt double_vending_80x75
+object 7 1 58 75 assets/Graphics/objects/png_object/object_animation.txt vending_58x75
 object 2 5 75 55 assets/Graphics/objects/png_object/object_animation.txt table_75x55
-
 
 object 25 4 180 180 assets/Graphics/objects/png_object/object_animation.txt cubicles_x_4_1_180x180
 object 18 4 180 180 assets/Graphics/objects/png_object/object_animation.txt cubicles_x_4_1_180x180
