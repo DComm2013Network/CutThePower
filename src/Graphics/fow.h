@@ -72,4 +72,7 @@ void init_fog_of_war_system  (FowComponent **fow);
 void cleanup_fog_of_war      (FowComponent  *fow);
 void reset_fog_of_war        (FowComponent  *fow);
 void init_players_speech     (FowComponent  *fow);
+void render_player_speech    (FowComponent *fow, int xPos, int yPos);
+
+void make_surrounding_tiles_visible (FowPlayerPosition *fowp);
 #endif

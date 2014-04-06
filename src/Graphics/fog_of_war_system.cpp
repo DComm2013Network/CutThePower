@@ -708,3 +708,65 @@ int subOne(int n)
 	if (n == 0) return n;
 	return --n;
 }
+
+
+/**
+ * Initializes player sound effects from wav files
+ *
+ * Revisions:
+ *     None.
+ *loading
+ * @param fow   		A pointer to a FogComponent struct which will contain the SDL Mix_Chunks / sound effects.
+ *
+ * @return void.
+ * 
+ * @designer Sam Youssef
+ * @author Sam Youssef
+ *
+ * @date April 6th, 2014
+ */
+void init_players_speech(FowComponent *fow) {
+
+	fow->copSpeech.speech[0] = Mix_LoadWAV("assets/Sound/speech/cop1.wav");
+	fow->copSpeech.speech[1] = Mix_LoadWAV("assets/Sound/speech/cop2.wav");
+	fow->copSpeech.speech[2] = Mix_LoadWAV("assets/Sound/speech/cop3.wav");
+	time( &fow->copSpeech.played );
+}
+
+/**
+ * Plays an opponent sound effect contingent on whether or not he's inside the visibility bubble
+ *
+ * Revisions:
+ *     None.
+ *loading
+ * @param fow   		A pointer to a FogComponent struct which contains the SDL Mix_Chunks / sound effects.
+ * @param xPos			x-position of opponent
+ * @param yPos			y-position of opponent
+ *
+ * @return void.
+ * 
+ * @designer Sam Youssef
+ * @author Sam Youssef
+ *
+ * @date April 6th, 2014
+ */
+void render_player_speech(FowComponent *fow, int xPos, int yPos) {
+
+	time_t tm;
+	// sound enemy speech if near (time wait of 8 secs)
+	if(time(&tm) - fow->copSpeech.played > 8)
+	{
+		int nTilesInLos = fow -> tilesVisibleToControllablePlayerCount;
+		for(int i = 0; i < nTilesInLos; i++)
+		{
+			if(fow -> tilesVisibleToControllablePlayer[i][0] == yPos &&
+			   fow -> tilesVisibleToControllablePlayer[i][1] == xPos) 
+			{		
+				Mix_PlayChannel( -1, fow->copSpeech.speech[rand() % NUMSPEECH], 0 );
+				time(&fow->copSpeech.played);
+			}
+		}	
+	}
+}
+
+

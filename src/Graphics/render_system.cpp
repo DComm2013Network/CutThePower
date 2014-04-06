@@ -12,10 +12,7 @@
 #include "text.h"
 #include "../Input/menu.h"
 
-void make_surrounding_tiles_visible(FowPlayerPosition *fowp);
-void render_player_speech(FowComponent *fow, int xPos, int yPos);
-void render_opponent_players(World& world, SDL_Surface *surface, FowComponent *fow, SDL_Rect map_rect);
-
+static void render_opponent_players(World& world, SDL_Surface *surface, FowComponent *fow, SDL_Rect map_rect);
 static int opponentPlayers[32];
 static int opponentPlayersCount = 0;
 
@@ -195,7 +192,25 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 	memset(fow->tilesVisibleToControllablePlayer, 0, sizeof(fow->tilesVisibleToControllablePlayer));
 }
 
-//only render enemy players that are inside the visibility circles
+
+/**
+ * Renders an opponent player contingent on his presence inside the team's visibility bubbles
+ * Calls render_player_speech to provide sound effects
+ *
+ * Revisions:
+ *     None.
+ *loading
+ * @param world			The world struct
+ * @param surface		The surface to blit to
+ * @param map_rect		A struct containing the camera offset from the map's origin
+ * @param fow   		A pointer to a FogComponent struct which contains a tile map and sound effects
+ * @return void.
+ * 
+ * @designer Sam Youssef
+ * @author Sam Youssef
+ *
+ * @date April 3rd, 2014
+ */
 void render_opponent_players(World& world, SDL_Surface *surface, FowComponent *fow, SDL_Rect map_rect) {
 
 	for(int entity = 0; entity < opponentPlayersCount && entity < 32; entity++) {
@@ -239,33 +254,6 @@ void render_opponent_players(World& world, SDL_Surface *surface, FowComponent *f
 
 			render_player_speech(fow, xPos, yPos);
 		}
-	}
-}
-
-void init_players_speech(FowComponent *fow) {
-
-	fow->copSpeech.speech[0] = Mix_LoadWAV("assets/Sound/speech/cop1.wav");
-	fow->copSpeech.speech[1] = Mix_LoadWAV("assets/Sound/speech/cop2.wav");
-	fow->copSpeech.speech[2] = Mix_LoadWAV("assets/Sound/speech/cop3.wav");
-	time( &fow->copSpeech.played );
-}
-
-void render_player_speech(FowComponent *fow, int xPos, int yPos) {
-
-	time_t tm;
-	// sound enemy speech if near (time wait of 8 secs)
-	if(time(&tm) - fow->copSpeech.played > 8)
-	{
-		int nTilesInLos = fow -> tilesVisibleToControllablePlayerCount;
-		for(int i = 0; i < nTilesInLos; i++)
-		{
-			if(fow -> tilesVisibleToControllablePlayer[i][0] == yPos &&
-			   fow -> tilesVisibleToControllablePlayer[i][1] == xPos) 
-			{		
-				Mix_PlayChannel( -1, fow->copSpeech.speech[rand() % NUMSPEECH], 0 );
-				time(&fow->copSpeech.played);
-			}
-		}	
 	}
 }
 
