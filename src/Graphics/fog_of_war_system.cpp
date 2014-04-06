@@ -194,6 +194,9 @@ void cleanup_fog_of_war(FowComponent *fow)
 		SDL_FreeSurface(fow -> fogOfWar[i]);
 		SDL_FreeSurface(fow -> alphaFog[i]);
 	}
+	
+	for(int i = 0; i < NUMSPEECH; i++)
+		Mix_FreeChunk(fow -> copSpeech.speech[i]);
 }
 
 

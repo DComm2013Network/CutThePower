@@ -2,6 +2,8 @@
 #define GRAPHICS_H
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
+#include <ctime>
 #include "../world.h"
 
 
@@ -17,9 +19,17 @@
 #define TRANSP_VIS 	1
 #define OPAQUE_VIS 	2
 		
+#define NUMSPEECH   3
 
 #define OPAQUE_FOG_COLOUR 0x000000
 #define TRANSP_FOG_COLOUR 0x221122
+
+typedef struct PlayerSpeech
+{
+	Mix_Chunk *speech[NUMSPEECH];
+	time_t played;
+		
+} PlayerSpeech;
 
 typedef struct FowTile
 {
@@ -36,6 +46,9 @@ typedef struct FowComponent
 	SDL_Surface **fogOfWar;
 	SDL_Surface **alphaFog;
 	teamNo_t teamNo;
+	
+	PlayerSpeech copSpeech;
+	
 } FowComponent;
 
 
@@ -50,4 +63,6 @@ void render_fog_of_war_system(SDL_Surface *surface, FowComponent *fow);
 void init_fog_of_war_system  (FowComponent **fow);
 void cleanup_fog_of_war      (FowComponent  *fow);
 void reset_fog_of_war				 (FowComponent  *fow);
+
+void init_players_speech		 (FowComponent  *fow);
 #endif

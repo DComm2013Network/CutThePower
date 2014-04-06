@@ -68,7 +68,8 @@ int main(int argc, char* argv[]) {
 	
 	FowComponent *fow;
 	init_fog_of_war_system(&fow);
-
+	init_players_speech(fow);
+	
 	while (running)
 	{
 		unsigned int current_time;

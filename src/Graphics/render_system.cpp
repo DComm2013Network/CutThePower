@@ -156,7 +156,7 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 						clipRect.w = WIDTH - playerRect.x;
 			
 					SDL_BlitScaled(renderPlayer->playerSurface, &clipRect, surface, &playerRect);
-
+							
 				}
 
 				else {
@@ -204,6 +204,8 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 
 		if(vistype == 1 || vistype == 2)
 		{
+			// show enemy player
+		
 			clipRect.x = -playerRect.x;
 			clipRect.y = -playerRect.y;
 			clipRect.w = playerRect.w;
@@ -222,8 +224,24 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 				clipRect.w = WIDTH - playerRect.x;
 
 			SDL_BlitScaled(renderPlayer->playerSurface, &clipRect, surface, &playerRect);
+
+			
 		}
 	}
+}
+
+void init_players_speech(FowComponent *fow) {
+
+	fow->copSpeech.speech[0] = Mix_LoadWAV("assets/Sound/speech/cop1.wav");
+	fow->copSpeech.speech[1] = Mix_LoadWAV("assets/Sound/speech/cop2.wav");
+	fow->copSpeech.speech[2] = Mix_LoadWAV("assets/Sound/speech/cop3.wav");
+	time( &fow->copSpeech.played );
+}
+
+void render_player_speech(FowComponent *fow) {
+
+	
+
 }
 
 
