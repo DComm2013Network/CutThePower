@@ -6,7 +6,20 @@
 
 
 #define NUMLEVELS   9
-#define NUMCORNERS 18
+
+#define L_EMPTY		1
+#define L_WALL		2
+
+#define COLLISION_MASK (COMPONENT_COLLISION)
+#define LEVEL_MASK (COMPONENT_LEVEL)
+
+#define CLEAR_VIS	  0
+#define TRANSP_VIS 	1
+#define OPAQUE_VIS 	2
+		
+
+#define OPAQUE_FOG_COLOUR 0x000000
+#define TRANSP_FOG_COLOUR 0x221122
 
 typedef struct FowTile
 {
@@ -22,7 +35,6 @@ typedef struct FowComponent
 	int yOffset;
 	SDL_Surface **fogOfWar;
 	SDL_Surface **alphaFog;
-	SDL_Surface  *corners[NUMCORNERS];
 	teamNo_t teamNo;
 } FowComponent;
 

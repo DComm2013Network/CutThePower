@@ -65,7 +65,6 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 	memset(opponentPlayers, 0, sizeof(opponentPlayers));
 
 	for(entity = 0; entity < MAX_ENTITIES; entity++){
-
 		
 		if(IN_THIS_COMPONENT(world.mask[entity], COMPONENT_PLAYER | COMPONENT_CONTROLLABLE)) {
 			fow->teamNo = world.player[entity].teamNo;
@@ -128,6 +127,7 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 			
 			if(IN_THIS_COMPONENT(world.mask[entity], COMPONENT_PLAYER)) {
 					
+
 				// only render players on my team
 				if ((fow->teamNo == world.player[entity].teamNo)) {	
 					FowPlayerPosition fowp;
@@ -158,7 +158,7 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 					SDL_BlitScaled(renderPlayer->playerSurface, &clipRect, surface, &playerRect);
 
 				}
-				// found an enemy, add it to the array
+
 				else {
 					opponentPlayers[opponentPlayersCount++] = entity;
 				}
@@ -185,10 +185,11 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 		}
 	}
 
+
 	//only render enemy players that are inside the visibility circles
 	for(int entity = 0; entity < opponentPlayersCount && entity < 32; entity++) {
 
-		position 	= &(world.position    [ opponentPlayers[entity] ]);
+		position 			= &(world.position    [ opponentPlayers[entity] ]);
 		renderPlayer 	= &(world.renderPlayer[ opponentPlayers[entity] ]);
 
 		playerRect.x = position->x + map_rect.x;
@@ -199,7 +200,9 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 		int xPos = position->x / TILE_WIDTH;
 		int yPos = position->y / TILE_HEIGHT;
 
-		if(fow -> tiles[yPos][xPos].visible[ position->level ] == 0)
+		int vistype = fow -> tiles[yPos][xPos].visible[ position->level ];
+
+		if(vistype == 1 || vistype == 2)
 		{
 			clipRect.x = -playerRect.x;
 			clipRect.y = -playerRect.y;
