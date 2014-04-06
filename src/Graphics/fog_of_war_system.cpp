@@ -81,7 +81,7 @@ void render_fog_of_war_system(SDL_Surface *surface, FowComponent *fow)
 				}
 			}
 			
-			//else if(fow -> teamNo == ROBBERS)
+			else if(fow -> teamNo == ROBBERS)
 			{
 				switch(visible)
 				{
