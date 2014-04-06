@@ -417,3 +417,23 @@ void destroy_world_not_player(World *world) {
 }
 
 
+
+
+void disable_component(World *world, unsigned int entity, unsigned int component) {
+	
+	if (IN_THIS_COMPONENT(world->mask[entity], component)) {
+		//printf("Disabling component!\n");
+		world->mask[entity] ^= component;
+	}
+	
+}
+
+void enable_component(World *world, unsigned int entity, unsigned int component) {
+	
+	if (!IN_THIS_COMPONENT(world->mask[entity], component)) {
+		//printf("Enabling component!\n");
+		world->mask[entity] ^= component;
+	}
+	
+}
+

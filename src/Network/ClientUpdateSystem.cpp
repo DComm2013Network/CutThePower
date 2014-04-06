@@ -15,6 +15,7 @@
 #include "network_systems.h"
 #include "../Input/chat.h"
 
+extern FowComponent *fow;
 extern unsigned int player_entity;
 extern int game_net_signalfd;     /**< An eventfd allowing the gameplay thread to request data from network router. */
 extern int network_ready;         /**< Indicates whether the network has initialised. */
@@ -171,6 +172,11 @@ void client_update_floor(World *world, void *packet)
 	world->position[player_entity].x		= floor_move->xPos;
 	world->position[player_entity].y		= floor_move->yPos;
 	rebuild_floor(world, floor_move->new_floor);
+
+	if(floor_move->new_floor == 0)
+	{
+		reset_fog_of_war(fow);
+	}
 
 	for(i = 0; i < MAX_ENTITIES; i++)
 	{
@@ -479,6 +485,9 @@ void setup_character_animation(World * world, int character, int entity)
 		break;
 		case SAM_ALT1:
 			 load_animation("assets/Graphics/player/sam_glitch/animation.txt", world, entity);
+		break;
+		case TIM_ALT1:
+			 load_animation("assets/Graphics/player/tim_yoshi/animation.txt", world, entity);
 		break;
 		default:
 		load_animation("assets/Graphics/player/p0/rob_animation.txt", world, entity);

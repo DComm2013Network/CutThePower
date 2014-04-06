@@ -11,8 +11,7 @@
 #include "Network/Packets.h"
 #include "Graphics/map.h"
 
-#define SHOW_MENU_INTRO 0 //1 == load intro, 0 == load straight into map
-#define DEBUG_SKINS     1 //1 = on, 0 = off
+#define DEBUG_SKINS     0 //1 = on, 0 = off
 #define ALT_SKIN_CHANCE 3 //chance to roll an alternate skin
 
 extern bool running;
@@ -24,6 +23,7 @@ extern int game_net_signalfd;
 static int character;
 static char username[MAX_NAME];
 static char serverip[MAXIP];
+extern FowComponent *fow;
 extern SDL_Window *window;
 static unsigned int altSong = 0;
 
@@ -306,7 +306,7 @@ bool menu_click(World *world, unsigned int entity) {
 		if (alternateSkin == ALT_SKIN_CHANCE) {
 			character = IAN_ALT1;
 			stop_music();
-			altSong = load_music("assets/Sound/players/ian_dovakiin/Dovak-Ian.wav");
+			altSong = load_music("assets/Sound/players/ian_dovakiin/dovakiinTrack.wav");
 			if (altSong != 0) {
 				play_music(altSong);
 			}
@@ -344,7 +344,7 @@ bool menu_click(World *world, unsigned int entity) {
 		if (alternateSkin == ALT_SKIN_CHANCE) {
 			character = JOSH_ALT1;
 			stop_music();
-			altSong = load_music("assets/Sound/players/josh_link/LoZ_MainThemeShort.wav");
+			altSong = load_music("assets/Sound/players/josh_link/linkTrack.wav");
 			if (altSong != 0) {
 				play_music(altSong);
 			}
@@ -433,6 +433,18 @@ bool menu_click(World *world, unsigned int entity) {
 		
 		destroy_menu(world);
 		character = TIM;
+		alternateSkin = rand() % (ALT_SKIN_CHANCE + 1);
+		#if DEBUG_SKINS
+		printf("Roll: %u\n", alternateSkin);
+		#endif
+		if (alternateSkin == ALT_SKIN_CHANCE) {
+			character = TIM_ALT1;
+			stop_music();
+			altSong = load_music("assets/Sound/players/tim_yoshi/yoshiTrack.wav");
+			if (altSong != 0) {
+				play_music(altSong);
+			}
+		}
 		create_setup_menu(world);
 		
 	}
@@ -447,7 +459,7 @@ bool menu_click(World *world, unsigned int entity) {
 		
 		altSong = 0;
 		destroy_menu(world);
-		character = rand() % 29;
+		character = rand() % 30;
 		switch(character) {
 			case JOSH_ALT1:
 				stop_music();
@@ -519,6 +531,13 @@ bool menu_click(World *world, unsigned int entity) {
 					play_music(altSong);
 				}
 			break;
+			case TIM_ALT1:
+				stop_music();
+				altSong = load_music("assets/Sound/players/tim_yoshi/yoshiTrack.wav");
+				if (altSong != 0) { 
+					play_music(altSong);
+				}
+			break;
 		}
 		create_setup_menu(world);
 
@@ -552,12 +571,12 @@ bool menu_click(World *world, unsigned int entity) {
 		unsigned int i;
 
 		stop_music();
-		stop_effect();
 		
 		if (altSong != 0) {
 			cleanup_music(altSong);
 			altSong = 0;
 		}
+		stop_all_effects();
 
 		for(i = 0; i < MAX_ENTITIES; i++) {
 
@@ -576,15 +595,17 @@ bool menu_click(World *world, unsigned int entity) {
 		printf("Username: %s\n", username);
 		printf("Server IP: %s\n", serverip);
 		
-		#if SHOW_MENU_INTRO 
+		#if DISPLAY_CUTSCENES 
+		
 		destroy_world(world);
-		create_load_screen(world);
+		stop_music();
+		create_van_intro(world, character);
 		
 		#else
 		
 		world->animation[entity].id = 0;
-		
 		animation_end(world, entity);
+		
 		#endif
 
 	}
@@ -658,6 +679,7 @@ bool menu_click(World *world, unsigned int entity) {
 		
 		uint32_t err = NUM_PACKETS + 1;
         write_pipe(send_router_fd[WRITE], &err, sizeof(err));
+        reset_fog_of_war(fow);
 		destroy_world(world);
 		player_entity = MAX_ENTITIES;
 		map_surface = 0;
@@ -675,13 +697,13 @@ bool menu_click(World *world, unsigned int entity) {
 
 void animation_end(World *world, unsigned int entity) {
 	AnimationComponent *animationComponent = &(world->animation[entity]);
-
+	
 	//INTRO SCREEN ENDED
 	if (animationComponent->id == 0) { //0 is the intro screen
 		destroy_world(world);
 
 		stop_music();
-		stop_effect();
+		stop_all_effects();
 		
 		PKT_GAME_STATUS pkt;
 		memcpy(pkt.otherPlayers_name[0], username, MAX_NAME);
@@ -715,4 +737,65 @@ void animation_end(World *world, unsigned int entity) {
 		
 		create_main_menu(world);
 	}
+	else if (animationComponent->id == ANIMATION_FADE_TO_BLACK) {
+		
+		destroy_world(world);
+		
+		create_load_screen(world);
+		
+		//world->animation[entity].id = CUTSCENE_GAME_INTRO;
+		//animation_end(world, entity);
+		
+	}
+}
+
+void cutscene_end(World *world, unsigned int entity) {
+	
+	CutsceneComponent *cutscene = &world->cutscene[entity];
+	
+	if (cutscene->id == CUTSCENE_GAME_INTRO) {
+		
+		destroy_world(world);
+
+		stop_music();
+		stop_all_effects();
+		
+		PKT_GAME_STATUS pkt;
+		memcpy(pkt.otherPlayers_name[0], username, MAX_NAME);
+		pkt.characters[0] = character;
+		pkt.readystatus[0] = 0;
+		pkt.otherPlayers_teams[0] = 0;
+
+		map_init(world, "assets/Graphics/map/map_00/map00.txt", "assets/Graphics/map/map_00/tiles.txt");
+		player_entity = create_player(world, 620, 420, true, COLLISION_HACKER, 0, &pkt);
+		setup_character_animation(world, character, player_entity);
+		////NETWORK CODE
+		game_net_signalfd 	= eventfd(0, EFD_SEMAPHORE);
+
+
+
+		init_client_network(send_router_fd, rcv_router_fd, serverip);
+		init_client_update(world);
+		send_intialization(world, send_router_fd[WRITE], username);
+		
+	}
+	else if (cutscene->id == CUTSCENE_VAN_INTRO) {
+		
+		unsigned int e = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION);
+		
+		world->position[e].x = 0;
+		world->position[e].y = 0;
+		
+		world->position[e].width = WIDTH;
+		world->position[e].height = HEIGHT;
+		
+		world->renderPlayer[e].width = WIDTH;
+		world->renderPlayer[e].height = HEIGHT;
+		
+		load_animation("assets/Graphics/cutscene/fade_to_black/animation.txt", world, e);
+		play_animation(world, e, "fade");
+		
+		world->animation[e].id = ANIMATION_FADE_TO_BLACK;
+	}
+	
 }

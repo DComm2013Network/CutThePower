@@ -18,7 +18,7 @@ int send_router_fd[2];
 int rcv_router_fd[2];
 int game_net_signalfd;
 int network_ready = 0;
-
+FowComponent *fow;
 int window_width = WIDTH;
 int window_height = HEIGHT;
 SDL_Window *window;
@@ -42,9 +42,12 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-	SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 0xff);
+	SDL_SetRenderDrawColor(renderer, 0x0, 0x0, 0x0, 0xff);
 	surface = SDL_CreateRGBSurface(0, WIDTH, HEIGHT, 32, 0, 0, 0, 0);
-
+	
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear"); 
+	SDL_RenderSetLogicalSize(renderer, WIDTH, HEIGHT);
+	
 	init_chat();
 	init_sound();
 	init_fonts();
@@ -53,14 +56,19 @@ int main(int argc, char* argv[]) {
 	srand(time(NULL));//random initializer
 	KeyMapInit("assets/Input/keymap.txt");
 	init_render_player_system();
+
+	unsigned int begin_time = SDL_GetTicks();
 	
-	enable_sound(true);
+	#if DISPLAY_CUTSCENES
 	
+	create_logo_screen(world);
+	
+	#else
+
 	create_main_menu(world);
 	
-	unsigned int begin_time = SDL_GetTicks();
-
-	//create_logo_screen(world);
+	#endif
+	
 
 	FPS fps;
 	fps.init();
@@ -68,7 +76,6 @@ int main(int argc, char* argv[]) {
 	running = true;
 	player_entity = -1;
 	
-	FowComponent *fow;
 	init_fog_of_war_system(&fow);
 	init_players_speech(fow);
 	
@@ -85,10 +92,13 @@ int main(int argc, char* argv[]) {
 				
 
 		animation_system(world);
+		cutscene_system(world);
 
 		render_player_system(*world, surface, fow);
 		render_fog_of_war_system(surface, fow);
 		chat_render(surface);
+		
+		
 		
 		surface_texture = SDL_CreateTextureFromSurface(renderer, surface);
 		SDL_RenderClear(renderer);
@@ -96,6 +106,8 @@ int main(int argc, char* argv[]) {
 		
 		SDL_DestroyTexture(surface_texture);
 		SDL_RenderPresent(renderer);
+
+
 
 		if(network_ready)
 		{

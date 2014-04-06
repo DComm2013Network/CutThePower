@@ -11,6 +11,9 @@
 
 #define GAME_SPEED 30
 
+//0 is off, 1 is on. Remember to make clean to get it to work.
+#define DISPLAY_CUTSCENES 1
+
 //max FPS
 #define FPS_MAX 120
 
@@ -43,6 +46,7 @@ typedef struct {
 	ObjectiveComponent		objective[MAX_ENTITIES];
 	TileComponent			tile[MAX_ENTITIES];
 	PowerUpComponent		powerup[MAX_ENTITIES];
+	CutsceneComponent		cutscene[MAX_ENTITIES];
 } World;
 
 class FPS {
@@ -121,5 +125,8 @@ unsigned int create_powerup(World * world, float x, float y, int width, int heig
 void destroy_entity(World* world, const unsigned int entity);
 void destroy_world(World *world);
 void destroy_world_not_player(World *world);
+
+void disable_component(World *world, unsigned int entity, unsigned int component);
+void enable_component(World *world, unsigned int entity, unsigned int component);
 
 #endif
