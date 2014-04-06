@@ -179,6 +179,21 @@ void init_fog_of_war_system(FowComponent **fow)
 }
 
 
+/**
+ * Fills map of blockable tiles.
+ *
+ * Revisions:
+ *     None.
+ *loading
+ * @param bt		Tile map 			
+ *
+ * @return void.
+ * 
+ * @designer Sam Youssef
+ * @author Sam Youssef
+ *
+ * @date April 6, 2014
+ */
 void setBlockedTileCoords(BlockedTiles bt[7][7])
 {
 
@@ -389,8 +404,8 @@ void reset_fog_of_war(FowComponent *fow)
  *     None.
  *loading
  * @param fow   		A pointer to a fogOfWarStruct. Contains a reference to the tile's visibility, i.e. whether or not it should be blitted.
- * @param	yd				Delta y from current position
- * @param xd				Delta x from current position
+ * @param yd			Delta y from current position
+ * @param xd			Delta x from current position
  *
  * @return int. 0 on wall collision. 1 otherwise
  * 
