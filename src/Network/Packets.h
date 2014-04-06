@@ -93,6 +93,10 @@
 #define RAMZI_ALT1		27
 #define SAM_ALT1		28
 #define TIM_ALT1		29
+#define CHRIS_ALT1		30
+#define SHANE_ALT1		31
+#define ROBIN_ALT1		32
+#define VINCENT_ALT1	33
 // Game Status Definitions
 
 // Game Status Definitions
