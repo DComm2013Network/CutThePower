@@ -128,14 +128,7 @@ void *networkRouter(void *args)
                 set_error(ERR_IPC_FAIL);
                 break;
             }
-			
-            if(type == NETWORK_SHUTDOWN)
-            {
-                nonexit_net_cleanup(send_data, receive_data, gameplay, cached_packets);
-                printf("Network thread exiting.\n");
-                break; 
-            }
-
+            
             write_packet(sendfd[WRITE_END], type, packet);
 			
             --ret;
@@ -150,7 +143,6 @@ void *networkRouter(void *args)
 		}
     }
 
-	
     pthread_cancel(thread_receive);
     pthread_cancel(thread_send);
     // Kill the send thread... forgot how this was supposed to happen, oops
@@ -180,7 +172,6 @@ int send_cached_chat(int gameplay_write_fd)
             perror("update_gameplay: write");
             return -1;
         }
-        printf("send_cache: %s\n", cached_chat.front()->message);
 
         free(cached_chat.front());
         cached_chat.pop_front();
@@ -499,37 +490,7 @@ void net_cleanup(NDATA send_data, NDATA receive_data, PDATA gameplay, void **cac
 
     /* Close send thread's eventfd */
     close(send_failure_fd);
-    network_ready = 1; /* Tell the client update system to read the network error */
 }
-
-void nonexit_net_cleanup(NDATA send_data, NDATA receive_data, PDATA gameplay, void **cached_packets)
-{
-    unsigned int changed_mask = 0;
-    
-    /* Close pipes for thread communication, checking that they're valid first */
-
-    
-    /* Free NDATA */
-    free(send_data);
-    free(receive_data);
-
-    //write_shutdown(gameplay->write_pipe, get_error_string());
-
-    /* Free any remaining packets */
-    determine_changed(cached_packets, &changed_mask);
-    for(int i = 0; i < NUM_PACKETS; ++i)
-    {
-        if(changed_mask & (1 << i))
-        {
-            free(cached_packets[i]);
-            cached_packets[i] = NULL;
-        }
-    }
-
-    /* Close send thread's eventfd */
-    network_ready = 1; /* Tell the client update system to read the network error */
-}
-
 /*
 
 The gameplay module will basically create the pipe and call the networkRouter() function

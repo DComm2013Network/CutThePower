@@ -8,7 +8,7 @@
 #include "Packets.h"
 
 #define TILE_SIZE 40
-#define GRANULARITY_VEL 1.4
+#define GRANULARITY_VEL 0.8
 #define GRANULARITY_POS 2.0
 #define FACTOR 8
 

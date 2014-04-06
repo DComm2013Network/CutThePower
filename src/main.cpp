@@ -18,14 +18,7 @@ int send_router_fd[2];
 int rcv_router_fd[2];
 int game_net_signalfd;
 int network_ready = 0;
-
-
-/*SAM**************************/
-extern void render_fog_of_war	( SDL_Surface *surface, FowComponent *fow );
-extern void init_fog_of_war  	( FowComponent **fow );
-extern void cleanup_fog_of_war( FowComponent  *fow );
-/******************************/
-
+FowComponent *fow;
 int window_width = WIDTH;
 int window_height = HEIGHT;
 SDL_Window *window;
@@ -37,11 +30,8 @@ int main(int argc, char* argv[]) {
 	SDL_Renderer *renderer;
 	SDL_Texture *surface_texture;
 
-	create_pipe(send_router_fd);
-	create_pipe(rcv_router_fd);
-
 	World *world = (World*)malloc(sizeof(World));
-	printf("Current World size: %i\n", sizeof(World));
+	printf("Current World size: %lu\n", sizeof(World));
 	
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
 	
@@ -52,9 +42,12 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-	SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 0xff);
+	SDL_SetRenderDrawColor(renderer, 0x0, 0x0, 0x0, 0xff);
 	surface = SDL_CreateRGBSurface(0, WIDTH, HEIGHT, 32, 0, 0, 0, 0);
-
+	
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear"); 
+	SDL_RenderSetLogicalSize(renderer, WIDTH, HEIGHT);
+	
 	init_chat();
 	init_sound();
 	init_fonts();
@@ -64,11 +57,18 @@ int main(int argc, char* argv[]) {
 	KeyMapInit("assets/Input/keymap.txt");
 	init_render_player_system();
 
+	unsigned int begin_time = SDL_GetTicks();
+	
+	#if DISPLAY_CUTSCENES
+	
+	create_logo_screen(world);
+	
+	#else
+
 	create_main_menu(world);
 	
-	unsigned int begin_time = SDL_GetTicks();
-
-	//create_logo_screen(world);
+	#endif
+	
 
 	FPS fps;
 	fps.init();
@@ -76,16 +76,12 @@ int main(int argc, char* argv[]) {
 	running = true;
 	player_entity = -1;
 	
-	/*SAM********************************/
-	FowComponent *fow;
-	
 	init_fog_of_war_system(&fow);
-	/************************************/
-
+	init_players_speech(fow);
+	
 	while (running)
 	{
 		unsigned int current_time;
-		//INPUT
 		KeyInputSystem(world);
 		MouseInputSystem(world);
 		movement_system(world, fps, send_router_fd[WRITE]);
@@ -96,10 +92,13 @@ int main(int argc, char* argv[]) {
 				
 
 		animation_system(world);
+		cutscene_system(world);
 
 		render_player_system(*world, surface, fow);
 		render_fog_of_war_system(surface, fow);
 		chat_render(surface);
+		
+		
 		
 		surface_texture = SDL_CreateTextureFromSurface(renderer, surface);
 		SDL_RenderClear(renderer);
@@ -107,6 +106,8 @@ int main(int argc, char* argv[]) {
 		
 		SDL_DestroyTexture(surface_texture);
 		SDL_RenderPresent(renderer);
+
+
 
 		if(network_ready)
 		{
@@ -121,8 +122,6 @@ int main(int argc, char* argv[]) {
 
 		fps.limit();
 		fps.update();
-		
-		//printf("FPS: %f\n", fps.getFPS());
 	}
 	
 	

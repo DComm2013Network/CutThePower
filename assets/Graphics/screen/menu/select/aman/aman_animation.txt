@@ -1,6 +1,7 @@
 1
 
-aman 2 1 -1 -1
+aman 3 50 -1 -1
+assets/Graphics/screen/menu/select/aman/aman_1.png
 assets/Graphics/screen/menu/select/aman/aman_1.png
 assets/Graphics/screen/menu/select/aman/aman_2.png
 

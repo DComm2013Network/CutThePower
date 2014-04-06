@@ -1,0 +1,8 @@
+1
+
+fade 5 200 -1 -1
+assets/Graphics/cutscene/fade_to_black/black_1.png
+assets/Graphics/cutscene/fade_to_black/black_2.png
+assets/Graphics/cutscene/fade_to_black/black_3.png
+assets/Graphics/cutscene/fade_to_black/black_4.png
+assets/Graphics/cutscene/fade_to_black/black_5.png
