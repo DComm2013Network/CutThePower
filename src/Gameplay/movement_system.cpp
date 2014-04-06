@@ -267,10 +267,10 @@ void handle_entity_collision(World* world, unsigned int entity, unsigned int ent
 				floor_change_flag = 1;
 			}
 			break;
-		case COLLISION_BELTRIGHT_TILE:
+		case COLLISION_BELTLEFT_TILE:
 			powerup_beltleft(world, entity);
 			break;
-		case COLLISION_BELTLEFT_TILE:
+		case COLLISION_BELTRIGHT_TILE:
 			powerup_beltright(world, entity);
 			break;
 		case COLLISION_PU_SPEEDUP:
