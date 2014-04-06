@@ -24,6 +24,9 @@
 #define OPAQUE_FOG_COLOUR 0x000000
 #define TRANSP_FOG_COLOUR 0x221122
 
+#define NMAXTILESINLOS 	37
+
+
 typedef struct PlayerSpeech
 {
 	Mix_Chunk *speech[NUMSPEECH];
@@ -35,7 +38,6 @@ typedef struct FowTile
 {
 	SDL_Rect rect;
 	int visible[NUMLEVELS];
-	int currentLOS;
 } FowTile;
 
 
@@ -49,6 +51,8 @@ typedef struct FowComponent
 	teamNo_t teamNo;
 	
 	PlayerSpeech copSpeech;
+	int tilesVisibleToControllablePlayer[NMAXTILESINLOS][2];
+	int tilesVisibleToControllablePlayerCount;
 	
 } FowComponent;
 
@@ -58,6 +62,9 @@ typedef struct FowPlayerPosition
 	World *world;
 	FowComponent *fow;
 	PositionComponent *pos;
+	
+	int isControllablePlayer;
+	
 } FowPlayerPosition;
 
 void render_fog_of_war_system(SDL_Surface *surface, FowComponent *fow);

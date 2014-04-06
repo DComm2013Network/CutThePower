@@ -563,7 +563,15 @@ int *get_visibility_type(PositionComponent *newposition, FowPlayerPosition *fowp
 	int x = set_tile_pos(xPos, xDel);
 
 	*newposition =  set_newposition(pos, yDel, xDel);
-
+	
+	if( fowp -> isControllablePlayer ) { 
+		int count = fow -> tilesVisibleToControllablePlayerCount;
+		
+		fow -> tilesVisibleToControllablePlayer[ count ][0] = y;
+		fow -> tilesVisibleToControllablePlayer[ count ][1] = x;	
+		fow -> tilesVisibleToControllablePlayerCount++;
+	}
+	
 	return &fow -> tiles[y][x].visible[ pos->level ];
 }
 

@@ -64,6 +64,7 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 	opponentPlayersCount = 0;
 	memset(opponentPlayers, 0, sizeof(opponentPlayers));
 
+
 	for(entity = 0; entity < MAX_ENTITIES; entity++){
 		
 		if(IN_THIS_COMPONENT(world.mask[entity], COMPONENT_PLAYER | COMPONENT_CONTROLLABLE)) {
@@ -130,12 +131,13 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 
 				// only render players on my team
 				if ((fow->teamNo == world.player[entity].teamNo)) {	
+		
 					FowPlayerPosition fowp;
 		
 					fowp.world = &world;
 					fowp.pos   = position;
-					fowp.fow   = fow;
-	
+					fowp.fow   = fow;		
+					fowp.isControllablePlayer = IN_THIS_COMPONENT(world.mask[entity], COMPONENT_CONTROLLABLE);
 					make_surrounding_tiles_visible(&fowp);
 
 					clipRect.x = -playerRect.x;
@@ -156,17 +158,6 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 						clipRect.w = WIDTH - playerRect.x;
 			
 					SDL_BlitScaled(renderPlayer->playerSurface, &clipRect, surface, &playerRect);
-							
-						
-					// sound enemy speech	
-					time_t tm;
-														
-					if(time(&tm) - fow->copSpeech.played > 4)
-					{
-						Mix_PlayChannel( -1, fow->copSpeech.speech[rand() % NUMSPEECH], 0 );
-						time(&fow->copSpeech.played);
-					}	
-	
 				}
 
 				else {
@@ -207,6 +198,8 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 		playerRect.w = renderPlayer->width;
 		playerRect.h = renderPlayer->height;
 
+		time_t tm;
+
 		int xPos = position->x / TILE_WIDTH;
 		int yPos = position->y / TILE_HEIGHT;
 
@@ -235,9 +228,24 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 
 			SDL_BlitScaled(renderPlayer->playerSurface, &clipRect, surface, &playerRect);
 
-			
+
+			// sound enemy speech if near
+			if(time(&tm) - fow->copSpeech.played > 4)
+			{			
+				int nTilesInLos = fow -> tilesVisibleToControllablePlayerCount;
+				for(int i = 0; i < nTilesInLos; i++)
+				{
+					Mix_PlayChannel( -1, fow->copSpeech.speech[rand() % NUMSPEECH], 0 );
+					time(&fow->copSpeech.played);
+				}	
+			}
 		}
 	}
+	
+	fow->tilesVisibleToControllablePlayerCount = 0;
+	memset(fow->tilesVisibleToControllablePlayer, 0, sizeof(fow->tilesVisibleToControllablePlayer));
+
+	
 }
 
 void init_players_speech(FowComponent *fow) {
