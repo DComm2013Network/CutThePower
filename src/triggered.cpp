@@ -12,7 +12,7 @@
 #include "Graphics/map.h"
 
 #define SHOW_MENU_INTRO 0 //1 == load intro, 0 == load straight into map
-#define DEBUG_SKINS     1 //1 = on, 0 = off
+#define DEBUG_SKINS     0 //1 = on, 0 = off
 #define ALT_SKIN_CHANCE 3 //chance to roll an alternate skin
 
 extern bool running;
@@ -306,7 +306,7 @@ bool menu_click(World *world, unsigned int entity) {
 		if (alternateSkin == ALT_SKIN_CHANCE) {
 			character = IAN_ALT1;
 			stop_music();
-			altSong = load_music("assets/Sound/players/ian_dovakiin/Dovak-Ian.wav");
+			altSong = load_music("assets/Sound/players/ian_dovakiin/dovakiinTrack.wav");
 			if (altSong != 0) {
 				play_music(altSong);
 			}
@@ -344,7 +344,7 @@ bool menu_click(World *world, unsigned int entity) {
 		if (alternateSkin == ALT_SKIN_CHANCE) {
 			character = JOSH_ALT1;
 			stop_music();
-			altSong = load_music("assets/Sound/players/josh_link/LoZ_MainThemeShort.wav");
+			altSong = load_music("assets/Sound/players/josh_link/linkTrack.wav");
 			if (altSong != 0) {
 				play_music(altSong);
 			}
@@ -433,6 +433,18 @@ bool menu_click(World *world, unsigned int entity) {
 		
 		destroy_menu(world);
 		character = TIM;
+		alternateSkin = rand() % (ALT_SKIN_CHANCE + 1);
+		#if DEBUG_SKINS
+		printf("Roll: %u\n", alternateSkin);
+		#endif
+		if (alternateSkin == ALT_SKIN_CHANCE) {
+			character = SAM_ALT1;
+			stop_music();
+			altSong = load_music("assets/Sound/players/tim_yoshi/yoshiTrack.wav");
+			if (altSong != 0) {
+				play_music(altSong);
+			}
+		}
 		create_setup_menu(world);
 		
 	}
@@ -515,6 +527,13 @@ bool menu_click(World *world, unsigned int entity) {
 			case SAM_ALT1:
 				stop_music();
 				altSong = load_music("assets/Sound/players/sam_glitch/glitchTrack.wav");
+				if (altSong != 0) { 
+					play_music(altSong);
+				}
+			break;
+			case TIM_ALT1:
+				stop_music();
+				altSong = load_music("assets/Sound/players/tim_yoshi/yoshiTrack.wav");
 				if (altSong != 0) { 
 					play_music(altSong);
 				}

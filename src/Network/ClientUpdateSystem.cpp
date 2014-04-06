@@ -486,6 +486,9 @@ void setup_character_animation(World * world, int character, int entity)
 		case SAM_ALT1:
 			 load_animation("assets/Graphics/player/sam_glitch/animation.txt", world, entity);
 		break;
+		case TIM_ALT1:
+			 load_animation("assets/Graphics/player/tim_yoshi/animation.txt", world, entity);
+		break;
 		default:
 		load_animation("assets/Graphics/player/p0/rob_animation.txt", world, entity);
 	}
