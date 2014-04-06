@@ -658,6 +658,7 @@ bool menu_click(World *world, unsigned int entity) {
 		
 		uint32_t err = NUM_PACKETS + 1;
         write_pipe(send_router_fd[WRITE], &err, sizeof(err));
+        reset_fog_of_war(fow);
 		destroy_world(world);
 		player_entity = MAX_ENTITIES;
 		map_surface = 0;

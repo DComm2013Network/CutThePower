@@ -18,7 +18,7 @@ int send_router_fd[2];
 int rcv_router_fd[2];
 int game_net_signalfd;
 int network_ready = 0;
-
+FowComponent *fow;
 int window_width = WIDTH;
 int window_height = HEIGHT;
 SDL_Window *window;
@@ -68,7 +68,6 @@ int main(int argc, char* argv[]) {
 	running = true;
 	player_entity = -1;
 	
-	FowComponent *fow;
 	init_fog_of_war_system(&fow);
 	init_players_speech(fow);
 	
