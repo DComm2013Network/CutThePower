@@ -29,7 +29,8 @@
 
 typedef struct PlayerSpeech
 {
-	Mix_Chunk *speech[NUMSPEECH];
+	Mix_Chunk *rob[NUMSPEECH];
+	Mix_Chunk *cop[NUMSPEECH];
 	time_t played;
 		
 } PlayerSpeech;
@@ -59,8 +60,7 @@ typedef struct FowComponent
 	
 	BlockedTiles bt[7][7];
 
-	PlayerSpeech copSpeech;
-	PlayerSpeech robSpeech;
+	PlayerSpeech speech;
 	int tilesVisibleToControllablePlayer[NMAXTILESINLOS][2];
 	int tilesVisibleToControllablePlayerCount;
 	

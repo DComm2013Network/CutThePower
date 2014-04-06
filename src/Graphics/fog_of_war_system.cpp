@@ -171,10 +171,6 @@ void init_fog_of_war_system(FowComponent **fow)
 
 	}
 
-	/*for(int i = 0; i < fogOfWarHeight; i++)
-		for(int j; j < fogOfWarWidth; j++)
-			memset((*fow) -> bt[i][j].coords, 0, sizeof(int) * 7 * 7);*/
-
 	setBlockedTileCoords((*fow) -> bt);
 }
 
@@ -196,6 +192,11 @@ void init_fog_of_war_system(FowComponent **fow)
  */
 void setBlockedTileCoords(BlockedTiles bt[7][7])
 {
+	for(int i = 0; i < 7; i++)
+	{
+		memset(bt[i], 0, sizeof(bt[i]));
+	}
+
 
 	// first corner
 	bt[1][2].coords[1][1] = 1;
@@ -355,7 +356,10 @@ void cleanup_fog_of_war(FowComponent *fow)
 	}
 	
 	for(int i = 0; i < NUMSPEECH; i++)
-		Mix_FreeChunk(fow -> copSpeech.speech[i]);
+	{
+		Mix_FreeChunk(fow -> speech.cop[i]);
+		Mix_FreeChunk(fow -> speech.rob[i]);
+	}
 }
 
 
@@ -629,8 +633,6 @@ int *get_visibility_ptr(PositionComponent *newposition, FowPlayerPosition *fowp,
  */
 int set_visibility_type(FowPlayerPosition *fowp, int y, int x)
 {
-
-	World *world = fowp -> world;
 	PositionComponent newposition;
 
 	int yd = y-3;
@@ -755,15 +757,15 @@ int subOne(int n)
  */
 void init_players_speech(FowComponent *fow) {
 
-	fow->copSpeech.speech[0] = Mix_LoadWAV("assets/Sound/speech/cop1.wav");
-	fow->copSpeech.speech[1] = Mix_LoadWAV("assets/Sound/speech/cop2.wav");
-	fow->copSpeech.speech[2] = Mix_LoadWAV("assets/Sound/speech/cop3.wav");
+	fow->speech.cop[0] = Mix_LoadWAV("assets/Sound/speech/cop1.wav");
+	fow->speech.cop[1] = Mix_LoadWAV("assets/Sound/speech/cop2.wav");
+	fow->speech.cop[2] = Mix_LoadWAV("assets/Sound/speech/cop3.wav");
 
-	fow->robSpeech.speech[0] = Mix_LoadWAV("assets/Sound/speech/rob1.wav");
-	fow->robSpeech.speech[1] = Mix_LoadWAV("assets/Sound/speech/rob2.wav");
-	fow->robSpeech.speech[2] = Mix_LoadWAV("assets/Sound/speech/rob3.wav");
+	fow->speech.rob[0] = Mix_LoadWAV("assets/Sound/speech/rob1.wav");
+	fow->speech.rob[1] = Mix_LoadWAV("assets/Sound/speech/rob2.wav");
+	fow->speech.rob[2] = Mix_LoadWAV("assets/Sound/speech/rob3.wav");
 
-	time( &fow->copSpeech.played );
+	time( &fow->speech.played );
 }
 
 /**
@@ -787,7 +789,7 @@ void render_player_speech(FowComponent *fow, int xPos, int yPos) {
 
 	time_t tm;
 	// sound enemy speech if near (time wait of 8 secs)
-	if(time(&tm) - fow->copSpeech.played > 8)
+	if(time(&tm) - fow->speech.played > 8)
 	{
 		int nTilesInLos = fow -> tilesVisibleToControllablePlayerCount;
 		for(int i = 0; i < nTilesInLos; i++)
@@ -795,8 +797,12 @@ void render_player_speech(FowComponent *fow, int xPos, int yPos) {
 			if(fow -> tilesVisibleToControllablePlayer[i][0] == yPos &&
 			   fow -> tilesVisibleToControllablePlayer[i][1] == xPos) 
 			{		
-				Mix_PlayChannel( -1, fow->copSpeech.speech[rand() % NUMSPEECH], 0 );
-				time(&fow->copSpeech.played);
+				switch(fow->teamNo)
+				{
+					case 1: Mix_PlayChannel( -1, fow->speech.rob[rand() % NUMSPEECH], 0 );
+					case 2: Mix_PlayChannel( -1, fow->speech.cop[rand() % NUMSPEECH], 0 );
+				}
+				time(&fow->speech.played);
 			}
 		}	
 	}
