@@ -40,11 +40,16 @@
 04 09 09 10 09 09 09 09 09 10 09 09 09 09 10 09 09 09 09 09 09 09 09 10 09 09 09 09 09 09 09 09 09 09 09 10 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 10 09 09 09 09 09 09 05 
 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 
 
-27
+31
 stairs 03 16 02 02 1 r
 stairs 60 17 39 35 1 r
 stairs 03 18 08 25 3 r
 stairs 60 19 51 31 3 r
+
+powerup 26 17 40 40 9 assets/Graphics/powerups/powerup_beltright/animation.txt
+powerup 12 30 40 40 10 assets/Graphics/powerups/powerup_beltleft/animation.txt
+powerup 53 7 40 40 10013 assets/Graphics/powerups/powerup_speedup/animation.txt
+powerup 16 19 40 40 10014 assets/Graphics/powerups/powerup_speeddown/animation.txt
 
 objective 15 19.5 25 45 0 assets/Graphics/objects/png_object/object_animation.txt
 objective 27 33.5 25 45 1 assets/Graphics/objects/png_object/object_animation.txt
