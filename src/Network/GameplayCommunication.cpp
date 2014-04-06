@@ -29,8 +29,7 @@ uint32_t packet_sizes[NUM_PACKETS + 1] = {
 	sizeof(PKT_FLOOR_MOVE),          // 12
     sizeof(PKT_TAGGING),             // 13
     sizeof(PKT_POS_UPDATE_MIN),      // 14
-    sizeof(PKT_ALL_POS_UPDATE_MIN),  // 15
-    sizeof(uint32_t)               // Network shutdown // 16
+    sizeof(PKT_ALL_POS_UPDATE_MIN)   // 15
 };
 
 /**
@@ -116,6 +115,9 @@ void init_client_network(int send_router_fd[2], int rcv_router_fd[2], char * ip)
 {
     pthread_t thread;
     PDATA pdata = (PDATA) malloc(sizeof(WTHREAD_DATA));
+   
+    create_pipe(send_router_fd);
+    create_pipe(rcv_router_fd);
     
     pdata->read_pipe = send_router_fd[READ_END];
     pdata->write_pipe = rcv_router_fd[WRITE_END];
@@ -176,7 +178,7 @@ int write_packet(int write_fd, uint32_t packet_type, void *packet)
  * @author      Ramzi Chennafi
  */
 void *read_data(int fd, uint32_t *type){
-    int read_bytes;
+
     void *packet;
     *type = read_type(fd);
     if(*type <= 0 || *type > NUM_PACKETS){

@@ -186,7 +186,6 @@ void anti_stuck_system(World *world, unsigned int curEntityID, int otherEntityID
 
 int check_tag_collision(World* world, unsigned int currentEntityID) {
 	PositionComponent entity;
-	int i = 0;
 	int lastDirection = 0;
 
 	lastDirection = world->movement[currentEntityID].lastDirection;
@@ -197,7 +196,7 @@ int check_tag_collision(World* world, unsigned int currentEntityID) {
 	entity.x = world->position[currentEntityID].x;
 	entity.y = world->position[currentEntityID].y;
 
-	for (i = 0; i < MAX_ENTITIES; i++) {
+	for (unsigned int i = 0; i < MAX_ENTITIES; i++) {
 		if (i != currentEntityID && (world->mask[i] & COLLISION_MASK) != 0) {
 			switch(lastDirection) {
 				case DIRECTION_RIGHT:

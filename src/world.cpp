@@ -5,6 +5,7 @@
  */
 
 #include "world.h"
+#include "Gameplay/powerups.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_keycode.h>
@@ -119,10 +120,8 @@ unsigned int create_player(World* world, int x, int y, bool controllable, int co
 	CommandComponent command;
 	CollisionComponent collision;
 	PlayerComponent player;
-
-	int lastID = -1;
-	unsigned int tempMask = 0;
-
+	PowerUpComponent powerup;
+	
 	render.width = 40;
 	render.height = 40;
 	
@@ -136,6 +135,7 @@ unsigned int create_player(World* world, int x, int y, bool controllable, int co
 	movement.id = 0;
 	movement.lastDirection = 0;
 	movement.acceleration = 1.50;
+	movement.defMaxSpeed = 8;
 	movement.maxSpeed = 8;
 	movement.movX = 0;
 	movement.movY = 0;
@@ -160,6 +160,10 @@ unsigned int create_player(World* world, int x, int y, bool controllable, int co
 	player.character = status_update->characters[playerNo];
 	player.readyStatus = status_update->readystatus[playerNo];
 	memcpy(player.name, status_update->otherPlayers_name[playerNo], MAX_NAME);
+	
+	powerup.captureTime = 0;
+	powerup.duration = 0;
+	powerup.type = PU_NONE;
 
 	for(entity = 0; entity < MAX_ENTITIES; ++entity) {
 		if (world->mask[entity] == COMPONENT_EMPTY) {
@@ -171,14 +175,16 @@ unsigned int create_player(World* world, int x, int y, bool controllable, int co
 										COMPONENT_COLLISION |
 										COMPONENT_CONTROLLABLE |
 										COMPONENT_PLAYER |
-										COMPONENT_ANIMATION;
+										COMPONENT_ANIMATION |
+										COMPONENT_POWERUP;
 			} else {
 				world->mask[entity] =	COMPONENT_POSITION | 
 										COMPONENT_RENDER_PLAYER | 
 										COMPONENT_ANIMATION |
 										COMPONENT_COLLISION | 
 										COMPONENT_MOVEMENT |
-										COMPONENT_PLAYER;
+										COMPONENT_PLAYER |
+										COMPONENT_POWERUP;
 			}
 			world->position[entity] = pos;
 			world->renderPlayer[entity] = render;
@@ -186,6 +192,7 @@ unsigned int create_player(World* world, int x, int y, bool controllable, int co
 			world->movement[entity] = movement;
 			world->collision[entity] = collision;
 			world->player[entity] = player;
+			world->powerup[entity] = powerup;
 
 			if (controllable) {
 				world->controllable[entity] = control;
@@ -281,6 +288,27 @@ unsigned int create_block(World* world, int x, int y, int width, int height, int
 	
 	world->collision[entity].id = 0;
 	world->collision[entity].type = COLLISION_SOLID;
+	world->collision[entity].timer = 0;
+	world->collision[entity].timerMax = 0;
+	world->collision[entity].active = true;
+	world->collision[entity].radius = 0;
+	
+	return entity;
+}
+
+unsigned int create_powerup(World * world, float x, float y, int width, int height, int type, int level) {
+	unsigned int entity;
+	
+	entity = create_entity(world, COMPONENT_POSITION | COMPONENT_COLLISION);
+	
+	world->position[entity].x = x;
+	world->position[entity].y = y;
+	world->position[entity].width = width;
+	world->position[entity].height = height;
+	world->position[entity].level = level;
+	
+	world->collision[entity].id = 0;
+	world->collision[entity].type = type;
 	world->collision[entity].timer = 0;
 	world->collision[entity].timerMax = 0;
 	world->collision[entity].active = true;
@@ -388,4 +416,24 @@ void destroy_world_not_player(World *world) {
 	}
 }
 
+
+
+
+void disable_component(World *world, unsigned int entity, unsigned int component) {
+	
+	if (IN_THIS_COMPONENT(world->mask[entity], component)) {
+		//printf("Disabling component!\n");
+		world->mask[entity] ^= component;
+	}
+	
+}
+
+void enable_component(World *world, unsigned int entity, unsigned int component) {
+	
+	if (!IN_THIS_COMPONENT(world->mask[entity], component)) {
+		//printf("Enabling component!\n");
+		world->mask[entity] ^= component;
+	}
+	
+}
 

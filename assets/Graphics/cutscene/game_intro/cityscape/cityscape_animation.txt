@@ -1,0 +1,20 @@
+2
+
+normal 3 400 -1 1
+assets/Graphics/cutscene/game_intro/cityscape/intro_01.png
+assets/Graphics/cutscene/game_intro/cityscape/intro_02.png
+assets/Graphics/cutscene/game_intro/cityscape/intro_03.png
+
+shutdown 12 400 -1 -1
+assets/Graphics/cutscene/game_intro/cityscape/shutdown_01.png
+assets/Graphics/cutscene/game_intro/cityscape/shutdown_02.png
+assets/Graphics/cutscene/game_intro/cityscape/shutdown_03.png
+assets/Graphics/cutscene/game_intro/cityscape/shutdown_04.png
+assets/Graphics/cutscene/game_intro/cityscape/shutdown_05.png
+assets/Graphics/cutscene/game_intro/cityscape/shutdown_06.png
+assets/Graphics/cutscene/game_intro/cityscape/shutdown_07.png
+assets/Graphics/cutscene/game_intro/cityscape/shutdown_08.png
+assets/Graphics/cutscene/game_intro/cityscape/shutdown_09.png
+assets/Graphics/cutscene/game_intro/cityscape/shutdown_10.png
+assets/Graphics/cutscene/game_intro/cityscape/shutdown_11.png
+assets/Graphics/cutscene/game_intro/cityscape/shutdown_12.png

@@ -104,4 +104,10 @@ typedef struct {
 	unsigned int start_time;
 } TileComponent;
 
+typedef struct {
+	unsigned int captureTime;
+	unsigned int duration; //in milliseconds
+	unsigned int type;
+} PowerUpComponent;
+
 #endif

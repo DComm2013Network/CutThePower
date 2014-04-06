@@ -27,5 +27,7 @@ void create_logo_screen(World* world);
 void create_select_screen(World *world);
 void create_pause_screen(World *world);
 
+void create_van_intro(World *world, int character);
+
 
 #endif

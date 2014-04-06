@@ -6,7 +6,9 @@
 Mix_Chunk *effects[MAX_EFFECTS];
 Mix_Music *music[MAX_MUSIC];
 
-bool soundon = false;
+int chunk_channels[MAX_EFFECTS];
+
+bool soundon = true;
 
 /**
  * Loads all sound files into memory.
@@ -20,9 +22,11 @@ void init_sound() {
 	
 	unsigned int i;
 	
+	Mix_Init(MIX_INIT_MP3);
+	
 	//initialize audio mixer.
 	if(Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096) == -1) {
-        return;    
+        return; 
     }
 	
 	for(i = 0; i < MAX_EFFECTS; i++) {
@@ -93,7 +97,7 @@ unsigned int load_music(const char *file) {
 		if (music[i] == 0) {
 			music[i] = Mix_LoadMUS(file);
 			if (music[i] == 0) {
-				printf("Error loading music file: %s\n", file);
+				printf("Error loading music file: %s: %s\n", file, Mix_GetError());
 			}
 			break;
 		}
@@ -154,6 +158,7 @@ void play_music(unsigned int sound) {
 	
 	
 	Mix_PlayMusic(music[sound], -1);
+	//printf("Playing music %u\n", sound);
 }
 
 /**
@@ -165,7 +170,7 @@ void play_music(unsigned int sound) {
  * @author Jordan Marling
  */
 void stop_music() {
-//	Mix_HaltMusic();
+	Mix_HaltMusic();
 }
 
 /**
@@ -176,7 +181,11 @@ void stop_music() {
  *
  * @author Jordan Marling
  */
-void stop_effect() {
+void stop_effect(unsigned int sound) {
+	Mix_HaltChannel(chunk_channels[sound]);
+}
+
+void stop_all_effects() {
 	Mix_HaltChannel(0);
 	Mix_HaltChannel(1);
 }
@@ -194,7 +203,7 @@ void stop_effect() {
 void play_effect(unsigned int sound) {
 	
 	if (soundon) {
-		Mix_PlayChannel(-1, effects[sound], 0);
+		chunk_channels[sound] = Mix_PlayChannel(-1, effects[sound], 0);
 		//printf("Playing effect %u\n", sound);
 	}
 	

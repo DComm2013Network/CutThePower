@@ -62,6 +62,7 @@ void animation_system(World *world) {
 
 							animationComponent->current_animation = -1;
 							renderPlayer->playerSurface = animation->surfaces[0];
+							//stop_effect(animation->sound_effect);
 
 							animation_end(world, entity);
 							continue;
@@ -89,7 +90,7 @@ void animation_system(World *world) {
 					animationComponent->last_random_occurance = SDL_GetTicks();
 					animationComponent->next_random_occurance = (rand() % (animationComponent->rand_occurance_max - animationComponent->rand_occurance_min)) + animationComponent->rand_occurance_min + SDL_GetTicks();
 					
-					if (animationComponent->animations[animationComponent->rand_animation].sound_effect != -1) {
+					if (animationComponent->animations[animationComponent->rand_animation].sound_effect != MAX_EFFECTS) {
 						play_effect(animationComponent->animations[animationComponent->rand_animation].sound_effect);
 					}
 				}
@@ -116,15 +117,15 @@ int load_animation(const char *filename, World *world, unsigned int entity) {
 
 	FILE *fp;
 
-	char animation_name[64];
+	char animation_name[128];
 	int animation_frames, ms_to_skip, loop_animation;
 	int frame_index, animation_index;
 	int optional_features;
 	int i;
-	char feature_type[64];
-	char triggered_sound[64];
+	char feature_type[128];
+	char triggered_sound[128];
 
-	char animation_filename[64];
+	char animation_filename[128];
 
 	if ((fp = fopen(filename, "r")) == 0) {
 		printf("Error opening animation file: %s\n", filename);
@@ -144,7 +145,7 @@ int load_animation(const char *filename, World *world, unsigned int entity) {
 	animationComponent->hover_animation = -1;
 
 	for(animation_index = 0; animation_index < animationComponent->animation_count; animation_index++) {
-		if (fscanf(fp, "%s %d %d %s %d", animation_name, &animation_frames, &ms_to_skip, &triggered_sound, &loop_animation) != 5) {
+		if (fscanf(fp, "%s %d %d %s %d", animation_name, &animation_frames, &ms_to_skip, triggered_sound, &loop_animation) != 5) {
 			printf("Expected more animations!\n");
 			return -1;
 		}
@@ -153,7 +154,7 @@ int load_animation(const char *filename, World *world, unsigned int entity) {
 
 		animationComponent->animations[animation_index].surface_count = animation_frames;
 		if (strcmp(triggered_sound, "-1") == 0) {
-			animationComponent->animations[animation_index].sound_effect = -1;
+			animationComponent->animations[animation_index].sound_effect = MAX_EFFECTS;
 		}
 		else {
 			animationComponent->animations[animation_index].sound_effect = load_effect(triggered_sound);
@@ -287,7 +288,7 @@ void play_animation(World *world, unsigned int entity, const char *animation_nam
 			
 			renderComponent->playerSurface = animationComponent->animations[i].surfaces[0];
 			
-			if (animationComponent->animations[i].sound_effect != -1) {
+			if (animationComponent->animations[i].sound_effect != MAX_EFFECTS) {
 				play_effect(animationComponent->animations[i].sound_effect);
 			}
 			

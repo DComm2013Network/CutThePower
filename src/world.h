@@ -4,11 +4,15 @@
 #include <SDL2/SDL.h>
 #include "Network/Packets.h"
 #include "components.h"
+#include "Gameplay/poweruptypes.h"
 
 #define WIDTH 1280
 #define HEIGHT 768
 
 #define GAME_SPEED 30
+
+//0 is off, 1 is on. Remember to make clean to get it to work.
+#define DISPLAY_CUTSCENES 1
 
 //max FPS
 #define FPS_MAX 120
@@ -41,6 +45,8 @@ typedef struct {
 	WormholeComponent		wormhole[MAX_ENTITIES];
 	ObjectiveComponent		objective[MAX_ENTITIES];
 	TileComponent			tile[MAX_ENTITIES];
+	PowerUpComponent		powerup[MAX_ENTITIES];
+	CutsceneComponent		cutscene[MAX_ENTITIES];
 } World;
 
 class FPS {
@@ -115,8 +121,12 @@ unsigned int create_level(World* world, int** map, int width, int height, int ti
 unsigned int create_stair(World* world, int targetLevel, int targetX, int targetY, int x, int y, int width, int height, int level);
 unsigned int create_objective(World* world, float x, float y, int w, int h, int id, int level);
 unsigned int create_block(World* world, int x, int y, int width, int height, int level);
+unsigned int create_powerup(World * world, float x, float y, int width, int height, int type, int level);
 void destroy_entity(World* world, const unsigned int entity);
 void destroy_world(World *world);
 void destroy_world_not_player(World *world);
+
+void disable_component(World *world, unsigned int entity, unsigned int component);
+void enable_component(World *world, unsigned int entity, unsigned int component);
 
 #endif

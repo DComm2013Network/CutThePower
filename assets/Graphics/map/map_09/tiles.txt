@@ -1,0 +1,29 @@
+27
+
+00	assets/Graphics/map/map_09/00_40px.bmp		0
+01	assets/Graphics/map/map_09/01_40px.bmp		0
+02	assets/Graphics/map/map_09/02_40px.bmp		0
+03	assets/Graphics/map/map_09/03_40px.bmp		2
+04	assets/Graphics/map/map_09/04_40px.bmp		2
+05	assets/Graphics/map/map_09/05_40px.bmp		2
+06	assets/Graphics/map/map_09/06_40px.bmp		2
+07	assets/Graphics/map/map_09/07_40px.bmp		2
+08	assets/Graphics/map/map_09/08_40px.bmp		2
+09	assets/Graphics/map/map_09/09_40px.bmp		2
+10	assets/Graphics/map/map_09/10_40px.bmp		2
+11	assets/Graphics/map/map_09/11_40px.bmp		2
+12	assets/Graphics/map/map_09/12_40px.bmp		2
+13	assets/Graphics/map/map_09/13_40px.bmp		2
+14	assets/Graphics/map/map_09/14_40px.bmp		2
+15	assets/Graphics/map/map_09/15_40px.bmp		2
+16	assets/Graphics/map/map_09/16_40px.bmp		2
+17	assets/Graphics/map/map_09/17_40px.bmp		2
+18	assets/Graphics/map/map_09/18_40px.bmp		2
+19	assets/Graphics/map/map_09/19_40px.bmp		2
+20	assets/Graphics/map/map_09/20_40px.bmp		0
+21	assets/Graphics/map/map_09/stairsdownleft.bmp	1
+22	assets/Graphics/map/map_09/stairsdownright.bmp	1
+23	assets/Graphics/map/map_09/stairsupleft.bmp	1
+24	assets/Graphics/map/map_09/stairsupright.bmp	1
+25	assets/Graphics/map/map_09/20_40px_with_white_tile.bmp	1
+26	assets/Graphics/map/map_09/26_40px_with_parkinglot_line.bmp 0
