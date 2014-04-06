@@ -16,7 +16,7 @@
 #include "SendSystem.h"
 
 extern int network_ready;
-static int controllable_player;
+extern unsigned int player_entity;
 
 teamNo_t player_team = 0;
 /**
@@ -45,6 +45,7 @@ void send_location(World *world, int fd)
 			pkt4->yPos = world->position[i].y;
 			pkt4->xVel = world->movement[i].movX;
 			pkt4->yVel = world->movement[i].movY;
+			//printf("x: %f, y: %f\n", world->movement[i].movX, world->movement[i].movY);
 			pkt4->floor = world->position[i].level;
 			pkt4->player_number = world->player[i].playerNo;
 			
@@ -69,7 +70,7 @@ void send_tag(World * world, int fd, unsigned int taggee)
 {
 	PKT_TAGGING * pkt = (PKT_TAGGING*) malloc(sizeof(PKT_TAGGING));
 
-	pkt->tagger_id = world->player[controllable_player].playerNo;
+	pkt->tagger_id = world->player[player_entity].playerNo;
 	pkt->taggee_id = taggee;
 
 	write_packet(fd, P_TAGGING, pkt);
@@ -98,7 +99,7 @@ void send_intialization(World *world, int fd, char * username)
 	for (int j = 0; j < MAX_ENTITIES; j++) {
 		if (IN_THIS_COMPONENT(world->mask[j], COMPONENT_PLAYER | COMPONENT_CONTROLLABLE))
 		{
-			controllable_player = j;
+			player_entity = j;
 			memcpy(pkt1->client_player_name, username, MAX_NAME);
 			memcpy(world->player[j].name, username, MAX_NAME);
 			pkt1->selectedCharacter = world->player[j].character;
@@ -127,8 +128,8 @@ void move_request(World * world, int fd, floorNo_t floor, pos_t xpos, pos_t ypos
 {
 	PKT_FLOOR_MOVE_REQUEST * pkt = (PKT_FLOOR_MOVE_REQUEST*)malloc(sizeof(PKT_FLOOR_MOVE_REQUEST));
 
-	pkt->player_number = world->player[controllable_player].playerNo;
-	pkt->current_floor = world->position[controllable_player].level;
+	pkt->player_number = world->player[player_entity].playerNo;
+	pkt->current_floor = world->position[player_entity].level;
 	pkt->desired_floor = floor;
 	pkt->desired_xPos = xpos;
 	pkt->desired_yPos = ypos;
@@ -157,10 +158,10 @@ void send_status(World * world, int fd, teamNo_t team, int ready_status)
 	{
 		PKT_READY_STATUS * pkt = (PKT_READY_STATUS*)malloc(sizeof(PKT_READY_STATUS));
 
-		pkt->player_number = world->player[controllable_player].playerNo;
+		pkt->player_number = world->player[player_entity].playerNo;
 		pkt->ready_status = ready_status;
 		pkt->team_number = team;
-		memcpy(pkt->player_name, world->player[controllable_player].name, MAX_NAME);
+		memcpy(pkt->player_name, world->player[player_entity].name, MAX_NAME);
 		player_team = team;
 
 		printf("Changed to team %d\n", team);
@@ -209,7 +210,7 @@ void send_chat(World * world, int fd, char * str)
 void send_objectives(World * world, int fd)
 {
 	PKT_OBJECTIVE_STATUS * obj_status = (PKT_OBJECTIVE_STATUS*) calloc(1, sizeof(PKT_OBJECTIVE_STATUS));
-	unsigned int obj_idx = (world->position[controllable_player].level - 1) * OBJECTIVES_PER_FLOOR; // find the offset into the objectives array
+	unsigned int obj_idx = (world->position[player_entity].level - 1) * OBJECTIVES_PER_FLOOR; // find the offset into the objectives array
 
 	for(int i = 0; i < MAX_ENTITIES; i++)
 	{
@@ -236,7 +237,7 @@ void send_tiles(World * world, unsigned int entity, int fd)
 {
 	PKT_SPECIAL_TILE * p_tile = (PKT_SPECIAL_TILE*) calloc(1, sizeof(PKT_SPECIAL_TILE));
 	
-	p_tile->playerNo = world->player[controllable_player].playerNo;
+	p_tile->playerNo = world->player[player_entity].playerNo;
 	p_tile->floor = world->position[entity].level;
 	p_tile->xPos = world->position[entity].x;
 	p_tile->yPos = world->position[entity].y;

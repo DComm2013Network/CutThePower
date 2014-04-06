@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 #include "Network/Packets.h"
 #include "components.h"
+#include "Gameplay/poweruptypes.h"
 
 #define WIDTH 1280
 #define HEIGHT 768
@@ -45,6 +46,7 @@ typedef struct {
 	ObjectiveComponent		objective[MAX_ENTITIES];
 	TileComponent			tile[MAX_ENTITIES];
 	CutsceneComponent		cutscene[MAX_ENTITIES];
+	PowerUpComponent		powerup[MAX_ENTITIES];
 } World;
 
 class FPS {
@@ -119,6 +121,7 @@ unsigned int create_level(World* world, int** map, int width, int height, int ti
 unsigned int create_stair(World* world, int targetLevel, int targetX, int targetY, int x, int y, int width, int height, int level);
 unsigned int create_objective(World* world, float x, float y, int w, int h, int id, int level);
 unsigned int create_block(World* world, int x, int y, int width, int height, int level);
+unsigned int create_powerup(World * world, float x, float y, int width, int height, int type, int level);
 void destroy_entity(World* world, const unsigned int entity);
 void destroy_world(World *world);
 void destroy_world_not_player(World *world);

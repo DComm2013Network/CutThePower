@@ -7,6 +7,7 @@
 #include "../systems.h"
 #include "../world.h"
 #include "collision.h"
+#include "powerups.h"
 #include "stdio.h"
 #include <math.h>
 
@@ -124,10 +125,10 @@ void handle_x_collision(World* world, unsigned int entity, PositionComponent* te
 			/* SPECIAL TILES*/
 		case COLLISION_BELTLEFT:
 			//add_force(movement, 0.47, 180);
-			add_force_acceleration_x(world->movement[entity], 0.47, 180, -0.000000000000000000001);
+			add_force_acceleration_x(world->movement[entity], 2.0, 180, -0.000000000000000000001);
 			break;
 		case COLLISION_BELTRIGHT:
-			add_force(world, entity, 0.47, 0);
+			add_force(world, entity, 2.0, 0);
 			//add_force_acceleration_x(movement, 0.47, 0, -0.000000000000000000001);
 			break;
 		default:
@@ -141,12 +142,12 @@ void handle_x_collision(World* world, unsigned int entity, PositionComponent* te
 			break;
 			/* SPECIAL TILES*/
 		case COLLISION_BELTRIGHT:
-			add_force(world, entity, 0.90, 0);
+			add_force(world, entity, 2.0, 0);
 			//add_force_acceleration_x(movement, 0.47, 0, -0.000000000000000000001);
 			break;
 		case COLLISION_BELTLEFT:
 			//add_force(movement, 0.47, 180);
-			add_force_acceleration_x(world->movement[entity], 0.90, 180, -0.000000000000000000001);
+			add_force_acceleration_x(world->movement[entity], 2.0, 180, -0.000000000000000000001);
 			break;
 		case COLLISION_ICE:
 			apply_ice_deceleration_x(world, entity, 0.005, fps);
@@ -266,11 +267,18 @@ void handle_entity_collision(World* world, unsigned int entity, unsigned int ent
 				floor_change_flag = 1;
 			}
 			break;
-		case COLLISION_TILEPOWER:
-			if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_CONTROLLABLE) && (world->collision[entity].type == COLLISION_HACKER || world->collision[entity].type == COLLISION_GUARD)) {
-				world->player[player_entity].tilez = rand() % 2 + 1;
+		case COLLISION_BELTLEFT_TILE:
+			powerup_beltleft(world, entity);
 			break;
-		}
+		case COLLISION_BELTRIGHT_TILE:
+			powerup_beltright(world, entity);
+			break;
+		case COLLISION_PU_SPEEDUP:
+			powerup_speedup(world, entity);
+		break;
+		case COLLISION_PU_SPEEDDOWN:
+			powerup_speeddown(world, entity);
+		break;
 	}
 		
 	if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_CONTROLLABLE) && world->controllable[entity].active) {
@@ -393,7 +401,7 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 				if (IN_THIS_COMPONENT(world->mask[entity], COLLISION_MASK)) {
 					
 					collision_system(world, entity, &temp, &entity_number, &tile_number, &hit_entity);
-					if (hit_entity != -1 && (entity_number == COLLISION_HACKER || entity_number== COLLISION_GUARD)) {
+					if (hit_entity != (unsigned int)-1 && (entity_number == COLLISION_HACKER || entity_number== COLLISION_GUARD)) {
 						anti_stuck_system(world, entity, hit_entity);
 					}
 
@@ -452,6 +460,7 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 						send_status(world, sendpipe, 0, PLAYER_STATE_WAITING);
 					}
 				}
+				powerup_system(world, entity);
 			}
 		}
 		else if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_POSITION | COMPONENT_MOVEMENT | COMPONENT_COLLISION)) {

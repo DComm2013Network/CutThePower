@@ -12,7 +12,7 @@
 #include "text.h"
 #include "../Input/menu.h"
 
-void make_surrounding_tiles_visible(FowPlayerPosition *fowp);
+static void render_opponent_players(World& world, SDL_Surface *surface, FowComponent *fow, SDL_Rect map_rect);
 static int opponentPlayers[32];
 static int opponentPlayersCount = 0;
 
@@ -58,8 +58,8 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 	opponentPlayersCount = 0;
 	memset(opponentPlayers, 0, sizeof(opponentPlayers));
 
-	for(entity = 0; entity < MAX_ENTITIES; entity++){
 
+	for(entity = 0; entity < MAX_ENTITIES; entity++){
 		
 		if(IN_THIS_COMPONENT(world.mask[entity], COMPONENT_PLAYER | COMPONENT_CONTROLLABLE)) {
 			fow->teamNo = world.player[entity].teamNo;
@@ -105,14 +105,16 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 			
 			if(IN_THIS_COMPONENT(world.mask[entity], COMPONENT_PLAYER)) {
 					
+
 				// only render players on my team
 				if ((fow->teamNo == world.player[entity].teamNo)) {	
+		
 					FowPlayerPosition fowp;
 		
 					fowp.world = &world;
 					fowp.pos   = position;
-					fowp.fow   = fow;
-	
+					fowp.fow   = fow;		
+					fowp.isControllablePlayer = IN_THIS_COMPONENT(world.mask[entity], COMPONENT_CONTROLLABLE);
 					make_surrounding_tiles_visible(&fowp);
 
 					clipRect.x = -playerRect.x;
@@ -133,9 +135,8 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 						clipRect.w = WIDTH - playerRect.x;
 			
 					SDL_BlitScaled(renderPlayer->playerSurface, &clipRect, surface, &playerRect);
-
 				}
-				// found an enemy, add it to the array
+
 				else {
 					opponentPlayers[opponentPlayersCount++] = entity;
 				}
@@ -143,11 +144,40 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 		}
 	}
 
-	//only render enemy players that are inside the visibility circles
+	render_opponent_players(world, surface, fow, map_rect);
+	
+	fow->tilesVisibleToControllablePlayerCount = 0;
+	memset(fow->tilesVisibleToControllablePlayer, 0, sizeof(fow->tilesVisibleToControllablePlayer));
+}
+
+
+/**
+ * Renders an opponent player contingent on his presence inside the team's visibility bubbles
+ * Calls render_player_speech to provide sound effects
+ *
+ * Revisions:
+ *     None.
+ *loading
+ * @param world			The world struct
+ * @param surface		The surface to blit to
+ * @param map_rect		A struct containing the camera offset from the map's origin
+ * @param fow   		A pointer to a FogComponent struct which contains a tile map and sound effects
+ * @return void.
+ * 
+ * @designer Sam Youssef
+ * @author Sam Youssef
+ *
+ * @date April 3rd, 2014
+ */
+void render_opponent_players(World& world, SDL_Surface *surface, FowComponent *fow, SDL_Rect map_rect) {
+
 	for(int entity = 0; entity < opponentPlayersCount && entity < 32; entity++) {
 
-		position 	= &(world.position    [ opponentPlayers[entity] ]);
-		renderPlayer 	= &(world.renderPlayer[ opponentPlayers[entity] ]);
+		PositionComponent     *position     = &(world.position    [ opponentPlayers[entity] ]);
+		RenderPlayerComponent *renderPlayer = &(world.renderPlayer[ opponentPlayers[entity] ]);
+
+		SDL_Rect playerRect;
+		SDL_Rect clipRect;
 
 		playerRect.x = position->x + map_rect.x;
 		playerRect.y = position->y + map_rect.y;
@@ -159,6 +189,8 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 
 		if(fow -> tiles[yPos][xPos].visible[ position->level ] == 0)
 		{
+			// show enemy player
+	
 			clipRect.x = -playerRect.x;
 			clipRect.y = -playerRect.y;
 			clipRect.w = playerRect.w;
@@ -177,6 +209,8 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 				clipRect.w = WIDTH - playerRect.x;
 
 			SDL_BlitScaled(renderPlayer->playerSurface, &clipRect, surface, &playerRect);
+
+			render_player_speech(fow, xPos, yPos);
 		}
 	}
 }
