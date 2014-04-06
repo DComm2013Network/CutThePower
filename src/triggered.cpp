@@ -12,7 +12,8 @@
 #include "Graphics/map.h"
 
 #define SHOW_MENU_INTRO 0 //1 == load intro, 0 == load straight into map
-#define ALT_SKIN_CHANCE 5 //chance to roll an alternate skin
+#define DEBUG_SKINS     1 //1 = on, 0 = off
+#define ALT_SKIN_CHANCE 3 //chance to roll an alternate skin
 
 extern bool running;
 extern SDL_Surface *map_surface;
@@ -202,10 +203,13 @@ bool menu_click(World *world, unsigned int entity) {
 		destroy_menu(world);
 		character = AMAN;
 		alternateSkin = rand() % (ALT_SKIN_CHANCE + 1);
+		#if DEBUG_SKINS
+		printf("Roll: %u\n", alternateSkin);
+		#endif
 		if (alternateSkin == ALT_SKIN_CHANCE) {
 			character = AMAN_ALT1;
 			stop_music();
-			altSong = load_music("assets/Sound/players/aman_vacation/LoZ_MainThemeShort.wav");
+			altSong = load_music("assets/Sound/players/aman_vacation/beachTrack.wav");
 			if (altSong != 0) {
 				play_music(altSong);
 			}
@@ -218,10 +222,13 @@ bool menu_click(World *world, unsigned int entity) {
 		destroy_menu(world);
 		character = ANDREW;
 		alternateSkin = rand() % (ALT_SKIN_CHANCE + 1);
+		#if DEBUG_SKINS
+		printf("Roll: %u\n", alternateSkin);
+		#endif
 		if (alternateSkin == ALT_SKIN_CHANCE) {
 			character = ANDREW_ALT1;
 			stop_music();
-			altSong = load_music("assets/Sound/players/andrew_terminator/LoZ_MainThemeShort.wav");
+			altSong = load_music("assets/Sound/players/andrew_terminator/terminatorTrack.wav");
 			if (altSong != 0) {
 				play_music(altSong);
 			}
@@ -248,10 +255,13 @@ bool menu_click(World *world, unsigned int entity) {
 		destroy_menu(world);
 		character = CORY;
 		alternateSkin = rand() % (ALT_SKIN_CHANCE + 1);
+		#if DEBUG_SKINS
+		printf("Roll: %u\n", alternateSkin);
+		#endif
 		if (alternateSkin == ALT_SKIN_CHANCE) {
 			character = CORY_ALT1;
 			stop_music();
-			altSong = load_music("assets/Sound/players/cory_megaman/LoZ_MainThemeShort.wav");
+			altSong = load_music("assets/Sound/players/cory_megaman/megamanTrack.wav");
 			if (altSong != 0) {
 				play_music(altSong);
 			}
@@ -264,10 +274,13 @@ bool menu_click(World *world, unsigned int entity) {
 		destroy_menu(world);
 		character = DAMIEN;
 		alternateSkin = rand() % (ALT_SKIN_CHANCE + 1);
+		#if DEBUG_SKINS
+		printf("Roll: %u\n", alternateSkin);
+		#endif
 		if (alternateSkin == ALT_SKIN_CHANCE) {
 			character = DAMIEN_ALT1;
 			stop_music();
-			altSong = load_music("assets/Sound/players/damien_ninja/LoZ_MainThemeShort.wav");
+			altSong = load_music("assets/Sound/players/damien_ninja/ninjaTrack.wav");
 			if (altSong != 0) {
 				play_music(altSong);
 			}
@@ -287,6 +300,9 @@ bool menu_click(World *world, unsigned int entity) {
 		destroy_menu(world);
 		character = IAN;
 		alternateSkin = rand() % (ALT_SKIN_CHANCE + 1);
+		#if DEBUG_SKINS
+		printf("Roll: %u\n", alternateSkin);
+		#endif
 		if (alternateSkin == ALT_SKIN_CHANCE) {
 			character = IAN_ALT1;
 			stop_music();
@@ -303,10 +319,13 @@ bool menu_click(World *world, unsigned int entity) {
 		destroy_menu(world);
 		character = JORDAN;
 		alternateSkin = rand() % (ALT_SKIN_CHANCE + 1);
+		#if DEBUG_SKINS
+		printf("Roll: %u\n", alternateSkin);
+		#endif
 		if (alternateSkin == ALT_SKIN_CHANCE) {
 			character = JORDAN_ALT1;
 			stop_music();
-			altSong = load_music("assets/Sound/players/jordan_bling/LoZ_MainThemeShort.wav");
+			altSong = load_music("assets/Sound/players/jordan_bling/blingTrack.wav");
 			if (altSong != 0) {
 				play_music(altSong);
 			}
@@ -319,6 +338,9 @@ bool menu_click(World *world, unsigned int entity) {
 		destroy_menu(world);
 		character = JOSH;
 		alternateSkin = rand() % (ALT_SKIN_CHANCE + 1);
+		#if DEBUG_SKINS
+		printf("Roll: %u\n", alternateSkin);
+		#endif
 		if (alternateSkin == ALT_SKIN_CHANCE) {
 			character = JOSH_ALT1;
 			stop_music();
@@ -342,10 +364,13 @@ bool menu_click(World *world, unsigned int entity) {
 		destroy_menu(world);
 		character = MAT;
 		alternateSkin = rand() % (ALT_SKIN_CHANCE + 1);
+		#if DEBUG_SKINS
+		printf("Roll: %u\n", alternateSkin);
+		#endif
 		if (alternateSkin == ALT_SKIN_CHANCE) {
 			character = MAT_ALT1;
 			stop_music();
-			altSong = load_music("assets/Sound/players/mat_stache/LoZ_MainThemeShort.wav");
+			altSong = load_music("assets/Sound/players/mat_stache/moustacheTrack.wav");
 			if (altSong != 0) {
 				play_music(altSong);
 			}
@@ -357,10 +382,13 @@ bool menu_click(World *world, unsigned int entity) {
 		destroy_menu(world);
 		character = RAMZI;
 		alternateSkin = rand() % (ALT_SKIN_CHANCE + 1);
+		#if DEBUG_SKINS
+		printf("Roll: %u\n", alternateSkin);
+		#endif
 		if (alternateSkin == ALT_SKIN_CHANCE) {
 			character = RAMZI_ALT1;
 			stop_music();
-			altSong = load_music("assets/Sound/players/ramzi_fish/LoZ_MainThemeShort.wav");
+			altSong = load_music("assets/Sound/players/ramzi_fish/underwaterTrack.wav");
 			if (altSong != 0) {
 				play_music(altSong);
 			}
@@ -380,10 +408,13 @@ bool menu_click(World *world, unsigned int entity) {
 		destroy_menu(world);
 		character = SAM;
 		alternateSkin = rand() % (ALT_SKIN_CHANCE + 1);
+		#if DEBUG_SKINS
+		printf("Roll: %u\n", alternateSkin);
+		#endif
 		if (alternateSkin == ALT_SKIN_CHANCE) {
 			character = SAM_ALT1;
 			stop_music();
-			altSong = load_music("assets/Sound/players/sam_glitch/LoZ_MainThemeShort.wav");
+			altSong = load_music("assets/Sound/players/sam_glitch/glitchTrack.wav");
 			if (altSong != 0) {
 				play_music(altSong);
 			}
@@ -416,7 +447,7 @@ bool menu_click(World *world, unsigned int entity) {
 		
 		altSong = 0;
 		destroy_menu(world);
-		character = rand() % 21;
+		character = rand() % 29;
 		switch(character) {
 			case JOSH_ALT1:
 				stop_music();
@@ -434,56 +465,56 @@ bool menu_click(World *world, unsigned int entity) {
 			break;
 			case AMAN_ALT1:
 				stop_music();
-				altSong = load_music("assets/Sound/players/aman_vacation/Dovak-Ian.wav");
+				altSong = load_music("assets/Sound/players/aman_vacation/beachTrack.wav");
 				if (altSong != 0) { 
 					play_music(altSong);
 				}
 			break;
 			case ANDREW_ALT1:
 				stop_music();
-				altSong = load_music("assets/Sound/players/andrew_terminator/Dovak-Ian.wav");
+				altSong = load_music("assets/Sound/players/andrew_terminator/terminatorTrack.wav");
 				if (altSong != 0) { 
 					play_music(altSong);
 				}
 			break;
 			case CORY_ALT1:
 				stop_music();
-				altSong = load_music("assets/Sound/players/cory_megaman/Dovak-Ian.wav");
+				altSong = load_music("assets/Sound/players/cory_megaman/megamanTrack.wav");
 				if (altSong != 0) { 
 					play_music(altSong);
 				}
 			break;
 			case DAMIEN_ALT1:
 				stop_music();
-				altSong = load_music("assets/Sound/players/damien_ninja/Dovak-Ian.wav");
+				altSong = load_music("assets/Sound/players/damien_ninja/ninjaTrack.wav");
 				if (altSong != 0) { 
 					play_music(altSong);
 				}
 			break;
 			case JORDAN_ALT1:
 				stop_music();
-				altSong = load_music("assets/Sound/players/jordan_bling/Dovak-Ian.wav");
+				altSong = load_music("assets/Sound/players/jordan_bling/blingTrack.wav");
 				if (altSong != 0) { 
 					play_music(altSong);
 				}
 			break;
 			case MAT_ALT1:
 				stop_music();
-				altSong = load_music("assets/Sound/players/mat_stache/Dovak-Ian.wav");
+				altSong = load_music("assets/Sound/players/mat_stache/moustacheTrack.wav");
 				if (altSong != 0) { 
 					play_music(altSong);
 				}
 			break;
 			case RAMZI_ALT1:
 				stop_music();
-				altSong = load_music("assets/Sound/players/ramzi_fish/Dovak-Ian.wav");
+				altSong = load_music("assets/Sound/players/ramzi_fish/underwaterTrack.wav");
 				if (altSong != 0) { 
 					play_music(altSong);
 				}
 			break;
 			case SAM_ALT1:
 				stop_music();
-				altSong = load_music("assets/Sound/players/sam_glitch/Dovak-Ian.wav");
+				altSong = load_music("assets/Sound/players/sam_glitch/glitchTrack.wav");
 				if (altSong != 0) { 
 					play_music(altSong);
 				}
@@ -522,6 +553,11 @@ bool menu_click(World *world, unsigned int entity) {
 
 		stop_music();
 		stop_effect();
+		
+		if (altSong != 0) {
+			cleanup_music(altSong);
+			altSong = 0;
+		}
 
 		for(i = 0; i < MAX_ENTITIES; i++) {
 
