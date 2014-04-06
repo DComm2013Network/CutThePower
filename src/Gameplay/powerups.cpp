@@ -21,6 +21,20 @@ void powerup_speeddown(World * world, unsigned int entityID) {
 	}
 }
 
+void powerup_beltleft(World * world, unsigned int entityID) {
+	world->powerup[entityID].captureTime = SDL_GetTicks();
+	world->powerup[entityID].duration = PU_BELT_DURATION;
+	world->powerup[entityID].type = PU_BELTLEFT;
+	world->player[entityID].tilez = TILE_BELT_LEFT;
+}
+
+void powerup_beltright(World * world, unsigned int entityID) {
+	world->powerup[entityID].captureTime = SDL_GetTicks();
+	world->powerup[entityID].duration = PU_BELT_DURATION;
+	world->powerup[entityID].type = PU_BELTRIGHT;
+	world->player[entityID].tilez = TILE_BELT_RIGHT;
+}
+
 void powerup_system(World * world, unsigned int entityID) {
 	if (IN_THIS_COMPONENT(world->mask[entityID], COMPONENT_POWERUP)) {
 		PowerUpComponent * powerup = &(world->powerup[entityID]);
@@ -32,14 +46,32 @@ void powerup_system(World * world, unsigned int entityID) {
 			if (current_time >= (powerup->captureTime + powerup->duration)) {
 				switch(powerup->type) {
 					case PU_SPEED_UP:
+						world->powerup[entityID].captureTime = 0;
+						world->powerup[entityID].duration = 0;
+						world->powerup[entityID].type = PU_NONE;
 						if (IN_THIS_COMPONENT(world->mask[entityID], COMPONENT_MOVEMENT)) {
 							world->movement[entityID].maxSpeed = world->movement[entityID].defMaxSpeed;
 						}
 					break;
 					case PU_SPEED_DOWN:
+						world->powerup[entityID].captureTime = 0;
+						world->powerup[entityID].duration = 0;
+						world->powerup[entityID].type = PU_NONE;
 						if (IN_THIS_COMPONENT(world->mask[entityID], COMPONENT_MOVEMENT)) {
 							world->movement[entityID].maxSpeed = world->movement[entityID].defMaxSpeed;
 						}
+					break;
+					case PU_BELTLEFT:
+						world->powerup[entityID].captureTime = 0;
+						world->powerup[entityID].duration = 0;
+						world->powerup[entityID].type = PU_NONE;
+						world->player[entityID].tilez = 0;
+					break;
+					case PU_BELTRIGHT:
+						world->powerup[entityID].captureTime = 0;
+						world->powerup[entityID].duration = 0;
+						world->powerup[entityID].type = PU_NONE;
+						world->player[entityID].tilez = 0;
 					break;
 				}
 			}

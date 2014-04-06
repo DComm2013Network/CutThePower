@@ -267,10 +267,11 @@ void handle_entity_collision(World* world, unsigned int entity, unsigned int ent
 				floor_change_flag = 1;
 			}
 			break;
-		case COLLISION_TILEPOWER:
-			if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_CONTROLLABLE) && (world->collision[entity].type == COLLISION_HACKER || world->collision[entity].type == COLLISION_GUARD)) {
-				world->player[player_entity].tilez = rand() % 2 + 1;
-			}
+		case COLLISION_BELTLEFT_TILE:
+			powerup_beltleft(world, entity);
+			break;
+		case COLLISION_BELTRIGHT_TILE:
+			powerup_beltright(world, entity);
 			break;
 		case COLLISION_PU_SPEEDUP:
 			powerup_speedup(world, entity);
@@ -282,7 +283,7 @@ void handle_entity_collision(World* world, unsigned int entity, unsigned int ent
 		
 	if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_CONTROLLABLE) && world->controllable[entity].active) {
 		tag_player(world, entity);
-		//capture_objective(world, entity);
+		capture_objective(world, entity);
 	}
 }
 /**

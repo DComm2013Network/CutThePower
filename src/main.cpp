@@ -53,7 +53,9 @@ int main(int argc, char* argv[]) {
 	srand(time(NULL));//random initializer
 	KeyMapInit("assets/Input/keymap.txt");
 	init_render_player_system();
-
+	
+	enable_sound(true);
+	
 	create_main_menu(world);
 	
 	unsigned int begin_time = SDL_GetTicks();
