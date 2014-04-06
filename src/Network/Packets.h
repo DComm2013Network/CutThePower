@@ -138,6 +138,7 @@ typedef struct pkt02{
 	uint32_t	connect_code;
 	playerNo_t 	clients_player_number;
 	teamNo_t 	clients_team_number;
+	char 		name[MAX_NAME];
 } PKT_PLAYER_CONNECT;
 
 typedef struct pkt03{

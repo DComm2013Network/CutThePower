@@ -120,9 +120,6 @@ unsigned int create_player(World* world, int x, int y, bool controllable, int co
 	CollisionComponent collision;
 	PlayerComponent player;
 
-	int lastID = -1;
-	unsigned int tempMask = 0;
-
 	render.width = 40;
 	render.height = 40;
 	
@@ -136,7 +133,7 @@ unsigned int create_player(World* world, int x, int y, bool controllable, int co
 	movement.id = 0;
 	movement.lastDirection = 0;
 	movement.acceleration = 1.50;
-	movement.maxSpeed = 8;
+	movement.maxSpeed = 5.61;
 	movement.movX = 0;
 	movement.movY = 0;
 	movement.friction = 0.30;
@@ -373,7 +370,6 @@ void destroy_world(World *world) {
 	unsigned int entity;
 	
 	for(entity = 0; entity < MAX_ENTITIES; entity++) {
-		//printf("world->mask[%3i]: 0x%08X\n", entity, world->mask[entity]);
 		destroy_entity(world, entity);
 	}
 	background = MAX_ENTITIES + 1;
@@ -383,7 +379,7 @@ void destroy_world_not_player(World *world) {
 	unsigned int entity;
 	
 	for(entity = 0; entity < MAX_ENTITIES; entity++) {
-		if(!IN_THIS_COMPONENT(world->mask[entity], COMPONENT_PLAYER)) {
+		if(!IN_THIS_COMPONENT(world->mask[entity], COMPONENT_PLAYER) && !IN_THIS_COMPONENT(world->mask[entity], COMPONENT_STILE)) {
 			destroy_entity(world, entity);
 		}
 	}

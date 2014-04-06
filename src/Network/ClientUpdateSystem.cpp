@@ -488,8 +488,10 @@ int client_update_info(World *world, void *packet)
 		{
 			world->player[i].teamNo							= client_info->clients_team_number;
 			world->player[i].playerNo						= client_info->clients_player_number;
+			memcpy(world->player[i].name, client_info->name, MAX_NAME);
 			controllable_playerNo 							= client_info->clients_player_number;
 			player_table[client_info->clients_player_number] = i;	
+			world->player[i].tilez 							 = 2;
 		}
 	}
 
@@ -532,6 +534,11 @@ int init_client_update(World *world)
 void update_special_tile(World *world, void * packet)
 {
 	PKT_SPECIAL_TILE * pkt = (PKT_SPECIAL_TILE*) packet;
-
-	create_stile(world, pkt->tile, pkt->xPos, pkt->yPos, pkt->floor);
+			
+	unsigned int tile = create_stile(world, pkt->tile, pkt->xPos, pkt->yPos, pkt->floor);
+	
+	if(pkt->floor != world->position[player_table[controllable_playerNo]].level)
+	{
+		world->mask[tile] &= ~(COMPONENT_RENDER_PLAYER | COMPONENT_COLLISION);
+	}
 }

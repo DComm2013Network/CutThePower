@@ -37,5 +37,5 @@ typedef struct FowPlayerPosition
 void render_fog_of_war_system(SDL_Surface *surface, FowComponent *fow);
 void init_fog_of_war_system  (FowComponent **fow);
 void cleanup_fog_of_war      (FowComponent  *fow);
-
+void reset_fog_of_war				 (FowComponent  *fow);
 #endif

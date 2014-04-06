@@ -18,13 +18,8 @@ static int opponentPlayersCount = 0;
 
 #define SYSTEM_MASK (COMPONENT_RENDER_PLAYER | COMPONENT_POSITION) /**< The entity must have a render player and position component
                                                                     * for processing by this system. */
-#define IMAGE_WIDTH			400
-
                                                                     
 extern SDL_Rect map_rect; /**< The rectangle containing the map. */
-
-//const char *character_map = ".01234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-//SDL_Surface *text_chars[38]; /**< we have 37 different characters. */
 SDL_Surface *ibeam;
 
 /**
@@ -56,7 +51,6 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 	unsigned int entity;
 	RenderPlayerComponent 	*renderPlayer;
 	PositionComponent 	*position;
-	TextFieldComponent	*text;
 	SDL_Rect playerRect;
 	
 	SDL_Rect clipRect;
@@ -77,14 +71,8 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 			position = &(world.position[entity]);
 			renderPlayer = &(world.renderPlayer[entity]);
 			
-			if (!IN_THIS_COMPONENT(world.mask[entity], COMPONENT_MENU_ITEM)) {
-				playerRect.x = position->x + map_rect.x;
-				playerRect.y = position->y + map_rect.y;
-			}
-			else {
-				playerRect.x = position->x;
-				playerRect.y = position->y;
-			}
+			playerRect.x = position->x + map_rect.x;
+			playerRect.y = position->y + map_rect.y;
 			playerRect.w = renderPlayer->width;
 			playerRect.h = renderPlayer->height;
 			
@@ -93,17 +81,6 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 				playerRect.y -= renderPlayer->height / 2;
 			}
 			
-			
-			if (IN_THIS_COMPONENT(world.mask[entity], COMPONENT_BUTTON)) {
-				
-				if (world.button[entity].hovered) {
-					playerRect.x -= 5;
-					playerRect.y -= 5;
-					playerRect.w += 10;
-					playerRect.h += 10;
-				}
-			}
-
 			if(!IN_THIS_COMPONENT(world.mask[entity], COMPONENT_PLAYER))
 			{
 				clipRect.x = -playerRect.x;
@@ -163,29 +140,10 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 					opponentPlayers[opponentPlayersCount++] = entity;
 				}
 			}
-
-			//check if a textbox.
-			if (IN_THIS_COMPONENT(world.mask[entity], COMPONENT_TEXTFIELD)) {
-				
-				text = &(world.text[entity]);
-				
-				playerRect.x += 10;
-				playerRect.y += 8;
-				
-				//TODO: Store the text in a component instead of creating it every frame.
-				//Perhaps we should store it in the renderPlayer component and draw the
-				//textbox if it has a text field component?
-				SDL_BlitSurface(draw_text(text->text, MENU_FONT), NULL, surface, &playerRect);
-				
-				if (text->focused) {
-					playerRect.x += get_text_width(text->text, MENU_FONT) + 1;
-					SDL_BlitSurface(ibeam, NULL, surface, &playerRect);
-				}
-			}
 		}
 	}
 
-	// only render enemy players that are inside the visibility circles
+	//only render enemy players that are inside the visibility circles
 	for(int entity = 0; entity < opponentPlayersCount && entity < 32; entity++) {
 
 		position 	= &(world.position    [ opponentPlayers[entity] ]);
@@ -220,6 +178,65 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 
 			SDL_BlitScaled(renderPlayer->playerSurface, &clipRect, surface, &playerRect);
 		}
+	}
+}
+
+void render_menu_system(World *world, SDL_Surface *surface) {
+	
+	unsigned int entity;
+	RenderPlayerComponent 	*renderPlayer;
+	PositionComponent 	*position;
+	TextFieldComponent *text;
+	SDL_Rect menu_rect;
+
+	for(entity = 0; entity < MAX_ENTITIES; entity++){
+		
+		if (IN_THIS_COMPONENT(world->mask[entity], SYSTEM_MASK | COMPONENT_MENU_ITEM)) {
+			
+			position = &(world->position[entity]);
+			renderPlayer = &(world->renderPlayer[entity]);
+			
+			
+			menu_rect.x = position->x;
+			menu_rect.y = position->y;
+			menu_rect.w = renderPlayer->width;
+			menu_rect.h = renderPlayer->height;
+			
+			if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_BUTTON)) {
+				
+				if (world->button[entity].hovered) {
+					menu_rect.x -= 5;
+					menu_rect.y -= 5;
+					menu_rect.w += 10;
+					menu_rect.h += 10;
+				}
+			}
+			
+			SDL_BlitScaled(renderPlayer->playerSurface, NULL, surface, &menu_rect);
+			
+			
+		
+			//check if a textbox.
+			if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_TEXTFIELD)) {
+				
+				text = &(world->text[entity]);
+				
+				menu_rect.x += 10;
+				menu_rect.y += 8;
+				
+				//TODO: Store the text in a component instead of creating it every frame.
+				//Perhaps we should store it in the renderPlayer component and draw the
+				//textbox if it has a text field component?
+				SDL_BlitSurface(draw_text(text->text, MENU_FONT), NULL, surface, &menu_rect);
+				
+				if (text->focused) {
+					menu_rect.x += get_text_width(text->text, MENU_FONT) + 1;
+					SDL_BlitSurface(ibeam, NULL, surface, &menu_rect);
+				}
+			}
+			
+		}
+		
 	}
 }
 

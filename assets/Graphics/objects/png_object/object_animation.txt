@@ -1,10 +1,22 @@
-72
+78
 
 bookshelf_90x57 1 20 -1 1
 assets/Graphics/objects/png_object/bookshelf_90x57.png
 
 box_32x36 1 20 -1 1
 assets/Graphics/objects/png_object/box_32x36.png
+
+car_robber_200x130 1 20 -1 1
+assets/Graphics/objects/png_object/car_robber_200x130.png
+
+car1_100x140 1 20 -1 1
+assets/Graphics/objects/png_object/car1_100x140.png
+
+car2_100x120 1 20 -1 1
+assets/Graphics/objects/png_object/car2_100x120.png
+
+car3_100x140 1 20 -1 1
+assets/Graphics/objects/png_object/car3_100x140.png
 
 chair_back_35x50 1 20 -1 1
 assets/Graphics/objects/png_object/chair_back_35x50.png
@@ -56,6 +68,12 @@ assets/Graphics/objects/png_object/cubicle2_90x90.png
 
 double_vending_80x75 1 20 -1 1
 assets/Graphics/objects/png_object/double_vending_80x75.png
+
+empty_parkinglot_120x160 1 20 -1 1
+assets/Graphics/objects/png_object/empty_parkinglot_120x160.png
+
+empty_parkinglot_160x160 1 20 -1 1
+assets/Graphics/objects/png_object/empty_parkinglot_160x160.png
 
 file_cabinet_40x60 1 20 -1 1
 assets/Graphics/objects/png_object/file_cabinet_40x60.png

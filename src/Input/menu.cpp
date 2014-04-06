@@ -511,28 +511,10 @@ void create_bsod_menu(World *world) {
 
 void create_intro(World *world) {
 	
-	unsigned int entity;
-	
 	destroy_world(world);
 	
-	//entity = create_entity(world, COMPONENT_MENU_ITEM | COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION);
-	
-	//world->position[entity].x = 0;
-	//world->position[entity].y = 0;
-	//world->position[entity].width = WIDTH;
-	//world->position[entity].height = HEIGHT;
-	
-	//load_animation("assets/Graphics/screen/intro/intro_animation.txt", world, entity);
-	
-	//world->animation[entity].id = 0;
-	
-	//world->renderPlayer[entity].width = WIDTH;
-	//world->renderPlayer[entity].height = HEIGHT;
-	
-	//play_animation(world, entity, "intro");
-	
-	entity = load_cutscene("assets/Graphics/cutscene/game_intro/intro_cutscene.txt", world, CUTSCENE_GAME_INTRO);
-	entity = load_cutscene("assets/Graphics/cutscene/game_intro/box_cutscene.txt", world, -1);
+	load_cutscene("assets/Graphics/cutscene/game_intro/intro_cutscene.txt", world, CUTSCENE_GAME_INTRO);
+	load_cutscene("assets/Graphics/cutscene/game_intro/box_cutscene.txt", world, -1);
 }
 
 void create_load_screen(World *world) {
@@ -630,7 +612,7 @@ void create_pause_screen(World *world) {
 
 void create_van_intro(World *world, int character) {
 	
-	unsigned int entity = create_entity(world, COMPONENT_MENU_ITEM | COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
+	unsigned int entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
 	
 	const int w = 1280;
 	const int h = 768;
@@ -649,17 +631,16 @@ void create_van_intro(World *world, int character) {
 	
 	
 	
-	if (load_cutscene("assets/Graphics/cutscene/van_intro/van_cutscene.txt", world, -1) == -1) {
+	if (load_cutscene("assets/Graphics/cutscene/van_intro/van_cutscene.txt", world, -1) == MAX_ENTITIES) {
 		printf("Error loading van cutscene!\n");
 		return;
 	}
 	
-	if ((entity = load_cutscene("assets/Graphics/cutscene/van_intro/player_cutscene.txt", world, CUTSCENE_VAN_INTRO)) == -1) {
+	if ((entity = load_cutscene("assets/Graphics/cutscene/van_intro/player_cutscene.txt", world, CUTSCENE_VAN_INTRO)) == MAX_ENTITIES) {
 		printf("Error loading player cutscene!\n");
 		return;
 	}
 	
 	setup_character_animation(world, character, entity);
-	
 	
 }

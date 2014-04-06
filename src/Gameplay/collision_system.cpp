@@ -85,25 +85,37 @@ void wall_collision(World* world, PositionComponent temp, unsigned int* tile_num
 	
 	if (yt < world->level[level].height && yt > 0 && yb < world->level[level].height && yb > 0) {
 		for (int i = 0; i < xdts; i++) {
-			if (world->level[level].map[xl + i * world->level[level].tileSize][yt] == L_WALL) {
-				*tile_number = COLLISION_WALL;
-				return;
+			if (xl + i * world->level[level].tileSize < world->level[level].width &&
+				xl + i * world->level[level].tileSize >= 0) {
+				if (world->level[level].map[xl + i * world->level[level].tileSize][yt] == L_WALL) {
+					*tile_number = COLLISION_WALL;
+					return;
+				}
 			}
-			if (world->level[level].map[xr - i * world->level[level].tileSize][yb] == L_WALL) {
-				*tile_number = COLLISION_WALL;
-				return;
+			if (xr - i * world->level[level].tileSize < world->level[level].width &&
+				xr - i * world->level[level].tileSize >= 0) {
+				if (world->level[level].map[xr - i * world->level[level].tileSize][yb] == L_WALL) {
+					*tile_number = COLLISION_WALL;
+					return;
+				}
 			}
 		}
 	}
 	if (xl < world->level[level].width && xl > 0 && xr < world->level[level].width && xr > 0) {
 		for (int i = 0; i < ydts; i++) {
-			if (world->level[level].map[xr][yt + i * world->level[level].tileSize] == L_WALL) {
-				*tile_number = COLLISION_WALL;
-				return;
+			if (yt + i * world->level[level].tileSize < world->level[level].height &&
+				yt + i * world->level[level].tileSize >= 0) {
+				if (world->level[level].map[xr][yt + i * world->level[level].tileSize] == L_WALL) {
+					*tile_number = COLLISION_WALL;
+					return;
+				}
 			}
-			if (world->level[level].map[xl][yb - i * world->level[level].tileSize] == L_WALL) {
-				*tile_number = COLLISION_WALL;
-				return;
+			if (yb - i * world->level[level].tileSize < world->level[level].height &&
+				yb - i * world->level[level].tileSize >= 0) {
+				if (world->level[level].map[xl][yb - i * world->level[level].tileSize] == L_WALL) {
+					*tile_number = COLLISION_WALL;
+					return;
+				}
 			}
 		}
 	}
@@ -323,8 +335,8 @@ unsigned int create_stile(World * world, int type, int xPos, int yPos, int level
 {
 	unsigned int speed_tile = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION | COMPONENT_COLLISION | COMPONENT_STILE);
 	
-	int x = (int)((xPos + TILE_WIDTH / 2) / TILE_WIDTH);
-	int y = (int)((yPos + TILE_HEIGHT / 2) / TILE_HEIGHT);
+	int x = xPos / TILE_WIDTH;
+	int y = yPos / TILE_HEIGHT;
 	
 	world->position[speed_tile].x = (x * TILE_WIDTH) + (TILE_WIDTH / 2);
 	world->position[speed_tile].y = (y * TILE_HEIGHT) + (TILE_HEIGHT / 2);
@@ -336,8 +348,11 @@ unsigned int create_stile(World * world, int type, int xPos, int yPos, int level
 	world->renderPlayer[speed_tile].width = TILE_WIDTH;
 	world->renderPlayer[speed_tile].height = TILE_HEIGHT;
 	
+	world->collision[speed_tile].id = 0;
+	world->collision[speed_tile].timer = 0;
+	world->collision[speed_tile].timerMax = 0;
 	world->collision[speed_tile].active = true;
-	world->collision[speed_tile].radius = 1;
+	world->collision[speed_tile].radius = 0;
 	
 	switch(type)
 	{

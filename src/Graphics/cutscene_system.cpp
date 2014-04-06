@@ -114,12 +114,12 @@ unsigned int load_cutscene(const char *filename, World *world, int id) {
 	
 	if ((fp = fopen(filename, "r")) == 0) {
 		printf("Error opening cutscene: %s\n", filename);
-		return -1;
+		return MAX_ENTITIES;
 	}
 	
 	if (fscanf(fp, "%d %f %f %d %d %s", &cutscene->num_sections, &xpos, &ypos, &width, &height, animation_filename) != 6) {
 		printf("Error loading number of sections and initial position.\n");
-		return -1;
+		return MAX_ENTITIES;
 	}
 	
 	//printf("num_sections: %d\n", cutscene->num_sections);
@@ -160,8 +160,6 @@ unsigned int load_cutscene(const char *filename, World *world, int id) {
 	if (strcmp(animation_filename, "0") != 0) {
 		load_animation(animation_filename, world, entity);
 	}
-	
-	//printf("Created cutscene %u: %s\n", entity, filename);
 	
 	//If the animation name is 0, don't render
 	if (strcmp(cutscene->sections[cutscene->current_section].animation_name, "0") == 0) {

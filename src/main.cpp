@@ -36,12 +36,9 @@ int main(int argc, char* argv[]) {
 
 	SDL_Renderer *renderer;
 	SDL_Texture *surface_texture;
-	
-	create_pipe(send_router_fd);
-	create_pipe(rcv_router_fd);
 
 	World *world = (World*)malloc(sizeof(World));
-	printf("Current World size: %i\n", sizeof(World));
+	printf("Current World size: %lu\n", sizeof(World));
 	
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
 	
@@ -95,7 +92,6 @@ int main(int argc, char* argv[]) {
 	while (running)
 	{
 		unsigned int current_time;
-		//INPUT
 		KeyInputSystem(world);
 		MouseInputSystem(world);
 		movement_system(world, fps, send_router_fd[WRITE]);
@@ -110,6 +106,7 @@ int main(int argc, char* argv[]) {
 
 		render_player_system(*world, surface, fow);
 		render_fog_of_war_system(surface, fow);
+		render_menu_system(world, surface);
 		chat_render(surface);
 		
 		
@@ -136,8 +133,6 @@ int main(int argc, char* argv[]) {
 
 		fps.limit();
 		fps.update();
-		
-		//printf("FPS: %f\n", fps.getFPS());
 	}
 	
 	
