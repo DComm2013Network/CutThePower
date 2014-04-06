@@ -19,16 +19,18 @@ extern SDL_Rect map_rect;
 int subOne(int n);
 int addOne(int n);
 
-int set_visibility_type(FowPlayerPosition *fowp, int yDel, int xDel, int newvis);
-int is_wall_collision(World *world, PositionComponent newposition);
-PositionComponent set_newposition(PositionComponent *pos, int yDel, int xDel);
+int is_wall_collision            (World *world           , PositionComponent newposition);
+PositionComponent set_newposition(PositionComponent *pos , int yDel, int xDel);
+int set_visibility_type          (FowPlayerPosition *fowp, int yDel, int xDel);
+void setBlockedTileCoords        (BlockedTiles       bt[7][7]);
 
 int fogOfWarHeight = 64;
-int fogOfWarWidth = 32;
+int fogOfWarWidth  = 32;
 
-extern int level;
+extern int      level;
 extern teamNo_t player_team;
 
+static int visMap[7][7];
 
 
 
@@ -71,7 +73,7 @@ void render_fog_of_war_system(SDL_Surface *surface, FowComponent *fow)
 			tileRect.w = TILE_WIDTH;
 			tileRect.h = TILE_HEIGHT;
 
-			if(fow -> teamNo == COPS)
+			//if(fow -> teamNo == COPS)
 			{
 				switch(visible)
 				{
@@ -81,15 +83,15 @@ void render_fog_of_war_system(SDL_Surface *surface, FowComponent *fow)
 				}
 			}
 			
-			else if(fow -> teamNo == ROBBERS)
-			{
-				switch(visible)
-				{
-					case CLEAR_VIS:	fow -> tiles[y][x].visible[ level ] = TRANSP_VIS;	break;
-					case OPAQUE_VIS: SDL_BlitSurface(fow -> fogOfWar[count++], NULL, surface, &tileRect); break;
-					case TRANSP_VIS: SDL_BlitSurface(fow -> alphaFog[count++], NULL, surface, &tileRect); break;
-				}
-			}
+			//else if(fow -> teamNo == ROBBERS)
+			//{
+			//	switch(visible)
+			//	{
+			//		case CLEAR_VIS:	fow -> tiles[y][x].visible[ level ] = TRANSP_VIS;	break;
+			//		case OPAQUE_VIS: SDL_BlitSurface(fow -> fogOfWar[count++], NULL, surface, &tileRect); break;
+			//		case TRANSP_VIS: SDL_BlitSurface(fow -> alphaFog[count++], NULL, surface, &tileRect); break;
+			//	}
+			//}
 		}
 	}
 }
@@ -119,7 +121,7 @@ void render_fog_of_war_system(SDL_Surface *surface, FowComponent *fow)
  */
 void init_fog_of_war_system(FowComponent **fow)
 {
-	fogOfWarWidth = 64;  // screen width (tiles/screen)
+	fogOfWarWidth  = 64; // screen width (tiles/screen)
 	fogOfWarHeight = 38; // screen height (tiles/screen)
 
 	int const TOTALTILESX = 2560;
@@ -168,8 +170,150 @@ void init_fog_of_war_system(FowComponent **fow)
 		SDL_FillRect((*fow) -> fogOfWar[ i ], 0, OPAQUE_FOG_COLOUR);
 
 	}
+
+	/*for(int i = 0; i < fogOfWarHeight; i++)
+		for(int j; j < fogOfWarWidth; j++)
+			memset((*fow) -> bt[i][j].coords, 0, sizeof(int) * 7 * 7);*/
+
+	setBlockedTileCoords((*fow) -> bt);
 }
 
+
+void setBlockedTileCoords(BlockedTiles bt[7][7])
+{
+
+	// first corner
+	bt[1][2].coords[1][1] = 1;
+	bt[1][2].coords[0][2] = 1;
+
+	bt[2][1].coords[1][1] = 1;
+	bt[2][1].coords[2][0] = 1;
+	
+	bt[2][2].coords[0][2] = 1;
+	bt[2][2].coords[1][1] = 1;
+	bt[2][2].coords[1][2] = 1;
+	bt[2][2].coords[2][1] = 1;
+	bt[2][2].coords[2][0] = 1;
+
+	// top mid
+	bt[1][3].coords[0][2] = 1;
+	bt[1][3].coords[0][3] = 1;
+	bt[1][3].coords[0][4] = 1;
+
+	bt[2][3].coords[0][2] = 1;
+	bt[2][3].coords[1][1] = 1;
+	bt[2][3].coords[1][2] = 1;
+	bt[2][3].coords[2][0] = 1;
+	bt[2][3].coords[2][1] = 1;
+	bt[2][3].coords[2][2] = 1;
+	bt[2][3].coords[0][3] = 1;
+	bt[2][3].coords[1][3] = 1;
+	bt[2][3].coords[0][4] = 1;
+	bt[2][3].coords[1][4] = 1;
+	bt[2][3].coords[1][5] = 1;
+	bt[2][3].coords[2][4] = 1;
+	bt[2][3].coords[2][5] = 1;
+	bt[2][3].coords[2][6] = 1;
+
+	// second corner
+	bt[1][4].coords[1][5] = 1;
+	bt[1][4].coords[0][4] = 1;
+
+	bt[2][5].coords[1][5] = 1;
+	bt[2][5].coords[2][6] = 1;
+	
+	bt[2][4].coords[0][4] = 1;
+	bt[2][4].coords[1][4] = 1;
+	bt[2][4].coords[1][5] = 1;
+	bt[2][4].coords[2][5] = 1;
+	bt[2][4].coords[2][6] = 1;
+
+	// right mid
+	bt[3][5].coords[2][6] = 1;
+	bt[3][5].coords[3][6] = 1;
+	bt[3][5].coords[4][6] = 1;
+
+	bt[3][4].coords[0][4] = 1;
+	bt[3][4].coords[1][4] = 1;
+	bt[3][4].coords[1][5] = 1;
+	bt[3][4].coords[2][4] = 1;
+	bt[3][4].coords[2][5] = 1;
+	bt[3][4].coords[2][6] = 1;
+	bt[3][4].coords[3][5] = 1;
+	bt[3][4].coords[3][6] = 1;
+	bt[3][4].coords[4][4] = 1;
+	bt[3][4].coords[4][5] = 1;
+	bt[3][4].coords[4][6] = 1;
+	bt[3][4].coords[5][5] = 1;
+	bt[3][4].coords[5][4] = 1;
+	bt[3][4].coords[6][4] = 1;
+
+	// third corner
+	bt[4][4].coords[4][5] = 1;
+	bt[4][4].coords[4][6] = 1;
+	bt[4][4].coords[5][4] = 1;
+	bt[4][4].coords[5][5] = 1;
+	bt[4][4].coords[6][4] = 1;
+
+	bt[4][5].coords[4][6] = 1;
+	bt[4][5].coords[5][5] = 1;
+
+	bt[5][4].coords[5][5] = 1;
+	bt[5][4].coords[6][4] = 1;
+
+	// bot mid
+	bt[5][3].coords[6][2] = 1;
+	bt[5][3].coords[6][3] = 1;
+	bt[5][3].coords[6][4] = 1;
+
+	bt[4][3].coords[4][0] = 1;
+	bt[4][3].coords[4][1] = 1;
+	bt[4][3].coords[4][2] = 1;
+	bt[4][3].coords[4][4] = 1;
+	bt[4][3].coords[4][5] = 1;
+	bt[4][3].coords[4][6] = 1;
+	bt[4][3].coords[5][1] = 1;
+	bt[4][3].coords[5][2] = 1;
+	bt[4][3].coords[5][3] = 1;
+	bt[4][3].coords[5][4] = 1;
+	bt[4][3].coords[5][5] = 1;
+	bt[4][3].coords[6][2] = 1;
+	bt[4][3].coords[6][3] = 1;
+	bt[4][3].coords[6][4] = 1;
+
+	// fourth corner
+	bt[4][2].coords[4][0] = 1;
+	bt[4][2].coords[4][1] = 1;
+	bt[4][2].coords[5][1] = 1;
+	bt[4][2].coords[5][2] = 1;
+	bt[4][2].coords[6][2] = 1;
+
+	bt[5][2].coords[5][1] = 1;
+	bt[5][2].coords[6][2] = 1;
+
+	bt[4][1].coords[4][0] = 1;
+	bt[4][1].coords[5][1] = 1;
+
+	// left mid
+	bt[3][1].coords[2][0] = 1;
+	bt[3][1].coords[3][0] = 1;
+	bt[3][1].coords[4][0] = 1;
+
+	bt[3][2].coords[0][2] = 1;
+	bt[3][2].coords[1][2] = 1;
+	bt[3][2].coords[2][2] = 1;
+	bt[3][2].coords[4][2] = 1;
+	bt[3][2].coords[5][2] = 1;
+	bt[3][2].coords[6][2] = 1;
+	bt[3][2].coords[1][1] = 1;
+	bt[3][2].coords[2][1] = 1;
+	bt[3][2].coords[3][1] = 1;
+	bt[3][2].coords[4][1] = 1;
+	bt[3][2].coords[5][1] = 1;
+	bt[3][2].coords[2][0] = 1;
+	bt[3][2].coords[3][0] = 1;
+	bt[3][2].coords[4][0] = 1;
+}
 
 
 /**
@@ -255,14 +399,17 @@ void reset_fog_of_war(FowComponent *fow)
  *
  * @date March 29, 2014
  */
-int get_visibility_of_near_wall(FowPlayerPosition *fowp, int yd, int xd)
+int get_visibility_of_near_wall(FowPlayerPosition *fowp, int y, int x)
 {
 		PositionComponent newposition;
 		
+		int yd = y-3;
+		int xd = x-3;
+
 		newposition = set_newposition(fowp -> pos, yd, xd);
 		
-		if(is_wall_collision(fowp -> world, newposition) == COLLISION_WALL) return false;
-		return true;
+		if(is_wall_collision(fowp -> world, newposition) == COLLISION_WALL) return 1;
+		return 0;
 }
 
 /**
@@ -287,176 +434,47 @@ void make_surrounding_tiles_visible(FowPlayerPosition *fowp)
 	fowp -> fow -> xOffset = -map_rect.x;
 	fowp -> fow -> yOffset = -map_rect.y;
 	
+	memset(visMap, 0, sizeof(int) * 7 * 7);
 
-	#define LFT -1
-	#define RGT +1
-	#define TOP -1
-	#define BOT +1
+	visMap[0][0] = 1;
+	visMap[0][1] = 1;
+	visMap[1][0] = 1;
 
-	#define LFT3 LFT + LFT + LFT
-	#define RGT3 RGT + RGT + RGT
-	#define BOT3 BOT + BOT + BOT
-	#define TOP3 TOP + TOP + TOP
+	visMap[0][5] = 1;
+	visMap[0][6] = 1;
+	visMap[1][6] = 1;
 
-	#define BOT2 BOT + BOT
-	#define TOP2 TOP + TOP
-	#define LFT2 LFT + LFT
-	#define RGT2 RGT + RGT
-	
-	set_visibility_type(fowp, 0, 0, 0);
+	visMap[5][6] = 1;
+	visMap[6][5] = 1;
+	visMap[6][6] = 1;
 
-
-	int l;
-	int r;
-	int b;
-	int t;
-	
+	visMap[5][0] = 1;
+	visMap[6][0] = 1;
+	visMap[6][1] = 1;
 
 
-	if((t = set_visibility_type(fowp, TOP,  0, CLEAR_VIS))) {	
-		if(set_visibility_type   (fowp, TOP2, 0, CLEAR_VIS))
+	for(int y = 0; y < 7; y++) 
+	{
+		for(int x = 0; x < 7; x++) 
 		{
-			set_visibility_type(fowp, TOP3, 0, CLEAR_VIS);
-			
-			if(get_visibility_of_near_wall(fowp, 0, LFT))
-			{			
-				set_visibility_type(fowp, TOP3, LFT, CLEAR_VIS);	
-				set_visibility_type(fowp, TOP2, LFT, CLEAR_VIS);	
-			}
-			
-			if(get_visibility_of_near_wall(fowp, 0, RGT))	
+			if(visMap[y][x] == 0)
 			{
-				set_visibility_type(fowp, TOP3, RGT, CLEAR_VIS);		
-				set_visibility_type(fowp, TOP2, RGT, CLEAR_VIS);
-			}				
-		}
-	}
-	
-	
-	if((b = set_visibility_type(fowp, BOT,  0, CLEAR_VIS))) {	
-		if(set_visibility_type   (fowp, BOT2, 0, CLEAR_VIS))
-		{
-			set_visibility_type(fowp, BOT3, 0, CLEAR_VIS);
-			
-			if(get_visibility_of_near_wall(fowp, 0, LFT))
-			{			
-				set_visibility_type(fowp, BOT3, LFT, CLEAR_VIS);	
-				set_visibility_type(fowp, BOT2, LFT, CLEAR_VIS);	
-			}
-			
-			if(get_visibility_of_near_wall(fowp, 0, RGT))	
-			{
-				set_visibility_type(fowp, BOT3, RGT, CLEAR_VIS);		
-				set_visibility_type(fowp, BOT2, RGT, CLEAR_VIS);
-			}				
-		}
-	}
-
-
-	if((l = set_visibility_type(fowp, 0, LFT,  CLEAR_VIS))) {
-		if(set_visibility_type	 (fowp, 0, LFT2, CLEAR_VIS))
-		{
-			
-			set_visibility_type (fowp, 0, LFT3, CLEAR_VIS);
-				
-			if(	get_visibility_of_near_wall(fowp, BOT, 0))
-			{
-				set_visibility_type (fowp, BOT, LFT2, CLEAR_VIS);	
-				set_visibility_type (fowp, BOT, LFT3, CLEAR_VIS);
-			}		
-			if(	get_visibility_of_near_wall(fowp, TOP, 0))
-			{
-				set_visibility_type (fowp, TOP, LFT2, CLEAR_VIS);	
-				set_visibility_type (fowp, TOP, LFT3, CLEAR_VIS);						
-			}
-		}
-	}
-	
-	
-	if((r = set_visibility_type(fowp, 0, RGT,  CLEAR_VIS))) {
-		if(set_visibility_type	 (fowp, 0, RGT2, CLEAR_VIS))
-		{
-			set_visibility_type (fowp, 0, RGT3, CLEAR_VIS);
-			
-			if(	get_visibility_of_near_wall(fowp, TOP, 0))
-			{
-				set_visibility_type (fowp, TOP, RGT3, CLEAR_VIS);
-				set_visibility_type (fowp, TOP, RGT2, CLEAR_VIS);
-			}
-			
-			if(	get_visibility_of_near_wall(fowp, BOT, 0))
-			{
-				set_visibility_type (fowp, BOT, RGT3, CLEAR_VIS);				
-				set_visibility_type (fowp, BOT, RGT2, CLEAR_VIS);						
-			}
-		}
-	}
-	
-	
-	if(t && l && set_visibility_type(fowp, TOP, LFT, CLEAR_VIS)) {
-	
-		if( l && t ) {
-			if(get_visibility_of_near_wall(fowp, TOP2, LFT) &&	
-				 get_visibility_of_near_wall(fowp, TOP2, 0  ) &&
-				 get_visibility_of_near_wall(fowp, TOP,  0  ) &&
-			   set_visibility_type(fowp, TOP2, LFT2, CLEAR_VIS)) {
-			   
-				if(get_visibility_of_near_wall(fowp, 0, LFT2)) {
-					set_visibility_type(fowp, TOP, LFT3, CLEAR_VIS);
-				}	
-			}
-		}
-	}
-						
-			
-	if(t && r && set_visibility_type(fowp, TOP, RGT, CLEAR_VIS)) {
-	
-		if( r && t )
-		{
-			if(get_visibility_of_near_wall(fowp, TOP2, RGT) &&
-		 		 get_visibility_of_near_wall(fowp, TOP2, 0  ) &&
- 		 		 get_visibility_of_near_wall(fowp, TOP,  0  ) &&
-				 set_visibility_type(fowp, TOP2, RGT2, CLEAR_VIS)) {
-				
-				if(get_visibility_of_near_wall(fowp, 0, RGT2)) {
-					set_visibility_type(fowp, TOP, RGT3, CLEAR_VIS);
-				}
-			}
-		}
-	}
-	
-	
-	if(b && l && set_visibility_type(fowp, BOT, LFT, CLEAR_VIS)) {
-	
-		if( l && b ) 
-		{
-			if(get_visibility_of_near_wall(fowp, BOT2, LFT) &&	
-				 get_visibility_of_near_wall(fowp, BOT2, 0  ) &&	
-				 get_visibility_of_near_wall(fowp, BOT,  0  ) &&
-			   set_visibility_type(fowp, BOT2, LFT2, CLEAR_VIS)) {
-			   
-				if(get_visibility_of_near_wall(fowp, 0, LFT2)) {
-					set_visibility_type(fowp, BOT, LFT3, CLEAR_VIS);
-				}				
-			}
-		}
-	}
-
-
-
-	if(b && r && set_visibility_type(fowp, BOT, RGT, CLEAR_VIS)) {
-	
-		if( r && b )
-		{
-			if( get_visibility_of_near_wall(fowp, BOT2, RGT) &&		
-					get_visibility_of_near_wall(fowp, BOT2, 0  ) &&	
-					get_visibility_of_near_wall(fowp, BOT , 0  ) &&	
-					set_visibility_type(fowp, BOT2, RGT2, CLEAR_VIS)) {
-			
-				if(get_visibility_of_near_wall(fowp, 0, RGT2)) {
-					set_visibility_type(fowp, BOT, RGT3, CLEAR_VIS);
+				if((visMap[y][x] = get_visibility_of_near_wall(fowp, y, x)) != 0)
+				{
+					for(int yi = 0; yi < 7; yi++)
+						for(int xi = 0; xi < 7; xi++)
+							if(fowp->fow->bt[y][x].coords[yi][xi] == 1)
+								visMap[yi][xi] = 1;
 				}
 			}		
+		}
+	}
+
+	for(int y = 0; y < 7; y++) 
+	{
+		for(int x = 0; x < 7; x++) 
+		{
+			set_visibility_type(fowp, y, x);
 		}
 	}
 }
@@ -550,7 +568,7 @@ PositionComponent set_newposition(PositionComponent *pos, int yDel, int xDel)
  *
  * @date March 29, 2014
  */
-int *get_visibility_type(PositionComponent *newposition, FowPlayerPosition *fowp, int yDel, int xDel)
+int *get_visibility_ptr(PositionComponent *newposition, FowPlayerPosition *fowp, int yDel, int xDel)
 {
 	FowComponent *fow = fowp -> fow;
 	PositionComponent *pos = fowp -> pos;
@@ -594,26 +612,21 @@ int *get_visibility_type(PositionComponent *newposition, FowPlayerPosition *fowp
  *
  * @date March 29, 2014
  */
-int set_visibility_type(FowPlayerPosition *fowp, int yDel, int xDel, int newvis)
+int set_visibility_type(FowPlayerPosition *fowp, int y, int x)
 {
 
 	World *world = fowp -> world;
 	PositionComponent newposition;
 
-	int *vis = get_visibility_type(&newposition, fowp, yDel, xDel);
-
-	if( is_wall_collision(world, newposition) == COLLISION_WALL ) 
-	{ 
-		*vis = TRANSP_VIS;
-		return 0; 
-	}
-
-	if(*vis == 0 || newvis == 0)
-		*vis = CLEAR_VIS;
+	int yd = y-3;
+	int xd = x-3;
 	
-	else
-		*vis = newvis;
-	
+
+	if(visMap[y][x] == 0)
+	{
+		int *vis = get_visibility_ptr(&newposition, fowp, yd, xd);
+		(*vis) =  CLEAR_VIS;
+	}	
 	return 1;
 }
 

@@ -34,11 +34,18 @@ typedef struct PlayerSpeech
 		
 } PlayerSpeech;
 
+
 typedef struct FowTile
 {
 	SDL_Rect rect;
 	int visible[NUMLEVELS];
 } FowTile;
+
+
+typedef struct BlockedTiles
+{
+	int coords[7][7];
+} BlockedTiles;
 
 
 typedef struct FowComponent
@@ -50,6 +57,8 @@ typedef struct FowComponent
 	SDL_Surface **alphaFog;
 	teamNo_t teamNo;
 	
+	BlockedTiles bt[7][7];
+
 	PlayerSpeech copSpeech;
 	int tilesVisibleToControllablePlayer[NMAXTILESINLOS][2];
 	int tilesVisibleToControllablePlayerCount;
