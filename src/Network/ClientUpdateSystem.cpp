@@ -456,6 +456,30 @@ void setup_character_animation(World * world, int character, int entity)
 		case IAN_ALT1:
 			 load_animation("assets/Graphics/player/ian_dovakiin/animation.txt", world, entity);
 		break;
+		case AMAN_ALT1:
+			 load_animation("assets/Graphics/player/aman_vacation/animation.txt", world, entity);
+		break;
+		case ANDREW_ALT1:
+			 load_animation("assets/Graphics/player/andrew_terminator/animation.txt", world, entity);
+		break;
+		case CORY_ALT1:
+			 load_animation("assets/Graphics/player/cory_megaman/animation.txt", world, entity);
+		break;
+		case DAMIEN_ALT1:
+			 load_animation("assets/Graphics/player/damien_ninja/animation.txt", world, entity);
+		break;
+		case JORDAN_ALT1:
+			 load_animation("assets/Graphics/player/jordan_bling/animation.txt", world, entity);
+		break;
+		case MAT_ALT1:
+			 load_animation("assets/Graphics/player/mat_stache/animation.txt", world, entity);
+		break;
+		case RAMZI_ALT1:
+			 load_animation("assets/Graphics/player/ramzi_fish/animation.txt", world, entity);
+		break;
+		case SAM_ALT1:
+			 load_animation("assets/Graphics/player/sam_glitch/animation.txt", world, entity);
+		break;
 		default:
 		load_animation("assets/Graphics/player/p0/rob_animation.txt", world, entity);
 	}
