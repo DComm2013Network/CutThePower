@@ -7,24 +7,24 @@
 #include "../world.h"
 
 
-#define NUMLEVELS   9
+#define NUMLEVELS 9
 
-#define L_EMPTY		1
-#define L_WALL		2
+#define L_EMPTY 1
+#define L_WALL  2
 
 #define COLLISION_MASK (COMPONENT_COLLISION)
 #define LEVEL_MASK (COMPONENT_LEVEL)
 
-#define CLEAR_VIS	  0
-#define TRANSP_VIS 	1
-#define OPAQUE_VIS 	2
+#define CLEAR_VIS  0
+#define TRANSP_VIS 1
+#define OPAQUE_VIS 2
 		
-#define NUMSPEECH   3
+#define NUMSPEECH      3
+#define NMAXTILESINLOS 37
 
 #define OPAQUE_FOG_COLOUR 0x000000
 #define TRANSP_FOG_COLOUR 0x221122
 
-#define NMAXTILESINLOS 	37
 
 
 typedef struct PlayerSpeech
@@ -70,7 +70,6 @@ typedef struct FowPlayerPosition
 void render_fog_of_war_system(SDL_Surface *surface, FowComponent *fow);
 void init_fog_of_war_system  (FowComponent **fow);
 void cleanup_fog_of_war      (FowComponent  *fow);
-void reset_fog_of_war				 (FowComponent  *fow);
-
-void init_players_speech		 (FowComponent  *fow);
+void reset_fog_of_war        (FowComponent  *fow);
+void init_players_speech     (FowComponent  *fow);
 #endif

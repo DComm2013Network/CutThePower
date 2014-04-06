@@ -13,6 +13,9 @@
 #include "../Input/menu.h"
 
 void make_surrounding_tiles_visible(FowPlayerPosition *fowp);
+void render_player_speech(FowComponent *fow, int xPos, int yPos);
+void render_opponent_players(World& world, SDL_Surface *surface, FowComponent *fow, SDL_Rect map_rect);
+
 static int opponentPlayers[32];
 static int opponentPlayersCount = 0;
 
@@ -186,29 +189,35 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 		}
 	}
 
+	render_opponent_players(world, surface, fow, map_rect);
+	
+	fow->tilesVisibleToControllablePlayerCount = 0;
+	memset(fow->tilesVisibleToControllablePlayer, 0, sizeof(fow->tilesVisibleToControllablePlayer));
+}
 
-	//only render enemy players that are inside the visibility circles
+//only render enemy players that are inside the visibility circles
+void render_opponent_players(World& world, SDL_Surface *surface, FowComponent *fow, SDL_Rect map_rect) {
+
 	for(int entity = 0; entity < opponentPlayersCount && entity < 32; entity++) {
 
-		position 			= &(world.position    [ opponentPlayers[entity] ]);
-		renderPlayer 	= &(world.renderPlayer[ opponentPlayers[entity] ]);
+		PositionComponent     *position     = &(world.position    [ opponentPlayers[entity] ]);
+		RenderPlayerComponent *renderPlayer = &(world.renderPlayer[ opponentPlayers[entity] ]);
+
+		SDL_Rect playerRect;
+		SDL_Rect clipRect;
 
 		playerRect.x = position->x + map_rect.x;
 		playerRect.y = position->y + map_rect.y;
 		playerRect.w = renderPlayer->width;
 		playerRect.h = renderPlayer->height;
 
-		time_t tm;
-
 		int xPos = position->x / TILE_WIDTH;
 		int yPos = position->y / TILE_HEIGHT;
 
-		int vistype = fow -> tiles[yPos][xPos].visible[ position->level ];
-
-		if(vistype == 1 || vistype == 2)
+		if(fow -> tiles[yPos][xPos].visible[ position->level ] == 0)
 		{
 			// show enemy player
-		
+	
 			clipRect.x = -playerRect.x;
 			clipRect.y = -playerRect.y;
 			clipRect.w = playerRect.w;
@@ -228,26 +237,9 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 
 			SDL_BlitScaled(renderPlayer->playerSurface, &clipRect, surface, &playerRect);
 
-
-			// sound enemy speech if near
-			if(time(&tm) - fow->copSpeech.played > 4)
-			{			
-				int nTilesInLos = fow -> tilesVisibleToControllablePlayerCount;
-				for(int i = 0; i < nTilesInLos; i++)
-				{
-					if(fow -> tilesVisibleToControllablePlayer[i][0] == yPos &&
-						 fow -> tilesVisibleToControllablePlayer[i][1] == xPos) 
-					{		 
-						Mix_PlayChannel( -1, fow->copSpeech.speech[rand() % NUMSPEECH], 0 );
-						time(&fow->copSpeech.played);
-					}
-				}	
-			}
+			render_player_speech(fow, xPos, yPos);
 		}
 	}
-	
-	fow->tilesVisibleToControllablePlayerCount = 0;
-	memset(fow->tilesVisibleToControllablePlayer, 0, sizeof(fow->tilesVisibleToControllablePlayer));
 }
 
 void init_players_speech(FowComponent *fow) {
@@ -258,10 +250,23 @@ void init_players_speech(FowComponent *fow) {
 	time( &fow->copSpeech.played );
 }
 
-void render_player_speech(FowComponent *fow) {
+void render_player_speech(FowComponent *fow, int xPos, int yPos) {
 
-	
-
+	time_t tm;
+	// sound enemy speech if near (time wait of 8 secs)
+	if(time(&tm) - fow->copSpeech.played > 8)
+	{
+		int nTilesInLos = fow -> tilesVisibleToControllablePlayerCount;
+		for(int i = 0; i < nTilesInLos; i++)
+		{
+			if(fow -> tilesVisibleToControllablePlayer[i][0] == yPos &&
+			   fow -> tilesVisibleToControllablePlayer[i][1] == xPos) 
+			{		
+				Mix_PlayChannel( -1, fow->copSpeech.speech[rand() % NUMSPEECH], 0 );
+				time(&fow->copSpeech.played);
+			}
+		}	
+	}
 }
 
 
