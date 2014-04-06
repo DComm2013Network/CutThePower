@@ -173,7 +173,7 @@ object 59 30 40 37 assets/Graphics/objects/png_object/object_animation.txt chair
 
 object 42 35 18 25 assets/Graphics/objects/png_object/object_animation.txt trash_18x25
 object 60 33 80 75 assets/Graphics/objects/png_object/object_animation.txt double_vending_80x75
-object 50 33 80 75 assets/Graphics/objects/png_object/object_animation.txt double_vending_80x75
+object 50 33 58 75 assets/Graphics/objects/png_object/object_animation.txt vending_58x75
 
 object 42 11 140 85 assets/Graphics/objects/png_object/object_animation.txt screen_140x85
 object 45.4 11 140 85 assets/Graphics/objects/png_object/object_animation.txt screen_140x85
