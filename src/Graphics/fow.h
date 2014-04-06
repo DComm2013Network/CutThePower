@@ -60,6 +60,7 @@ typedef struct FowComponent
 	BlockedTiles bt[7][7];
 
 	PlayerSpeech copSpeech;
+	PlayerSpeech robSpeech;
 	int tilesVisibleToControllablePlayer[NMAXTILESINLOS][2];
 	int tilesVisibleToControllablePlayerCount;
 	

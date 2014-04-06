@@ -743,6 +743,11 @@ void init_players_speech(FowComponent *fow) {
 	fow->copSpeech.speech[0] = Mix_LoadWAV("assets/Sound/speech/cop1.wav");
 	fow->copSpeech.speech[1] = Mix_LoadWAV("assets/Sound/speech/cop2.wav");
 	fow->copSpeech.speech[2] = Mix_LoadWAV("assets/Sound/speech/cop3.wav");
+
+	fow->robSpeech.speech[0] = Mix_LoadWAV("assets/Sound/speech/rob1.wav");
+	fow->robSpeech.speech[1] = Mix_LoadWAV("assets/Sound/speech/rob2.wav");
+	fow->robSpeech.speech[2] = Mix_LoadWAV("assets/Sound/speech/rob3.wav");
+
 	time( &fow->copSpeech.played );
 }
 
