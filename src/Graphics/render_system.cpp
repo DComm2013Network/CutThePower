@@ -235,8 +235,12 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 				int nTilesInLos = fow -> tilesVisibleToControllablePlayerCount;
 				for(int i = 0; i < nTilesInLos; i++)
 				{
-					Mix_PlayChannel( -1, fow->copSpeech.speech[rand() % NUMSPEECH], 0 );
-					time(&fow->copSpeech.played);
+					if(fow -> tilesVisibleToControllablePlayer[i][0] == yPos &&
+						 fow -> tilesVisibleToControllablePlayer[i][0] == xPos) 
+					{		 
+						Mix_PlayChannel( -1, fow->copSpeech.speech[rand() % NUMSPEECH], 0 );
+						time(&fow->copSpeech.played);
+					}
 				}	
 			}
 		}
