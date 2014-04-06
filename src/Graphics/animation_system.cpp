@@ -89,7 +89,7 @@ void animation_system(World *world) {
 					
 					animationComponent->last_random_occurance = SDL_GetTicks();
 					animationComponent->next_random_occurance = (rand() % (animationComponent->rand_occurance_max - animationComponent->rand_occurance_min)) + animationComponent->rand_occurance_min + SDL_GetTicks();
-					
+
 					if (animationComponent->animations[animationComponent->rand_animation].sound_effect != MAX_EFFECTS) {
 						play_effect(animationComponent->animations[animationComponent->rand_animation].sound_effect);
 					}

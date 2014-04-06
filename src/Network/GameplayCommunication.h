@@ -17,7 +17,7 @@
 #include <cstring>
 #include <pthread.h>
 
-#define NET_SHUTDOWN -1 /**< The network will write this to the gameplay 
+#define NET_SHUTDOWN    -1 /**< The network will write this to the gameplay 
                              module (possibly followed by an error message) on shutdown. */
 #define MAXIP 			20
 
