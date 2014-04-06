@@ -35,6 +35,7 @@ typedef struct FowTile
 {
 	SDL_Rect rect;
 	int visible[NUMLEVELS];
+	int currentLOS;
 } FowTile;
 
 

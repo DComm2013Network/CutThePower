@@ -157,6 +157,16 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 			
 					SDL_BlitScaled(renderPlayer->playerSurface, &clipRect, surface, &playerRect);
 							
+						
+					// sound enemy speech	
+					time_t tm;
+														
+					if(time(&tm) - fow->copSpeech.played > 4)
+					{
+						Mix_PlayChannel( -1, fow->copSpeech.speech[rand() % NUMSPEECH], 0 );
+						time(&fow->copSpeech.played);
+					}	
+	
 				}
 
 				else {
