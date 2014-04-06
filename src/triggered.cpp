@@ -492,8 +492,8 @@ bool menu_click(World *world, unsigned int entity) {
 	}
 	else if (strcmp(world->button[entity].label, "ingame_exit") == 0) {
 		
-		uint32_t type  = 1;
-		write_packet(send_router_fd[WRITE], NETWORK_SHUTDOWN, &type);
+		uint32_t err = NUM_PACKETS + 1;
+        write_pipe(send_router_fd[WRITE], &err, sizeof(err));
 		destroy_world(world);
 		player_entity = MAX_ENTITIES;
 		map_surface = 0;

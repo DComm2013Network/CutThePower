@@ -82,15 +82,6 @@ extern int send_failure_fd;
             write_pipe(recv_data->write_pipe, &err, sizeof(err));
      	    break;
         }
- 
-        else if(numready == 0) // Timed out; tell network router to check if server is down
-        {
-            int oldstate;
-            uint32_t type = P_KEEPALIVE;
-            pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &oldstate);
-            write_pipe(recv_data->write_pipe, &type, sizeof(uint32_t));
-            pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, &oldstate);
-        }
 
 		else
 		{
@@ -111,8 +102,8 @@ extern int send_failure_fd;
             pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, &oldstate);
     	}
  	}
-    type = 0;
-    write_packet(recv_data->write_pipe, NETWORK_SHUTDOWN, &type);
+    uint32_t err = NUM_PACKETS + 1;
+    write_pipe(recv_data->write_pipe, &err, sizeof(err));
     pthread_cleanup_pop(1); // Calls the cleanup handler
     return NULL;
 }

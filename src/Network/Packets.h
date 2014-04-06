@@ -60,9 +60,8 @@
 #define P_TAGGING        14
 #define P_MIN_POS        15
 #define P_MIN_POS_ALL    16
-#define NETWORK_SHUTDOWN 17
 
-#define NUM_PACKETS  17
+#define NUM_PACKETS  16
 
 #define ABHISHEK 	0
 #define AMAN     	1
