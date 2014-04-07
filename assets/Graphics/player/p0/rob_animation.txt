@@ -1,12 +1,12 @@
 4
 
-down 3 150 -1 1
+down 4 150 -1 1
 assets/Graphics/player/p0/d1.png
 assets/Graphics/player/p0/d2.png
 assets/Graphics/player/p0/d3.png
 assets/Graphics/player/p0/d4.png
 
-up 3 150 -1 1
+up 4 150 -1 1
 assets/Graphics/player/p0/u1.png
 assets/Graphics/player/p0/u2.png
 assets/Graphics/player/p0/u3.png
