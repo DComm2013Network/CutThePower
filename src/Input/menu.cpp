@@ -612,7 +612,7 @@ void create_pause_screen(World *world) {
 
 void create_van_intro(World *world, int character) {
 	
-	unsigned int entity = create_entity(world, COMPONENT_MENU_ITEM | COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
+	unsigned int entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);
 	
 	const int w = 1280;
 	const int h = 768;
@@ -642,6 +642,5 @@ void create_van_intro(World *world, int character) {
 	}
 	
 	setup_character_animation(world, character, entity);
-	
 	
 }

@@ -26,6 +26,7 @@ static char serverip[MAXIP];
 extern FowComponent *fow;
 extern SDL_Window *window;
 static unsigned int altSong = 0;
+extern FowComponent *fow;
 
 bool menu_click(World *world, unsigned int entity) {
 	//printf("Clicked: %s\n", world->button[entity].label);

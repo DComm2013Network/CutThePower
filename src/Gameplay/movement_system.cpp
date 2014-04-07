@@ -564,7 +564,7 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 			position->y = temp.y;
 			
 			handle_entity_collision(world, entity, entity_number, tile_number, hit_entity);
-
+			
 			switch(world->movement[entity].lastDirection) {
 				case DIRECTION_RIGHT:
 					if (world->movement[entity].movX != 0) {

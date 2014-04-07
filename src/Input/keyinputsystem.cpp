@@ -142,12 +142,11 @@ void KeyInputSystem(World *world)
             command->commands[C_RIGHT] = (currentKeyboardState[command_keys[C_RIGHT]] != 0);
 			command->commands[C_ACTION] = (currentKeyboardState[command_keys[C_ACTION]] != 0) && (prevKeyboardState[command_keys[C_ACTION]] == 0);
 			command->commands[C_TILE] = (currentKeyboardState[command_keys[C_TILE]] != 0) && (prevKeyboardState[command_keys[C_TILE]] == 0);
-			
+
         }
     }
     
-    if (player_entity != MAX_ENTITIES) {
-		//pause menu
+    if (player_entity < MAX_ENTITIES) {		//pause menu
 		if ((currentKeyboardState[SDL_SCANCODE_ESCAPE] != 0) && (prevKeyboardState[SDL_SCANCODE_ESCAPE] == 0)) {
 			if (IN_THIS_COMPONENT(world->mask[player_entity], COMPONENT_COMMAND)) {
 				world->mask[player_entity] ^= COMPONENT_COMMAND;

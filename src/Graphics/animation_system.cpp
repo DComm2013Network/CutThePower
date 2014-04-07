@@ -145,7 +145,11 @@ int load_animation(const char *filename, World *world, unsigned int entity) {
 	animationComponent->hover_animation = -1;
 
 	for(animation_index = 0; animation_index < animationComponent->animation_count; animation_index++) {
+<<<<<<< HEAD
 		if (fscanf(fp, "%s %d %d %s %d", animation_name, &animation_frames, &ms_to_skip, triggered_sound, &loop_animation) != 5) {
+=======
+		if (fscanf(fp, "%s %d %d %s %d", (char*)animation_name, &animation_frames, &ms_to_skip, (char*)triggered_sound, &loop_animation) != 5) {
+>>>>>>> 3800e573d6ba3e06ad1cbe28277cd1ab3afd1509
 			printf("Expected more animations!\n");
 			return -1;
 		}

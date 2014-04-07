@@ -45,8 +45,8 @@ typedef struct {
 	WormholeComponent		wormhole[MAX_ENTITIES];
 	ObjectiveComponent		objective[MAX_ENTITIES];
 	TileComponent			tile[MAX_ENTITIES];
-	PowerUpComponent		powerup[MAX_ENTITIES];
 	CutsceneComponent		cutscene[MAX_ENTITIES];
+	PowerUpComponent		powerup[MAX_ENTITIES];
 } World;
 
 class FPS {

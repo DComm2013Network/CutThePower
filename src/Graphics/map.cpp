@@ -182,7 +182,6 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 			if (strcmp(entity_type, "stair") == 0 || strcmp(entity_type, "stairs") == 0) { //stairs
 				
 				//stair x y targetX targetY 2
-
 				int x, y, floor;
 				float targetX, targetY;
 				char dir;

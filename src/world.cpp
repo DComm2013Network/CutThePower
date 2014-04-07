@@ -121,7 +121,8 @@ unsigned int create_player(World* world, int x, int y, bool controllable, int co
 	CollisionComponent collision;
 	PlayerComponent player;
 	PowerUpComponent powerup;
-	
+
+
 	render.width = 40;
 	render.height = 40;
 	
@@ -422,7 +423,6 @@ void destroy_world_not_player(World *world) {
 void disable_component(World *world, unsigned int entity, unsigned int component) {
 	
 	if (IN_THIS_COMPONENT(world->mask[entity], component)) {
-		//printf("Disabling component!\n");
 		world->mask[entity] ^= component;
 	}
 	
@@ -431,7 +431,6 @@ void disable_component(World *world, unsigned int entity, unsigned int component
 void enable_component(World *world, unsigned int entity, unsigned int component) {
 	
 	if (!IN_THIS_COMPONENT(world->mask[entity], component)) {
-		//printf("Enabling component!\n");
 		world->mask[entity] ^= component;
 	}
 	

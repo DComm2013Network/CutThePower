@@ -64,7 +64,6 @@ int main(int argc, char* argv[]) {
 	create_logo_screen(world);
 	
 	#else
-
 	create_main_menu(world);
 	
 	#endif
@@ -96,6 +95,7 @@ int main(int argc, char* argv[]) {
 
 		render_player_system(*world, surface, fow);
 		render_fog_of_war_system(surface, fow);
+		render_menu_system(world, surface);
 		chat_render(surface);
 		
 		
