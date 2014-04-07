@@ -182,7 +182,6 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 			if (strcmp(entity_type, "stair") == 0 || strcmp(entity_type, "stairs") == 0) { //stairs
 				
 				//stair x y targetX targetY 2
-				unsigned int entity;
 				int x, y, floor;
 				float targetX, targetY;
 				char dir;
@@ -193,19 +192,19 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 				}
 				switch (dir) { // make the hitboxes for the stairs
 					case 'l':
-						entity = create_stair(world, floor, targetX * TILE_WIDTH + TILE_WIDTH / 2, targetY * TILE_HEIGHT + TILE_HEIGHT / 2, x * TILE_WIDTH + TILE_WIDTH / 2 - 5, y * TILE_HEIGHT + TILE_HEIGHT / 2, 4, 4, level);
+						create_stair(world, floor, targetX * TILE_WIDTH + TILE_WIDTH / 2, targetY * TILE_HEIGHT + TILE_HEIGHT / 2, x * TILE_WIDTH + TILE_WIDTH / 2 - 5, y * TILE_HEIGHT + TILE_HEIGHT / 2, 4, 4, level);
 						create_block(world, x * TILE_WIDTH + 7, y * TILE_HEIGHT + TILE_HEIGHT / 2, 10, TILE_HEIGHT - 4, floor);
 						break;
 					case 'r':
-						entity = create_stair(world, floor, targetX * TILE_WIDTH + TILE_WIDTH / 2, targetY * TILE_HEIGHT + TILE_HEIGHT / 2, x * TILE_WIDTH + TILE_WIDTH / 2 + 5, y * TILE_HEIGHT + TILE_HEIGHT / 2, 4, 4, level);
+						create_stair(world, floor, targetX * TILE_WIDTH + TILE_WIDTH / 2, targetY * TILE_HEIGHT + TILE_HEIGHT / 2, x * TILE_WIDTH + TILE_WIDTH / 2 + 5, y * TILE_HEIGHT + TILE_HEIGHT / 2, 4, 4, level);
 						create_block(world, x * TILE_WIDTH + TILE_WIDTH - 7, y * TILE_HEIGHT + TILE_HEIGHT / 2, 10, TILE_HEIGHT - 4, floor);
 						break;
 					case 'u':
-						entity = create_stair(world, floor, targetX * TILE_WIDTH + TILE_WIDTH / 2, targetY * TILE_HEIGHT + TILE_HEIGHT / 2, x * TILE_WIDTH + TILE_WIDTH / 2, y * TILE_HEIGHT + TILE_HEIGHT / 2 - 5, 4, 4, level);
+						create_stair(world, floor, targetX * TILE_WIDTH + TILE_WIDTH / 2, targetY * TILE_HEIGHT + TILE_HEIGHT / 2, x * TILE_WIDTH + TILE_WIDTH / 2, y * TILE_HEIGHT + TILE_HEIGHT / 2 - 5, 4, 4, level);
 						create_block(world, x * TILE_WIDTH + TILE_WIDTH / 2, y * TILE_HEIGHT + 7, TILE_WIDTH - 4, 10, floor);
 						break;
 					case 'd':
-						entity = create_stair(world, floor, targetX * TILE_WIDTH + TILE_WIDTH / 2, targetY * TILE_HEIGHT + TILE_HEIGHT / 2, x * TILE_WIDTH + TILE_WIDTH / 2, y * TILE_HEIGHT + TILE_HEIGHT / 2 + 5, 4, 4, level);
+						create_stair(world, floor, targetX * TILE_WIDTH + TILE_WIDTH / 2, targetY * TILE_HEIGHT + TILE_HEIGHT / 2, x * TILE_WIDTH + TILE_WIDTH / 2, y * TILE_HEIGHT + TILE_HEIGHT / 2 + 5, 4, 4, level);
 						create_block(world, x * TILE_WIDTH + TILE_WIDTH / 2, y * TILE_HEIGHT + TILE_HEIGHT - 7, TILE_WIDTH - 4, 10, floor);
 						break;
 				}
@@ -292,6 +291,31 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 				play_animation(world, entity, "not_captured");
 				
 				//printf("Loaded objective: %u\n", entity);
+				
+				free(animation_filename);
+			}
+			else if (strcmp(entity_type, "powerup") == 0) {
+				float x, y;
+				int w, h, type;
+				unsigned int entity = -1;
+				char *animation_filename = (char*)malloc(sizeof(char) * 128);
+				
+				if (fscanf(fp_map, "%f %f %d %d %d %s", &x, &y, &w, &h, &type, animation_filename) != 6) {
+					printf("Error loading powerup!\n");
+					return -1;
+				}
+				entity = create_powerup(world, x * TILE_WIDTH + TILE_WIDTH / 2, y * TILE_HEIGHT + TILE_HEIGHT / 2, w, h, type, level);
+				
+				if (entity >= MAX_ENTITIES) {
+					printf("exceeded max entities.\n");
+					return -1;
+				}
+				world->mask[entity] |= COMPONENT_ANIMATION | COMPONENT_RENDER_PLAYER;
+				world->renderPlayer[entity].width = w;
+				world->renderPlayer[entity].height = h;
+				
+				load_animation(animation_filename, world, entity);
+				play_animation(world, entity, "bounce");
 				
 				free(animation_filename);
 			}

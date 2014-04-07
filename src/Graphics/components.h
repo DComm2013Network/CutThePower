@@ -13,6 +13,20 @@
 
 #include "../components.h"
 
+typedef enum {
+	
+	ANIMATION_LOADING_SCREEN = 1,
+	ANIMATION_FADE_TO_BLACK = 3
+	
+} AnimationID;
+
+typedef enum {
+	
+	CUTSCENE_VAN_INTRO = 1,
+	CUTSCENE_GAME_INTRO = 2
+	
+} CutsceneID;
+
 /**
  * Contains the components related to rendering.
  *
@@ -61,5 +75,29 @@ typedef struct {
 	unsigned int last_random_occurance; //the last time the random animation was played
 	unsigned int next_random_occurance; //the next time the random animation is played
 } AnimationComponent;
+
+
+typedef struct {
+	
+	float x_end;
+	float y_end;
+	unsigned int total_ms;
+	unsigned int start_ms;
+	char *animation_name;
+	
+} CutsceneSection;
+
+typedef struct {
+	
+	CutsceneSection *sections;
+	int num_sections;
+	int current_section;
+	
+	int id;
+	
+	float xpos, ypos;
+	
+	
+} CutsceneComponent;
 
 #endif

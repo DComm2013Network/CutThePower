@@ -1,4 +1,4 @@
-78
+114
 
 bookshelf_90x57 1 20 -1 1
 assets/Graphics/objects/png_object/bookshelf_90x57.png
@@ -6,17 +6,35 @@ assets/Graphics/objects/png_object/bookshelf_90x57.png
 box_32x36 1 20 -1 1
 assets/Graphics/objects/png_object/box_32x36.png
 
-car_robber_200x130 1 20 -1 1
-assets/Graphics/objects/png_object/car_robber_200x130.png
+captured 1 20 -1 -1
+assets/Graphics/objects/png_object/signal_red_15x35.png
 
-car1_100x140 1 20 -1 1
-assets/Graphics/objects/png_object/car1_100x140.png
+car1_68x106 1 20 -1 1
+assets/Graphics/objects/png_object/car1_68x106.png
 
-car2_100x120 1 20 -1 1
-assets/Graphics/objects/png_object/car2_100x120.png
+car2_68x106 1 20 -1 1
+assets/Graphics/objects/png_object/car2_68x106.png
 
-car3_100x140 1 20 -1 1
-assets/Graphics/objects/png_object/car3_100x140.png
+car3_68x106 1 20 -1 1
+assets/Graphics/objects/png_object/car3_68x106.png
+
+car4_68x106 1 20 -1 1
+assets/Graphics/objects/png_object/car4_68x106.png
+
+car5_68x106 1 20 -1 1
+assets/Graphics/objects/png_object/car5_68x106.png
+
+car6_68x106 1 20 -1 1
+assets/Graphics/objects/png_object/car6_68x106.png
+
+car7_68x106 1 20 -1 1
+assets/Graphics/objects/png_object/car7_68x106.png
+
+car8_68x106 1 20 -1 1
+assets/Graphics/objects/png_object/car8_68x106.png
+
+car9_68x106 1 20 -1 1
+assets/Graphics/objects/png_object/car9_68x106.png
 
 chair_back_35x50 1 20 -1 1
 assets/Graphics/objects/png_object/chair_back_35x50.png
@@ -60,20 +78,83 @@ assets/Graphics/objects/png_object/couch_left_35x84.png
 couch_right_35x76 1 20 -1 1
 assets/Graphics/objects/png_object/couch_right_35x76.png
 
-cubicle_90x90 1 20 -1 1
-assets/Graphics/objects/png_object/cubicle_90x90.png
+cubicle1_100x116 1 20 -1 1
+assets/Graphics/objects/png_object/cubicle1_100x116.png
 
-cubicle2_90x90 1 20 -1 1
-assets/Graphics/objects/png_object/cubicle2_90x90.png
+cubicle1_100x116 1 20 -1 1
+assets/Graphics/objects/png_object/cubicle1_100x116.png
+
+cubicle1_100x116 1 20 -1 1
+assets/Graphics/objects/png_object/cubicle1_100x116.png
+
+cubicle1_100x116 1 20 -1 1
+assets/Graphics/objects/png_object/cubicle1_100x116.png
+
+cubicle2_100x116 1 20 -1 1
+assets/Graphics/objects/png_object/cubicle2_100x116.png
+
+cubicle3_100x116 1 20 -1 1
+assets/Graphics/objects/png_object/cubicle3_100x116.png
+
+cubicle4_100x116 1 20 -1 1
+assets/Graphics/objects/png_object/cubicle4_100x116.png
+
+cubicle5_100x116 1 20 -1 1
+assets/Graphics/objects/png_object/cubicle5_100x116.png
+
+cubicle6_100x116 1 20 -1 1
+assets/Graphics/objects/png_object/cubicle6_100x116.png
+
+cubicle7_100x116 1 20 -1 1
+assets/Graphics/objects/png_object/cubicle7_100x116.png
+
+cubicle8_100x116 1 20 -1 1
+assets/Graphics/objects/png_object/cubicle8_100x116.png
+
+cubicle9_100x116 1 20 -1 1
+assets/Graphics/objects/png_object/cubicle9_100x116.png
+
+cubicle10_100x116 1 20 -1 1
+assets/Graphics/objects/png_object/cubicle10_100x116.png
+
+cubicle11_100x116 1 20 -1 1
+assets/Graphics/objects/png_object/cubicle11_100x116.png
+
+cubicle12_100x116 1 20 -1 1
+assets/Graphics/objects/png_object/cubicle12_100x116.png
+
+cubicle13_100x116 1 20 -1 1
+assets/Graphics/objects/png_object/cubicle13_100x116.png
+
+cubicle14_100x116 1 20 -1 1
+assets/Graphics/objects/png_object/cubicle14_100x116.png
+
+cubicle15_100x116 1 20 -1 1
+assets/Graphics/objects/png_object/cubicle15_100x116.png
+
+cubicle16_100x116 1 20 -1 1
+assets/Graphics/objects/png_object/cubicle16_100x116.png
+
+cubicle17_100x95 1 20 -1 1
+assets/Graphics/objects/png_object/cubicle17_100x95.png
+
+cubicles_x_4_1_180x180 1 20 -1 1
+assets/Graphics/objects/png_object/cubicles_x_4_1_180x180.png
+
+cubicles_x_4_2_180x180 1 20 -1 1
+assets/Graphics/objects/png_object/cubicles_x_4_2_180x180.png
+
+cubicles_x_6_1_196x284 1 20 -1 1
+assets/Graphics/objects/png_object/cubicles_x_6_1_196x284.png
+
+cubicles_x_6_2_359x203 1 20 -1 1
+assets/Graphics/objects/png_object/cubicles_x_6_2_359x203.png
+
+cubicles_x_8_185x364 1 20 -1 1
+assets/Graphics/objects/png_object/cubicles_x_8_185x364.png
 
 double_vending_80x75 1 20 -1 1
 assets/Graphics/objects/png_object/double_vending_80x75.png
-
-empty_parkinglot_120x160 1 20 -1 1
-assets/Graphics/objects/png_object/empty_parkinglot_120x160.png
-
-empty_parkinglot_160x160 1 20 -1 1
-assets/Graphics/objects/png_object/empty_parkinglot_160x160.png
 
 file_cabinet_40x60 1 20 -1 1
 assets/Graphics/objects/png_object/file_cabinet_40x60.png
@@ -125,6 +206,12 @@ assets/Graphics/objects/png_object/monitor_back_31x31.png
 
 monitor_front_25x25 1 20 -1 1
 assets/Graphics/objects/png_object/monitor_front_25x25.png
+
+microwave_37x63 1 20 -1 1
+assets/Graphics/objects/png_object/microwave_37x63.png
+
+not_captured 1 20 -1 -1
+assets/Graphics/objects/png_object/signal_green_15x35.png
 
 picture_50x40 1 20 -1 1
 assets/Graphics/objects/png_object/picture_50x40.png
@@ -189,6 +276,15 @@ assets/Graphics/objects/png_object/server3_35x65.png
 server4_35x65 1 20 -1 1
 assets/Graphics/objects/png_object/server4_35x65.png
 
+server_65x65 1 20 -1 1
+assets/Graphics/objects/png_object/server_65x65.png
+
+server2_65x65 1 20 -1 1
+assets/Graphics/objects/png_object/server2_65x65.png
+
+server_130x65 1 20 -1 1
+assets/Graphics/objects/png_object/server_130x65.png
+
 shelf_65x67 1 20 -1 1
 assets/Graphics/objects/png_object/shelf_65x67.png
 
@@ -198,11 +294,11 @@ assets/Graphics/objects/png_object/side_shelf_26x93.png
 signal_blue_25x45 1 20 -1 1
 assets/Graphics/objects/png_object/signal_blue_25x45.png
 
-not_captured 1 20 -1 -1
+signal_green_15x35 1 20 -1 1
 assets/Graphics/objects/png_object/signal_green_15x35.png
 
-captured 1 20 -1 -1
-assets/Graphics/objects/png_object/signal_red_15x35.png
+sink_30x46 1 20 -1 1
+assets/Graphics/objects/png_object/sink_30x46.png
 
 table_35x60 1 20 -1 1
 assets/Graphics/objects/png_object/table_35x60.png
@@ -210,11 +306,17 @@ assets/Graphics/objects/png_object/table_35x60.png
 table_75x70 1 20 -1 1
 assets/Graphics/objects/png_object/table_75x70.png
 
+table_85x70 1 20 -1 1
+assets/Graphics/objects/png_object/table_85x70.png
+
 table_75x55 1 20 -1 1
 assets/Graphics/objects/png_object/table_75x55.png
 
 table_220x66 1 20 -1 1
 assets/Graphics/objects/png_object/table_220x66.png
+
+toilet_35x55 1 20 -1 1
+assets/Graphics/objects/png_object/toilet_35x55.png
 
 trash_18x25 1 20 -1 1
 assets/Graphics/objects/png_object/trash_18x25.png
@@ -222,8 +324,14 @@ assets/Graphics/objects/png_object/trash_18x25.png
 tv_35x50 1 20 -1 1
 assets/Graphics/objects/png_object/tv_35x50.png
 
+van_160x80 1 20 -1 1
+assets/Graphics/objects/png_object/van_160x80.png
+
 vending_35x65 1 20 -1 1
 assets/Graphics/objects/png_object/vending_35x65.png
+
+vending_58x75 1 20 -1 1
+assets/Graphics/objects/png_object/vending_58x75.png
 
 vertical_bench_38x80 1 20 -1 1
 assets/Graphics/objects/png_object/vertical_bench_38x80.png

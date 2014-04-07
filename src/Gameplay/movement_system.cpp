@@ -7,6 +7,7 @@
 #include "../systems.h"
 #include "../world.h"
 #include "collision.h"
+#include "powerups.h"
 #include "stdio.h"
 #include <math.h>
 
@@ -21,6 +22,9 @@
 #define DIRECTION_UP	3
 #define DIRECTION_DOWN	4																	/**< An approximation of pi for vector calculations. */
 
+
+extern objective_cache objective_table[];
+extern unsigned int* player_table;
 extern int floor_change_flag;
 extern int send_router_fd[];
 extern unsigned int player_entity;
@@ -124,10 +128,10 @@ void handle_x_collision(World* world, unsigned int entity, PositionComponent* te
 			/* SPECIAL TILES*/
 		case COLLISION_BELTLEFT:
 			//add_force(movement, 0.47, 180);
-			add_force_acceleration_x(world->movement[entity], 0.47, 180, -0.000000000000000000001);
+			add_force_acceleration_x(world->movement[entity], 2.0, 180, -0.000000000000000000001);
 			break;
 		case COLLISION_BELTRIGHT:
-			add_force(world, entity, 0.47, 0);
+			add_force(world, entity, 2.0, 0);
 			//add_force_acceleration_x(movement, 0.47, 0, -0.000000000000000000001);
 			break;
 		default:
@@ -141,12 +145,12 @@ void handle_x_collision(World* world, unsigned int entity, PositionComponent* te
 			break;
 			/* SPECIAL TILES*/
 		case COLLISION_BELTRIGHT:
-			add_force(world, entity, 0.90, 0);
+			add_force(world, entity, 2.0, 0);
 			//add_force_acceleration_x(movement, 0.47, 0, -0.000000000000000000001);
 			break;
 		case COLLISION_BELTLEFT:
 			//add_force(movement, 0.47, 180);
-			add_force_acceleration_x(world->movement[entity], 0.90, 180, -0.000000000000000000001);
+			add_force_acceleration_x(world->movement[entity], 2.0, 180, -0.000000000000000000001);
 			break;
 		case COLLISION_ICE:
 			apply_ice_deceleration_x(world, entity, 0.005, fps);
@@ -207,6 +211,36 @@ void handle_y_collision(World* world, unsigned int entity, PositionComponent* te
  */
 void rebuild_floor(World* world, int targl)
 {
+    int num_objectives = 0;
+    int num_players = 0;
+    int topfloor = 0;
+    for (int i = 0; i < MAX_OBJECTIVES; i ++)
+    {
+        if(objective_table[i].obj_state != OBJECTIVE_NONE)
+        {
+            num_objectives++;
+        }
+    }
+    if(num_objectives < 12)
+    {
+        for(int i = 0; i < MAX_PLAYERS; i++)
+        {
+            if(player_table[i] != UNASSIGNED)
+            {
+                num_players++;
+            }
+        }
+        //start with half the player count
+        num_objectives = num_players;
+        // at least 3 floors
+        num_objectives = (num_objectives < 12) ? 12 : num_objectives;
+        // rounded to the nearest full floor
+        num_objectives += num_objectives % 4;
+    }
+
+
+    topfloor = num_objectives/OBJECTIVES_PER_FLOOR;
+
 	destroy_world_not_player(world);
     switch (targl) {
 		case 0:
@@ -219,22 +253,57 @@ void rebuild_floor(World* world, int targl)
 			map_init(world, "assets/Graphics/map/map_02/map02.txt", "assets/Graphics/map/map_02/tiles.txt");
 			break;
 		case 3:
-			map_init(world, "assets/Graphics/map/map_03/map03.txt", "assets/Graphics/map/map_03/tiles.txt");
+			if(topfloor == 3)
+			{
+			    map_init(world, "assets/Graphics/map/map_03/map03_topfloor.txt", "assets/Graphics/map/map_03/tiles.txt");
+			}
+            else
+            {
+                map_init(world, "assets/Graphics/map/map_03/map03.txt", "assets/Graphics/map/map_03/tiles.txt");
+            }
 			break;
 		case 4:
-			map_init(world, "assets/Graphics/map/map_04/map04.txt", "assets/Graphics/map/map_04/tiles.txt");
+			if(topfloor == 4)
+			{
+			    map_init(world, "assets/Graphics/map/map_04/map04_topfloor.txt", "assets/Graphics/map/map_04/tiles.txt");
+			}
+            else
+            {
+                map_init(world, "assets/Graphics/map/map_04/map04.txt", "assets/Graphics/map/map_04/tiles.txt");
+            }
 			break;
 		case 5:
-			map_init(world, "assets/Graphics/map/map_05/map05.txt", "assets/Graphics/map/map_05/tiles.txt");
+			if(topfloor == 5)
+			{
+			    map_init(world, "assets/Graphics/map/map_05/map05_topfloor.txt", "assets/Graphics/map/map_05/tiles.txt");
+			}
+            else
+            {
+                map_init(world, "assets/Graphics/map/map_05/map05.txt", "assets/Graphics/map/map_05/tiles.txt");
+            }
 			break;
 		case 6:
-			map_init(world, "assets/Graphics/map/map_06/map06.txt", "assets/Graphics/map/map_06/tiles.txt");
+			if(topfloor == 6)
+			{
+			    map_init(world, "assets/Graphics/map/map_06/map06_topfloor.txt", "assets/Graphics/map/map_06/tiles.txt");
+			}
+            else
+            {
+                map_init(world, "assets/Graphics/map/map_06/map06.txt", "assets/Graphics/map/map_06/tiles.txt");
+            }
 			break;
 		case 7:
-			map_init(world, "assets/Graphics/map/map_07/map07.txt", "assets/Graphics/map/map_07/tiles.txt");
+			if(topfloor == 7)
+			{
+			    map_init(world, "assets/Graphics/map/map_07/map07_topfloor.txt", "assets/Graphics/map/map_07/tiles.txt");
+			}
+            else
+            {
+                map_init(world, "assets/Graphics/map/map_07/map07.txt", "assets/Graphics/map/map_07/tiles.txt");
+            }
 			break;
 		case 8:
-			map_init(world, "assets/Graphics/map/map_08/map08.txt", "assets/Graphics/map/map_08/tiles.txt");
+                map_init(world, "assets/Graphics/map/map_08/map08.txt", "assets/Graphics/map/map_08/tiles.txt");
 			break;
 		case 9:
 			map_init(world, "assets/Graphics/map/map_09/map09.txt", "assets/Graphics/map/map_09/tiles.txt");
@@ -256,7 +325,6 @@ void handle_entity_collision(World* world, unsigned int entity, unsigned int ent
 				int targy = world->wormhole[hit_entity].targetY;
 				int targl = world->wormhole[hit_entity].targetLevel;
 
-				world->player[player_entity].tilez = rand() % 2 + 1;
 				move_request(world, send_router_fd[WRITE], targl, targx, targy);
 				if(!network_ready)
 				{
@@ -266,11 +334,18 @@ void handle_entity_collision(World* world, unsigned int entity, unsigned int ent
 				floor_change_flag = 1;
 			}
 			break;
-		case COLLISION_TILEPOWER:
-			if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_CONTROLLABLE) && (world->collision[entity].type == COLLISION_HACKER || world->collision[entity].type == COLLISION_GUARD)) {
-				world->player[player_entity].tilez = rand() % 2 + 1;
+		case COLLISION_BELTLEFT_TILE:
+			powerup_beltleft(world, entity);
 			break;
-		}
+		case COLLISION_BELTRIGHT_TILE:
+			powerup_beltright(world, entity);
+			break;
+		case COLLISION_PU_SPEEDUP:
+			powerup_speedup(world, entity);
+		break;
+		case COLLISION_PU_SPEEDDOWN:
+			powerup_speeddown(world, entity);
+		break;
 	}
 		
 	if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_CONTROLLABLE) && world->controllable[entity].active) {
@@ -381,19 +456,20 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 					switch(world->player[entity].tilez){
 						case TILE_BELT_RIGHT:
 							tile = create_stile(world, TILE_BELT_RIGHT, world->position[entity].x, world->position[entity].y, world->position[entity].level);
+							send_tiles(world, tile, send_router_fd[WRITE]);
 							break;
 						case TILE_BELT_LEFT: 
 							tile = create_stile(world, TILE_BELT_LEFT, world->position[entity].x, world->position[entity].y, world->position[entity].level);
+							send_tiles(world, tile, send_router_fd[WRITE]);
 							break;
 					}
-					send_tiles(world, tile, send_router_fd[WRITE]);
 				}
 				/* SPECIAL TILES */
 				
 				if (IN_THIS_COMPONENT(world->mask[entity], COLLISION_MASK)) {
 					
 					collision_system(world, entity, &temp, &entity_number, &tile_number, &hit_entity);
-					if (hit_entity != -1 && (entity_number == COLLISION_HACKER || entity_number== COLLISION_GUARD)) {
+					if (hit_entity != (unsigned int)-1 && (entity_number == COLLISION_HACKER || entity_number== COLLISION_GUARD)) {
 						anti_stuck_system(world, entity, hit_entity);
 					}
 
@@ -452,6 +528,7 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 						send_status(world, sendpipe, 0, PLAYER_STATE_WAITING);
 					}
 				}
+				powerup_system(world, entity);
 			}
 		}
 		else if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_POSITION | COMPONENT_MOVEMENT | COMPONENT_COLLISION)) {
@@ -483,7 +560,7 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 			position->y = temp.y;
 			
 			handle_entity_collision(world, entity, entity_number, tile_number, hit_entity);
-
+			
 			switch(world->movement[entity].lastDirection) {
 				case DIRECTION_RIGHT:
 					if (world->movement[entity].movX != 0) {

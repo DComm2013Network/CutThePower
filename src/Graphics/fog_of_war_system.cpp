@@ -13,81 +13,24 @@
 
 #include "map.h"
 
-#define L_EMPTY		1
-#define L_WALL		2
-
-#define COLLISION_MASK (COMPONENT_COLLISION)
-#define LEVEL_MASK (COMPONENT_LEVEL)
-
-#define CLEAR_VIS	0
-#define TRANSP_VIS 	1
-#define OPAQUE_VIS 	2
-		
-
-#define OPAQUE_FOG_COLOUR 0x000000
-#define TRANSP_FOG_COLOUR 0x221122
-
-#define TOP2LEFT2 	10
-#define TOP2LEFT 	11
-#define TOPLEFT2 	12
-
-#define BOT2LEFT2 	13
-#define BOT2LEFT	14
-#define BOTLEFT2 	15
-
-#define TOP2RGHT2 	16
-#define TOP2RGHT 	17
-#define TOPRGHT2 	18
-
-#define BOT2RGHT2 	19
-#define BOT2RGHT 	20
-#define BOTRGHT2 	21
-
 
 extern SDL_Rect map_rect;
 
 int subOne(int n);
 int addOne(int n);
 
-int set_visibility_type(FowPlayerPosition *fowp, int yDel, int xDel, int newvis);
-int is_wall_collision(World *world, PositionComponent newposition);
+int is_wall_collision            (World *world           , PositionComponent newposition);
+PositionComponent set_newposition(PositionComponent *pos , int yDel, int xDel);
+int set_visibility_type          (FowPlayerPosition *fowp, int yDel, int xDel);
+void setBlockedTileCoords        (BlockedTiles       bt[7][7]);
 
-PositionComponent set_newposition(PositionComponent *pos, int yDel, int xDel);
+int fogOfWarHeight = 64;
+int fogOfWarWidth  = 32;
 
-int fogOfWarHeight;
-int fogOfWarWidth;
-
-extern int level;
+extern int      level;
 extern teamNo_t player_team;
 
-/**
- * Blits a fog of war "corner" tile to the larger window surface.
- * 
- * The tile surface to blit is defined in corners[].
- * The relative (NOT absolute in x and y coords !) position of the tile is defined in the tile map.
- *
- * Revisions:
- *     None.
- *loading
- * @param surface 	The window surface.
- * @param fow   		A pointer to a fogOfWarStruct. Includes the corners[] array and the two-dimensional tile map.
- * @param tileRect  A pointer to an SDL rect. Defines the tile's position and dimensions.
- * @param y					The y coordinate of the tile in the tile map.
- * @param x					The x coordinate of the tile in the tile map.
- * #param i					The index of the tile surface in the corners array.
- *
- * @return void.
- * 
- * @designer Sam Youssef
- * @author Sam Youssef
- *
- * @date March 29, 2014
- */
-void blit_tile(SDL_Surface *surface, FowComponent *fow, SDL_Rect *tileRect, int y, int x, int i)
-{
-	SDL_BlitSurface(fow -> corners[i], NULL, surface, tileRect);
-	fow -> tiles[y][x].visible[ level ] = TRANSP_VIS;
-}
+static int visMap[7][7];
 
 
 
@@ -149,32 +92,6 @@ void render_fog_of_war_system(SDL_Surface *surface, FowComponent *fow)
 					case TRANSP_VIS: SDL_BlitSurface(fow -> alphaFog[count++], NULL, surface, &tileRect); break;
 				}
 			}
-			
-
-			if(fow -> teamNo == ROBBERS || fow -> teamNo == COPS)
-			{
-				switch(visible)
-				{		
-					case 10: blit_tile(surface, fow, &tileRect, y, x, 0); break;
-					case 11: blit_tile(surface, fow, &tileRect, y, x, 1); break;					
-					case 12: blit_tile(surface, fow, &tileRect, y, x, 2); break;	
-					case 13: blit_tile(surface, fow, &tileRect, y, x, 3); break;
-					case 14: blit_tile(surface, fow, &tileRect, y, x, 4); break;
-					case 15: blit_tile(surface, fow, &tileRect, y, x, 5); break;
-					case 16: blit_tile(surface, fow, &tileRect, y, x, 6); break;
-					case 17: blit_tile(surface, fow, &tileRect, y, x, 7); break;
-					case 18: blit_tile(surface, fow, &tileRect, y, x, 8); break;
-					case 19: blit_tile(surface, fow, &tileRect, y, x, 9); break;
-					case 20: blit_tile(surface, fow, &tileRect, y, x, 10); break;
-					case 21: blit_tile(surface, fow, &tileRect, y, x, 11); break;
-					case 22: blit_tile(surface, fow, &tileRect, y, x, 12); break;
-					case 23: blit_tile(surface, fow, &tileRect, y, x, 13); break;
-					case 24: blit_tile(surface, fow, &tileRect, y, x, 14); break;
-					case 25: blit_tile(surface, fow, &tileRect, y, x, 15); break;
-					case 26: blit_tile(surface, fow, &tileRect, y, x, 16); break;
-					case 27: blit_tile(surface, fow, &tileRect, y, x, 17); break;
-				}
-			}
 		}
 	}
 }
@@ -189,7 +106,6 @@ void render_fog_of_war_system(SDL_Surface *surface, FowComponent *fow)
  *
  * Initializes opaque fog surfaces
  * Initializes transparent fog surfaces
- * Initializes corner-vision fog surfaces
  *
  * Revisions:
  *     None.
@@ -205,80 +121,215 @@ void render_fog_of_war_system(SDL_Surface *surface, FowComponent *fow)
  */
 void init_fog_of_war_system(FowComponent **fow)
 {
-		fogOfWarWidth = 64;  // screen width (tiles/screen)
-		fogOfWarHeight = 38; // screen height (tiles/screen)
+	fogOfWarWidth  = 64; // screen width (tiles/screen)
+	fogOfWarHeight = 38; // screen height (tiles/screen)
 
-		int const TOTALTILESX = 2560;
-		int const TOTALTILESY = 1520;
-		
+	int const TOTALTILESX = 2560;
+	int const TOTALTILESY = 1520;
+	
 
-		(*fow) = (FowComponent*)malloc(sizeof(FowComponent));
+	(*fow) = (FowComponent*)malloc(sizeof(FowComponent));
 
 
-		// fog of war tile map
-		(*fow) -> tiles = (FowTile**)malloc(sizeof(FowTile*) * TOTALTILESY);
+	// fog of war tile map
+	(*fow) -> tiles = (FowTile**)malloc(sizeof(FowTile*) * TOTALTILESY);
 
-		for(int y = 0; y < TOTALTILESY; y++)
+	for(int y = 0; y < TOTALTILESY; y++)
+	{
+		(*fow) -> tiles[y] = (FowTile*)malloc(sizeof(FowTile) * TOTALTILESX);
+
+		for(int x = 0; x < TOTALTILESX; x++)
 		{
-			(*fow) -> tiles[y] = (FowTile*)malloc(sizeof(FowTile) * TOTALTILESX);
-
-			for(int x = 0; x < TOTALTILESX; x++)
+			for(int lev = 0; lev < NUMLEVELS; lev++)
 			{
-				for(int lev = 0; lev < NUMLEVELS; lev++)
-				{
-					(*fow) -> tiles[y][x].visible[ lev ] = OPAQUE_VIS;
-					(*fow) -> tiles[y][x].rect.x = (x * TILE_WIDTH );
-					(*fow) -> tiles[y][x].rect.y = (y * TILE_HEIGHT);
-					(*fow) -> tiles[y][x].rect.w = ( TILE_WIDTH  );
-					(*fow) -> tiles[y][x].rect.h = ( TILE_HEIGHT );				
-				}
-			}	
-		}
-	
-	
-		// array of surfaces
-		(*fow) -> fogOfWar = (SDL_Surface**)malloc(sizeof(SDL_Surface*) * fogOfWarWidth * fogOfWarHeight);
-		(*fow) -> alphaFog = (SDL_Surface**)malloc(sizeof(SDL_Surface*) * fogOfWarWidth * fogOfWarHeight);
-			
-		for(int i = 0; i < (fogOfWarHeight * fogOfWarWidth); i++)
-		{	
-			(*fow) -> alphaFog[ i ] = SDL_CreateRGBSurface(0, TILE_WIDTH, TILE_HEIGHT, 32, 0, 0, 0, 0);
-			SDL_FillRect((*fow) -> alphaFog[ i ], 0, TRANSP_FOG_COLOUR);
-			
-			
-			SDL_SetSurfaceBlendMode((*fow)->alphaFog[ i ], SDL_BLENDMODE_BLEND);
-			SDL_SetSurfaceAlphaMod ((*fow)->alphaFog[ i ] , 102);
+				(*fow) -> tiles[y][x].visible[ lev ] = OPAQUE_VIS;
+				(*fow) -> tiles[y][x].rect.x = (x * TILE_WIDTH );
+				(*fow) -> tiles[y][x].rect.y = (y * TILE_HEIGHT);
+				(*fow) -> tiles[y][x].rect.w = ( TILE_WIDTH  );
+				(*fow) -> tiles[y][x].rect.h = ( TILE_HEIGHT );				
+			}
+		}	
+	}
 
 
-			(*fow) -> fogOfWar[ i ] = SDL_CreateRGBSurface(0, TILE_WIDTH, TILE_HEIGHT, 32, 0, 0, 0, 0);
-			SDL_FillRect((*fow) -> fogOfWar[ i ], 0, OPAQUE_FOG_COLOUR);
-
-		}
+	// array of surfaces
+	(*fow) -> fogOfWar = (SDL_Surface**)malloc(sizeof(SDL_Surface*) * fogOfWarWidth * fogOfWarHeight);
+	(*fow) -> alphaFog = (SDL_Surface**)malloc(sizeof(SDL_Surface*) * fogOfWarWidth * fogOfWarHeight);
 		
-		(*fow)->corners[0] = IMG_Load("assets/Graphics/fow/topleft/head.png");
-		(*fow)->corners[1] = IMG_Load("assets/Graphics/fow/topleft/right.png");
-		(*fow)->corners[2] = IMG_Load("assets/Graphics/fow/topleft/left.png");
-			
-		(*fow)->corners[3] = IMG_Load("assets/Graphics/fow/botleft/head.png");
-		(*fow)->corners[4] = IMG_Load("assets/Graphics/fow/botleft/right.png");
-		(*fow)->corners[5] = IMG_Load("assets/Graphics/fow/botleft/left.png");
-			
-		(*fow)->corners[6] = IMG_Load("assets/Graphics/fow/topright/head.png");
-		(*fow)->corners[7] = IMG_Load("assets/Graphics/fow/topright/left.png");
-		(*fow)->corners[8] = IMG_Load("assets/Graphics/fow/topright/right.png");
+	for(int i = 0; i < (fogOfWarHeight * fogOfWarWidth); i++)
+	{	
+		(*fow) -> alphaFog[ i ] = SDL_CreateRGBSurface(0, TILE_WIDTH, TILE_HEIGHT, 32, 0, 0, 0, 0);
+		SDL_FillRect((*fow) -> alphaFog[ i ], 0, TRANSP_FOG_COLOUR);
 		
-		(*fow)->corners[9] = IMG_Load("assets/Graphics/fow/botright/head.png");
-		(*fow)->corners[10] = IMG_Load("assets/Graphics/fow/botright/left.png");
-		(*fow)->corners[11] = IMG_Load("assets/Graphics/fow/botright/right.png");
-		(*fow)->corners[12] = IMG_Load("assets/Graphics/fow/intersects/intersect_1.png");
-		(*fow)->corners[13] = IMG_Load("assets/Graphics/fow/intersects/intersect_2.png");
-		(*fow)->corners[14] = IMG_Load("assets/Graphics/fow/intersects/intersect_3.png");
-		(*fow)->corners[15] = IMG_Load("assets/Graphics/fow/intersects/intersect_4.png");
-		(*fow)->corners[16] = IMG_Load("assets/Graphics/fow/intersects/intersect_5.png");
-		(*fow)->corners[17] = IMG_Load("assets/Graphics/fow/intersects/intersect_6.png");
+		
+		SDL_SetSurfaceBlendMode((*fow)->alphaFog[ i ], SDL_BLENDMODE_BLEND);
+		SDL_SetSurfaceAlphaMod ((*fow)->alphaFog[ i ] , 102);
 
+
+		(*fow) -> fogOfWar[ i ] = SDL_CreateRGBSurface(0, TILE_WIDTH, TILE_HEIGHT, 32, 0, 0, 0, 0);
+		SDL_FillRect((*fow) -> fogOfWar[ i ], 0, OPAQUE_FOG_COLOUR);
+
+	}
+
+	setBlockedTileCoords((*fow) -> bt);
 }
 
+
+/**
+ * Fills map of blockable tiles.
+ *
+ * Revisions:
+ *     None.
+ *loading
+ * @param bt		Tile map 			
+ *
+ * @return void.
+ * 
+ * @designer Sam Youssef
+ * @author Sam Youssef
+ *
+ * @date April 6, 2014
+ */
+void setBlockedTileCoords(BlockedTiles bt[7][7])
+{
+	for(int i = 0; i < 7; i++)
+	{
+		memset(bt[i], 0, sizeof(bt[i]));
+	}
+
+
+	// first corner
+	bt[1][2].coords[1][1] = 1;
+	bt[1][2].coords[0][2] = 1;
+
+	bt[2][1].coords[1][1] = 1;
+	bt[2][1].coords[2][0] = 1;
+	
+	bt[2][2].coords[0][2] = 1;
+	bt[2][2].coords[1][1] = 1;
+	bt[2][2].coords[1][2] = 1;
+	bt[2][2].coords[2][1] = 1;
+	bt[2][2].coords[2][0] = 1;
+
+	// top mid
+	bt[1][3].coords[0][2] = 1;
+	bt[1][3].coords[0][3] = 1;
+	bt[1][3].coords[0][4] = 1;
+
+	bt[2][3].coords[0][2] = 1;
+	bt[2][3].coords[1][1] = 1;
+	bt[2][3].coords[1][2] = 1;
+	bt[2][3].coords[2][0] = 1;
+	bt[2][3].coords[2][1] = 1;
+	bt[2][3].coords[2][2] = 1;
+	bt[2][3].coords[0][3] = 1;
+	bt[2][3].coords[1][3] = 1;
+	bt[2][3].coords[0][4] = 1;
+	bt[2][3].coords[1][4] = 1;
+	bt[2][3].coords[1][5] = 1;
+	bt[2][3].coords[2][4] = 1;
+	bt[2][3].coords[2][5] = 1;
+	bt[2][3].coords[2][6] = 1;
+
+	// second corner
+	bt[1][4].coords[1][5] = 1;
+	bt[1][4].coords[0][4] = 1;
+
+	bt[2][5].coords[1][5] = 1;
+	bt[2][5].coords[2][6] = 1;
+	
+	bt[2][4].coords[0][4] = 1;
+	bt[2][4].coords[1][4] = 1;
+	bt[2][4].coords[1][5] = 1;
+	bt[2][4].coords[2][5] = 1;
+	bt[2][4].coords[2][6] = 1;
+
+	// right mid
+	bt[3][5].coords[2][6] = 1;
+	bt[3][5].coords[3][6] = 1;
+	bt[3][5].coords[4][6] = 1;
+
+	bt[3][4].coords[0][4] = 1;
+	bt[3][4].coords[1][4] = 1;
+	bt[3][4].coords[1][5] = 1;
+	bt[3][4].coords[2][4] = 1;
+	bt[3][4].coords[2][5] = 1;
+	bt[3][4].coords[2][6] = 1;
+	bt[3][4].coords[3][5] = 1;
+	bt[3][4].coords[3][6] = 1;
+	bt[3][4].coords[4][4] = 1;
+	bt[3][4].coords[4][5] = 1;
+	bt[3][4].coords[4][6] = 1;
+	bt[3][4].coords[5][5] = 1;
+	bt[3][4].coords[5][4] = 1;
+	bt[3][4].coords[6][4] = 1;
+
+	// third corner
+	bt[4][4].coords[4][5] = 1;
+	bt[4][4].coords[4][6] = 1;
+	bt[4][4].coords[5][4] = 1;
+	bt[4][4].coords[5][5] = 1;
+	bt[4][4].coords[6][4] = 1;
+
+	bt[4][5].coords[4][6] = 1;
+	bt[4][5].coords[5][5] = 1;
+
+	bt[5][4].coords[5][5] = 1;
+	bt[5][4].coords[6][4] = 1;
+
+	// bot mid
+	bt[5][3].coords[6][2] = 1;
+	bt[5][3].coords[6][3] = 1;
+	bt[5][3].coords[6][4] = 1;
+
+	bt[4][3].coords[4][0] = 1;
+	bt[4][3].coords[4][1] = 1;
+	bt[4][3].coords[4][2] = 1;
+	bt[4][3].coords[4][4] = 1;
+	bt[4][3].coords[4][5] = 1;
+	bt[4][3].coords[4][6] = 1;
+	bt[4][3].coords[5][1] = 1;
+	bt[4][3].coords[5][2] = 1;
+	bt[4][3].coords[5][3] = 1;
+	bt[4][3].coords[5][4] = 1;
+	bt[4][3].coords[5][5] = 1;
+	bt[4][3].coords[6][2] = 1;
+	bt[4][3].coords[6][3] = 1;
+	bt[4][3].coords[6][4] = 1;
+
+	// fourth corner
+	bt[4][2].coords[4][0] = 1;
+	bt[4][2].coords[4][1] = 1;
+	bt[4][2].coords[5][1] = 1;
+	bt[4][2].coords[5][2] = 1;
+	bt[4][2].coords[6][2] = 1;
+
+	bt[5][2].coords[5][1] = 1;
+	bt[5][2].coords[6][2] = 1;
+
+	bt[4][1].coords[4][0] = 1;
+	bt[4][1].coords[5][1] = 1;
+
+	// left mid
+	bt[3][1].coords[2][0] = 1;
+	bt[3][1].coords[3][0] = 1;
+	bt[3][1].coords[4][0] = 1;
+
+	bt[3][2].coords[0][2] = 1;
+	bt[3][2].coords[1][2] = 1;
+	bt[3][2].coords[2][2] = 1;
+	bt[3][2].coords[4][2] = 1;
+	bt[3][2].coords[5][2] = 1;
+	bt[3][2].coords[6][2] = 1;
+	bt[3][2].coords[1][1] = 1;
+	bt[3][2].coords[2][1] = 1;
+	bt[3][2].coords[3][1] = 1;
+	bt[3][2].coords[4][1] = 1;
+	bt[3][2].coords[5][1] = 1;
+	bt[3][2].coords[2][0] = 1;
+	bt[3][2].coords[3][0] = 1;
+	bt[3][2].coords[4][0] = 1;
+}
 
 
 /**
@@ -304,15 +355,86 @@ void cleanup_fog_of_war(FowComponent *fow)
 		SDL_FreeSurface(fow -> alphaFog[i]);
 	}
 	
-	for(int i = 0; i < 12; i++)
+	for(int i = 0; i < NUMSPEECHCOP; i++)
 	{
-		SDL_FreeSurface(fow -> corners[i]);
+		Mix_FreeChunk(fow -> speech.cop[i]);
+	}
+	
+
+	for(int i = 0; i < NUMSPEECHROB; i++)
+	{
+		Mix_FreeChunk(fow -> speech.rob[i]);
 	}
 }
 
 
+/**
+ * Resets all fog of war tiles to opaque
+ * 
+ * Loops through the tile map to reset the visibility level
+ *
+ * Revisions:
+ *     None.
+ *loading
+ * @param fow   		A pointer to a fogOfWarStruct. Contains a reference to the tile's visibility, i.e. whether or not it should be blitted.
+ *
+ * @return void.
+ * 
+ * @designer Sam Youssef
+ * @author Sam Youssef
+ *
+ * @date March 29, 2014
+ */
+void reset_fog_of_war(FowComponent *fow)
+{
+
+	int const TOTALTILESX = 2560;
+	int const TOTALTILESY = 1520;
+
+	for(int y = 0; y < TOTALTILESY; y++)
+	{
+		for(int x = 0; x < TOTALTILESX; x++)
+		{
+			for(int lev = 0; lev < NUMLEVELS; lev++)
+			{
+				fow -> tiles[y][x].visible[ lev ] = OPAQUE_VIS;			
+			}
+		}	
+	}
+}
 
 
+/**
+ * Checks whether a near tile is a wall
+ * 
+ * Loops through the tile map to blit all the tiles that need blitting.
+ *
+ * Revisions:
+ *     None.
+ *loading
+ * @param fow   		A pointer to a fogOfWarStruct. Contains a reference to the tile's visibility, i.e. whether or not it should be blitted.
+ * @param yd			Delta y from current position
+ * @param xd			Delta x from current position
+ *
+ * @return int. 0 on wall collision. 1 otherwise
+ * 
+ * @designer Sam Youssef
+ * @author Sam Youssef
+ *
+ * @date March 29, 2014
+ */
+int get_visibility_of_near_wall(FowPlayerPosition *fowp, int y, int x)
+{
+		PositionComponent newposition;
+		
+		int yd = y-3;
+		int xd = x-3;
+
+		newposition = set_newposition(fowp -> pos, yd, xd);
+		
+		if(is_wall_collision(fowp -> world, newposition) == COLLISION_WALL) return 1;
+		return 0;
+}
 
 /**
  * Makes the tiles surrounding the player (by a radius of two) visible.
@@ -336,138 +458,176 @@ void make_surrounding_tiles_visible(FowPlayerPosition *fowp)
 	fowp -> fow -> xOffset = -map_rect.x;
 	fowp -> fow -> yOffset = -map_rect.y;
 	
+	memset(visMap, 0, sizeof(int) * 7 * 7);
 
-	#define LEFT -1
-	#define RGHT +1
-	#define TOP  -1
-	#define BOT  +1
+	visMap[0][0] = 3;
+	visMap[0][1] = 3;
+	visMap[1][0] = 3;
 
-	set_visibility_type(fowp, 0, 0, 0);
+	visMap[0][5] = 3;
+	visMap[0][6] = 3;
+	visMap[1][6] = 3;
 
-	int ttl = 1;
-	int ttr = 1;
-	int llt = 1;
-	int rrt = 1;
-	
-	int bbl = 1;
-	int bbr = 1;
-	int llb = 1;
-	int rrb = 1;
+	visMap[5][6] = 3;
+	visMap[6][5] = 3;
+	visMap[6][6] = 3;
 
-	int l;
-	int r;
-	int b;
-	int t;
+	visMap[5][0] = 3;
+	visMap[6][0] = 3;
+	visMap[6][1] = 3;
 
 
-	if( ! (t = set_visibility_type(fowp, TOP,  0, CLEAR_VIS))) {
-
-		set_visibility_type(fowp, TOP, 0, CLEAR_VIS);
-
-		PositionComponent newposition;
-		newposition = set_newposition(fowp -> pos, TOP, LEFT);
-		
-		if(is_wall_collision(fowp -> world, newposition) == COLLISION_WALL) set_visibility_type(fowp, TOP,  LEFT, CLEAR_VIS);
-		
-		newposition = set_newposition(fowp -> pos, TOP, RGHT);
-		if(is_wall_collision(fowp -> world, newposition) == COLLISION_WALL) set_visibility_type(fowp, TOP,  RGHT, CLEAR_VIS);
-	
-		ttl = 0;
-		ttr = 0;
-	}
-	else {
-		if( set_visibility_type(fowp, TOP + TOP,  0, CLEAR_VIS))
-			set_visibility_type(fowp, TOP + TOP + TOP, 0, TRANSP_VIS);
-	}
-	
-	
-	if((b = set_visibility_type(fowp, BOT,  0, CLEAR_VIS))) {	
-		if(set_visibility_type(fowp, BOT + BOT,  0, CLEAR_VIS))
-			set_visibility_type(fowp, BOT + BOT + BOT, 0, TRANSP_VIS);
-	}
-	else {
-		bbl = 0;
-		bbr = 0;
-	}
-
-
-	if((l = set_visibility_type(fowp, 0,  LEFT, CLEAR_VIS))) {
-		if(set_visibility_type(fowp, 0, LEFT + LEFT, CLEAR_VIS))
-			set_visibility_type(fowp, 0, LEFT + LEFT + LEFT, TRANSP_VIS);
-	}
-	else {	
-		llt = 0;
-		llb = 0;
-	}
-	
-	
-	if((r = set_visibility_type(fowp, 0, RGHT, CLEAR_VIS))) {
-		if(set_visibility_type(fowp, 0, RGHT + RGHT, CLEAR_VIS))
-			set_visibility_type(fowp, 0, RGHT + RGHT + RGHT, TRANSP_VIS);
-	}
-	else {	
-		rrt = 0;
-		rrb = 0;
-	}
-	
-	
-	if(t && l && set_visibility_type(fowp, TOP, LEFT, CLEAR_VIS)) {
-	
-		if( l && t )
-			set_visibility_type(fowp, TOP + TOP, LEFT + LEFT, TOP2LEFT2);
-		
-		if( ttl )	
-			set_visibility_type(fowp, TOP + TOP, LEFT, TOP2LEFT);
-				
-		if( llt ) 
-			set_visibility_type(fowp, TOP, LEFT + LEFT, TOPLEFT2);
-
-	}
-			
-	
-	if(b && l && set_visibility_type(fowp, BOT, LEFT, CLEAR_VIS)) {
-	
-		if( l && b )
-			set_visibility_type(fowp, BOT + BOT, LEFT + LEFT, BOT2LEFT2);
-		
-		if( bbl ) {
-			if(set_visibility_type(fowp, BOT + BOT, LEFT, BOT2LEFT))
-				set_visibility_type(fowp, BOT + BOT + BOT, LEFT, TRANSP_VIS);			
-		}
-		if( llb ) {
-			if(set_visibility_type(fowp, BOT, LEFT + LEFT, BOTLEFT2))
-				set_visibility_type(fowp, BOT, LEFT + LEFT + LEFT, TRANSP_VIS);
+	for(int y = 0; y < 7; y++) 
+	{
+		for(int x = 0; x < 7; x++) 
+		{
+			if(visMap[y][x] == 0)
+			{
+				if((visMap[y][x] = get_visibility_of_near_wall(fowp, y, x)) != 0)
+				{
+					for(int yi = 0; yi < 7; yi++)
+						for(int xi = 0; xi < 7; xi++)
+							if(fowp->fow->bt[y][x].coords[yi][xi] == 1)
+								visMap[yi][xi] = 1;
+				}
+			}		
 		}
 	}
-			
-			
-	if(t && r && set_visibility_type(fowp, TOP, RGHT, CLEAR_VIS)) {
-	
-		if( r && t )
-			set_visibility_type(fowp, TOP + TOP, RGHT + RGHT, TOP2RGHT2);
-		
-		if( ttr ) 
-			if( set_visibility_type(fowp, TOP + TOP, RGHT, TOP2RGHT))
-					set_visibility_type(fowp, TOP + TOP + TOP, RGHT, TRANSP_VIS);
-					
-		if( rrt ) 
-			if( set_visibility_type(fowp, TOP, RGHT + RGHT, TOPRGHT2))
-					set_visibility_type(fowp, TOP, RGHT + RGHT + RGHT, TRANSP_VIS);
+
+
+	// grey out the walls
+	for(int y = 3, x = 3; x >= 0; --x) {
+		if(visMap[y][x] == 1) {
+			visMap[y][x] = 2;
+			break;
+		}
 	}
 
 
-	if(b && r && set_visibility_type(fowp, BOT, RGHT, CLEAR_VIS)) {
-	
-		if( r && b )
-			set_visibility_type(fowp, BOT + BOT, RGHT + RGHT, BOT2RGHT2);
-		
-		if( bbr ) 
-			if( set_visibility_type(fowp, BOT + BOT, RGHT, BOT2RGHT))
-				set_visibility_type(fowp, BOT + BOT + BOT, RGHT, TRANSP_VIS);
-				
-		if( rrb ) 
-			if( set_visibility_type(fowp, BOT, RGHT + RGHT, BOTRGHT2))
-				set_visibility_type(fowp, BOT, RGHT + RGHT + RGHT, TRANSP_VIS);
+	for(int y = 3, x = 3; x <= 6; ++x) {
+		if(visMap[y][x] == 1) {
+			visMap[y][x] = 2;
+			break;
+		}
+	}
+
+	for(int y = 3, x = 3; y >= 0; --y) {
+		if(visMap[y][x] == 1) {
+			visMap[y][x] = 2;
+			break;
+		}
+	}
+
+	for(int y = 3, x = 3; y <= 6; ++y) {
+		if(visMap[y][x] == 1) {
+			visMap[y][x] = 2;
+			break;
+		}
+	}
+
+
+	for(int y = 3, x = 3; y <= 6; ++y, ++x) {
+
+		if(visMap[y][x] == 1) {
+			visMap[y][x] = 2;
+			break;
+		}
+	}
+
+	for(int y = 3, x = 3; y >= 0; --y, --x) {
+		if(visMap[y][x] == 1) {
+			visMap[y][x] = 2;
+			break;
+		}
+	}
+
+
+	for(int y = 3, x = 3; y >= 0; --y, ++x) {
+		if(visMap[y][x] == 1) {
+			visMap[y][x] = 2;
+			break;
+		}
+	}
+
+
+	for(int y = 3, x = 3; y <= 6; ++y, --x) {
+		if(visMap[y][x] == 1) {
+			visMap[y][x] = 2;
+			break;
+		}
+	}
+
+
+
+	if(visMap[2][4] == 0) 
+	{
+		if(visMap[2][5] == 1) 
+			visMap[2][5] = 2;
+
+		else if(visMap[2][6] == 1) 
+			visMap[2][6] = 2;
+
+		if(visMap[1][4] == 1) 
+			visMap[1][4] = 2;
+
+		else if(visMap[0][4] == 1) 
+			visMap[0][4] = 2;
+	}
+
+
+	if(visMap[2][2] == 0) 
+	{
+		if(visMap[2][1] == 1) 
+			visMap[2][1] = 2;
+
+		else if(visMap[2][0] == 1) 
+			visMap[2][0] = 2;
+
+		if(visMap[1][2] == 1) 
+			visMap[1][2] = 2;
+
+		else if(visMap[0][2] == 1) 
+			visMap[0][2] = 2;
+	}
+
+
+	if(visMap[4][2] == 0) 
+	{
+		if(visMap[5][2] == 1) 
+			visMap[5][2] = 2;
+
+		else if(visMap[6][2] == 1) 
+			visMap[6][2] = 2;
+
+		if(visMap[4][1] == 1) 
+			visMap[4][1] = 2;
+
+		else if(visMap[4][0] == 1) 
+			visMap[4][0] = 2;
+	}
+
+
+	if(visMap[4][4] == 0) 
+	{
+		if(visMap[4][5] == 1) 
+			visMap[4][5] = 2;
+
+		else if(visMap[4][6] == 1) 
+			visMap[4][6] = 2;
+
+		if(visMap[5][4] == 1) 
+			visMap[5][4] = 2;
+
+		else if(visMap[6][4] == 1) 
+			visMap[6][4] = 2;
+	}
+
+	for(int y = 0; y < 7; y++) 
+	{
+		for(int x = 0; x < 7; x++) 
+		{
+			set_visibility_type(fowp, y, x);
+		}
 	}
 }
 
@@ -500,7 +660,25 @@ int set_tile_pos(int pos, int delta)
 }
 
 
-
+/**
+ * Sets a PositionComponent struct with the desired position
+ * 
+ * Copies from current position and applies delta-x & delta-y to get new position.
+ *
+ * Revisions:
+ *     None.
+ *loading
+ * @param pos 	PositionComponent struct with current position information
+ * @param	yDel	Delta y from current position
+ * @param xDel	Delta x from current position
+ *
+ * @return void.
+ * 
+ * @designer Sam Youssef
+ * @author Sam Youssef
+ *
+ * @date March 29, 2014
+ */
 PositionComponent set_newposition(PositionComponent *pos, int yDel, int xDel)
 {
 	PositionComponent newposition;
@@ -542,11 +720,11 @@ PositionComponent set_newposition(PositionComponent *pos, int yDel, int xDel)
  *
  * @date March 29, 2014
  */
-int *get_visibility_type(PositionComponent *newposition, FowPlayerPosition *fowp, int yDel, int xDel)
+int get_visibility_ptr(PositionComponent *newposition, FowPlayerPosition *fowp, int yDel, int xDel, int visType)
 {
 	FowComponent *fow = fowp -> fow;
 	PositionComponent *pos = fowp -> pos;
-
+	World *world = fowp->world;
 
 	int xPos = pos->x / TILE_WIDTH;
 	int yPos = pos->y / TILE_HEIGHT;
@@ -555,22 +733,37 @@ int *get_visibility_type(PositionComponent *newposition, FowPlayerPosition *fowp
 	int x = set_tile_pos(xPos, xDel);
 
 	*newposition =  set_newposition(pos, yDel, xDel);
-
-	return &fow -> tiles[y][x].visible[ pos->level ];
-}
-
-
-
-int iscorner(int n)
-{
-	int arr[] = { 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21 };
-	for(int i = 0; i < 12; i++) if(arr[i] == n) return 1;
 	
-	return 0;
+	int curlevel = -1;
+	
+	for (int i = 0; i < MAX_ENTITIES; i++) {
+		if (((world->mask[i] & LEVEL_MASK) != 0) && world->level[i].levelID == newposition->level) {
+			curlevel = i;
+			break;
+		}
+	}
+	
+	if (curlevel == -1) {
+		return false;
+	}
+	
+	if( fowp -> isControllablePlayer ) { 
+		int count = fow -> tilesVisibleToControllablePlayerCount;
+		
+		fow -> tilesVisibleToControllablePlayer[ count ][0] = y;
+		fow -> tilesVisibleToControllablePlayer[ count ][1] = x;	
+		fow -> tilesVisibleToControllablePlayerCount++;
+	}	
+	
+	if(x >= 0 && y >= 0 && y < world->level[ curlevel ].height && x < world->level[ curlevel ].width)
+		fow -> tiles[y][x].visible[ pos->level ] = visType;
+		
+		return true;
 }
+
 
 /**
- * Sets a tile's visibility.
+ * Sets a tile's level of visibility.
  *
  * Revisions:
  *     None.
@@ -587,44 +780,21 @@ int iscorner(int n)
  *
  * @date March 29, 2014
  */
-int set_visibility_type(FowPlayerPosition *fowp, int yDel, int xDel, int newvis)
+int set_visibility_type(FowPlayerPosition *fowp, int y, int x)
 {
-
-	World *world = fowp -> world;
 	PositionComponent newposition;
 
-	int *vis = get_visibility_type(&newposition, fowp, yDel, xDel);
-
-	if(*vis == 0 || newvis == 0) {
-		*vis = CLEAR_VIS;
-	}
+	int yd = y-3;
+	int xd = x-3;
 	
-	else if(iscorner(*vis) && iscorner(newvis) ) {
 
-		if     ((*vis == BOT2RGHT2 && newvis == TOP2LEFT2) || (*vis == TOP2LEFT2 && newvis == BOT2RGHT2)) *vis = 22;
-		else if((*vis == BOT2LEFT2 && newvis == TOP2RGHT2) || (*vis == TOP2RGHT2 && newvis == BOT2LEFT2)) *vis = 23;
-		else if((*vis == TOP2LEFT2 && newvis == TOP2RGHT2) || (*vis == TOP2RGHT2 && newvis == TOP2LEFT2)) *vis = 24;
-		else if((*vis == BOT2RGHT2 && newvis == BOT2LEFT2) || (*vis == BOT2LEFT2 && newvis == BOT2RGHT2)) *vis = 25;
-		else if((*vis == BOT2LEFT2 && newvis == TOP2LEFT2) || (*vis == TOP2LEFT2 && newvis == TOP2LEFT2)) *vis = 26;
-		else if((*vis == BOT2RGHT2 && newvis == TOP2RGHT2) || (*vis == TOP2RGHT2 && newvis == BOT2RGHT2)) *vis = 27;
-		else *vis = CLEAR_VIS;
-
+	if(visMap[y][x] == 0)
+	{
+		get_visibility_ptr(&newposition, fowp, yd, xd, CLEAR_VIS);
 	}
-	else if(iscorner(*vis) && newvis == 1) {
-
-	}
-	
-	else if(*vis == 1 && iscorner(newvis)) {
-		*vis = newvis;
-	}
-	
-	else {					
-		*vis = newvis;
-	}
-	
-	if( is_wall_collision(world, newposition) == COLLISION_WALL ) { 
-		*vis = TRANSP_VIS;
-		return 0; 
+	else if(visMap[y][x] == 2)
+	{
+		get_visibility_ptr(&newposition, fowp, yd, xd, TRANSP_VIS);
 	}
 	return 1;
 }
@@ -665,11 +835,14 @@ int is_wall_collision(World *world, PositionComponent newposition)
 	int x = newposition.x / world->level[curlevel].tileSize;
 	int y = newposition.y / world->level[curlevel].tileSize;
 	
-	if (world->level[curlevel].map[x][y] == L_WALL) 
+	if(x >= 0 && y >= 0 && y < world->level[curlevel].height && x < world->level[curlevel].width)
 	{
+		if (world->level[curlevel].map[x][y] == L_WALL) 
+		{
 			return COLLISION_WALL;
+		}
 	}
-	
+
 	return COLLISION_EMPTY;
 }
 
@@ -720,3 +893,75 @@ int subOne(int n)
 	if (n == 0) return n;
 	return --n;
 }
+
+
+/**
+ * Initializes player sound effects from wav files
+ *
+ * Revisions:
+ *     None.
+ *loading
+ * @param fow   		A pointer to a FogComponent struct which will contain the SDL Mix_Chunks / sound effects.
+ *
+ * @return void.
+ * 
+ * @designer Sam Youssef
+ * @author Sam Youssef
+ *
+ * @date April 6th, 2014
+ */
+void init_players_speech(FowComponent *fow) {
+
+	fow->speech.cop[0] = Mix_LoadWAV("assets/Sound/speech/cop1.wav");
+	fow->speech.cop[1] = Mix_LoadWAV("assets/Sound/speech/cop2.wav");
+	fow->speech.cop[2] = Mix_LoadWAV("assets/Sound/speech/cop3.wav");
+	fow->speech.cop[3] = Mix_LoadWAV("assets/Sound/speech/cop4.wav");
+	fow->speech.cop[4] = Mix_LoadWAV("assets/Sound/speech/cop5.wav");
+		
+	fow->speech.rob[0] = Mix_LoadWAV("assets/Sound/speech/rob1.wav");
+	fow->speech.rob[1] = Mix_LoadWAV("assets/Sound/speech/rob2.wav");
+
+	time( &fow->speech.played );
+}
+
+/**
+ * Plays an opponent sound effect contingent on whether or not he's inside the visibility bubble
+ *
+ * Revisions:
+ *     None.
+ *loading
+ * @param fow   		A pointer to a FogComponent struct which contains the SDL Mix_Chunks / sound effects.
+ * @param xPos			x-position of opponent
+ * @param yPos			y-position of opponent
+ *
+ * @return void.
+ * 
+ * @designer Sam Youssef
+ * @author Sam Youssef
+ *
+ * @date April 6th, 2014
+ */
+void render_player_speech(FowComponent *fow, int xPos, int yPos) {
+
+	time_t tm;
+	// sound enemy speech if near (time wait of 8 secs)
+	if(time(&tm) - fow->speech.played > 8)
+	{
+		int nTilesInLos = fow -> tilesVisibleToControllablePlayerCount;
+		for(int i = 0; i < nTilesInLos; i++)
+		{
+			if(fow -> tilesVisibleToControllablePlayer[i][0] == yPos &&
+			   fow -> tilesVisibleToControllablePlayer[i][1] == xPos) 
+			{		
+				switch(fow->teamNo)
+				{
+					case 1: Mix_PlayChannel( -1, fow->speech.rob[rand() % NUMSPEECHCOP], 0 ); break;
+					case 2: Mix_PlayChannel( -1, fow->speech.cop[rand() % NUMSPEECHROB], 0 ); break;
+				}
+				time(&fow->speech.played);
+			}
+		}	
+	}
+}
+
+

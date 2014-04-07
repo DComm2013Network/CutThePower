@@ -1,0 +1,12 @@
+1
+
+bounce 9 150 -1 1
+assets/Graphics/powerups/powerup_double_speed/power_up_double_speed_1.png
+assets/Graphics/powerups/powerup_double_speed/power_up_double_speed_2.png
+assets/Graphics/powerups/powerup_double_speed/power_up_double_speed_3.png
+assets/Graphics/powerups/powerup_double_speed/power_up_double_speed_4.png
+assets/Graphics/powerups/powerup_double_speed/power_up_double_speed_5.png
+assets/Graphics/powerups/powerup_double_speed/power_up_double_speed_4.png
+assets/Graphics/powerups/powerup_double_speed/power_up_double_speed_3.png
+assets/Graphics/powerups/powerup_double_speed/power_up_double_speed_2.png
+assets/Graphics/powerups/powerup_double_speed/power_up_double_speed_1.png
