@@ -15,7 +15,7 @@
 static void render_opponent_players(World& world, SDL_Surface *surface, FowComponent *fow, SDL_Rect map_rect);
 static int opponentPlayers[32];
 static int opponentPlayersCount = 0;
-
+extern int curlevel;
 #define SYSTEM_MASK (COMPONENT_RENDER_PLAYER | COMPONENT_POSITION) /**< The entity must have a render player and position component
                                                                     * for processing by this system. */
 
