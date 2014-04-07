@@ -336,7 +336,6 @@ void handle_entity_collision(World* world, unsigned int entity, unsigned int ent
 				int targy = world->wormhole[hit_entity].targetY;
 				int targl = world->wormhole[hit_entity].targetLevel;
 
-				world->player[player_entity].tilez = rand() % 2 + 1;
 				move_request(world, send_router_fd[WRITE], targl, targx, targy);
 				if(!network_ready)
 				{
