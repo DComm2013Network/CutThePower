@@ -187,7 +187,7 @@ void *read_data(int fd, uint32_t *type){
     }
 
     if((packet = read_packet(fd, packet_sizes[*type - 1])) == NULL){
-        perror("read_data: Failed to read packet");
+        printf("read_data: Failed to read packet\n");
         return NULL;
     }
 
