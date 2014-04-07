@@ -231,7 +231,7 @@ void rebuild_floor(World* world, int targl)
             }
         }
         //start with half the player count
-        num_objectives = num_players / 2;
+        num_objectives = num_players;
         // at least 3 floors
         num_objectives = (num_objectives < 12) ? 12 : num_objectives;
         // rounded to the nearest full floor
