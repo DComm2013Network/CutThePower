@@ -7,7 +7,7 @@
 #include "../world.h"
 
 
-#define NUMLEVELS 9
+#define NUMLEVELS 10
 
 #define L_EMPTY 1
 #define L_WALL  2

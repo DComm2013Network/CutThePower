@@ -720,11 +720,11 @@ PositionComponent set_newposition(PositionComponent *pos, int yDel, int xDel)
  *
  * @date March 29, 2014
  */
-int *get_visibility_ptr(PositionComponent *newposition, FowPlayerPosition *fowp, int yDel, int xDel)
+int get_visibility_ptr(PositionComponent *newposition, FowPlayerPosition *fowp, int yDel, int xDel, int visType)
 {
 	FowComponent *fow = fowp -> fow;
 	PositionComponent *pos = fowp -> pos;
-
+	World *world = fowp->world;
 
 	int xPos = pos->x / TILE_WIDTH;
 	int yPos = pos->y / TILE_HEIGHT;
@@ -734,15 +734,31 @@ int *get_visibility_ptr(PositionComponent *newposition, FowPlayerPosition *fowp,
 
 	*newposition =  set_newposition(pos, yDel, xDel);
 	
+	int curlevel = -1;
+	
+	for (int i = 0; i < MAX_ENTITIES; i++) {
+		if (((world->mask[i] & LEVEL_MASK) != 0) && world->level[i].levelID == newposition->level) {
+			curlevel = i;
+			break;
+		}
+	}
+	
+	if (curlevel == -1) {
+		return false;
+	}
+	
 	if( fowp -> isControllablePlayer ) { 
 		int count = fow -> tilesVisibleToControllablePlayerCount;
 		
 		fow -> tilesVisibleToControllablePlayer[ count ][0] = y;
 		fow -> tilesVisibleToControllablePlayer[ count ][1] = x;	
 		fow -> tilesVisibleToControllablePlayerCount++;
-	}
+	}	
 	
-	return &fow -> tiles[y][x].visible[ pos->level ];
+	if(x >= 0 && y >= 0 && y < world->level[ curlevel ].height && x < world->level[ curlevel ].width)
+		fow -> tiles[y][x].visible[ pos->level ] = visType;
+		
+		return true;
 }
 
 
@@ -774,13 +790,11 @@ int set_visibility_type(FowPlayerPosition *fowp, int y, int x)
 
 	if(visMap[y][x] == 0)
 	{
-		int *vis = get_visibility_ptr(&newposition, fowp, yd, xd);
-		(*vis) =  CLEAR_VIS;
+		get_visibility_ptr(&newposition, fowp, yd, xd, CLEAR_VIS);
 	}
 	else if(visMap[y][x] == 2)
 	{
-		int *vis = get_visibility_ptr(&newposition, fowp, yd, xd);
-		(*vis) =  TRANSP_VIS;
+		get_visibility_ptr(&newposition, fowp, yd, xd, TRANSP_VIS);
 	}
 	return 1;
 }

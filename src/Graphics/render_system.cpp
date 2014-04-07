@@ -15,7 +15,7 @@
 static void render_opponent_players(World& world, SDL_Surface *surface, FowComponent *fow, SDL_Rect map_rect);
 static int opponentPlayers[32];
 static int opponentPlayersCount = 0;
-
+extern int curlevel;
 #define SYSTEM_MASK (COMPONENT_RENDER_PLAYER | COMPONENT_POSITION) /**< The entity must have a render player and position component
                                                                     * for processing by this system. */
 
@@ -147,7 +147,8 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 	render_opponent_players(world, surface, fow, map_rect);
 	
 	fow->tilesVisibleToControllablePlayerCount = 0;
-	memset(fow->tilesVisibleToControllablePlayer, 0, sizeof(fow->tilesVisibleToControllablePlayer));
+	for(int i = 0; i < NMAXTILESINLOS; i++)
+		memset(fow->tilesVisibleToControllablePlayer[i], 0, 2 * sizeof(int));
 }
 
 
@@ -187,6 +188,7 @@ void render_opponent_players(World& world, SDL_Surface *surface, FowComponent *f
 		int xPos = position->x / TILE_WIDTH;
 		int yPos = position->y / TILE_HEIGHT;
 
+		if(xPos >= 0 && yPos >= 0 && yPos < world.level[ position->level ].height && xPos < world.level[ position->level ].width)
 		if(fow -> tiles[yPos][xPos].visible[ position->level ] == 0)
 		{
 			// show enemy player
@@ -277,10 +279,8 @@ void render_menu_system(World *world, SDL_Surface *surface) {
 					menu_rect.x += get_text_width(text->text, MENU_FONT) + 1;
 					SDL_BlitSurface(ibeam, NULL, surface, &menu_rect);
 				}
-			}
-			
+			}	
 		}
-		
 	}
 }
 
