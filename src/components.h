@@ -27,5 +27,6 @@ typedef enum {
 	COMPONENT_STILE = 1 << 16,
 	COMPONENT_POWERUP = 1 << 17,
 	COMPONENT_CUTSCENE = 1 << 18
-}
+} Components;
+
 #endif

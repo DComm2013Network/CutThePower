@@ -216,7 +216,6 @@ void rebuild_floor(World* world, int targl)
     int topfloor = 0;
     for (int i = 0; i < MAX_OBJECTIVES; i ++)
     {
-        printf("objective_table[%d]: %d\n", i, objective_table[i].obj_state);
         if(objective_table[i].obj_state != OBJECTIVE_NONE)
         {
             num_objectives++;
@@ -241,9 +240,6 @@ void rebuild_floor(World* world, int targl)
 
 
     topfloor = num_objectives/OBJECTIVES_PER_FLOOR;
-    printf("num_players: %d\n", num_players);
-    printf("topfloor: %d\n", topfloor);
-    printf("num_objectives: %d\n", num_objectives);
 
 	destroy_world_not_player(world);
     switch (targl) {
