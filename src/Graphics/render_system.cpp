@@ -188,6 +188,7 @@ void render_opponent_players(World& world, SDL_Surface *surface, FowComponent *f
 		int xPos = position->x / TILE_WIDTH;
 		int yPos = position->y / TILE_HEIGHT;
 
+		if(xPos >= 0 && yPos >= 0 && yPos < world.level[ position->level ].height && xPos < world.level[ position->level ].width)
 		if(fow -> tiles[yPos][xPos].visible[ position->level ] == 0)
 		{
 			// show enemy player
