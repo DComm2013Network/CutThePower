@@ -355,9 +355,14 @@ void cleanup_fog_of_war(FowComponent *fow)
 		SDL_FreeSurface(fow -> alphaFog[i]);
 	}
 	
-	for(int i = 0; i < NUMSPEECH; i++)
+	for(int i = 0; i < NUMSPEECHCOP; i++)
 	{
 		Mix_FreeChunk(fow -> speech.cop[i]);
+	}
+	
+
+	for(int i = 0; i < NUMSPEECHROB; i++)
+	{
 		Mix_FreeChunk(fow -> speech.rob[i]);
 	}
 }
@@ -896,10 +901,11 @@ void init_players_speech(FowComponent *fow) {
 	fow->speech.cop[0] = Mix_LoadWAV("assets/Sound/speech/cop1.wav");
 	fow->speech.cop[1] = Mix_LoadWAV("assets/Sound/speech/cop2.wav");
 	fow->speech.cop[2] = Mix_LoadWAV("assets/Sound/speech/cop3.wav");
-
+	fow->speech.cop[3] = Mix_LoadWAV("assets/Sound/speech/cop4.wav");
+	fow->speech.cop[4] = Mix_LoadWAV("assets/Sound/speech/cop5.wav");
+		
 	fow->speech.rob[0] = Mix_LoadWAV("assets/Sound/speech/rob1.wav");
 	fow->speech.rob[1] = Mix_LoadWAV("assets/Sound/speech/rob2.wav");
-	fow->speech.rob[2] = Mix_LoadWAV("assets/Sound/speech/rob3.wav");
 
 	time( &fow->speech.played );
 }
@@ -935,8 +941,8 @@ void render_player_speech(FowComponent *fow, int xPos, int yPos) {
 			{		
 				switch(fow->teamNo)
 				{
-					case 1: Mix_PlayChannel( -1, fow->speech.rob[rand() % NUMSPEECH], 0 ); break;
-					case 2: Mix_PlayChannel( -1, fow->speech.cop[rand() % NUMSPEECH], 0 ); break;
+					case 1: Mix_PlayChannel( -1, fow->speech.rob[rand() % NUMSPEECHCOP], 0 ); break;
+					case 2: Mix_PlayChannel( -1, fow->speech.cop[rand() % NUMSPEECHROB], 0 ); break;
 				}
 				time(&fow->speech.played);
 			}

@@ -19,7 +19,8 @@
 #define TRANSP_VIS 1
 #define OPAQUE_VIS 2
 		
-#define NUMSPEECH      3
+#define NUMSPEECHCOP    5
+#define NUMSPEECHROB		2
 #define NMAXTILESINLOS 37
 
 #define OPAQUE_FOG_COLOUR 0x000000
@@ -29,8 +30,8 @@
 
 typedef struct PlayerSpeech
 {
-	Mix_Chunk *rob[NUMSPEECH];
-	Mix_Chunk *cop[NUMSPEECH];
+	Mix_Chunk *rob[NUMSPEECHROB];
+	Mix_Chunk *cop[NUMSPEECHCOP];
 	time_t played;
 		
 } PlayerSpeech;
