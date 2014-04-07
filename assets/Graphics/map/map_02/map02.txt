@@ -40,7 +40,7 @@
 04 09 09 10 09 09 09 09 09 10 09 09 09 09 10 09 09 09 09 09 09 09 09 10 09 09 09 09 09 09 09 09 09 09 09 10 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 10 09 09 09 09 09 09 05 
 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 
 
-31
+27
 stairs 03 16 02 02 1 r
 stairs 60 17 39 35 1 r
 stairs 03 18 08 25 3 r
@@ -61,7 +61,7 @@ object 9 11.1 80 75 assets/Graphics/objects/png_object/object_animation.txt doub
 
 object 12.37 19.8 100 116 assets/Graphics/objects/png_object/object_animation.txt cubicle6_100x116
 object 57.63 7.8 100 116 assets/Graphics/objects/png_object/object_animation.txt cubicle2_100x116
-object 23.5 4.57 359 203 assets/Graphics/objects/png_object/object_animation.txt cubicles_x_6_2_196x284
+object 23.5 4.57 359 203 assets/Graphics/objects/png_object/object_animation.txt cubicles_x_6_2_359x203
 object 18.4 32 190 196 assets/Graphics/objects/png_object/object_animation.txt cubicles_x_4_2_180x180
 
 object 9 18.5 40 40 assets/Graphics/objects/png_object/object_animation.txt clock_40x40
@@ -78,8 +78,8 @@ object 56.93 31 35 55 assets/Graphics/objects/png_object/object_animation.txt ma
 object 58.93 31 35 55 assets/Graphics/objects/png_object/object_animation.txt machine_left_35x55
 object 60.93 31 35 55 assets/Graphics/objects/png_object/object_animation.txt machine_left_35x55
 
-object 1 5.9 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 4 5.9 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
+object 1 5.9 25 50 assets/Graphics/objects/png_object/object_animation.txt plant_25x50
+object 4 5.9 25 50 assets/Graphics/objects/png_object/object_animation.txt plant_25x50
 
 
 
