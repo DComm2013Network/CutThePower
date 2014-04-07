@@ -259,7 +259,7 @@ void rebuild_floor(World* world, int targl)
 		case 3:
 			if(topfloor == 3)
 			{
-			    map_init(world, "assets/Graphics/map/map03/map03_topfloor.txt", "assets/Graphics/map/map_03/tiles.txt");
+			    map_init(world, "assets/Graphics/map/map_03/map03_topfloor.txt", "assets/Graphics/map/map_03/tiles.txt");
 			}
             else
             {
@@ -468,12 +468,13 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 					switch(world->player[entity].tilez){
 						case TILE_BELT_RIGHT:
 							tile = create_stile(world, TILE_BELT_RIGHT, world->position[entity].x, world->position[entity].y, world->position[entity].level);
+							send_tiles(world, tile, send_router_fd[WRITE]);
 							break;
 						case TILE_BELT_LEFT: 
 							tile = create_stile(world, TILE_BELT_LEFT, world->position[entity].x, world->position[entity].y, world->position[entity].level);
+							send_tiles(world, tile, send_router_fd[WRITE]);
 							break;
 					}
-					send_tiles(world, tile, send_router_fd[WRITE]);
 				}
 				/* SPECIAL TILES */
 				
