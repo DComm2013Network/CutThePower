@@ -44,7 +44,7 @@
 stairs 50 31 59 19 2 l
 stairs 07 25 02 18 2 l
 stairs 09 07 04	11 4 l
-stairs 33 08 32 14 4 l
+stairs 59 08 13 33 4 l
 
 objective 02 06 25 45 0 assets/Graphics/objects/png_object/object_animation.txt
 objective 17 32 25 45 1 assets/Graphics/objects/png_object/object_animation.txt
