@@ -18,7 +18,7 @@ static int opponentPlayersCount = 0;
 
 #define SYSTEM_MASK (COMPONENT_RENDER_PLAYER | COMPONENT_POSITION) /**< The entity must have a render player and position component
                                                                     * for processing by this system. */
-                                                                    
+
 extern SDL_Rect map_rect; /**< The rectangle containing the map. */
 SDL_Surface *ibeam;
 
@@ -215,6 +215,16 @@ void render_opponent_players(World& world, SDL_Surface *surface, FowComponent *f
 	}
 }
 
+/**
+ * Render the menu to the screen.
+ *
+ * @param[in,out] world   A reference to the world structure containing entities to render.
+ * @param[in,out] surface Surface player is being rendered to.
+ *
+ * @designer Jordan Marling
+ *
+ * @author Jordan Marling
+ */
 void render_menu_system(World *world, SDL_Surface *surface) {
 	
 	unsigned int entity;
@@ -222,7 +232,7 @@ void render_menu_system(World *world, SDL_Surface *surface) {
 	PositionComponent 	*position;
 	TextFieldComponent *text;
 	SDL_Rect menu_rect;
-
+	
 	for(entity = 0; entity < MAX_ENTITIES; entity++){
 		
 		if (IN_THIS_COMPONENT(world->mask[entity], SYSTEM_MASK | COMPONENT_MENU_ITEM)) {
