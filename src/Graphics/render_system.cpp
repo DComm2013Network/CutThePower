@@ -180,8 +180,8 @@ void render_opponent_players(World& world, SDL_Surface *surface, FowComponent *f
 		SDL_Rect playerRect;
 		SDL_Rect clipRect;
 
-		playerRect.x = position->x + map_rect.x + 10;
-		playerRect.y = position->y + map_rect.y + 10;
+		playerRect.x = position->x + map_rect.x - 20;
+		playerRect.y = position->y + map_rect.y - 20 ;
 		playerRect.w = renderPlayer->width;
 		playerRect.h = renderPlayer->height;
 
