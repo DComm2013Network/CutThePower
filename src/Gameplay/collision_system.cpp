@@ -332,11 +332,11 @@ void cleanup_spacebar_collision(unsigned int** collision_list) {
 
 unsigned int create_stile(World * world, int type, int xPos, int yPos, int level)
 {
-	if(type != 1 || type != 2)
+	if(type != 1 && type != 2)
 	{
 		return -1;
 	}
-	
+
 	unsigned int speed_tile = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION | COMPONENT_COLLISION | COMPONENT_STILE);
 	
 	int x = xPos / TILE_WIDTH;

@@ -307,14 +307,7 @@ void rebuild_floor(World* world, int targl)
             }
 			break;
 		case 8:
-			if(topfloor == 5)
-			{
-			    map_init(world, "assets/Graphics/map/map_08/map08_topfloor.txt", "assets/Graphics/map/map_08/tiles.txt");
-			}
-            else
-            {
                 map_init(world, "assets/Graphics/map/map_08/map08.txt", "assets/Graphics/map/map_08/tiles.txt");
-            }
 			break;
 		case 9:
 			map_init(world, "assets/Graphics/map/map_09/map09.txt", "assets/Graphics/map/map_09/tiles.txt");

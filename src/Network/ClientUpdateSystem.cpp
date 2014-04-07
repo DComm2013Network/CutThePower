@@ -558,7 +558,7 @@ int init_client_update(World *world)
 	}
 
 	memset(player_table, 255, MAX_PLAYERS * sizeof(unsigned int));
-	memset(objective_table, 5, MAX_OBJECTIVES * sizeof(objective_cache));
+	memset(objective_table, 0, MAX_OBJECTIVES * sizeof(objective_cache));
 	return 1;
 }
 /**
@@ -578,9 +578,9 @@ void update_special_tile(World *world, void * packet)
 			
 	unsigned int tile = create_stile(world, pkt->tile, pkt->xPos, pkt->yPos, pkt->floor);
 	
-	if(tile = 1)
+	if(tile == -1)
 	{
-		return 0;
+		return;
 	}
 
 	if(pkt->floor != (unsigned int) world->position[player_entity].level)
