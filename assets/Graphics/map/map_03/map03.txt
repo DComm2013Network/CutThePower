@@ -40,7 +40,7 @@
 04 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 10 09 09 09 09 09 09 09 09 09 09 09 09 09 09 10 09 09 10 09 09 10 09 10 09 10 09 10 09 09 09 09 09 05 
 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 
 
-100
+96
 stairs 50 31 59 19 2 l
 stairs 07 25 02 18 2 l
 stairs 09 07 04	11 4 l
@@ -103,10 +103,6 @@ object 27 18.8 31 40 assets/Graphics/objects/png_object/object_animation.txt cha
 
 object 26.5 8.6 85 70 assets/Graphics/objects/png_object/object_animation.txt table_85x70
 
-object 32.5 1.1 130 65 assets/Graphics/objects/png_object/object_animation.txt server_130x65
-object 35.5 1.06 37 69 assets/Graphics/objects/png_object/object_animation.txt fridge_37x69
-object 36.4 1.1 37 63 assets/Graphics/objects/png_object/object_animation.txt microwave_37x63
-object 39.4 1.6 90 42 assets/Graphics/objects/png_object/object_animation.txt horizontal_bench_90x42
 object 44.5 1.1 130 65 assets/Graphics/objects/png_object/object_animation.txt server_130x65
 
 object 31.62 13.08 100 110 assets/Graphics/objects/png_object/object_animation.txt cubicle4_100x116
