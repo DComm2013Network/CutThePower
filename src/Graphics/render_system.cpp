@@ -147,7 +147,8 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 	render_opponent_players(world, surface, fow, map_rect);
 	
 	fow->tilesVisibleToControllablePlayerCount = 0;
-	memset(fow->tilesVisibleToControllablePlayer, 0, sizeof(fow->tilesVisibleToControllablePlayer));
+	for(int i = 0; i < NMAXTILESINLOS; i++)
+		memset(fow->tilesVisibleToControllablePlayer[i], 0, 2 * sizeof(int));
 }
 
 
@@ -277,10 +278,8 @@ void render_menu_system(World *world, SDL_Surface *surface) {
 					menu_rect.x += get_text_width(text->text, MENU_FONT) + 1;
 					SDL_BlitSurface(ibeam, NULL, surface, &menu_rect);
 				}
-			}
-			
+			}	
 		}
-		
 	}
 }
 
