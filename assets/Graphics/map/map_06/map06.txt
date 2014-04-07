@@ -42,7 +42,7 @@
 
 131
 stairs 57 05 21 03 5 r
-stairs 29 18 49 34 5 r
+stairs 29 18 51 34 5 r
 stairs 16 24 09 06 7 r
 stairs 48 32 33 15 7 r
 

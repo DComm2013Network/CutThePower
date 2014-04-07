@@ -240,6 +240,18 @@ bool menu_click(World *world, unsigned int entity) {
 		
 		destroy_menu(world);
 		character = CHRIS;
+		alternateSkin = rand() % (ALT_SKIN_CHANCE + 1);
+		#if DEBUG_SKINS
+		printf("Roll: %u\n", alternateSkin);
+		#endif
+		if (alternateSkin == ALT_SKIN_CHANCE) {
+			character = CHRIS_ALT1;
+			stop_music();
+			altSong = load_music("assets/Sound/players/chris_niko/nikoTrack.wav");
+			if (altSong != 0) {
+				play_music(altSong);
+			}
+		}
 		create_setup_menu(world);
 		
 	}
@@ -400,6 +412,18 @@ bool menu_click(World *world, unsigned int entity) {
 		
 		destroy_menu(world);
 		character = ROBIN;
+		alternateSkin = rand() % (ALT_SKIN_CHANCE + 1);
+		#if DEBUG_SKINS
+		printf("Roll: %u\n", alternateSkin);
+		#endif
+		if (alternateSkin == ALT_SKIN_CHANCE) {
+			character = ROBIN_ALT1;
+			stop_music();
+			altSong = load_music("assets/Sound/players/robin_robin/robinTrack.wav");
+			if (altSong != 0) {
+				play_music(altSong);
+			}
+		}
 		create_setup_menu(world);
 		
 	}
@@ -426,6 +450,18 @@ bool menu_click(World *world, unsigned int entity) {
 		
 		destroy_menu(world);
 		character = SHANE;
+		alternateSkin = rand() % (ALT_SKIN_CHANCE + 1);
+		#if DEBUG_SKINS
+		printf("Roll: %u\n", alternateSkin);
+		#endif
+		if (alternateSkin == ALT_SKIN_CHANCE) {
+			character = SHANE_ALT1;
+			stop_music();
+			altSong = load_music("assets/Sound/players/shane_pirate/pirateTrack.wav");
+			if (altSong != 0) {
+				play_music(altSong);
+			}
+		}
 		create_setup_menu(world);
 		
 	}
@@ -452,6 +488,18 @@ bool menu_click(World *world, unsigned int entity) {
 		
 		destroy_menu(world);
 		character = VINCENT;
+		alternateSkin = rand() % (ALT_SKIN_CHANCE + 1);
+		#if DEBUG_SKINS
+		printf("Roll: %u\n", alternateSkin);
+		#endif
+		if (alternateSkin == ALT_SKIN_CHANCE) {
+			character = VINCENT_ALT1;
+			stop_music();
+			altSong = load_music("assets/Sound/players/vincent_wizard/wizardTrack.wav");
+			if (altSong != 0) {
+				play_music(altSong);
+			}
+		}
 		create_setup_menu(world);
 		
 	}
@@ -459,7 +507,7 @@ bool menu_click(World *world, unsigned int entity) {
 		
 		altSong = 0;
 		destroy_menu(world);
-		character = rand() % 30;
+		character = rand() % 34;
 		switch(character) {
 			case JOSH_ALT1:
 				stop_music();
@@ -534,6 +582,34 @@ bool menu_click(World *world, unsigned int entity) {
 			case TIM_ALT1:
 				stop_music();
 				altSong = load_music("assets/Sound/players/tim_yoshi/yoshiTrack.wav");
+				if (altSong != 0) { 
+					play_music(altSong);
+				}
+			break;
+			case CHRIS_ALT1:
+				stop_music();
+				altSong = load_music("assets/Sound/players/chris_niko/nikoTrack.wav");
+				if (altSong != 0) { 
+					play_music(altSong);
+				}
+			break;
+			case SHANE_ALT1:
+				stop_music();
+				altSong = load_music("assets/Sound/players/shane_pirate/pirateTrack.wav");
+				if (altSong != 0) { 
+					play_music(altSong);
+				}
+			break;
+			case ROBIN_ALT1:
+				stop_music();
+				altSong = load_music("assets/Sound/players/robin_robin/robinTrack.wav");
+				if (altSong != 0) { 
+					play_music(altSong);
+				}
+			break;
+			case VINCENT_ALT1:
+				stop_music();
+				altSong = load_music("assets/Sound/players/vincent_wizard/wizardTrack.wav");
 				if (altSong != 0) { 
 					play_music(altSong);
 				}

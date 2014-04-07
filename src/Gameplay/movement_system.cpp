@@ -22,6 +22,9 @@
 #define DIRECTION_UP	3
 #define DIRECTION_DOWN	4																	/**< An approximation of pi for vector calculations. */
 
+
+extern objective_cache objective_table[];
+extern unsigned int* player_table;
 extern int floor_change_flag;
 extern int send_router_fd[];
 extern unsigned int player_entity;
@@ -208,6 +211,40 @@ void handle_y_collision(World* world, unsigned int entity, PositionComponent* te
  */
 void rebuild_floor(World* world, int targl)
 {
+    int num_objectives = 0;
+    int num_players = 0;
+    int topfloor = 0;
+    for (int i = 0; i < MAX_OBJECTIVES; i ++)
+    {
+        printf("objective_table[%d]: %d\n", i, objective_table[i].obj_state);
+        if(objective_table[i].obj_state != OBJECTIVE_NONE)
+        {
+            num_objectives++;
+        }
+    }
+    if(num_objectives < 12)
+    {
+        for(int i = 0; i < MAX_PLAYERS; i++)
+        {
+            if(player_table[i] != UNASSIGNED)
+            {
+                num_players++;
+            }
+        }
+        //start with half the player count
+        num_objectives = num_players / 2;
+        // at least 3 floors
+        num_objectives = (num_objectives < 12) ? 12 : num_objectives;
+        // rounded to the nearest full floor
+        num_objectives += num_objectives % 4;
+    }
+
+
+    topfloor = num_objectives/OBJECTIVES_PER_FLOOR;
+    printf("num_players: %d\n", num_players);
+    printf("topfloor: %d\n", topfloor);
+    printf("num_objectives: %d\n", num_objectives);
+
 	destroy_world_not_player(world);
     switch (targl) {
 		case 0:
@@ -220,22 +257,64 @@ void rebuild_floor(World* world, int targl)
 			map_init(world, "assets/Graphics/map/map_02/map02.txt", "assets/Graphics/map/map_02/tiles.txt");
 			break;
 		case 3:
-			map_init(world, "assets/Graphics/map/map_03/map03.txt", "assets/Graphics/map/map_03/tiles.txt");
+			if(topfloor == 3)
+			{
+			    map_init(world, "assets/Graphics/map/map03/map03_topfloor.txt", "assets/Graphics/map/map_03/tiles.txt");
+			}
+            else
+            {
+                map_init(world, "assets/Graphics/map/map_03/map03.txt", "assets/Graphics/map/map_03/tiles.txt");
+            }
 			break;
 		case 4:
-			map_init(world, "assets/Graphics/map/map_04/map04.txt", "assets/Graphics/map/map_04/tiles.txt");
+			if(topfloor == 4)
+			{
+			    map_init(world, "assets/Graphics/map/map04/map04_topfloor.txt", "assets/Graphics/map/map_04/tiles.txt");
+			}
+            else
+            {
+                map_init(world, "assets/Graphics/map/map_04/map04.txt", "assets/Graphics/map/map_04/tiles.txt");
+            }
 			break;
 		case 5:
-			map_init(world, "assets/Graphics/map/map_05/map05.txt", "assets/Graphics/map/map_05/tiles.txt");
+			if(topfloor == 5)
+			{
+			    map_init(world, "assets/Graphics/map/map05/map05_topfloor.txt", "assets/Graphics/map/map_05/tiles.txt");
+			}
+            else
+            {
+                map_init(world, "assets/Graphics/map/map_05/map05.txt", "assets/Graphics/map/map_05/tiles.txt");
+            }
 			break;
 		case 6:
-			map_init(world, "assets/Graphics/map/map_06/map06.txt", "assets/Graphics/map/map_06/tiles.txt");
+			if(topfloor == 6)
+			{
+			    map_init(world, "assets/Graphics/map/map06/map06_topfloor.txt", "assets/Graphics/map/map_06/tiles.txt");
+			}
+            else
+            {
+                map_init(world, "assets/Graphics/map/map_06/map06.txt", "assets/Graphics/map/map_06/tiles.txt");
+            }
 			break;
 		case 7:
-			map_init(world, "assets/Graphics/map/map_07/map07.txt", "assets/Graphics/map/map_07/tiles.txt");
+			if(topfloor == 7)
+			{
+			    map_init(world, "assets/Graphics/map/map07/map07_topfloor.txt", "assets/Graphics/map/map_07/tiles.txt");
+			}
+            else
+            {
+                map_init(world, "assets/Graphics/map/map_07/map07.txt", "assets/Graphics/map/map_07/tiles.txt");
+            }
 			break;
 		case 8:
-			map_init(world, "assets/Graphics/map/map_08/map08.txt", "assets/Graphics/map/map_08/tiles.txt");
+			if(topfloor == 5)
+			{
+			    map_init(world, "assets/Graphics/map/map08/map08_topfloor.txt", "assets/Graphics/map/map_08/tiles.txt");
+			}
+            else
+            {
+                map_init(world, "assets/Graphics/map/map_08/map08.txt", "assets/Graphics/map/map_08/tiles.txt");
+            }
 			break;
 		case 9:
 			map_init(world, "assets/Graphics/map/map_09/map09.txt", "assets/Graphics/map/map_09/tiles.txt");

@@ -489,6 +489,18 @@ void setup_character_animation(World * world, int character, int entity)
 		case TIM_ALT1:
 			 load_animation("assets/Graphics/player/tim_yoshi/animation.txt", world, entity);
 		break;
+		case CHRIS_ALT1:
+			 load_animation("assets/Graphics/player/chris_niko/animation.txt", world, entity);
+		break;
+		case SHANE_ALT1:
+			 load_animation("assets/Graphics/player/shane_pirate/animation.txt", world, entity);
+		break;
+		case ROBIN_ALT1:
+			 load_animation("assets/Graphics/player/robin_robin/animation.txt", world, entity);
+		break;
+		case VINCENT_ALT1:
+			 load_animation("assets/Graphics/player/vincent_wizard/animation.txt", world, entity);
+		break;
 		default:
 		load_animation("assets/Graphics/player/p0/rob_animation.txt", world, entity);
 	}
@@ -545,7 +557,7 @@ int init_client_update(World *world)
 	}
 
 	memset(player_table, 255, MAX_PLAYERS * sizeof(unsigned int));
-	memset(objective_table, 0, MAX_OBJECTIVES * sizeof(objective_cache));
+	memset(objective_table, 5, MAX_OBJECTIVES * sizeof(objective_cache));
 	return 1;
 }
 /**
