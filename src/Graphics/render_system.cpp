@@ -66,7 +66,7 @@ void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow)
 		}
 
 
-		if (IN_THIS_COMPONENT(world.mask[entity], SYSTEM_MASK)){
+		if (IN_THIS_COMPONENT(world.mask[entity], SYSTEM_MASK) && !IN_THIS_COMPONENT(world.mask[entity], COMPONENT_MENU_ITEM)){
 			
 			position = &(world.position[entity]);
 			renderPlayer = &(world.renderPlayer[entity]);

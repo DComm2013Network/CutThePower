@@ -242,8 +242,6 @@ void send_tiles(World * world, unsigned int entity, int fd)
 	p_tile->yPos = world->position[entity].y;
 	p_tile->tile = world->tile[entity].type;
 
-	printf("tile: %d, floor: %d", p_tile->tile, p_tile->floor);
-
 	write_packet(fd, P_SPECIAL_TILE, p_tile);
 	free(p_tile);
 }
