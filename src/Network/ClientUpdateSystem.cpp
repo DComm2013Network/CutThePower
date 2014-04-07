@@ -565,6 +565,11 @@ void update_special_tile(World *world, void * packet)
 			
 	unsigned int tile = create_stile(world, pkt->tile, pkt->xPos, pkt->yPos, pkt->floor);
 	
+	if(tile = 1)
+	{
+		return 0;
+	}
+
 	if(pkt->floor != (unsigned int) world->position[player_entity].level)
 	{
 		world->mask[tile] &= ~(COMPONENT_RENDER_PLAYER | COMPONENT_COLLISION);

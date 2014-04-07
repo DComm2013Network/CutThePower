@@ -816,11 +816,14 @@ int is_wall_collision(World *world, PositionComponent newposition)
 	int x = newposition.x / world->level[curlevel].tileSize;
 	int y = newposition.y / world->level[curlevel].tileSize;
 	
-	if (world->level[curlevel].map[x][y] == L_WALL) 
+	if(x >= 0 && y >= 0 && y < world->level[curlevel].height && x < world->level[curlevel].width)
 	{
+		if (world->level[curlevel].map[x][y] == L_WALL) 
+		{
 			return COLLISION_WALL;
+		}
 	}
-	
+
 	return COLLISION_EMPTY;
 }
 

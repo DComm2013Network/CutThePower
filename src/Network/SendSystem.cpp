@@ -45,7 +45,6 @@ void send_location(World *world, int fd)
 			pkt4->yPos = world->position[i].y;
 			pkt4->xVel = world->movement[i].movX;
 			pkt4->yVel = world->movement[i].movY;
-			//printf("x: %f, y: %f\n", world->movement[i].movX, world->movement[i].movY);
 			pkt4->floor = world->position[i].level;
 			pkt4->player_number = world->player[i].playerNo;
 		}
@@ -240,6 +239,8 @@ void send_tiles(World * world, unsigned int entity, int fd)
 	p_tile->xPos = world->position[entity].x;
 	p_tile->yPos = world->position[entity].y;
 	p_tile->tile = world->tile[entity].type;
+
+	printf("tile: %d, floor: %d", p_tile->tile, p_tile->floor);
 
 	write_packet(fd, P_SPECIAL_TILE, p_tile);
 	free(p_tile);

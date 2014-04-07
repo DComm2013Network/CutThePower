@@ -12,7 +12,7 @@
 #define GAME_SPEED 30
 
 //0 is off, 1 is on. Remember to make clean to get it to work.
-#define DISPLAY_CUTSCENES 1
+#define DISPLAY_CUTSCENES 0
 
 //max FPS
 #define FPS_MAX 120
