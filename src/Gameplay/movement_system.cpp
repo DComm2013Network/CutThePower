@@ -269,7 +269,7 @@ void rebuild_floor(World* world, int targl)
 		case 4:
 			if(topfloor == 4)
 			{
-			    map_init(world, "assets/Graphics/map/map04/map04_topfloor.txt", "assets/Graphics/map/map_04/tiles.txt");
+			    map_init(world, "assets/Graphics/map/map_04/map04_topfloor.txt", "assets/Graphics/map/map_04/tiles.txt");
 			}
             else
             {
@@ -279,7 +279,7 @@ void rebuild_floor(World* world, int targl)
 		case 5:
 			if(topfloor == 5)
 			{
-			    map_init(world, "assets/Graphics/map/map05/map05_topfloor.txt", "assets/Graphics/map/map_05/tiles.txt");
+			    map_init(world, "assets/Graphics/map/map_05/map05_topfloor.txt", "assets/Graphics/map/map_05/tiles.txt");
 			}
             else
             {
@@ -289,7 +289,7 @@ void rebuild_floor(World* world, int targl)
 		case 6:
 			if(topfloor == 6)
 			{
-			    map_init(world, "assets/Graphics/map/map06/map06_topfloor.txt", "assets/Graphics/map/map_06/tiles.txt");
+			    map_init(world, "assets/Graphics/map/map_06/map06_topfloor.txt", "assets/Graphics/map/map_06/tiles.txt");
 			}
             else
             {
@@ -299,7 +299,7 @@ void rebuild_floor(World* world, int targl)
 		case 7:
 			if(topfloor == 7)
 			{
-			    map_init(world, "assets/Graphics/map/map07/map07_topfloor.txt", "assets/Graphics/map/map_07/tiles.txt");
+			    map_init(world, "assets/Graphics/map/map_07/map07_topfloor.txt", "assets/Graphics/map/map_07/tiles.txt");
 			}
             else
             {
@@ -309,7 +309,7 @@ void rebuild_floor(World* world, int targl)
 		case 8:
 			if(topfloor == 5)
 			{
-			    map_init(world, "assets/Graphics/map/map08/map08_topfloor.txt", "assets/Graphics/map/map_08/tiles.txt");
+			    map_init(world, "assets/Graphics/map/map_08/map08_topfloor.txt", "assets/Graphics/map/map_08/tiles.txt");
 			}
             else
             {
