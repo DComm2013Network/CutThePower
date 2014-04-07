@@ -95,7 +95,6 @@ void *networkRouter(void *args)
 
             if(!packet)
             {
-                set_error(ERR_IPC_FAIL);
                 break;
             }
             
@@ -125,7 +124,6 @@ void *networkRouter(void *args)
         	packet = read_data(gameplay->read_pipe, &type);
             if(!packet)
             {
-                set_error(ERR_IPC_FAIL);
                 break;
             }
             
