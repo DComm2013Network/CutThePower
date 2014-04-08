@@ -15,6 +15,7 @@
 #include "network_systems.h"
 #include "../Input/chat.h"
 
+extern int textField;
 extern FowComponent *fow;
 extern unsigned int player_entity;
 extern int game_net_signalfd;     /**< An eventfd allowing the gameplay thread to request data from network router. */
@@ -171,6 +172,7 @@ void client_update_floor(World *world, void *packet)
 	world->position[player_entity].level	= floor_move->new_floor;
 	world->position[player_entity].x		= floor_move->xPos;
 	world->position[player_entity].y		= floor_move->yPos;
+	destroy_entity(world, textField);
 	rebuild_floor(world, floor_move->new_floor);
 
 	if(floor_move->new_floor == 0)
