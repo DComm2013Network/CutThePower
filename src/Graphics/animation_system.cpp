@@ -90,7 +90,8 @@ void animation_system(World *world) {
 					animationComponent->last_random_occurance = SDL_GetTicks();
 					animationComponent->next_random_occurance = (rand() % (animationComponent->rand_occurance_max - animationComponent->rand_occurance_min)) + animationComponent->rand_occurance_min + SDL_GetTicks();
 					
-					if (animationComponent->animations[animationComponent->rand_animation].sound_effect != MAX_EFFECTS) {
+					if (animationComponent->animations[animationComponent->rand_animation].sound_effect != MAX_EFFECTS &&
+						animationComponent->animations[animationComponent->rand_animation].sound_enabled == true) {
 						play_effect(animationComponent->animations[animationComponent->rand_animation].sound_effect);
 					}
 				}
@@ -163,6 +164,7 @@ int load_animation(const char *filename, World *world, unsigned int entity) {
 		animationComponent->animations[animation_index].ms_last = 0;
 		animationComponent->animations[animation_index].ms_to_skip = ms_to_skip;
 		animationComponent->animations[animation_index].index = 0;
+		animationComponent->animations[animation_index].sound_enabled = true;
 		
 		animationComponent->animations[animation_index].name = (char*)malloc(sizeof(char) * strlen(animation_name) + 1);
 		strcpy(animationComponent->animations[animation_index].name, animation_name);
@@ -288,7 +290,8 @@ void play_animation(World *world, unsigned int entity, const char *animation_nam
 			
 			renderComponent->playerSurface = animationComponent->animations[i].surfaces[0];
 			
-			if (animationComponent->animations[i].sound_effect != MAX_EFFECTS) {
+			if (animationComponent->animations[i].sound_effect != MAX_EFFECTS &&
+				animationComponent->animations[i].sound_enabled == true) {
 				play_effect(animationComponent->animations[i].sound_effect);
 			}
 			
