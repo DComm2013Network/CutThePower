@@ -39,7 +39,12 @@
 
 		</style>
 		<script>
-		
+			/**
+			 * Creates the tool boxes for the map editor on loading.
+			 *
+			 * @designer Joshua Campbell
+			 * @author   Joshua Campbell
+			 */
 			$(document).ready(function() {
 				$("#MapControllerDialog").show();
 				$("#MapControllerDialog").dialog({ 
@@ -56,7 +61,12 @@
 				});
 			});
 			
-			/*This function generates the map*/
+			/*
+			 * Generates the map in the map view.
+			 *
+			 * @designer Joshua Campbell
+			 * @author   Joshua Campbell
+			 */
 			function GenerateMap() {
 				var mapwidth = $("#map_width").val();
 				var mapheight = $("#map_height").val();
@@ -206,7 +216,12 @@
 				ZoomMap();
 			}
 			
-			/*Fills the map with the currently selected tile*/
+			/*
+			 * Fills the map with the currently selected tile.
+			 *
+			 * @designer Joshua Campbell
+			 * @author   Joshua Campbell
+			 */
 			function FillMap() {
 				var mapwidth = $("#hidden-width").val();
 				var mapheight = $("#hidden-height").val();
@@ -320,6 +335,12 @@
 				ZoomMap();
 			}
 			
+			/*
+			 * Controller for changing the tiles for single tile or box of tiles.
+			 *
+			 * @designer Joshua Campbell
+			 * @author   Joshua Campbell
+			 */
 			function ChangeTileController(id) {
 				if (parseInt($("#CurrentToolType").val()) == 1) {
 					DrawBox(id);
@@ -328,7 +349,12 @@
 				}
 			}
 			
-			/*changes a tile on the map to the new tile when clicked*/
+			/*
+			 * Changes a tile on the map.
+			 *
+			 * @designer Joshua Campbell
+			 * @author   Joshua Campbell
+			 */
 			function ChangeTile(id) {
 				var image = '#img-' + id;
 				var tiletype = '#tiletype-' + id;
@@ -426,7 +452,12 @@
 				}
 			}
 			
-			/*opens the tile tool box dialog*/
+			/*
+			 * Opens the tile tool box.
+			 *
+			 * @designer Joshua Campbell
+			 * @author   Joshua Campbell
+			 */
 			function OpenToolbox() {
 				$("#toolbox").show();
 				$("#toolbox").dialog({
@@ -435,7 +466,12 @@
 				});
 			}
 			
-			/*Sets the current tool to the last tile clicked in the tool box*/
+			/*
+			 * Sets the current tile to paint.
+			 *
+			 * @designer Joshua Campbell
+			 * @author   Joshua Campbell
+			 */
 			function SetTool(tool) {
 				switch(tool) {
 					case '00':
@@ -525,7 +561,12 @@
 				}
 			}
 			
-			/*Gets the map and formats it for copying and pasting into a text file*/
+			/*
+			 * Gets the map for copying into a map file.
+			 *
+			 * @designer Joshua Campbell
+			 * @author   Joshua Campbell
+			 */
 			function GetMap() {
 				var levelID = $("#hidden-level").val();
 				var mapwidth = $("#hidden-width").val();
@@ -550,6 +591,12 @@
 				});
 			}
 			
+			/*
+			 * Loads the Map dialog box.
+			 *
+			 * @designer Joshua Campbell
+			 * @author   Joshua Campbell
+			 */
 			function LoadMapDialog() {
 				$("#loadmap").show();
 				$("#loadmap").dialog({ 
@@ -560,6 +607,12 @@
 				});
 			}
 			
+			/*
+			 * Loads a map from the contents of a map file for editing.
+			 *
+			 * @designer Joshua Campbell
+			 * @author   Joshua Campbell
+			 */
 			function LoadMapData() {
 				var mapstring = $("#load-map-data").val();
 				var mapdata = new Array();
@@ -685,12 +738,24 @@
 				ZoomMap();
 			}
 			
+			/*
+			 * Zooms the map.
+			 *
+			 * @designer Joshua Campbell
+			 * @author   Joshua Campbell
+			 */
 			$(document).ready(function() {
 				$("#Zoom-Selector").change(function() {
 					ZoomMap();
 				});
 			});
 			
+			/*
+			 * Zooms in the map for a wider field of view.
+			 *
+			 * @designer Joshua Campbell
+			 * @author   Joshua Campbell
+			 */
 			function ZoomMap() {
 				var mapwidth = $("#hidden-width").val();
 				var mapheight = $("#hidden-height").val();
@@ -725,6 +790,12 @@
 				}
 			}
 			
+			/*
+			 * Draws a box of tiles.
+			 *
+			 * @designer Joshua Campbell
+			 * @author   Joshua Campbell
+			 */
 			function DrawBox(id) {
 				var linecurclick = parseInt($("#line-curclick").val());
 				linecurclick = linecurclick + 1;
@@ -776,6 +847,12 @@
 				}
 			}
 			
+			/*
+			 * Sets the pointer drawing type (ie single or box).
+			 *
+			 * @designer Joshua Campbell
+			 * @author   Joshua Campbell
+			 */
 			function SetPointer(TileTool) {
 				$("#Tool-SingleTile").css('border', '1px solid #d3d3d3');
 				$("#Tool-Boxes").css('border', '1px solid #d3d3d3');
