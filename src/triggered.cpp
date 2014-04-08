@@ -417,11 +417,33 @@ bool menu_click(World *world, unsigned int entity) {
 		printf("Roll: %u\n", alternateSkin);
 		#endif
 		if (alternateSkin == ALT_SKIN_CHANCE) {
-			character = MAT_ALT1;
-			stop_music();
-			altSong = load_music("assets/Sound/players/mat_turtle/turtleTrack.wav");
-			if (altSong != 0) {
-				play_music(altSong);
+			int subroll = 0;
+			subroll = rand() % 2;
+			switch(subroll) {
+				case 0:
+					character = MAT_ALT1;
+					stop_music();
+					altSong = load_music("assets/Sound/players/mat_turtle/turtleTrack.wav");
+					if (altSong != 0) {
+						play_music(altSong);
+					}
+				break;
+				case 1:
+					character = MAT_ALT2;
+					stop_music();
+					altSong = load_music("assets/Sound/players/mat_stache/moustacheTrack.wav");
+					if (altSong != 0) {
+						play_music(altSong);
+					}
+				break;
+				default:
+					character = MAT_ALT1;
+					stop_music();
+					altSong = load_music("assets/Sound/players/mat_turtle/turtleTrack.wav");
+					if (altSong != 0) {
+						play_music(altSong);
+					}
+				break;
 			}
 		}
 		create_setup_menu(world);
@@ -564,7 +586,7 @@ bool menu_click(World *world, unsigned int entity) {
 		
 		altSong = 0;
 		destroy_menu(world);
-		character = rand() % 38;
+		character = rand() % 39;
 		switch(character) {
 			case JOSH_ALT1:
 				stop_music();
@@ -695,6 +717,14 @@ bool menu_click(World *world, unsigned int entity) {
 			case ALBERT:
 				stop_music();
 				altSong = load_music("assets/Sound/players/albert_wei/albertTrack.wav");
+				if (altSong != 0) {
+					play_music(altSong);
+				}
+			break;
+			case MAT_ALT2:
+				character = MAT_ALT2;
+				stop_music();
+				altSong = load_music("assets/Sound/players/mat_stache/moustacheTrack.wav");
 				if (altSong != 0) {
 					play_music(altSong);
 				}
