@@ -18,6 +18,12 @@
 #define CHAT_SURFACE_WIDTH			(CHAT_LINE_LENGTH * 20) - 40
 #define CHAT_SURFACE_HEIGHT			(CHAT_LINES * (CHAT_LINE_HEIGHT + CHAT_LINE_GAP))
 
+/**
+ * Contains information of a chat line 
+ * 
+ * 
+ * @struct Chat Lines
+ */
 typedef struct {
 	char text[MAX_MESSAGE + MAX_NAME + 3];
 	unsigned int start_ticks;
