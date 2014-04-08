@@ -384,7 +384,6 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 			position = &(world->position[entity]);
 			controllable = &(world->controllable[entity]);
 			movement = &(world->movement[entity]);
-			world->player[entity].tilez = 1;
 			//very simple movement. This needs to be synchronized with the
 			//game loop so there is no jittering on very slow systems.
 			if (controllable->active == true) {
