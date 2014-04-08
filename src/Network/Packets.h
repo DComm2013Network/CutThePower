@@ -102,6 +102,7 @@
 #define GERMAN_ALT1		36
 #define ALBERT  		37
 #define MAT_ALT2  		38
+#define ALBERT_ALT1 	39
 // Game Status Definitions
 
 // Game Status Definitions

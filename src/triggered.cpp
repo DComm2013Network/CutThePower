@@ -571,14 +571,14 @@ bool menu_click(World *world, unsigned int entity) {
 		if (altSong != 0) {
 			play_music(altSong);
 		}
-		/*alternateSkin = rand() % (ALT_SKIN_CHANCE + 1);
+		alternateSkin = rand() % (ALT_SKIN_CHANCE + 1);
 		#if DEBUG_SKINS
 		printf("Roll: %u\n", alternateSkin);
 		#endif
 		if (alternateSkin == ALT_SKIN_CHANCE) {
-			character = ABHISHEK_ALT1;
+			character = ALBERT_ALT1;
 			
-		}*/
+		}
 		create_setup_menu(world);
 		
 	}
@@ -715,6 +715,13 @@ bool menu_click(World *world, unsigned int entity) {
 				}
 			break;
 			case ALBERT:
+				stop_music();
+				altSong = load_music("assets/Sound/players/albert_wei/albertTrack.wav");
+				if (altSong != 0) {
+					play_music(altSong);
+				}
+			break;
+			case ALBERT_ALT1:
 				stop_music();
 				altSong = load_music("assets/Sound/players/albert_wei/albertTrack.wav");
 				if (altSong != 0) {
