@@ -797,7 +797,7 @@ bool menu_click(World *world, unsigned int entity) {
 				}
 			break;
 			case ABHISHEK_ALT2:
-				character = MAT_ALT2;
+				character = ABHISHEK_ALT2;
 				stop_music();
 				altSong = load_music("assets/Sound/players/abhishek_ranger/rangerTrack.wav");
 				if (altSong != 0) {
@@ -805,7 +805,7 @@ bool menu_click(World *world, unsigned int entity) {
 				}
 			break;
 			case ABHISHEK_ALT3:
-				character = MAT_ALT2;
+				character = ABHISHEK_ALT2;
 				stop_music();
 				altSong = load_music("assets/Sound/players/abhishek_ranger/rangerTrack.wav");
 				if (altSong != 0) {
@@ -813,7 +813,7 @@ bool menu_click(World *world, unsigned int entity) {
 				}
 			break;
 			case ABHISHEK_ALT4:
-				character = MAT_ALT2;
+				character = ABHISHEK_ALT2;
 				stop_music();
 				altSong = load_music("assets/Sound/players/abhishek_ranger/rangerTrack.wav");
 				if (altSong != 0) {
@@ -821,7 +821,7 @@ bool menu_click(World *world, unsigned int entity) {
 				}
 			break;
 			case ABHISHEK_ALT5:
-				character = MAT_ALT2;
+				character = ABHISHEK_ALT2;
 				stop_music();
 				altSong = load_music("assets/Sound/players/abhishek_ranger/rangerTrack.wav");
 				if (altSong != 0) {
@@ -829,7 +829,7 @@ bool menu_click(World *world, unsigned int entity) {
 				}
 			break;
 			case CLARK_ALT1:
-				character = MAT_ALT2;
+				character = CLARK_ALT1;
 				stop_music();
 				altSong = load_music("assets/Sound/players/clark_halo/haloTrack.wav");
 				if (altSong != 0) {
