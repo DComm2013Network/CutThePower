@@ -339,8 +339,8 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 				
 				//printf("Loading object %d (%f, %f) [%s] %s\n", entity, x, y, animation_name, animation_filename);
 				
-				world->position[entity].x = x * TILE_WIDTH + TILE_WIDTH / 2;
-				world->position[entity].y = y * TILE_HEIGHT + TILE_HEIGHT / 2;
+				world->position[entity].x = x * TILE_WIDTH;
+				world->position[entity].y = y * TILE_HEIGHT;
 				
 				world->position[entity].width = w;
 				world->position[entity].height = h;
