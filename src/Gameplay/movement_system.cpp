@@ -1,4 +1,3 @@
-
 /** @ingroup Gameplay */
 /** @{ */
 /** @file movement_system.cpp */

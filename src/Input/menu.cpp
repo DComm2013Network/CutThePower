@@ -1,3 +1,13 @@
+/** @ingroup Input */
+/*@{*/
+
+/**
+ * @date 2014/02/18
+ *
+ * 
+ * @file menu.cpp
+ */
+/*@}*/
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_scancode.h>

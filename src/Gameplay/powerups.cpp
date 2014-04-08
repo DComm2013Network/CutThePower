@@ -1,3 +1,7 @@
+/** @ingroup Gameplay */
+/** @{ */
+/** @file powerups.cpp */
+/** @} */
 #include "powerups.h"
 #include "poweruptypes.h"
 

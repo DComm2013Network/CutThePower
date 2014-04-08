@@ -1,3 +1,8 @@
+/** @ingroup Gameplay */
+/** @{ */
+/** @file main.cpp */
+/** @} */
+
 #include <stdio.h>
 #include <SDL2/SDL.h>
 #include <time.h>
