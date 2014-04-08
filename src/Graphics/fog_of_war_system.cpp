@@ -945,7 +945,7 @@ void render_player_speech(FowComponent *fow, int xPos, int yPos) {
 
 	time_t tm;
 	// sound enemy speech if near (time wait of 8 secs)
-	if(time(&tm) - fow->speech.played > 8)
+	if(time(&tm) - fow->speech.played > 25)
 	{
 		int nTilesInLos = fow -> tilesVisibleToControllablePlayerCount;
 		for(int i = 0; i < nTilesInLos; i++)
