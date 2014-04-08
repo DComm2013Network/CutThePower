@@ -322,6 +322,39 @@ int map_init(World* world, const char *file_map, const char *file_tiles) {
 				
 				free(animation_filename);
 			}
+			else if (strcmp(entity_type, "chair") == 0) { //animated objects
+				
+				unsigned int entity;
+				float x, y;
+				int w, h;
+				char *animation_name = (char*)malloc(sizeof(char) * 64);
+				char *animation_filename = (char*)malloc(sizeof(char) * 64);
+				
+				if (fscanf(fp_map, "%f %f %d %d %s %s", &x, &y, &w, &h, animation_filename, animation_name) != 6) {
+					printf("Error loading chair!\n");
+					return -1;
+				}
+				
+				entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_ANIMATION);
+				
+				//printf("Loading object %d (%f, %f) [%s] %s\n", entity, x, y, animation_name, animation_filename);
+				
+				world->position[entity].x = x * TILE_WIDTH + TILE_WIDTH / 2;
+				world->position[entity].y = y * TILE_HEIGHT + TILE_HEIGHT / 2;
+				
+				world->position[entity].width = w;
+				world->position[entity].height = h;
+				
+				world->renderPlayer[entity].width = w;
+				world->renderPlayer[entity].height = h;
+				
+				load_animation(animation_filename, world, entity);
+				play_animation(world, entity, animation_name);
+				
+				free(animation_name);
+				free(animation_filename);
+				
+			}
 			else {
 				printf("Did not deal with the entity type: %s\n", entity_type);
 				break;
