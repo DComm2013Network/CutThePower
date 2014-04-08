@@ -34,8 +34,8 @@ SDL_Surface *ibeam;
  *     <li>Mateusz Siwoski - February 28, 2014: Modified to pass in the Position Component, fixed not loading the image
  *         every time the frame is drawn</li>
  *     <li>Jordan Marling/Mat Siwoski - March 6, 2014: Updated support for the camera.</li>
- *		 <li>Sam Youssef - March 25, 2014: added full support for rendering fog of war</li>
- *		 <li>Sam Youssef - April 3, 2014: fog of war hides enemy team, full functionality</li>
+ *     <li>Sam Youssef - March 25, 2014: added full support for rendering fog of war</li>
+ *     <li>Sam Youssef - April 3, 2014: fog of war hides enemy team, full functionality</li>
  * </ol>
  *
  * @param[in,out] world   A reference to the world structure containing entities to render.
