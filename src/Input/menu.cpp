@@ -1,3 +1,13 @@
+/** @ingroup Input */
+/*@{*/
+
+/**
+ * @date 2014/02/18
+ *
+ * 
+ * @file menu.cpp
+ */
+/*@}*/
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_scancode.h>
@@ -11,6 +21,7 @@
 #include "../Network/network_systems.h"
 
 unsigned int background = MAX_ENTITIES + 1;
+unsigned int background_music = -1;
 
 /**
  * Destroys every entity in the world except for the background of the menu.
@@ -224,9 +235,9 @@ void create_animated_button(World *world, const char* fileName, int x, int y, co
  */
 void create_main_menu_background(World *world) {
 	
-	unsigned int music;
-	
 	if (background < MAX_ENTITIES) {
+		world->animation[background].animations[world->animation[background].rand_animation].sound_enabled = true;
+		play_music(background_music);
 		return;
 	}
 	
@@ -243,10 +254,15 @@ void create_main_menu_background(World *world) {
 	world->renderPlayer[background].height = HEIGHT;
 	
 	//Load and play music
-	music = load_music("assets/Sound/menu/sound_menu_bg.wav");
-	play_music(music);
+	background_music = load_music("assets/Sound/menu/sound_menu_bg.wav");
+	play_music(background_music);
 }
 
+void disable_background_sound(World *world) {
+	if (background < MAX_ENTITIES) {
+		world->animation[background].animations[world->animation[background].rand_animation].sound_enabled = false;
+	}
+}
 
 /**
  * Creates the logo screen
@@ -608,7 +624,7 @@ void create_select_screen(World *world) {
 	create_animated_button(world, "assets/Graphics/screen/menu/select/tim/tim_animation.txt", 550, 544, "menu_select_tim");	
 	create_animated_button(world, "assets/Graphics/screen/menu/select/vincent/vincent_animation.txt", 750, 544, "menu_select_vincent");	
 	create_animated_button(world, "assets/Graphics/screen/menu/select/random/random_animation.txt", 950, 544, "menu_select_random");	
-	
+	create_animated_button(world, "assets/Graphics/screen/menu/select/ian/secret/sparkle_animation.txt", 1150, 0, "menu_select_albert");	
 	
 	
 	world->renderPlayer[entity].width = WIDTH;
@@ -678,8 +694,8 @@ void create_van_intro(World *world, int character) {
 	const int w = 1280;
 	const int h = 768;
 	
-	world->position[entity].x = (WIDTH / 2) - (w / 2);
-	world->position[entity].y = (HEIGHT / 2) - (h / 2);
+	world->position[entity].x = 0;//(WIDTH / 2) - (w / 2);
+	world->position[entity].y = 0;//(HEIGHT / 2) - (h / 2);
 	world->position[entity].width = w;
 	world->position[entity].height = h;
 	

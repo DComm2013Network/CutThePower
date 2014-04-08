@@ -1,4 +1,3 @@
-
 /** @ingroup Gameplay */
 /** @{ */
 /** @file movement_system.cpp */
@@ -57,26 +56,116 @@ void add_force(World* world, unsigned int entity, float magnitude, float dir) {
 	}
 }
 
+/**
+ * Applies the entity's velocity to it's position (x vector).
+ * 
+ * It also scales the speed to the FPS of the game, so that entities move at the same speed
+ * across all systems.
+ * @param[in, out]	world	A pointer to the world structure
+ * @param[in]		entity	The entity to whose position is changed
+ * @param[in, out]	temp	The temporary position that is being applied
+ * @param[in]		fps		The frames-per-second class that allows scaling
+ * 
+ * @return	void
+ * 
+ * @designer	Josh Campbell
+ * @author		Josh Campbell
+ */
 void apply_force_x(World* world, unsigned int entity, PositionComponent* temp, FPS fps) {
 	temp->x += world->movement[entity].movX * ((double)GAME_SPEED / fps.getFPS());
 }
 
+/**
+ * Removes the entity's velocity from it's position (x vector).
+ * 
+ * It also scales the speed to the FPS of the game, so that entities move at the same speed
+ * across all systems.
+ * @param[in, out]	world	A pointer to the world structure
+ * @param[in]		entity	The entity to whose position is changed
+ * @param[in, out]	temp	The temporary position that is being applied
+ * @param[in]		fps		The frames-per-second class that allows scaling
+ * 
+ * @return	void
+ * 
+ * @designer	Josh Campbell
+ * @author		Josh Campbell
+ */
 void remove_force_x(World* world, unsigned int entity, PositionComponent* temp, FPS fps) {
 	temp->x -= world->movement[entity].movX * ((double)GAME_SPEED / fps.getFPS());
 }
 
+/**
+ * Applies the entity's deceleration to it's velocity (x vector).
+ * 
+ * It also scales the speed to the FPS of the game, so that entities move at the same speed
+ * across all systems.
+ * @param[in, out]	world	A pointer to the world structure
+ * @param[in]		entity	The entity to whose position is changed
+ * @param[in, out]	temp	The temporary position that is being applied
+ * @param[in]		fps		The frames-per-second class that allows scaling
+ * 
+ * @return	void
+ * 
+ * @designer	Josh Campbell
+ * @author		Josh Campbell
+ */
 void apply_deceleration_x(World* world, unsigned int entity, FPS fps) {
 	world->movement[entity].movX *= 1 - world->movement[entity].friction * ((double)GAME_SPEED / fps.getFPS());
 }
 
+/**
+ * Applies the entity's velocity to it's position (y vector).
+ * 
+ * It also scales the speed to the FPS of the game, so that entities move at the same speed
+ * across all systems.
+ * @param[in, out]	world	A pointer to the world structure
+ * @param[in]		entity	The entity to whose position is changed
+ * @param[in, out]	temp	The temporary position that is being applied
+ * @param[in]		fps		The frames-per-second class that allows scaling
+ * 
+ * @return	void
+ * 
+ * @designer	Josh Campbell
+ * @author		Josh Campbell
+ */
 void apply_force_y(World* world, unsigned int entity, PositionComponent* temp, FPS fps) {
 	temp->y += world->movement[entity].movY * ((double)GAME_SPEED / fps.getFPS());
 }
 
+/**
+ * Removes the entity's velocity from it's position (y vector).
+ * 
+ * It also scales the speed to the FPS of the game, so that entities move at the same speed
+ * across all systems.
+ * @param[in, out]	world	A pointer to the world structure
+ * @param[in]		entity	The entity to whose position is changed
+ * @param[in, out]	temp	The temporary position that is being applied
+ * @param[in]		fps		The frames-per-second class that allows scaling
+ * 
+ * @return	void
+ * 
+ * @designer	Josh Campbell
+ * @author		Josh Campbell
+ */
 void remove_force_y(World* world, unsigned int entity, PositionComponent* temp, FPS fps) {
 	temp->y -= world->movement[entity].movY * ((double)GAME_SPEED / fps.getFPS());
 }
 
+/**
+ * Applies the entity's deceleration to it's velocity (y vector).
+ * 
+ * It also scales the speed to the FPS of the game, so that entities move at the same speed
+ * across all systems.
+ * @param[in, out]	world	A pointer to the world structure
+ * @param[in]		entity	The entity to whose position is changed
+ * @param[in, out]	temp	The temporary position that is being applied
+ * @param[in]		fps		The frames-per-second class that allows scaling
+ * 
+ * @return	void
+ * 
+ * @designer	Josh Campbell
+ * @author		Josh Campbell
+ */
 void apply_deceleration_y(World* world, unsigned int entity, FPS fps) {
 	world->movement[entity].movY *= 1 - world->movement[entity].friction * ((double)GAME_SPEED / fps.getFPS());
 }
@@ -98,6 +187,21 @@ void add_force_acceleration_x(World * world, MovementComponent& movement, float 
 	}
 }
 
+/**
+ * Handles the solid-wall x axis collisions, be it with walls or solid entities.
+ * 
+ * @param[in, out]	world			A pointer to the world struct.
+ * @param[in]		entity			The current entity id whose collisions are being checked.
+ * @param[in, out]	temp			The temporary position of the entity.
+ * @praam[in]		entity_number	The entity collision type of the hit entity.
+ * @param[in]		tile_number		The tile collision type of the hit tile.
+ * @param[in]		fps				The current frames per second.
+ * 
+ * @return	void
+ * 
+ * @designer	Josh Campbell
+ * @author		Josh Campbell & Clark Allenby
+ */
 void handle_x_collision(World* world, unsigned int entity, PositionComponent* temp, unsigned int entity_number, unsigned int tile_number, FPS fps) {
 
 	switch(entity_number) {
@@ -125,6 +229,21 @@ void handle_x_collision(World* world, unsigned int entity, PositionComponent* te
 	}
 }
 
+/**
+ * Handles the solid-wall y axis collisions, be it with walls or solid entities.
+ * 
+ * @param[in, out]	world			A pointer to the world struct.
+ * @param[in]		entity			The current entity id whose collisions are being checked.
+ * @param[in, out]	temp			The temporary position of the entity.
+ * @praam[in]		entity_number	The entity collision type of the hit entity.
+ * @param[in]		tile_number		The tile collision type of the hit tile.
+ * @param[in]		fps				The current frames per second.
+ * 
+ * @return	void
+ * 
+ * @designer	Josh Campbell
+ * @author		Josh Campbell & Clark Allenby
+ */
 void handle_y_collision(World* world, unsigned int entity, PositionComponent* temp, unsigned int entity_number, unsigned int tile_number, FPS fps) {
 	switch(entity_number) {
 		case COLLISION_SOLID:
@@ -166,7 +285,7 @@ void rebuild_floor(World* world, int targl)
     int topfloor = 0;
     for (int i = 0; i < MAX_OBJECTIVES; i ++)
     {
-        if(objective_table[i].obj_state != OBJECTIVE_NONE)
+        if((objective_table[i].obj_state == OBJECTIVE_UNCAP) || (objective_table[i].obj_state == OBJECTIVE_CAP))
         {
             num_objectives++;
         }
@@ -267,6 +386,20 @@ void rebuild_floor(World* world, int targl)
 	}
 }
 
+/**
+ * Handles collisions with entities.
+ * 
+ * @param[in, out]	world			A pointer to the world struct.
+ * @param[in]		entity			The current entity that is being checked.
+ * @param[in]		entity_number	The entity collision type.
+ * @param[in]		tile_number		The tile collision type.
+ * @param[in]		hit_entity		The id of the entity that was hit.
+ * 
+ * @return	void
+ * 
+ * @designer	Josh Campbell & Clark Allenby
+ * @author		Josh Campbell & Clark Allenby
+ */
 void handle_entity_collision(World* world, unsigned int entity, unsigned int entity_number, unsigned int tile_number, unsigned int hit_entity) {
 	switch(entity_number) {
 		case COLLISION_STAIR:
@@ -359,11 +492,13 @@ int manage_special_tiles(World * world, unsigned int entity)
  * Determines the inputs applied to the entity and adds forces in
  * the specified directions.
  *
- * @param world A reference to the world struct.
- * @param fps current frame rate.
+ * @param[in, out]	world	A pointer to the world struct.
+ * @param[in]		fps		current frame rate.
  *
- * @designer ?
- * @author   ?
+ * @return	void
+ * 
+ * @designer	Josh Campbell & Clark Allenby
+ * @author		Clark Allenby & Josh Campbell
  */
 void movement_system(World* world, FPS fps, int sendpipe) {
 	unsigned int entity;

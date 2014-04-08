@@ -265,7 +265,7 @@ void *recv_tcp_packet(TCPsocket sock, uint32_t *packet_type, uint64_t *timestamp
 
 	recv_tcp(sock, packet, packet_size);
 	*timestamp = tcp_seq_num++;
-    printf("Type: %d\n", *packet_type);
+    //printf("Type: %d\n", *packet_type);
 	return packet;
 }
 

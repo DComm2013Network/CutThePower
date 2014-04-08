@@ -13,6 +13,7 @@
 #define ANIMATED_BUTTON_HEIGHT	130
 
 void destroy_menu(World *world);
+void disable_background_sound(World *world);
 
 void create_credits_menu(World *world);
 void create_keymap_menu(World *world);

@@ -349,6 +349,14 @@ void setBlockedTileCoords(BlockedTiles bt[7][7])
  */
 void cleanup_fog_of_war(FowComponent *fow)
 {
+
+	for(int i = 0; i < (fogOfWarHeight); i++)
+	{
+		free(fow -> tiles [i]);
+	}
+
+	free(fow -> tiles);
+
 	for(int i = 0; i < (fogOfWarHeight * fogOfWarWidth); i++)
 	{
 		SDL_FreeSurface(fow -> fogOfWar[i]);

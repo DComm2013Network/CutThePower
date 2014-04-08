@@ -11,7 +11,7 @@
 #include "Network/Packets.h"
 #include "Graphics/map.h"
 
-#define DEBUG_SKINS     0 //1 = on, 0 = off
+#define DEBUG_SKINS     1 //1 = on, 0 = off
 #define ALT_SKIN_CHANCE 3 //chance to roll an alternate skin
 
 extern bool running;
@@ -210,6 +210,7 @@ bool menu_click(World *world, unsigned int entity) {
 		#if DEBUG_SKINS
 		printf("Roll: %u\n", alternateSkin);
 		#endif
+		create_setup_menu(world);
 		if (alternateSkin == ALT_SKIN_CHANCE) {
 			int subroll = 0;
 			subroll = rand() % 5;
@@ -255,8 +256,8 @@ bool menu_click(World *world, unsigned int entity) {
 					}
 				break;
 			}
+			disable_background_sound(world);
 		}
-		create_setup_menu(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_aman") == 0) {
@@ -267,6 +268,7 @@ bool menu_click(World *world, unsigned int entity) {
 		#if DEBUG_SKINS
 		printf("Roll: %u\n", alternateSkin);
 		#endif
+		create_setup_menu(world);
 		if (alternateSkin == ALT_SKIN_CHANCE) {
 			character = AMAN_ALT1;
 			stop_music();
@@ -275,7 +277,7 @@ bool menu_click(World *world, unsigned int entity) {
 				play_music(altSong);
 			}
 		}
-		create_setup_menu(world);
+		disable_background_sound(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_andrew") == 0) {
@@ -286,6 +288,7 @@ bool menu_click(World *world, unsigned int entity) {
 		#if DEBUG_SKINS
 		printf("Roll: %u\n", alternateSkin);
 		#endif
+		create_setup_menu(world);
 		if (alternateSkin == ALT_SKIN_CHANCE) {
 			character = ANDREW_ALT1;
 			stop_music();
@@ -294,7 +297,7 @@ bool menu_click(World *world, unsigned int entity) {
 				play_music(altSong);
 			}
 		}
-		create_setup_menu(world);
+		disable_background_sound(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_chris") == 0) {
@@ -305,6 +308,7 @@ bool menu_click(World *world, unsigned int entity) {
 		#if DEBUG_SKINS
 		printf("Roll: %u\n", alternateSkin);
 		#endif
+		create_setup_menu(world);
 		if (alternateSkin == ALT_SKIN_CHANCE) {
 			character = CHRIS_ALT1;
 			stop_music();
@@ -313,7 +317,7 @@ bool menu_click(World *world, unsigned int entity) {
 				play_music(altSong);
 			}
 		}
-		create_setup_menu(world);
+		disable_background_sound(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_clark") == 0) {
@@ -324,6 +328,7 @@ bool menu_click(World *world, unsigned int entity) {
 		#if DEBUG_SKINS
 		printf("Roll: %u\n", alternateSkin);
 		#endif
+		create_setup_menu(world);
 		if (alternateSkin == ALT_SKIN_CHANCE) {
 			character = CLARK_ALT1;
 			stop_music();
@@ -332,7 +337,7 @@ bool menu_click(World *world, unsigned int entity) {
 				play_music(altSong);
 			}
 		}
-		create_setup_menu(world);
+		disable_background_sound(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_cory") == 0) {
@@ -343,6 +348,7 @@ bool menu_click(World *world, unsigned int entity) {
 		#if DEBUG_SKINS
 		printf("Roll: %u\n", alternateSkin);
 		#endif
+		create_setup_menu(world);
 		if (alternateSkin == ALT_SKIN_CHANCE) {
 			character = CORY_ALT1;
 			stop_music();
@@ -351,7 +357,7 @@ bool menu_click(World *world, unsigned int entity) {
 				play_music(altSong);
 			}
 		}
-		create_setup_menu(world);
+		disable_background_sound(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_damien") == 0) {
@@ -362,6 +368,7 @@ bool menu_click(World *world, unsigned int entity) {
 		#if DEBUG_SKINS
 		printf("Roll: %u\n", alternateSkin);
 		#endif
+		create_setup_menu(world);
 		if (alternateSkin == ALT_SKIN_CHANCE) {
 			character = DAMIEN_ALT1;
 			stop_music();
@@ -370,7 +377,7 @@ bool menu_click(World *world, unsigned int entity) {
 				play_music(altSong);
 			}
 		}
-		create_setup_menu(world);
+		disable_background_sound(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_german") == 0) {
@@ -381,6 +388,7 @@ bool menu_click(World *world, unsigned int entity) {
 		#if DEBUG_SKINS
 		printf("Roll: %u\n", alternateSkin);
 		#endif
+		create_setup_menu(world);
 		if (alternateSkin == ALT_SKIN_CHANCE) {
 			character = GERMAN_ALT1;
 			stop_music();
@@ -389,7 +397,7 @@ bool menu_click(World *world, unsigned int entity) {
 				play_music(altSong);
 			}
 		}
-		create_setup_menu(world);
+		disable_background_sound(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_ian") == 0) {
@@ -400,6 +408,7 @@ bool menu_click(World *world, unsigned int entity) {
 		#if DEBUG_SKINS
 		printf("Roll: %u\n", alternateSkin);
 		#endif
+		create_setup_menu(world);
 		if (alternateSkin == ALT_SKIN_CHANCE) {
 			character = IAN_ALT1;
 			stop_music();
@@ -408,7 +417,7 @@ bool menu_click(World *world, unsigned int entity) {
 				play_music(altSong);
 			}
 		}
-		create_setup_menu(world);
+		disable_background_sound(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_jordan") == 0) {
@@ -419,6 +428,7 @@ bool menu_click(World *world, unsigned int entity) {
 		#if DEBUG_SKINS
 		printf("Roll: %u\n", alternateSkin);
 		#endif
+		create_setup_menu(world);
 		if (alternateSkin == ALT_SKIN_CHANCE) {
 			character = JORDAN_ALT1;
 			stop_music();
@@ -427,7 +437,7 @@ bool menu_click(World *world, unsigned int entity) {
 				play_music(altSong);
 			}
 		}
-		create_setup_menu(world);
+		disable_background_sound(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_josh") == 0) {
@@ -438,6 +448,7 @@ bool menu_click(World *world, unsigned int entity) {
 		#if DEBUG_SKINS
 		printf("Roll: %u\n", alternateSkin);
 		#endif
+		create_setup_menu(world);
 		if (alternateSkin == ALT_SKIN_CHANCE) {
 			character = JOSH_ALT1;
 			stop_music();
@@ -446,7 +457,7 @@ bool menu_click(World *world, unsigned int entity) {
 				play_music(altSong);
 			}
 		}
-		create_setup_menu(world);
+		disable_background_sound(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_konst") == 0) {
@@ -457,6 +468,7 @@ bool menu_click(World *world, unsigned int entity) {
 		#if DEBUG_SKINS
 		printf("Roll: %u\n", alternateSkin);
 		#endif
+		create_setup_menu(world);
 		if (alternateSkin == ALT_SKIN_CHANCE) {
 			character = KONST_ALT1;
 			stop_music();
@@ -465,7 +477,7 @@ bool menu_click(World *world, unsigned int entity) {
 				play_music(altSong);
 			}
 		}
-		create_setup_menu(world);
+		disable_background_sound(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_mat") == 0) {
@@ -476,6 +488,7 @@ bool menu_click(World *world, unsigned int entity) {
 		#if DEBUG_SKINS
 		printf("Roll: %u\n", alternateSkin);
 		#endif
+		create_setup_menu(world);
 		if (alternateSkin == ALT_SKIN_CHANCE) {
 			int subroll = 0;
 			subroll = rand() % 2;
@@ -506,7 +519,7 @@ bool menu_click(World *world, unsigned int entity) {
 				break;
 			}
 		}
-		create_setup_menu(world);
+		disable_background_sound(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_ramzi") == 0) {
@@ -516,6 +529,7 @@ bool menu_click(World *world, unsigned int entity) {
 		#if DEBUG_SKINS
 		printf("Roll: %u\n", alternateSkin);
 		#endif
+		create_setup_menu(world);
 		if (alternateSkin == ALT_SKIN_CHANCE) {
 			character = RAMZI_ALT1;
 			stop_music();
@@ -524,7 +538,7 @@ bool menu_click(World *world, unsigned int entity) {
 				play_music(altSong);
 			}
 		}
-		create_setup_menu(world);
+		disable_background_sound(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_robin") == 0) {
@@ -535,6 +549,7 @@ bool menu_click(World *world, unsigned int entity) {
 		#if DEBUG_SKINS
 		printf("Roll: %u\n", alternateSkin);
 		#endif
+		create_setup_menu(world);
 		if (alternateSkin == ALT_SKIN_CHANCE) {
 			character = ROBIN_ALT1;
 			stop_music();
@@ -543,7 +558,7 @@ bool menu_click(World *world, unsigned int entity) {
 				play_music(altSong);
 			}
 		}
-		create_setup_menu(world);
+		disable_background_sound(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_sam") == 0) {
@@ -554,6 +569,7 @@ bool menu_click(World *world, unsigned int entity) {
 		#if DEBUG_SKINS
 		printf("Roll: %u\n", alternateSkin);
 		#endif
+		create_setup_menu(world);
 		if (alternateSkin == ALT_SKIN_CHANCE) {
 			character = SAM_ALT1;
 			stop_music();
@@ -562,7 +578,7 @@ bool menu_click(World *world, unsigned int entity) {
 				play_music(altSong);
 			}
 		}
-		create_setup_menu(world);
+		disable_background_sound(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_shane") == 0) {
@@ -573,6 +589,7 @@ bool menu_click(World *world, unsigned int entity) {
 		#if DEBUG_SKINS
 		printf("Roll: %u\n", alternateSkin);
 		#endif
+		create_setup_menu(world);
 		if (alternateSkin == ALT_SKIN_CHANCE) {
 			character = SHANE_ALT1;
 			stop_music();
@@ -581,7 +598,7 @@ bool menu_click(World *world, unsigned int entity) {
 				play_music(altSong);
 			}
 		}
-		create_setup_menu(world);
+		disable_background_sound(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_tim") == 0) {
@@ -592,6 +609,7 @@ bool menu_click(World *world, unsigned int entity) {
 		#if DEBUG_SKINS
 		printf("Roll: %u\n", alternateSkin);
 		#endif
+		create_setup_menu(world);
 		if (alternateSkin == ALT_SKIN_CHANCE) {
 			character = TIM_ALT1;
 			stop_music();
@@ -600,7 +618,7 @@ bool menu_click(World *world, unsigned int entity) {
 				play_music(altSong);
 			}
 		}
-		create_setup_menu(world);
+		disable_background_sound(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_vincent") == 0) {
@@ -611,6 +629,7 @@ bool menu_click(World *world, unsigned int entity) {
 		#if DEBUG_SKINS
 		printf("Roll: %u\n", alternateSkin);
 		#endif
+		create_setup_menu(world);
 		if (alternateSkin == ALT_SKIN_CHANCE) {
 			character = VINCENT_ALT1;
 			stop_music();
@@ -619,10 +638,10 @@ bool menu_click(World *world, unsigned int entity) {
 				play_music(altSong);
 			}
 		}
-		create_setup_menu(world);
+		disable_background_sound(world);
 		
 	}
-		else if (strcmp(world->button[entity].label, "menu_select_albert") == 0) {
+	else if (strcmp(world->button[entity].label, "menu_select_albert") == 0) {
 		
 		destroy_menu(world);
 		character = ALBERT;
@@ -635,11 +654,12 @@ bool menu_click(World *world, unsigned int entity) {
 		#if DEBUG_SKINS
 		printf("Roll: %u\n", alternateSkin);
 		#endif
+		create_setup_menu(world);
 		if (alternateSkin == ALT_SKIN_CHANCE) {
 			character = ALBERT_ALT1;
 			
 		}
-		create_setup_menu(world);
+		disable_background_sound(world);
 		
 	}
 	else if (strcmp(world->button[entity].label, "menu_select_random") == 0) {
@@ -647,6 +667,7 @@ bool menu_click(World *world, unsigned int entity) {
 		altSong = 0;
 		destroy_menu(world);
 		character = rand() % 45;
+		create_setup_menu(world);
 		switch(character) {
 			case JOSH_ALT1:
 				stop_music();
@@ -654,6 +675,7 @@ bool menu_click(World *world, unsigned int entity) {
 				if (altSong != 0) { 
 					play_music(altSong);
 				}
+				disable_background_sound(world);
 			break;
 			case IAN_ALT1:
 				stop_music();
@@ -661,6 +683,7 @@ bool menu_click(World *world, unsigned int entity) {
 				if (altSong != 0) { 
 					play_music(altSong);
 				}
+				disable_background_sound(world);
 			break;
 			case AMAN_ALT1:
 				stop_music();
@@ -668,6 +691,7 @@ bool menu_click(World *world, unsigned int entity) {
 				if (altSong != 0) { 
 					play_music(altSong);
 				}
+				disable_background_sound(world);
 			break;
 			case ANDREW_ALT1:
 				stop_music();
@@ -675,6 +699,7 @@ bool menu_click(World *world, unsigned int entity) {
 				if (altSong != 0) { 
 					play_music(altSong);
 				}
+				disable_background_sound(world);
 			break;
 			case CORY_ALT1:
 				stop_music();
@@ -682,6 +707,7 @@ bool menu_click(World *world, unsigned int entity) {
 				if (altSong != 0) { 
 					play_music(altSong);
 				}
+				disable_background_sound(world);
 			break;
 			case DAMIEN_ALT1:
 				stop_music();
@@ -689,6 +715,7 @@ bool menu_click(World *world, unsigned int entity) {
 				if (altSong != 0) { 
 					play_music(altSong);
 				}
+				disable_background_sound(world);
 			break;
 			case JORDAN_ALT1:
 				stop_music();
@@ -696,6 +723,7 @@ bool menu_click(World *world, unsigned int entity) {
 				if (altSong != 0) { 
 					play_music(altSong);
 				}
+				disable_background_sound(world);
 			break;
 			case MAT_ALT1:
 				stop_music();
@@ -703,6 +731,7 @@ bool menu_click(World *world, unsigned int entity) {
 				if (altSong != 0) { 
 					play_music(altSong);
 				}
+				disable_background_sound(world);
 			break;
 			case RAMZI_ALT1:
 				stop_music();
@@ -710,6 +739,7 @@ bool menu_click(World *world, unsigned int entity) {
 				if (altSong != 0) { 
 					play_music(altSong);
 				}
+				disable_background_sound(world);
 			break;
 			case SAM_ALT1:
 				stop_music();
@@ -717,6 +747,7 @@ bool menu_click(World *world, unsigned int entity) {
 				if (altSong != 0) { 
 					play_music(altSong);
 				}
+				disable_background_sound(world);
 			break;
 			case TIM_ALT1:
 				stop_music();
@@ -724,6 +755,7 @@ bool menu_click(World *world, unsigned int entity) {
 				if (altSong != 0) { 
 					play_music(altSong);
 				}
+				disable_background_sound(world);
 			break;
 			case CHRIS_ALT1:
 				stop_music();
@@ -731,6 +763,7 @@ bool menu_click(World *world, unsigned int entity) {
 				if (altSong != 0) { 
 					play_music(altSong);
 				}
+				disable_background_sound(world);
 			break;
 			case SHANE_ALT1:
 				stop_music();
@@ -738,6 +771,7 @@ bool menu_click(World *world, unsigned int entity) {
 				if (altSong != 0) { 
 					play_music(altSong);
 				}
+				disable_background_sound(world);
 			break;
 			case ROBIN_ALT1:
 				stop_music();
@@ -745,6 +779,7 @@ bool menu_click(World *world, unsigned int entity) {
 				if (altSong != 0) { 
 					play_music(altSong);
 				}
+				disable_background_sound(world);
 			break;
 			case VINCENT_ALT1:
 				stop_music();
@@ -752,6 +787,7 @@ bool menu_click(World *world, unsigned int entity) {
 				if (altSong != 0) { 
 					play_music(altSong);
 				}
+				disable_background_sound(world);
 			break;
 			case KONST_ALT1:
 				stop_music();
@@ -759,6 +795,7 @@ bool menu_click(World *world, unsigned int entity) {
 				if (altSong != 0) { 
 					play_music(altSong);
 				}
+				disable_background_sound(world);
 			break;
 			case ABHISHEK_ALT1:
 				stop_music();
@@ -766,6 +803,7 @@ bool menu_click(World *world, unsigned int entity) {
 				if (altSong != 0) { 
 					play_music(altSong);
 				}
+				disable_background_sound(world);
 			break;
 			case GERMAN_ALT1:
 				stop_music();
@@ -773,6 +811,7 @@ bool menu_click(World *world, unsigned int entity) {
 				if (altSong != 0) { 
 					play_music(altSong);
 				}
+				disable_background_sound(world);
 			break;
 			case ALBERT:
 				stop_music();
@@ -780,6 +819,7 @@ bool menu_click(World *world, unsigned int entity) {
 				if (altSong != 0) {
 					play_music(altSong);
 				}
+				disable_background_sound(world);
 			break;
 			case ALBERT_ALT1:
 				stop_music();
@@ -787,6 +827,7 @@ bool menu_click(World *world, unsigned int entity) {
 				if (altSong != 0) {
 					play_music(altSong);
 				}
+				disable_background_sound(world);
 			break;
 			case MAT_ALT2:
 				character = MAT_ALT2;
@@ -795,6 +836,7 @@ bool menu_click(World *world, unsigned int entity) {
 				if (altSong != 0) {
 					play_music(altSong);
 				}
+				disable_background_sound(world);
 			break;
 			case ABHISHEK_ALT2:
 				character = ABHISHEK_ALT2;
@@ -803,6 +845,7 @@ bool menu_click(World *world, unsigned int entity) {
 				if (altSong != 0) {
 					play_music(altSong);
 				}
+				disable_background_sound(world);
 			break;
 			case ABHISHEK_ALT3:
 				character = ABHISHEK_ALT2;
@@ -811,6 +854,7 @@ bool menu_click(World *world, unsigned int entity) {
 				if (altSong != 0) {
 					play_music(altSong);
 				}
+				disable_background_sound(world);
 			break;
 			case ABHISHEK_ALT4:
 				character = ABHISHEK_ALT2;
@@ -819,6 +863,7 @@ bool menu_click(World *world, unsigned int entity) {
 				if (altSong != 0) {
 					play_music(altSong);
 				}
+				disable_background_sound(world);
 			break;
 			case ABHISHEK_ALT5:
 				character = ABHISHEK_ALT2;
@@ -827,6 +872,7 @@ bool menu_click(World *world, unsigned int entity) {
 				if (altSong != 0) {
 					play_music(altSong);
 				}
+				disable_background_sound(world);
 			break;
 			case CLARK_ALT1:
 				character = CLARK_ALT1;
@@ -835,9 +881,9 @@ bool menu_click(World *world, unsigned int entity) {
 				if (altSong != 0) {
 					play_music(altSong);
 				}
+				disable_background_sound(world);
 			break;
 		}
-		create_setup_menu(world);
 
 	}
 
@@ -890,8 +936,8 @@ bool menu_click(World *world, unsigned int entity) {
 			}
 		}
 
-		printf("Username: %s\n", username);
-		printf("Server IP: %s\n", serverip);
+		//printf("Username: %s\n", username);
+		//printf("Server IP: %s\n", serverip);
 		
 		#if DISPLAY_CUTSCENES 
 		

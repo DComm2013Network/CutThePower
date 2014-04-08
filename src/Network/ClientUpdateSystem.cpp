@@ -1,3 +1,5 @@
+/** @ingroup Network */
+/** @{ */
 /**
  * The client update system retrieves from the network module and
  * applies them to the world.
@@ -6,6 +8,7 @@
  *
  * @todo Add "end of game" logic to client_udpate_objectives
  */
+ /** @} */
 #include "Packets.h"
 #include "GameplayCommunication.h"
 #include "PipeUtils.h"

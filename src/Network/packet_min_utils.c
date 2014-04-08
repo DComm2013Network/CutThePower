@@ -1,3 +1,10 @@
+/** @ingroup Network */
+/** @{ */
+/**
+ * @file packet_min_utils.c
+ */
+/** @} */
+
 #include "packet_min_utils.h"
 
 /*	
