@@ -527,6 +527,8 @@ void setup_character_animation(World * world, int character, int entity)
 		break;
 		case ABHISHEK_ALT5:
 			 load_animation("assets/Graphics/player/abhishek_ranger/pink/animation.txt", world, entity);
+		case ALBERT_ALT1:
+			 load_animation("assets/Graphics/player/albert_darth/animation.txt", world, entity);
 		break;
 		default:
 		load_animation("assets/Graphics/player/p0/rob_animation.txt", world, entity);

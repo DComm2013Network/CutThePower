@@ -11,8 +11,8 @@
 #include "Network/Packets.h"
 #include "Graphics/map.h"
 
-#define DEBUG_SKINS     1 //1 = on, 0 = off
-#define ALT_SKIN_CHANCE 1 //chance to roll an alternate skin
+#define DEBUG_SKINS     0 //1 = on, 0 = off
+#define ALT_SKIN_CHANCE 3 //chance to roll an alternate skin
 
 extern bool running;
 extern SDL_Surface *map_surface;
@@ -203,7 +203,6 @@ bool menu_click(World *world, unsigned int entity) {
 		if (alternateSkin == ALT_SKIN_CHANCE) {
 			int subroll = 0;
 			subroll = rand() % 5;
-			printf("subroll: %d\n", subroll);
 			switch(subroll) {
 				case 0:
 					character = ABHISHEK_ALT1;
@@ -610,14 +609,14 @@ bool menu_click(World *world, unsigned int entity) {
 		if (altSong != 0) {
 			play_music(altSong);
 		}
-		/*alternateSkin = rand() % (ALT_SKIN_CHANCE + 1);
+		alternateSkin = rand() % (ALT_SKIN_CHANCE + 1);
 		#if DEBUG_SKINS
 		printf("Roll: %u\n", alternateSkin);
 		#endif
 		if (alternateSkin == ALT_SKIN_CHANCE) {
-			character = ABHISHEK_ALT1;
+			character = ALBERT_ALT1;
 			
-		}*/
+		}
 		create_setup_menu(world);
 		
 	}
@@ -754,6 +753,13 @@ bool menu_click(World *world, unsigned int entity) {
 				}
 			break;
 			case ALBERT:
+				stop_music();
+				altSong = load_music("assets/Sound/players/albert_wei/albertTrack.wav");
+				if (altSong != 0) {
+					play_music(altSong);
+				}
+			break;
+			case ALBERT_ALT1:
 				stop_music();
 				altSong = load_music("assets/Sound/players/albert_wei/albertTrack.wav");
 				if (altSong != 0) {
