@@ -11,7 +11,7 @@
 #include "Network/Packets.h"
 #include "Graphics/map.h"
 
-#define DEBUG_SKINS     1 //1 = on, 0 = off
+#define DEBUG_SKINS     0 //1 = on, 0 = off
 #define ALT_SKIN_CHANCE 3 //chance to roll an alternate skin
 
 extern bool running;
@@ -28,6 +28,16 @@ extern SDL_Window *window;
 static unsigned int altSong = 0;
 extern FowComponent *fow;
 
+
+/**
+ * Processes button presses from the main menu.
+ * 
+ * @param[in,out] world    A pointer to the world structure.
+ * @param[in] entity       The current button entity.
+ *
+ * @designer Jordan Marling, Joshua Campbell, Ian Davidson
+ * @author   Jordan Marling
+ */
 bool menu_click(World *world, unsigned int entity) {
 	//printf("Clicked: %s\n", world->button[entity].label);
 	unsigned int alternateSkin = 0;
