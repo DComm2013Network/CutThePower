@@ -419,7 +419,7 @@ bool menu_click(World *world, unsigned int entity) {
 		if (alternateSkin == ALT_SKIN_CHANCE) {
 			character = MAT_ALT1;
 			stop_music();
-			altSong = load_music("assets/Sound/players/mat_stache/moustacheTrack.wav");
+			altSong = load_music("assets/Sound/players/mat_turtle/turtleTrack.wav");
 			if (altSong != 0) {
 				play_music(altSong);
 			}
@@ -617,7 +617,7 @@ bool menu_click(World *world, unsigned int entity) {
 			break;
 			case MAT_ALT1:
 				stop_music();
-				altSong = load_music("assets/Sound/players/mat_stache/moustacheTrack.wav");
+				altSong = load_music("assets/Sound/players/mat_turtle/turtleTrack.wav");
 				if (altSong != 0) { 
 					play_music(altSong);
 				}

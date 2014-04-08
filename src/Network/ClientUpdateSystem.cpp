@@ -478,7 +478,7 @@ void setup_character_animation(World * world, int character, int entity)
 			 load_animation("assets/Graphics/player/jordan_bling/animation.txt", world, entity);
 		break;
 		case MAT_ALT1:
-			 load_animation("assets/Graphics/player/mat_stache/animation.txt", world, entity);
+			 load_animation("assets/Graphics/player/mat_turtle/animation.txt", world, entity);
 		break;
 		case RAMZI_ALT1:
 			 load_animation("assets/Graphics/player/ramzi_fish/animation.txt", world, entity);
