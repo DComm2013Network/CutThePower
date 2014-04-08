@@ -102,6 +102,10 @@
 #define GERMAN_ALT1		36
 #define ALBERT  		37
 #define MAT_ALT2  		38
+#define ABHISHEK_ALT2	39
+#define ABHISHEK_ALT3	40
+#define ABHISHEK_ALT4	41
+#define ABHISHEK_ALT5	42
 // Game Status Definitions
 
 // Game Status Definitions

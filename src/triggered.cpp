@@ -11,8 +11,8 @@
 #include "Network/Packets.h"
 #include "Graphics/map.h"
 
-#define DEBUG_SKINS     0 //1 = on, 0 = off
-#define ALT_SKIN_CHANCE 3 //chance to roll an alternate skin
+#define DEBUG_SKINS     1 //1 = on, 0 = off
+#define ALT_SKIN_CHANCE 1 //chance to roll an alternate skin
 
 extern bool running;
 extern SDL_Surface *map_surface;
@@ -201,11 +201,50 @@ bool menu_click(World *world, unsigned int entity) {
 		printf("Roll: %u\n", alternateSkin);
 		#endif
 		if (alternateSkin == ALT_SKIN_CHANCE) {
-			character = ABHISHEK_ALT1;
-			stop_music();
-			altSong = load_music("assets/Sound/players/abhishek_ranger/rangerTrack.wav");
-			if (altSong != 0) {
-				play_music(altSong);
+			int subroll = 0;
+			subroll = rand() % 5;
+			printf("subroll: %d\n", subroll);
+			switch(subroll) {
+				case 0:
+					character = ABHISHEK_ALT1;
+					stop_music();
+					altSong = load_music("assets/Sound/players/abhishek_ranger/rangerTrack.wav");
+					if (altSong != 0) {
+						play_music(altSong);
+					}
+				break;
+				case 1:
+					character = ABHISHEK_ALT2;
+					stop_music();
+					altSong = load_music("assets/Sound/players/abhishek_ranger/rangerTrack.wav");
+					if (altSong != 0) {
+						play_music(altSong);
+					}
+				break;
+				case 2:
+					character = ABHISHEK_ALT3;
+					stop_music();
+					altSong = load_music("assets/Sound/players/abhishek_ranger/rangerTrack.wav");
+					if (altSong != 0) {
+						play_music(altSong);
+					}
+				break;
+				case 3:
+					character = ABHISHEK_ALT4;
+					stop_music();
+					altSong = load_music("assets/Sound/players/abhishek_ranger/rangerTrack.wav");
+					if (altSong != 0) {
+						play_music(altSong);
+					}
+				break;
+				case 4:
+					character = ABHISHEK_ALT5;
+					stop_music();
+					altSong = load_music("assets/Sound/players/abhishek_ranger/rangerTrack.wav");
+					if (altSong != 0) {
+						play_music(altSong);
+					}
+				break;
 			}
 		}
 		create_setup_menu(world);
@@ -586,7 +625,7 @@ bool menu_click(World *world, unsigned int entity) {
 		
 		altSong = 0;
 		destroy_menu(world);
-		character = rand() % 39;
+		character = rand() % 43;
 		switch(character) {
 			case JOSH_ALT1:
 				stop_music();
@@ -725,6 +764,38 @@ bool menu_click(World *world, unsigned int entity) {
 				character = MAT_ALT2;
 				stop_music();
 				altSong = load_music("assets/Sound/players/mat_stache/moustacheTrack.wav");
+				if (altSong != 0) {
+					play_music(altSong);
+				}
+			break;
+			case ABHISHEK_ALT2:
+				character = MAT_ALT2;
+				stop_music();
+				altSong = load_music("assets/Sound/players/abhishek_ranger/rangerTrack.wav");
+				if (altSong != 0) {
+					play_music(altSong);
+				}
+			break;
+			case ABHISHEK_ALT3:
+				character = MAT_ALT2;
+				stop_music();
+				altSong = load_music("assets/Sound/players/abhishek_ranger/rangerTrack.wav");
+				if (altSong != 0) {
+					play_music(altSong);
+				}
+			break;
+			case ABHISHEK_ALT4:
+				character = MAT_ALT2;
+				stop_music();
+				altSong = load_music("assets/Sound/players/abhishek_ranger/rangerTrack.wav");
+				if (altSong != 0) {
+					play_music(altSong);
+				}
+			break;
+			case ABHISHEK_ALT5:
+				character = MAT_ALT2;
+				stop_music();
+				altSong = load_music("assets/Sound/players/abhishek_ranger/rangerTrack.wav");
 				if (altSong != 0) {
 					play_music(altSong);
 				}
