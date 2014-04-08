@@ -11,7 +11,7 @@
 #include "Network/Packets.h"
 #include "Graphics/map.h"
 
-#define DEBUG_SKINS     0 //1 = on, 0 = off
+#define DEBUG_SKINS     1 //1 = on, 0 = off
 #define ALT_SKIN_CHANCE 3 //chance to roll an alternate skin
 
 extern bool running;
@@ -310,6 +310,18 @@ bool menu_click(World *world, unsigned int entity) {
 		
 		destroy_menu(world);
 		character = CLARK;
+		alternateSkin = rand() % (ALT_SKIN_CHANCE + 1);
+		#if DEBUG_SKINS
+		printf("Roll: %u\n", alternateSkin);
+		#endif
+		if (alternateSkin == ALT_SKIN_CHANCE) {
+			character = CLARK_ALT1;
+			stop_music();
+			altSong = load_music("assets/Sound/players/clark_halo/haloTrack.wav");
+			if (altSong != 0) {
+				play_music(altSong);
+			}
+		}
 		create_setup_menu(world);
 		
 	}
@@ -624,7 +636,7 @@ bool menu_click(World *world, unsigned int entity) {
 		
 		altSong = 0;
 		destroy_menu(world);
-		character = rand() % 43;
+		character = rand() % 45;
 		switch(character) {
 			case JOSH_ALT1:
 				stop_music();
@@ -802,6 +814,14 @@ bool menu_click(World *world, unsigned int entity) {
 				character = MAT_ALT2;
 				stop_music();
 				altSong = load_music("assets/Sound/players/abhishek_ranger/rangerTrack.wav");
+				if (altSong != 0) {
+					play_music(altSong);
+				}
+			break;
+			case CLARK_ALT1:
+				character = MAT_ALT2;
+				stop_music();
+				altSong = load_music("assets/Sound/players/clark_halo/haloTrack.wav");
 				if (altSong != 0) {
 					play_music(altSong);
 				}

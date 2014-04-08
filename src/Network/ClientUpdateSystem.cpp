@@ -530,6 +530,9 @@ void setup_character_animation(World * world, int character, int entity)
 		case ALBERT_ALT1:
 			 load_animation("assets/Graphics/player/albert_darth/animation.txt", world, entity);
 		break;
+		case CLARK_ALT1:
+			 load_animation("assets/Graphics/player/clark_halo/animation.txt", world, entity);
+		break;
 		default:
 		load_animation("assets/Graphics/player/p0/rob_animation.txt", world, entity);
 	}

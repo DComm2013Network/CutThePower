@@ -107,6 +107,7 @@
 #define ABHISHEK_ALT4	41
 #define ABHISHEK_ALT5	42
 #define ALBERT_ALT1 	43
+#define CLARK_ALT1 		44
 // Game Status Definitions
 
 // Game Status Definitions
