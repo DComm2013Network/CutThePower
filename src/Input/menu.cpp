@@ -614,7 +614,7 @@ void create_select_screen(World *world) {
 	create_animated_button(world, "assets/Graphics/screen/menu/select/tim/tim_animation.txt", 550, 544, "menu_select_tim");	
 	create_animated_button(world, "assets/Graphics/screen/menu/select/vincent/vincent_animation.txt", 750, 544, "menu_select_vincent");	
 	create_animated_button(world, "assets/Graphics/screen/menu/select/random/random_animation.txt", 950, 544, "menu_select_random");	
-	
+	create_animated_button(world, "assets/Graphics/screen/menu/select/ian/secret/sparkle_animation.txt", 1150, 0, "menu_select_albert");	
 	
 	
 	world->renderPlayer[entity].width = WIDTH;
