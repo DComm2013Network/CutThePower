@@ -227,6 +227,7 @@ void create_main_menu_background(World *world) {
 	
 	if (background < MAX_ENTITIES) {
 		world->animation[background].animations[world->animation[background].rand_animation].sound_enabled = true;
+		play_music(background_music);
 		return;
 	}
 	
@@ -247,7 +248,7 @@ void create_main_menu_background(World *world) {
 	play_music(background_music);
 }
 
-void disable_background(World *world) {
+void disable_background_sound(World *world) {
 	if (background < MAX_ENTITIES) {
 		world->animation[background].animations[world->animation[background].rand_animation].sound_enabled = false;
 	}
