@@ -1,0 +1,4 @@
+1
+
+ice 1 20 -1 1
+assets/Graphics/objects/tiles/ice/ice.png

@@ -1,0 +1,11 @@
+1
+
+chris 5 50 -1 -1
+assets/Graphics/screen/menu/select/chris/chris_1.png
+assets/Graphics/screen/menu/select/chris/chris_1.png
+assets/Graphics/screen/menu/select/chris/chris_2.png
+assets/Graphics/screen/menu/select/chris/chris_3.png
+assets/Graphics/screen/menu/select/chris/chris_4.png
+
+1 
+hover 0

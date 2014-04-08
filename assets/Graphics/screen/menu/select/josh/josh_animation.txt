@@ -1,0 +1,10 @@
+1
+
+josh 4 50 -1 -1                      
+assets/Graphics/screen/menu/select/josh/josh_1.png
+assets/Graphics/screen/menu/select/josh/josh_1.png
+assets/Graphics/screen/menu/select/josh/josh_2.png
+assets/Graphics/screen/menu/select/josh/josh_3.png
+
+1
+hover 0

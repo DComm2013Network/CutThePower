@@ -1,0 +1,11 @@
+1
+
+jordan 5 50 -1 -1                         
+assets/Graphics/screen/menu/select/jordan/jordan_1.png
+assets/Graphics/screen/menu/select/jordan/jordan_1.png
+assets/Graphics/screen/menu/select/jordan/jordan_2.png
+assets/Graphics/screen/menu/select/jordan/jordan_3.png
+assets/Graphics/screen/menu/select/jordan/jordan_2.png
+
+1
+hover 0

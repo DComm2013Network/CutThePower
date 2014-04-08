@@ -1,0 +1,12 @@
+1
+
+damien 6 50 -1 -1                        
+assets/Graphics/screen/menu/select/damien/damien_1.png
+assets/Graphics/screen/menu/select/damien/damien_1.png
+assets/Graphics/screen/menu/select/damien/damien_2.png
+assets/Graphics/screen/menu/select/damien/damien_3.png
+assets/Graphics/screen/menu/select/damien/damien_4.png
+assets/Graphics/screen/menu/select/damien/damien_3.png
+
+1
+hover 0

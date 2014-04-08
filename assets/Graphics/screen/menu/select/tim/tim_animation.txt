@@ -1,0 +1,9 @@
+1
+
+tim 3 50 -1 -1                      
+assets/Graphics/screen/menu/select/tim/tim_1.png
+assets/Graphics/screen/menu/select/tim/tim_1.png
+assets/Graphics/screen/menu/select/tim/tim_2.png
+
+1 
+hover 0

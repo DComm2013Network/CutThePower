@@ -1,0 +1,11 @@
+1
+
+cory 5 50 -1 -1
+assets/Graphics/screen/menu/select/cory/cory_1.png
+assets/Graphics/screen/menu/select/cory/cory_1.png
+assets/Graphics/screen/menu/select/cory/cory_2.png
+assets/Graphics/screen/menu/select/cory/cory_3.png
+assets/Graphics/screen/menu/select/cory/cory_4.png
+
+1
+hover 0

@@ -1,0 +1,4 @@
+1
+
+load 1 40 -1 1
+assets/objects/animation/loading/load.png

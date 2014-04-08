@@ -1,0 +1,225 @@
+7
+64 38
+
+06 09 09 09 09 14 09 09 09 09 09 09 09 09 14 09 09 09 09 09 09 09 09 14 09 09 09 09 09 09 09 09 14 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 14 09 14 09 14 09 09 14 09 09 14 09 14 09 08 
+13 25 25 25 25 13 25 25 25 25 25 25 25 25 13 25 25 25 25 25 25 25 25 13 25 25 25 25 25 25 25 25 13 25 25 25 25 25 25 25 25 25 25 25 25 25 25 25 25 13 25 13 25 13 25 25 13 25 25 13 25 13 25 13 
+13 00 00 00 00 17 00 00 00 00 00 00 00 00 17 00 00 00 00 00 00 00 00 17 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 23 00 00 00 00 00 00 00 00 13 00 13 00 13 00 00 13 00 00 13 00 13 00 13 
+13 00 00 00 00 25 00 00 00 00 00 00 00 00 25 00 00 00 00 00 00 00 00 25 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 13 00 13 00 13 00 00 13 00 00 13 00 13 00 13 
+13 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 13 00 00 00 00 00 00 13 
+13 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 13 00 00 00 00 00 00 13 
+13 00 00 00 00 13 00 00 21 00 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 04 09 09 18 00 00 16 10 18 00 00 16 09 09 13 
+13 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 25 25 25 25 00 00 25 25 25 00 00 25 25 25 13 
+13 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 13 
+13 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 13 
+13 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 06 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 18 00 00 16 09 19 
+13 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 13 25 25 25 25 25 25 25 25 25 25 25 25 25 25 25 25 25 25 25 25 25 00 00 25 25 13 
+13 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 13 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 13 
+13 00 00 00 00 04 08 00 00 00 00 00 00 06 10 08 00 00 00 00 00 00 06 10 08 00 00 00 00 00 00 06 05 00 00 00 00 13 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 13 
+13 00 00 00 00 25 04 08 00 00 00 00 06 05 25 04 08 00 00 00 00 06 05 25 04 08 00 00 00 00 06 05 25 00 00 00 00 13 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 13 
+13 00 00 00 00 00 25 04 08 00 00 06 05 25 00 25 04 08 00 00 06 05 25 00 25 04 08 00 00 06 05 25 21 00 00 00 00 13 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 13 
+13 00 00 00 00 00 00 25 17 00 00 17 25 00 00 00 25 17 00 00 17 25 00 00 00 25 17 00 00 17 25 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 13 
+13 00 00 00 00 00 00 00 25 00 00 25 00 00 00 00 00 25 00 00 25 00 00 00 00 00 25 00 00 25 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 13 
+13 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 13 
+13 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 13 
+13 00 00 00 00 00 00 00 07 00 00 07 00 00 00 00 00 07 00 00 07 00 00 00 00 00 07 00 00 07 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 13 
+13 00 00 00 00 00 00 06 05 00 00 04 08 00 00 00 06 05 00 00 04 08 00 00 00 06 05 00 00 04 08 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 13 
+13 00 00 00 00 00 06 05 25 00 00 25 04 08 00 06 05 25 00 00 25 04 08 00 06 05 25 00 00 25 04 08 00 00 00 00 00 13 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 13 
+13 00 00 00 00 06 05 25 00 00 00 00 25 04 15 05 25 00 00 00 00 25 04 15 05 25 00 00 00 00 25 04 08 00 00 00 00 13 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 13 
+13 00 00 00 00 13 25 00 00 00 00 00 00 25 13 25 00 00 00 00 00 00 25 13 25 00 00 00 00 00 00 25 13 00 00 00 00 13 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 13 
+13 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 13 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 13 
+13 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 13 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 13 
+13 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 13 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 13 
+13 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 13 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 13 
+13 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 13 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 13 
+13 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 13 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 13 
+13 00 00 00 00 17 00 00 00 00 00 00 00 00 17 00 00 00 00 00 00 00 00 17 00 00 00 00 00 00 00 00 13 00 00 00 00 13 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 13 
+13 00 00 00 00 25 00 00 00 00 00 00 00 00 25 00 00 00 00 00 00 00 00 25 00 00 00 00 00 00 00 00 13 00 00 00 00 17 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 13 
+13 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 13 00 00 00 00 25 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 13 
+13 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 13 
+13 00 00 00 00 13 00 00 00 23 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 00 13 00 00 00 00 07 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 13 
+04 09 09 09 09 10 09 09 09 09 09 09 09 09 10 09 09 09 09 09 09 09 09 10 09 09 09 09 09 09 09 09 10 09 09 09 09 10 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 05 
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 
+
+158
+stairs 08 06 15 24 6 l
+stairs 32 15 47 32 6 l
+stairs 40 02 45 04 8 l
+stairs 09 35 04 32 8 l
+
+objective 60 02 25 45 0 assets/Graphics/objects/png_object/object_animation.txt
+objective 30 03 25 45 1 assets/Graphics/objects/png_object/object_animation.txt
+objective 67 31 25 45 2 assets/Graphics/objects/png_object/object_animation.txt
+objective 03 32 25 45 3 assets/Graphics/objects/png_object/object_animation.txt
+
+object 41 15 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 42 15 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 43 15 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 44 15 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 45 15 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 46 15 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 47 15 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 48 15 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 49 15 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+
+object 51 15 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 52 15 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 53 15 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 54 15 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 55 15 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 56 15 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 57 15 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 58 15 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 59 15 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+
+object 41 18 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 42 18 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 43 18 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 44 18 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 45 18 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 46 18 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 47 18 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 48 18 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 49 18 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+
+object 51 18 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 52 18 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 53 18 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 54 18 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 55 18 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 56 18 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 57 18 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 58 18 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 59 18 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+
+object 41 21 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 42 21 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 43 21 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 44 21 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 45 21 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 46 21 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 47 21 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 48 21 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 49 21 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+
+object 51 21 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 52 21 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 53 21 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 54 21 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 55 21 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 56 21 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 57 21 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 58 21 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 59 21 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+
+object 41 24 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 42 24 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 43 24 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 44 24 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 45 24 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 46 24 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 47 24 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 48 24 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 49 24 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+
+object 51 24 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 52 24 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 53 24 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 54 24 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 55 24 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 56 24 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 57 24 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 58 24 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 59 24 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+
+object 41 27 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 42 27 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 43 27 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 44 27 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 45 27 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 46 27 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 47 27 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 48 27 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 49 27 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+
+object 51 27 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 52 27 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 53 27 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 54 27 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 55 27 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 56 27 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 57 27 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 58 27 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 59 27 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+
+object 41 30 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 42 30 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 43 30 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 44 30 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 45 30 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 46 30 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 47 30 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 48 30 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 49 30 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+
+object 51 30 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 52 30 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 53 30 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 54 30 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 55 30 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 56 30 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 57 30 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 58 30 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+object 59 30 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+
+object 42 35 18 25 assets/Graphics/objects/png_object/object_animation.txt trash_18x25
+object 60 33 80 75 assets/Graphics/objects/png_object/object_animation.txt double_vending_80x75
+object 50 33 58 75 assets/Graphics/objects/png_object/object_animation.txt vending_58x75
+
+object 42 11 140 85 assets/Graphics/objects/png_object/object_animation.txt screen_140x85
+object 45.4 11 140 85 assets/Graphics/objects/png_object/object_animation.txt screen_140x85
+object 48.8 11 140 85 assets/Graphics/objects/png_object/object_animation.txt screen_140x85
+object 52.2 11 140 85 assets/Graphics/objects/png_object/object_animation.txt screen_140x85
+object 55.6 11 140 85 assets/Graphics/objects/png_object/object_animation.txt screen_140x85
+
+object 44 0.5 40 37 assets/Graphics/objects/png_object/object_animation.txt window_40x37
+object 54 0.5 40 37 assets/Graphics/objects/png_object/object_animation.txt window_40x37
+object 58 0.5 40 37 assets/Graphics/objects/png_object/object_animation.txt window_40x37
+
+object 38 0.5 20 33 assets/Graphics/objects/png_object/object_animation.txt fire_extinguisher_20x33
+
+object 27.2 6.5 185 364 assets/Graphics/objects/png_object/object_animation.txt cubicles_x_8_185x364
+object 27.2 29.8 185 364 assets/Graphics/objects/png_object/object_animation.txt cubicles_x_8_185x364
+object 18.2 6.5 185 364 assets/Graphics/objects/png_object/object_animation.txt cubicles_x_8_185x364
+object 18.2 29.8 185 364 assets/Graphics/objects/png_object/object_animation.txt cubicles_x_8_185x364
+
+object 9.5 26 90 42 assets/Graphics/objects/png_object/object_animation.txt horizontal_bench_90x42
+object 9.5 28 90 42 assets/Graphics/objects/png_object/object_animation.txt horizontal_bench_90x42
+object 9.5 30 90 42 assets/Graphics/objects/png_object/object_animation.txt horizontal_bench_90x42
+object 13 30 37 69 assets/Graphics/objects/png_object/object_animation.txt fridge_37x69
+object 6 30 37 69 assets/Graphics/objects/png_object/object_animation.txt fridge_37x69
+object 6.5 24.5 65 50 assets/Graphics/objects/png_object/object_animation.txt fishtank_65x50
+
+object 6 35 30 40 assets/Graphics/objects/png_object/object_animation.txt plant_30x40
+object 13 35 30 40 assets/Graphics/objects/png_object/object_animation.txt plant_30x40
+
+object 6 6 35 55 assets/Graphics/objects/png_object/object_animation.txt locker_35x55
+object 13 5 27 33 assets/Graphics/objects/png_object/object_animation.txt jukebox_27x33
+object 9.5 8 90 42 assets/Graphics/objects/png_object/object_animation.txt horizontal_bench_90x42
+object 9.5 10 90 42 assets/Graphics/objects/png_object/object_animation.txt horizontal_bench_90x42
+object 3 0.5 20 33 assets/Graphics/objects/png_object/object_animation.txt fire_extinguisher_20x33
+object 20 21.5 40 40 assets/Graphics/objects/png_object/object_animation.txt clock_40x40
+object 29 21.5 40 40 assets/Graphics/objects/png_object/object_animation.txt clock_40x40
+
+object 9.5 1 180 53 assets/Graphics/objects/png_object/object_animation.txt kitchen_180x53
+
+object 19 0.5 50 40 assets/Graphics/objects/png_object/object_animation.txt picture_50x40
+object 27 0.5 60 23 assets/Graphics/objects/png_object/object_animation.txt pictures_60x23
+
+object 1 1.5 25 50 assets/Graphics/objects/png_object/object_animation.txt plant_25x50
+object 4 1.5 25 50 assets/Graphics/objects/png_object/object_animation.txt plant_25x50
+object 1 35 25 50 assets/Graphics/objects/png_object/object_animation.txt plant_25x50
+object 4 35 25 50 assets/Graphics/objects/png_object/object_animation.txt plant_25x50
+object 33 35 25 50 assets/Graphics/objects/png_object/object_animation.txt plant_25x50
+object 36 35 25 50 assets/Graphics/objects/png_object/object_animation.txt plant_25x50
+object 33 1.5 25 50 assets/Graphics/objects/png_object/object_animation.txt plant_25x50
+object 48 1.5 25 50 assets/Graphics/objects/png_object/object_animation.txt plant_25x50

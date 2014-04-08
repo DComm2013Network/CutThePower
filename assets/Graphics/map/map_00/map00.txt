@@ -1,0 +1,64 @@
+0 
+31 16
+
+02 02 02 02 02 02 02 02 02 02 06 09 09 09 09 09 09 09 09 09 08 02 02 02 02 02 02 02 02 02 02 
+02 02 02 02 02 02 02 02 02 02 13 79 81 81 81 81 81 81 81 80 13 02 02 02 02 02 02 02 02 02 02 
+02 02 02 02 02 02 02 02 02 02 13 22 25 28 31 34 37 40 43 46 13 02 02 02 02 02 02 02 02 02 02 
+06 09 09 09 09 09 14 09 09 09 05 22 25 28 31 34 37 40 43 46 04 09 09 09 14 09 09 09 09 09 08 
+13 20 20 20 20 20 13 20 20 20 20 23 26 29 32 35 38 41 44 47 20 20 20 20 13 20 20 20 20 20 13 
+13 02 02 02 02 02 13 02 02 02 02 48 48 48 48 48 48 48 48 48 02 02 02 02 13 02 02 02 02 02 13 
+13 02 02 02 02 02 13 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 13 02 02 02 02 02 13 
+13 02 64 65 66 02 17 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 17 02 49 50 51 02 13 
+13 02 67 68 69 02 20 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 20 02 52 53 54 02 13 
+13 02 70 71 72 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 55 56 57 02 13 
+13 02 73 74 75 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 58 59 60 02 13 
+13 02 76 77 78 02 07 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 07 02 61 62 63 02 13 
+13 02 02 02 02 02 13 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 13 02 02 02 02 02 13 
+13 02 02 02 02 02 13 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 13 02 02 02 02 02 13 
+04 09 09 09 09 09 10 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 09 10 09 09 09 09 09 05 
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 
+
+34
+
+object 7 4 25 50 assets/Graphics/objects/png_object/object_animation.txt plant_25x50
+object 23 4 25 50 assets/Graphics/objects/png_object/object_animation.txt plant_25x50
+
+chair 10 7 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+chair 11 7 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+chair 12 7 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+chair 13 7 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+
+chair 10 8.7 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+chair 11 8.7 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+chair 12 8.7 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+chair 13 8.7 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+
+chair 10 10.4 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+chair 11 10.4 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+chair 12 10.4 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+chair 13 10.4 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+
+chair 10 12.1 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+chair 11 12.1 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+chair 12 12.1 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+chair 13 12.1 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+
+chair 17 7 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+chair 18 7 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+chair 19 7 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+chair 20 7 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+
+chair 17 8.7 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+chair 18 8.7 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+chair 19 8.7 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+chair 20 8.7 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+
+chair 17 10.4 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+chair 18 10.4 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+chair 19 10.4 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+chair 20 10.4 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+
+chair 17 12.1 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+chair 18 12.1 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+chair 19 12.1 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37
+chair 20 12.1 40 37 assets/Graphics/objects/png_object/object_animation.txt chair_up_40x37

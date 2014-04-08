@@ -1,0 +1,8 @@
+6 15000 300 600 400 assets/Graphics/cutscene/van_intro/van/animation.txt
+
+7000	450	300	van_moving
+4000	450	300	van_still
+ 560	450	300	van_opening
+3540	450	300	van_open
+ 560	450	300	van_closing
+5040	450	300	van_still

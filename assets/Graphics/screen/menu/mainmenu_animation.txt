@@ -1,0 +1,26 @@
+1
+
+mainmenu 20 45 assets/Sound/menu/sound_menu_thunder.wav -1
+assets/Graphics/screen/menu/MainMenu_01.png
+assets/Graphics/screen/menu/MainMenu_02.png
+assets/Graphics/screen/menu/MainMenu_03.png
+assets/Graphics/screen/menu/MainMenu_04.png
+assets/Graphics/screen/menu/MainMenu_05.png
+assets/Graphics/screen/menu/MainMenu_06.png
+assets/Graphics/screen/menu/MainMenu_07.png
+assets/Graphics/screen/menu/MainMenu_08.png
+assets/Graphics/screen/menu/MainMenu_09.png
+assets/Graphics/screen/menu/MainMenu_10.png
+assets/Graphics/screen/menu/MainMenu_11.png
+assets/Graphics/screen/menu/MainMenu_11.png
+assets/Graphics/screen/menu/MainMenu_12.png
+assets/Graphics/screen/menu/MainMenu_13.png
+assets/Graphics/screen/menu/MainMenu_14.png
+assets/Graphics/screen/menu/MainMenu_15.png
+assets/Graphics/screen/menu/MainMenu_16.png
+assets/Graphics/screen/menu/MainMenu_17.png
+assets/Graphics/screen/menu/MainMenu_18.png
+assets/Graphics/screen/menu/MainMenu_19.png
+
+1
+random 0 5000 10000

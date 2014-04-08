@@ -1,0 +1,12 @@
+1
+
+german 5 50 -1 -1                        
+assets/Graphics/screen/menu/select/german/german_1.png
+assets/Graphics/screen/menu/select/german/german_1.png
+assets/Graphics/screen/menu/select/german/german_2.png
+assets/Graphics/screen/menu/select/german/german_3.png
+assets/Graphics/screen/menu/select/german/german_4.png
+
+1
+hover 0
+

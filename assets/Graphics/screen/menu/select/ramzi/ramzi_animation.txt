@@ -1,0 +1,12 @@
+1
+
+ramzi 6 50 -1 -1                    
+assets/Graphics/screen/menu/select/ramzi/ramzi_1.png
+assets/Graphics/screen/menu/select/ramzi/ramzi_1.png
+assets/Graphics/screen/menu/select/ramzi/ramzi_2.png
+assets/Graphics/screen/menu/select/ramzi/ramzi_3.png
+assets/Graphics/screen/menu/select/ramzi/ramzi_4.png
+assets/Graphics/screen/menu/select/ramzi/ramzi_5.png
+
+1 
+hover 0

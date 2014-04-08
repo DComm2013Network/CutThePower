@@ -1,0 +1,58 @@
+5
+
+van_moving 1 1 assets/Sound/cutscene/van.wav -1
+assets/Graphics/cutscene/van_intro/van/van_door_open_01.png
+
+van_still 1 1 -1 -1
+assets/Graphics/cutscene/van_intro/van/van_door_open_01.png
+
+van_opening 22 20 -1 -1
+assets/Graphics/cutscene/van_intro/van/van_door_open_01.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_02.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_03.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_04.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_05.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_06.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_07.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_08.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_09.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_10.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_11.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_12.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_13.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_14.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_15.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_16.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_17.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_18.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_19.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_20.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_21.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_22.png
+
+van_open 1 10 -1 -1
+assets/Graphics/cutscene/van_intro/van/van_door_open_22.png
+
+van_closing 22 20 -1 -1
+assets/Graphics/cutscene/van_intro/van/van_door_open_22.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_21.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_20.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_19.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_18.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_17.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_16.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_15.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_14.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_13.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_12.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_11.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_10.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_09.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_08.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_07.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_06.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_05.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_04.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_03.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_02.png
+assets/Graphics/cutscene/van_intro/van/van_door_open_01.png

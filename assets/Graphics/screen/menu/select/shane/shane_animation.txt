@@ -1,0 +1,13 @@
+1
+
+shane 7 50 -1 -1                       
+assets/Graphics/screen/menu/select/shane/shane_1.png
+assets/Graphics/screen/menu/select/shane/shane_1.png
+assets/Graphics/screen/menu/select/shane/shane_2.png
+assets/Graphics/screen/menu/select/shane/shane_3.png
+assets/Graphics/screen/menu/select/shane/shane_4.png
+assets/Graphics/screen/menu/select/shane/shane_5.png
+assets/Graphics/screen/menu/select/shane/shane_6.png
+
+1 
+hover 0

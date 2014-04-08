@@ -1,0 +1,10 @@
+1
+
+ian 4 50 -1 -1                        
+assets/Graphics/screen/menu/select/ian/ian_1.png
+assets/Graphics/screen/menu/select/ian/ian_1.png
+assets/Graphics/screen/menu/select/ian/ian_2.png
+assets/Graphics/screen/menu/select/ian/ian_3.png
+
+1
+hover 0

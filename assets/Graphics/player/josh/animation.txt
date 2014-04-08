@@ -1,0 +1,25 @@
+4
+
+down 3 150 -1 1
+assets/Graphics/player/josh/josh_walk_front_1.png
+assets/Graphics/player/josh/josh_walk_front_2.png
+assets/Graphics/player/josh/josh_walk_front_3.png
+
+up 3 150 -1 1
+assets/Graphics/player/josh/josh_walk_back_1.png
+assets/Graphics/player/josh/josh_walk_back_2.png
+assets/Graphics/player/josh/josh_walk_back_3.png
+
+left 5 150 -1 1
+assets/Graphics/player/josh/josh_walk_left_1.png
+assets/Graphics/player/josh/josh_walk_left_2.png
+assets/Graphics/player/josh/josh_walk_left_3.png
+assets/Graphics/player/josh/josh_walk_left_4.png
+assets/Graphics/player/josh/josh_walk_left_3.png
+
+right 5 150 -1 1
+assets/Graphics/player/josh/josh_walk_right_1.png
+assets/Graphics/player/josh/josh_walk_right_2.png
+assets/Graphics/player/josh/josh_walk_right_3.png
+assets/Graphics/player/josh/josh_walk_right_4.png
+assets/Graphics/player/josh/josh_walk_right_3.png

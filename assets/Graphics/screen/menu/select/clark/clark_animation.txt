@@ -1,0 +1,10 @@
+1
+
+clark 4 50 -1 -1
+assets/Graphics/screen/menu/select/clark/clark_1.png
+assets/Graphics/screen/menu/select/clark/clark_1.png
+assets/Graphics/screen/menu/select/clark/clark_2.png
+assets/Graphics/screen/menu/select/clark/clark_3.png
+
+1
+hover 0

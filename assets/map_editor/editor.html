@@ -1,0 +1,1029 @@
+<html>
+	<head>
+		<link rel="stylesheet" href="jquery-ui/themes/base/jquery-ui.css">
+		<script src="jquery/jquery-1.11.0.min.js"></script>
+        <script src="jquery-ui/ui/jquery-ui.js"></script>
+	</head>
+	<body>
+		<style>
+			#maptable tr td {
+				border: 1px solid black;
+				padding: 0;
+			}
+			
+			#toolbox tools tr td {
+				border: 1px solid black;
+			}
+			
+			body {
+				background-color: Grey;
+			}
+			
+			img {
+				/* For Opera and <= IE9, we need to add unselectable="on" attribute onto each element */
+				/* Check this site for more details: http://help.dottoro.com/lhwdpnva.php */
+				-moz-user-select: none; /* These user-select properties are inheritable, used to prevent text selection */
+				-webkit-user-select: none;
+				-ms-user-select: none; /* From IE10 only */
+				user-select: none; /* Not valid CSS yet, as of July 2012 */
+
+				-webkit-user-drag: none; /* Prevents dragging of images/divs etc */
+				user-drag: none;
+				margin: 0;
+			}
+			
+			a {
+				margin: 0;
+				padding: 0;
+			}
+
+		</style>
+		<script>
+			/**
+			 * Creates the tool boxes for the map editor on loading.
+			 *
+			 * @designer Joshua Campbell
+			 * @author   Joshua Campbell
+			 */
+			$(document).ready(function() {
+				$("#MapControllerDialog").show();
+				$("#MapControllerDialog").dialog({ 
+					width: 320, 
+					height: 520,
+					position: [0,10],
+					closeOnEscape: false,
+				    open: function() { $(".ui-dialog-titlebar-close").hide(); }
+				});
+				$("#toolbox").show();
+				$("#toolbox").dialog({
+					width: 320,
+					position: [screen.availWidth, 10]
+				});
+			});
+			
+			/*
+			 * Generates the map in the map view.
+			 *
+			 * @designer Joshua Campbell
+			 * @author   Joshua Campbell
+			 */
+			function GenerateMap() {
+				var mapwidth = $("#map_width").val();
+				var mapheight = $("#map_height").val();
+				var levelid = $("#level_id").val();
+				
+				var curwidth = $("#hidden-width").val();
+				var curheight = $("#hidden-height").val();
+				
+				/* If there is no previous map data, generate a blank map */
+				if (curwidth == 0 && curheight == 0) {
+					var map = "";
+					for (var y = 0; y < mapheight; y++) {
+						map += "<tr>";
+						for (var x = 0; x < mapwidth; x++) {
+							map += "<td id=\"tile-" + x + "-" + y + "\"><a href=\"javascript:void()\" onclick=\"ChangeTileController('" + x + "-" + y + "')\">";
+							map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/tile_blank.bmp\" />";
+							map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"00\"></a></td>";
+						}
+						map += "</tr>";
+					}
+				} else {
+					var mapdata = new Array();
+					var y = 0;
+					
+					/* Storing the old map data for copying into the new map */
+					$("#maptable tr").each(function() {
+						mapdata[y] = new Array();
+						var x = 0;
+						$(this).find('td').each(function() {
+							mapdata[y][x] = $(this).find('input').val();
+							x++;
+						});
+						y++;
+					});
+					
+					var map = "";
+					
+					/* Generating the new map */
+					for (var y = 0; y < mapheight; y++) {
+						map += "<tr>";
+						for (var x = 0; x < mapwidth; x++) {
+							map += "<td id=\"tile-" + x + "-" + y + "\"><a href=\"javascript:void()\" onclick=\"ChangeTileController('" + x + "-" + y + "')\">";
+							if (x < curwidth && y < curheight) {
+								switch(mapdata[y][x]) {
+									case '00':
+										map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/00_40px.bmp\" />";
+										map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"00\"></a></td>";
+									break;
+									case '01':
+										map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/01_40px.bmp\" />";
+										map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"01\"></a></td>";
+									break;
+									case '02':
+										map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/02_40px.bmp\" />";
+										map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"02\"></a></td>";
+									break;
+									case '03':
+										map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/03_40px.bmp\" />";
+										map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"03\"></a></td>";
+									break;
+									case '04':
+										map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/04_40px.bmp\" />";
+										map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"04\"></a></td>";
+									break;
+									case '05':
+										map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/05_40px.bmp\" />";
+										map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"05\"></a></td>";
+									break;
+									case '06':
+										map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/06_40px.bmp\" />";
+										map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"06\"></a></td>";
+									break;
+									case '07':
+										map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/07_40px.bmp\" />";
+										map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"07\"></a></td>";
+									break;
+									case '08':
+										map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/08_40px.bmp\" />";
+										map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"08\"></a></td>";
+									break;
+									case '09':
+										map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/09_40px.bmp\" />";
+										map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"09\"></a></td>";
+									break;
+									case '10':
+										map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/10_40px.bmp\" />";
+										map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"10\"></a></td>";
+									break;
+									case '11':
+										map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/11_40px.bmp\" />";
+										map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"11\"></a></td>";
+									break;
+									case '12':
+										map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/12_40px.bmp\" />";
+										map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"12\"></a></td>";
+									break;
+									case '13':
+										map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/13_40px.bmp\" />";
+										map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"13\"></a></td>";
+									break;
+									case '14':
+										map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/14_40px.bmp\" />";
+										map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"14\"></a></td>";
+									break;
+									case '15':
+										map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/15_40px.bmp\" />";
+										map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"15\"></a></td>";
+									break;
+									case '16':
+										map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/16_40px.bmp\" />";
+										map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"16\"></a></td>";
+									break;
+									case '17':
+										map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/17_40px.bmp\" />";
+										map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"17\"></a></td>";
+									break;
+									case '18':
+										map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/18_40px.bmp\" />";
+										map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"18\"></a></td>";
+									break;
+									case '19':
+										map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/19_40px.bmp\" />";
+										map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"19\"></a></td>";
+									break;
+									case '20':
+										map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/20_40px.bmp\" />";
+										map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"20\"></a></td>";
+									break;
+									default:
+										map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/00_40px.bmp\" />";
+										map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"00\"></a></td>";
+									break;
+								}
+							} else {
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/00_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"00\"></a></td>";
+							}
+						}
+						map += "</tr>";
+					}
+				}
+				
+				$("#maptable").html(map);
+				$("#hidden-width").val(mapwidth);
+				$("#hidden-height").val(mapheight);
+				$("#hidden-level").val(levelid);
+				ZoomMap();
+			}
+			
+			/*
+			 * Fills the map with the currently selected tile.
+			 *
+			 * @designer Joshua Campbell
+			 * @author   Joshua Campbell
+			 */
+			function FillMap() {
+				var mapwidth = $("#hidden-width").val();
+				var mapheight = $("#hidden-height").val();
+				var tool = $("#current-tool").val();
+				
+				var map = "";
+				
+				for (var y = 0; y < mapheight; y++) {
+					
+					map += "<tr>";
+					for (var x = 0; x < mapwidth; x++) {
+						map += "<td id=\"tile-" + x + "-" + y + "\"><a href=\"javascript:void()\" onclick=\"ChangeTileController('" + x + "-" + y + "')\">";
+						
+						switch(tool) {
+							case '00':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/00_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"00\"></a></td>";
+							break;
+							case '01':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/01_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"01\"></a></td>";
+							break;
+							case '02':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/02_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"02\"></a></td>";
+							break;
+							case '03':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/03_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"03\"></a></td>";
+							break;
+							case '04':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/04_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"04\"></a></td>";
+							break;
+							case '05':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/05_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"05\"></a></td>";
+							break;
+							case '06':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/06_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"06\"></a></td>";
+							break;
+							case '07':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/07_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"07\"></a></td>";
+							break;
+							case '08':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/08_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"08\"></a></td>";
+							break;
+							case '09':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/09_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"09\"></a></td>";
+							break;
+							case '10':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/10_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"10\"></a></td>";
+							break;
+							case '11':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/11_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"11\"></a></td>";
+							break;
+							case '12':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/12_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"12\"></a></td>";
+							break;
+							case '13':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/13_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"13\"></a></td>";
+							break;
+							case '14':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/14_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"14\"></a></td>";
+							break;
+							case '15':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/15_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"15\"></a></td>";
+							break;
+							case '16':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/16_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"16\"></a></td>";
+							break;
+							case '17':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/17_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"17\"></a></td>";
+							break;
+							case '18':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/18_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"18\"></a></td>";
+							break;
+							case '19':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/19_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"19\"></a></td>";
+							break;
+							case '20':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/20_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"20\"></a></td>";
+							break;
+							default:
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/tile_blank.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"00\"></a></td>";
+							break;
+						}
+						
+					}
+					map += "</tr>";
+				}
+				
+				$("#maptable").html(map);
+				
+				ZoomMap();
+			}
+			
+			/*
+			 * Controller for changing the tiles for single tile or box of tiles.
+			 *
+			 * @designer Joshua Campbell
+			 * @author   Joshua Campbell
+			 */
+			function ChangeTileController(id) {
+				if (parseInt($("#CurrentToolType").val()) == 1) {
+					DrawBox(id);
+				} else {
+					ChangeTile(id);
+				}
+			}
+			
+			/*
+			 * Changes a tile on the map.
+			 *
+			 * @designer Joshua Campbell
+			 * @author   Joshua Campbell
+			 */
+			function ChangeTile(id) {
+				var image = '#img-' + id;
+				var tiletype = '#tiletype-' + id;
+				var tool = $("#current-tool").val();
+				
+				switch(tool) {
+					case '00':
+						$(image).attr("src", "tiles/00_40px.bmp");
+						$(tiletype).val('00');
+					break;
+					case '01':
+						$(image).attr("src", "tiles/01_40px.bmp");
+						$(tiletype).val('01');
+					break;
+					case '02':
+						$(image).attr("src", "tiles/02_40px.bmp");
+						$(tiletype).val('02');
+					break;
+					case '03':
+						$(image).attr("src", "tiles/03_40px.bmp");
+						$(tiletype).val('03');
+					break;
+					case '04':
+						$(image).attr("src", "tiles/04_40px.bmp");
+						$(tiletype).val('04');
+					break;
+					case '05':
+						$(image).attr("src", "tiles/05_40px.bmp");
+						$(tiletype).val('05');
+					break;
+					case '06':
+						$(image).attr("src", "tiles/06_40px.bmp");
+						$(tiletype).val('06');
+					break;
+					case '07':
+						$(image).attr("src", "tiles/07_40px.bmp");
+						$(tiletype).val('07');
+					break;
+					case '08':
+						$(image).attr("src", "tiles/08_40px.bmp");
+						$(tiletype).val('08');
+					break;
+					case '09':
+						$(image).attr("src", "tiles/09_40px.bmp");
+						$(tiletype).val('09');
+					break;
+					case '10':
+						$(image).attr("src", "tiles/10_40px.bmp");
+						$(tiletype).val('10');
+					break;
+					case '11':
+						$(image).attr("src", "tiles/11_40px.bmp");
+						$(tiletype).val('11');
+					break;
+					case '12':
+						$(image).attr("src", "tiles/12_40px.bmp");
+						$(tiletype).val('12');
+					break;
+					case '13':
+						$(image).attr("src", "tiles/13_40px.bmp");
+						$(tiletype).val('13');
+					break;
+					case '14':
+						$(image).attr("src", "tiles/14_40px.bmp");
+						$(tiletype).val('14');
+					break;
+					case '15':
+						$(image).attr("src", "tiles/15_40px.bmp");
+						$(tiletype).val('15');
+					break;
+					case '16':
+						$(image).attr("src", "tiles/16_40px.bmp");
+						$(tiletype).val('16');
+					break;
+					case '17':
+						$(image).attr("src", "tiles/17_40px.bmp");
+						$(tiletype).val('17');
+					break;
+					case '18':
+						$(image).attr("src", "tiles/18_40px.bmp");
+						$(tiletype).val('18');
+					break;
+					case '19':
+						$(image).attr("src", "tiles/19_40px.bmp");
+						$(tiletype).val('19');
+					break;
+					case '20':
+						$(image).attr("src", "tiles/20_40px.bmp");
+						$(tiletype).val('20');
+					break;
+					default:
+						$(image).attr("src", "tiles/tile_blank.bmp");
+						$(tiletype).val('00');
+					break;
+				}
+			}
+			
+			/*
+			 * Opens the tile tool box.
+			 *
+			 * @designer Joshua Campbell
+			 * @author   Joshua Campbell
+			 */
+			function OpenToolbox() {
+				$("#toolbox").show();
+				$("#toolbox").dialog({
+					width: 320,
+					position: [screen.availWidth, 10]
+				});
+			}
+			
+			/*
+			 * Sets the current tile to paint.
+			 *
+			 * @designer Joshua Campbell
+			 * @author   Joshua Campbell
+			 */
+			function SetTool(tool) {
+				switch(tool) {
+					case '00':
+						$("#selected-tool").attr("src", "tiles/00_40px.bmp");
+						$("#current-tool").val(tool);
+					break;
+					case '01':
+						$("#selected-tool").attr("src", "tiles/01_40px.bmp");
+						$("#current-tool").val(tool);
+					break;
+					case '02':
+						$("#selected-tool").attr("src", "tiles/02_40px.bmp");
+						$("#current-tool").val(tool);
+					break;
+					case '03':
+						$("#selected-tool").attr("src", "tiles/03_40px.bmp");
+						$("#current-tool").val(tool);
+					break;
+					case '04':
+						$("#selected-tool").attr("src", "tiles/04_40px.bmp");
+						$("#current-tool").val(tool);
+					break;
+					case '05':
+						$("#selected-tool").attr("src", "tiles/05_40px.bmp");
+						$("#current-tool").val(tool);
+					break;
+					case '06':
+						$("#selected-tool").attr("src", "tiles/06_40px.bmp");
+						$("#current-tool").val(tool);
+					break;
+					case '07':
+						$("#selected-tool").attr("src", "tiles/07_40px.bmp");
+						$("#current-tool").val(tool);
+					break;
+					case '08':
+						$("#selected-tool").attr("src", "tiles/08_40px.bmp");
+						$("#current-tool").val(tool);
+					break;
+					case '09':
+						$("#selected-tool").attr("src", "tiles/09_40px.bmp");
+						$("#current-tool").val(tool);
+					break;
+					case '10':
+						$("#selected-tool").attr("src", "tiles/10_40px.bmp");
+						$("#current-tool").val(tool);
+					break;
+					case '11':
+						$("#selected-tool").attr("src", "tiles/11_40px.bmp");
+						$("#current-tool").val(tool);
+					break;
+					case '12':
+						$("#selected-tool").attr("src", "tiles/12_40px.bmp");
+						$("#current-tool").val(tool);
+					break;
+					case '13':
+						$("#selected-tool").attr("src", "tiles/13_40px.bmp");
+						$("#current-tool").val(tool);
+					break;
+					case '14':
+						$("#selected-tool").attr("src", "tiles/14_40px.bmp");
+						$("#current-tool").val(tool);
+					break;
+					case '15':
+						$("#selected-tool").attr("src", "tiles/15_40px.bmp");
+						$("#current-tool").val(tool);
+					break;
+					case '16':
+						$("#selected-tool").attr("src", "tiles/16_40px.bmp");
+						$("#current-tool").val(tool);
+					break;
+					case '17':
+						$("#selected-tool").attr("src", "tiles/17_40px.bmp");
+						$("#current-tool").val(tool);
+					break;
+					case '18':
+						$("#selected-tool").attr("src", "tiles/18_40px.bmp");
+						$("#current-tool").val(tool);
+					break;
+					case '19':
+						$("#selected-tool").attr("src", "tiles/19_40px.bmp");
+						$("#current-tool").val(tool);
+					break;
+					case '20':
+						$("#selected-tool").attr("src", "tiles/20_40px.bmp");
+						$("#current-tool").val(tool);
+					break;
+				}
+			}
+			
+			/*
+			 * Gets the map for copying into a map file.
+			 *
+			 * @designer Joshua Campbell
+			 * @author   Joshua Campbell
+			 */
+			function GetMap() {
+				var levelID = $("#hidden-level").val();
+				var mapwidth = $("#hidden-width").val();
+				var mapheight = $("#hidden-height").val();
+				
+				var mapdata = levelID + "\n" + mapwidth + " " + mapheight + "\n\n";
+				
+				for (var y = 0; y < mapheight; y++) {
+					for (var x = 0; x < mapwidth; x++) {
+						var tiletype = '#tiletype-' + x + '-' + y;
+						mapdata += $(tiletype).val() + ' ';
+					}
+					mapdata += '\n';
+				}
+				$("#mapdata textarea").html(mapdata);
+				$("#mapdata").show();
+				$("#mapdata").dialog({ 
+					modal: true, 
+					width: 800, 
+					height: 600,
+					position: [440,40]
+				});
+			}
+			
+			/*
+			 * Loads the Map dialog box.
+			 *
+			 * @designer Joshua Campbell
+			 * @author   Joshua Campbell
+			 */
+			function LoadMapDialog() {
+				$("#loadmap").show();
+				$("#loadmap").dialog({ 
+					modal: true, 
+					width: 800, 
+					height: 520,
+					position: [440,80]
+				});
+			}
+			
+			/*
+			 * Loads a map from the contents of a map file for editing.
+			 *
+			 * @designer Joshua Campbell
+			 * @author   Joshua Campbell
+			 */
+			function LoadMapData() {
+				var mapstring = $("#load-map-data").val();
+				var mapdata = new Array();
+				mapdata = mapstring.split("\n");
+				var levelID = mapdata[0];
+				var sizeline = new Array();
+				sizeline = mapdata[1].split(" ");
+				var mapwidth = parseInt(sizeline[0]);
+				var mapheight = parseInt(sizeline[1]);
+				
+				var map = "";
+				
+				for (var y = 0; y < mapheight; y++) {
+					var line = mapdata[y + 3].split(" ");
+					map += "<tr>";
+					for (var x = 0; x < mapwidth; x++) {
+						map += "<td id=\"tile-" + x + "-" + y + "\"><a href=\"javascript:void()\" onclick=\"ChangeTileController('" + x + "-" + y + "')\">";
+						var tile = line[x];
+						switch(tile) {
+							case '00':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/00_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"00\"></a></td>";
+							break;
+							case '01':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/01_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"01\"></a></td>";
+							break;
+							case '02':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/02_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"02\"></a></td>";
+							break;
+							case '03':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/03_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"03\"></a></td>";
+							break;
+							case '04':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/04_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"04\"></a></td>";
+							break;
+							case '05':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/05_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"05\"></a></td>";
+							break;
+							case '06':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/06_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"06\"></a></td>";
+							break;
+							case '07':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/07_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"07\"></a></td>";
+							break;
+							case '08':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/08_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"08\"></a></td>";
+							break;
+							case '09':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/09_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"09\"></a></td>";
+							break;
+							case '10':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/10_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"10\"></a></td>";
+							break;
+							case '11':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/11_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"11\"></a></td>";
+							break;
+							case '12':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/12_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"12\"></a></td>";
+							break;
+							case '13':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/13_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"13\"></a></td>";
+							break;
+							case '14':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/14_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"14\"></a></td>";
+							break;
+							case '15':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/15_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"15\"></a></td>";
+							break;
+							case '16':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/16_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"16\"></a></td>";
+							break;
+							case '17':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/17_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"17\"></a></td>";
+							break;
+							case '18':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/18_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"18\"></a></td>";
+							break;
+							case '19':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/19_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"19\"></a></td>";
+							break;
+							case '20':
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/20_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"20\"></a></td>";
+							break;
+							default:
+								map += "<img id=\"img-" + x + "-" + y + "\" src=\"tiles/00_40px.bmp\" />";
+								map += "<input type=\"hidden\" id=\"tiletype-" + x + "-" + y + "\" value=\"00\"></a></td>";
+							break;
+						}
+						
+					}
+					map += "</tr>";
+				}
+				
+				$("#maptable").html(map);
+				$("#level_id").val(levelID);
+				$("#map_width").val(mapwidth);
+				$("#map_height").val(mapheight);
+				
+				$("#hidden-level").val(levelID);
+				$("#hidden-width").val(mapwidth);
+				$("#hidden-height").val(mapheight);
+				
+				ZoomMap();
+			}
+			
+			/*
+			 * Zooms the map.
+			 *
+			 * @designer Joshua Campbell
+			 * @author   Joshua Campbell
+			 */
+			$(document).ready(function() {
+				$("#Zoom-Selector").change(function() {
+					ZoomMap();
+				});
+			});
+			
+			/*
+			 * Zooms in the map for a wider field of view.
+			 *
+			 * @designer Joshua Campbell
+			 * @author   Joshua Campbell
+			 */
+			function ZoomMap() {
+				var mapwidth = $("#hidden-width").val();
+				var mapheight = $("#hidden-height").val();
+				switch(parseInt($("#Zoom-Selector").val())) {
+					case 100:
+						for (var y = 0; y < mapheight; y++) {
+							for (var x = 0; x < mapwidth; x++) {
+								var tiletype = '#img-' + x + '-' + y;
+								$(tiletype).width('40px');
+								$(tiletype).height('40px');
+							}
+						}
+					break;
+					case 50:
+						for (var y = 0; y < mapheight; y++) {
+							for (var x = 0; x < mapwidth; x++) {
+								var tiletype = '#img-' + x + '-' + y;
+								$(tiletype).width('20px');
+								$(tiletype).height('20px');
+							}
+						}
+					break;
+					case 25:
+						for (var y = 0; y < mapheight; y++) {
+							for (var x = 0; x < mapwidth; x++) {
+								var tiletype = '#img-' + x + '-' + y;
+								$(tiletype).width('10px');
+								$(tiletype).height('10px');
+							}
+						}
+					break;
+				}
+			}
+			
+			/*
+			 * Draws a box of tiles.
+			 *
+			 * @designer Joshua Campbell
+			 * @author   Joshua Campbell
+			 */
+			function DrawBox(id) {
+				var linecurclick = parseInt($("#line-curclick").val());
+				linecurclick = linecurclick + 1;
+				$("#line-curclick").val(linecurclick);
+				
+				if (linecurclick == 1) {
+					$("#linepos-1").val(id);
+				} else if (linecurclick == 2) {
+					$("#linepos-2").val(id);
+					var x = 0;
+					var y = 1;
+					var pos1 = $("#linepos-1").val().split("-");
+					var pos2 = $("#linepos-2").val().split("-");
+					
+					var xdist = Math.abs(pos2[x] - pos1[x]);
+					var ydist = Math.abs(pos2[y] - pos1[y]);
+					
+					$("#line-curclick").val(0);
+					
+					if (pos1[x] < pos2[x]) {
+						for (var xpos = pos1[x]; xpos <= pos2[x]; xpos++) {
+							if (pos1[y] < pos2[y]) {
+								for (var ypos = pos1[y]; ypos <= pos2[y]; ypos++) {
+									var newid = "" + xpos + "-" + ypos;
+									ChangeTile(newid);
+								}
+							} else {
+								for (var ypos = pos2[y]; ypos <= pos1[y]; ypos++) {
+									var newid = "" + xpos + "-" + ypos;
+									ChangeTile(newid);
+								}
+							}
+						}
+					} else {
+						for (var xpos = pos2[x]; xpos <= pos1[x]; xpos++) {
+							if (pos1[y] < pos2[y]) {
+								for (var ypos = pos1[y]; ypos <= pos2[y]; ypos++) {
+									var newid = "" + xpos + "-" + ypos;
+									ChangeTile(newid);
+								}
+							} else {
+								for (var ypos = pos2[y]; ypos <= pos1[y]; ypos++) {
+									var newid = "" + xpos + "-" + ypos;
+									ChangeTile(newid);
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			/*
+			 * Sets the pointer drawing type (ie single or box).
+			 *
+			 * @designer Joshua Campbell
+			 * @author   Joshua Campbell
+			 */
+			function SetPointer(TileTool) {
+				$("#Tool-SingleTile").css('border', '1px solid #d3d3d3');
+				$("#Tool-Boxes").css('border', '1px solid #d3d3d3');
+				
+				$("#Tool-SingleTile").css('padding', '3px');
+				$("#Tool-Boxes").css('padding', '3px');
+				switch(TileTool) {
+					case 0:
+						$("#Tool-SingleTile").css('border', '3px solid Green');
+						$("#selected-tiletool").attr('src', 'tools/point.png');
+						$("#CurrentToolType").val(0);
+						
+						$("#linepos-1").val("0-0");
+						$("#linepos-2").val("0-0");
+						$("#line-curclick").val("0");
+					break;
+					case 1:
+						$("#Tool-Boxes").css('border', '3px solid Green');
+						$("#selected-tiletool").attr('src', 'tools/block.png');
+						$("#CurrentToolType").val(1);
+					break;
+					default:
+						$("#Tool-SingleTile").css('border', '3px solid Green');
+						$("#selected-tiletool").attr('src', 'tools/point.png');
+						$("#CurrentToolType").val(0);
+						
+						$("#linepos-1").val("0-0");
+						$("#linepos-2").val("0-0");
+						$("#line-curclick").val("0");
+					break;
+				}
+			}
+		</script>
+		
+		<!-- The left column -->
+		<!--<div style="width: 250px; padding-left: 20px; height: 300px;">
+			
+		</div>-->
+		
+		<!-- Where the map is loaded -->
+		<div style="width: 1000; 
+					height: 700; 
+					margin-top: 10px; 
+					margin-left: 340px; 
+					margin-bottom: 100px; 
+					margin-right: 50px; 
+					overflow:scroll; 
+					background-color: White;">
+			<div id="map">
+				<table id="maptable" cellspacing="0" style="margin: 20px;">
+					
+				</table>
+			</div>
+		</div>
+		<div style="min-width: 50px; float: right; margin-left: 100px;"></div>
+		<br/>
+		<br/>
+		<input type="hidden" id="hidden-width" value="0" />
+		<input type="hidden" id="hidden-height" value="0" />
+		<input type="hidden" id="hidden-level" value="0" />
+		
+		<!-- Tile tool box dialog -->
+		<div id="toolbox" title="Tool Box" style="display: none;">
+			<table>
+				<tr>
+					<td style="width: 83px;">Current: </td>
+					<td style="border: 1px solid Black;"><img id="selected-tool" src="tiles/tile_blank.bmp" /></td>
+					<td style="border: 1px solid Black;"><img id="selected-tiletool" src="tools/point.png" /></td>
+				</tr>
+			</table>
+			<table id="tools">
+				<tr>
+					<td><a href="javascript:void()" onclick="SetTool('00')"><img src="tiles/00_40px.bmp" /></a></td>
+					<td><a href="javascript:void()" onclick="SetTool('01')"><img src="tiles/01_40px.bmp" /></a></td>
+					<td><a href="javascript:void()" onclick="SetTool('02')"><img src="tiles/02_40px.bmp" /></a></td>
+					<td><a href="javascript:void()" onclick="SetTool('03')"><img src="tiles/03_40px.bmp" /></a></td>
+					<td><a href="javascript:void()" onclick="SetTool('04')"><img src="tiles/04_40px.bmp" /></a></td>
+				</tr>
+				<tr>
+					<td><a href="javascript:void()" onclick="SetTool('05')"><img src="tiles/05_40px.bmp" /></a></td>
+					<td><a href="javascript:void()" onclick="SetTool('06')"><img src="tiles/06_40px.bmp" /></a></td>
+					<td><a href="javascript:void()" onclick="SetTool('07')"><img src="tiles/07_40px.bmp" /></a></td>
+					<td><a href="javascript:void()" onclick="SetTool('08')"><img src="tiles/08_40px.bmp" /></a></td>
+					<td><a href="javascript:void()" onclick="SetTool('09')"><img src="tiles/09_40px.bmp" /></a></td>
+				</tr>
+				<tr>
+					<td><a href="javascript:void()" onclick="SetTool('10')"><img src="tiles/10_40px.bmp" /></a></td>
+					<td><a href="javascript:void()" onclick="SetTool('11')"><img src="tiles/11_40px.bmp" /></a></td>
+					<td><a href="javascript:void()" onclick="SetTool('12')"><img src="tiles/12_40px.bmp" /></a></td>
+					<td><a href="javascript:void()" onclick="SetTool('13')"><img src="tiles/13_40px.bmp" /></a></td>
+					<td><a href="javascript:void()" onclick="SetTool('14')"><img src="tiles/14_40px.bmp" /></a></td>
+				</tr>
+				<tr>
+					<td><a href="javascript:void()" onclick="SetTool('15')"><img src="tiles/15_40px.bmp" /></a></td>
+					<td><a href="javascript:void()" onclick="SetTool('16')"><img src="tiles/16_40px.bmp" /></a></td>
+					<td><a href="javascript:void()" onclick="SetTool('17')"><img src="tiles/17_40px.bmp" /></a></td>
+					<td><a href="javascript:void()" onclick="SetTool('18')"><img src="tiles/18_40px.bmp" /></a></td>
+					<td><a href="javascript:void()" onclick="SetTool('19')"><img src="tiles/19_40px.bmp" /></a></td>
+				</tr>
+				<tr>
+					<td><a href="javascript:void()" onclick="SetTool('20')"><img src="tiles/20_40px.bmp" /></a></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<!--<tr>
+					<td><a href="javascript:void()" onclick="SetTool('05')"><img src="" /></a></td>
+					<td><a href="javascript:void()" onclick="SetTool('06')"><img src="" /></a></td>
+					<td><a href="javascript:void()" onclick="SetTool('07')"><img src="" /></a></td>
+					<td><a href="javascript:void()" onclick="SetTool('08')"><img src="" /></a></td>
+					<td><a href="javascript:void()" onclick="SetTool('09')"><img src="" /></a></td>
+				</tr>-->
+			</table>
+			<br/>
+			<input type="button" value="Fill Map" onclick="FillMap()" />
+			<br/><br/>
+			<!--<label for="drawBox">Draw Boxes? </label><input id="drawBox" name="drawBox" type="checkbox" />
+			<br/>-->
+			<input id="Tool-SingleTile" type="button" value="Single Tile" onclick="SetPointer(0)" style="border: 3px solid Green; padding: 3px;"/>&nbsp;&nbsp;
+			<input id="Tool-Boxes" type="button" value="Boxes" onclick="SetPointer(1)" style="border: 1px solid #d3d3d3; padding: 3px;"/>
+			<input id="CurrentToolType" type="hidden" value="0" />
+			<input id="linepos-1" type="hidden" value="0-0" />
+			<input id="linepos-2" type="hidden" value="0-0" />
+			<input id="line-curclick" type="hidden" value="0" />
+		</div>
+		
+		<!-- Map controller dialog box -->
+		<div id="MapControllerDialog" title="Map Editor" style="display: none;">
+			<table>
+				<tr>
+					<td><label>Level ID: </label></td>
+					<td><input type="text" id="level_id" /></td>
+				</tr>
+				<tr>
+					<td><label>Width: </label></td>
+					<td><input type="text" id="map_width" /></td>
+				</tr>
+				<tr>
+					<td><label>Height: </label></td>
+					<td><input type="text" id="map_height" /></td>
+				</tr>
+			</table>
+			<br/>
+			<input type="button" value="CreateMap" onclick="GenerateMap()" />&nbsp;<input type="button" value="Get Map Code" onclick="GetMap();" />
+			<br/><br/>
+			<input type="button" value="Load Map" onclick="LoadMapDialog()" />
+			<br/><br/>
+			<input type="button" value="Tool Box" onclick="OpenToolbox()" />
+			<label>Zoom: </label>
+			<select id="Zoom-Selector">
+				<option value="100">100%</option>
+				<option value="50">50%</option>
+				<option value="25">25%</option>
+			</select>
+			<input type="hidden" id="current-tool" value="00" />
+			<br/>
+		</div>
+		
+		<!-- Map Data Dialog -->
+		<div id="mapdata" title="Map Data" style="display: none;">
+			<textarea style="width: 750px; height: 520px;">
+			</textarea>
+		</div>
+		
+		<!-- Load Map Dialog -->
+		<div id="loadmap" title="Load Map" style="display: none;">
+			<textarea id="load-map-data" style="width: 750px; height: 400px;">
+			</textarea>
+			<br/>
+			<input type="button" value="Load" onclick="LoadMapData()" style="float: right; margin-right: 14px;" />
+		</div>
+	</body>
+</html>

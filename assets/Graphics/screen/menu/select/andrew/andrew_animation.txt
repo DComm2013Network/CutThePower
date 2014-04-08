@@ -1,0 +1,10 @@
+1
+
+andrew 4 50 -1 -1
+assets/Graphics/screen/menu/select/andrew/andrew_1.png
+assets/Graphics/screen/menu/select/andrew/andrew_1.png
+assets/Graphics/screen/menu/select/andrew/andrew_2.png
+assets/Graphics/screen/menu/select/andrew/andrew_3.png
+
+1 
+hover 0

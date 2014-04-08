@@ -1,0 +1,9 @@
+1
+
+vincent 3 50 -1 -1                      
+assets/Graphics/screen/menu/select/vincent/vincent_1.png
+assets/Graphics/screen/menu/select/vincent/vincent_1.png
+assets/Graphics/screen/menu/select/vincent/vincent_2.png
+
+1 
+hover 0

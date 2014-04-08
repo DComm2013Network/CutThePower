@@ -1,0 +1,27 @@
+4
+
+down 4 150 -1 1
+assets/Graphics/player/p0/d1.png
+assets/Graphics/player/p0/d2.png
+assets/Graphics/player/p0/d3.png
+assets/Graphics/player/p0/d4.png
+
+up 4 150 -1 1
+assets/Graphics/player/p0/u1.png
+assets/Graphics/player/p0/u2.png
+assets/Graphics/player/p0/u3.png
+assets/Graphics/player/p0/u4.png
+
+left 5 150 -1 1
+assets/Graphics/player/p0/l1.png
+assets/Graphics/player/p0/l2.png
+assets/Graphics/player/p0/l3.png
+assets/Graphics/player/p0/l4.png
+assets/Graphics/player/p0/l3.png
+
+right 5 150 -1 1
+assets/Graphics/player/p0/r1.png
+assets/Graphics/player/p0/r2.png
+assets/Graphics/player/p0/r3.png
+assets/Graphics/player/p0/r4.png
+assets/Graphics/player/p0/r3.png

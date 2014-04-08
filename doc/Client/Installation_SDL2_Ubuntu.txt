@@ -1,0 +1,99 @@
+To Install SDL on UBUNTU:
+
+download SDL2-2.0.1.zip at
+http://libsdl.org/download-2.0.php
+
+unzip the folder.
+
+Open up the terminal as root user.
+
+navigate to the inside of the SDL2-2.0.1 folder
+
+type:
+./configure
+
+wait for the configure to finish.
+
+type:
+make
+
+wait for the make to finish
+
+type:
+make install
+
+After the install is done SDL2 should be installed on your computer.
+OR
+Read the INSTALL.txt file after downloading SDL 2.0.
+
+To install SDL2_net: (For Networking)
+download  SDL2_net-2.0.0.zip: http://www.libsdl.org/projects/SDL_net/
+
+unzip the folder.
+
+Open up the terminal as root user.
+
+navigate to the inside of the SDL2-2.0.1 folder
+
+type:
+./configure
+
+wait for the configure to finish.
+
+type:
+make
+
+wait for the make to finish
+
+type:
+make install
+
+After the install is done SDL2 should be installed on your computer.
+OR
+Read the INSTALL.txt file after downloading SDL 2.0.
+
+To install SDL2_mixer (FOR SOUND) 
+download SDL2_mixer-2.0.0.zip: http://www.libsdl.org/projects/SDL_mixer/
+unzip the folder.
+
+Open up the terminal as root user.
+
+navigate to the inside of the SDL2-2.0.1 folder
+
+type:
+./configure
+
+wait for the configure to finish.
+
+type:
+make
+
+wait for the make to finish
+
+type:
+make install
+
+After the install is done SDL2 should be installed on your computer.
+OR
+Read the INSTALL.txt file after downloading SDL 2.0.
+
+
+http://www.libsdl.org/projects/SDL_net/
+
+
+Troubleshooting:
+
+if you get the following error
+error while loading shared libraries: libSDL2-2.0.so.0: cannot open shared object file: No such file or directory
+make: *** [run] Error 127
+
+run this:
+sudo apt-get install ia32-libs
+
+try to run the sdl application once again.
+
+If you get the error about no sound
+sudo apt-get install libpulse-dev libasound2-dev
+install and recompile/reinstall SDL2
+
+

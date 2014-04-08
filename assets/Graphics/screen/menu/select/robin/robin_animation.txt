@@ -1,0 +1,10 @@
+1
+
+robin 4 50 -1 -1                       
+assets/Graphics/screen/menu/select/robin/robin_1.png
+assets/Graphics/screen/menu/select/robin/robin_1.png
+assets/Graphics/screen/menu/select/robin/robin_2.png
+assets/Graphics/screen/menu/select/robin/robin_3.png
+
+1 
+hover 0

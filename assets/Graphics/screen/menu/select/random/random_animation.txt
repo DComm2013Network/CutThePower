@@ -1,0 +1,12 @@
+1
+
+random 5 100 -1 -1                        
+assets/Graphics/screen/menu/select/random/random_1.png
+assets/Graphics/screen/menu/select/random/random_1.png
+assets/Graphics/screen/menu/select/random/random_2.png
+assets/Graphics/screen/menu/select/random/random_3.png
+assets/Graphics/screen/menu/select/random/random_2.png
+
+1 
+hover 0
+

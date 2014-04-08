@@ -1,0 +1,38 @@
+4
+
+up 7 30 -1 1
+assets/Graphics/player/player_josh/josh_up1.png
+assets/Graphics/player/player_josh/josh_up2.png
+assets/Graphics/player/player_josh/josh_up3.png
+assets/Graphics/player/player_josh/josh_up4.png
+assets/Graphics/player/player_josh/josh_up5.png
+assets/Graphics/player/player_josh/josh_up6.png
+assets/Graphics/player/player_josh/josh_up7.png
+
+down 7 30 -1 1
+assets/Graphics/player/player_josh/josh_down1.png
+assets/Graphics/player/player_josh/josh_down2.png
+assets/Graphics/player/player_josh/josh_down3.png
+assets/Graphics/player/player_josh/josh_down4.png
+assets/Graphics/player/player_josh/josh_down5.png
+assets/Graphics/player/player_josh/josh_down6.png
+assets/Graphics/player/player_josh/josh_down7.png
+
+left 7 30 -1 1
+assets/Graphics/player/player_josh/josh_left1.png
+assets/Graphics/player/player_josh/josh_left2.png
+assets/Graphics/player/player_josh/josh_left3.png
+assets/Graphics/player/player_josh/josh_left4.png
+assets/Graphics/player/player_josh/josh_left5.png
+assets/Graphics/player/player_josh/josh_left6.png
+assets/Graphics/player/player_josh/josh_left7.png
+
+right 7 30 -1 1
+assets/Graphics/player/player_josh/josh_right1.png
+assets/Graphics/player/player_josh/josh_right2.png
+assets/Graphics/player/player_josh/josh_right3.png
+assets/Graphics/player/player_josh/josh_right4.png
+assets/Graphics/player/player_josh/josh_right5.png
+assets/Graphics/player/player_josh/josh_right6.png
+assets/Graphics/player/player_josh/josh_right7.png
+

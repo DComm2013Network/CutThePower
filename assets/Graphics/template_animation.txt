@@ -1,0 +1,15 @@
+ANIMATION_COUNT
+
+ANIMATION_NAME FRAME_COUNT MILLISECONDS_BETWEEN_FRAMES SOUND_EFFECT(-1_IF_NONE) LOOP(-1/1)
+ASSET_FILENAME
+ASSET_FILENAME
+ASSET_FILENAME
+
+EXAMPLE FILE:
+1
+
+right 3 20 -1 -1
+assets/Graphics/player/robber/rob_right1.png
+assets/Graphics/player/robber/rob_right2.png
+assets/Graphics/player/robber/rob_right3.png
+
