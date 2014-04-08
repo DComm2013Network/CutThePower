@@ -45,6 +45,7 @@ SDL_Surface *ibeam;
  * @designer Mat Siwoski
  *
  * @author Mat Siwoski
+ * @date Feb 14, 2024
  */
 void render_player_system(World& world, SDL_Surface* surface, FowComponent *fow) {
 	
@@ -226,6 +227,7 @@ void render_opponent_players(World& world, SDL_Surface *surface, FowComponent *f
  * @designer Jordan Marling
  *
  * @author Jordan Marling
+ * @date March 12s, 2024
  */
 void render_menu_system(World *world, SDL_Surface *surface) {
 	
@@ -284,7 +286,14 @@ void render_menu_system(World *world, SDL_Surface *surface) {
 	}
 }
 
-
+/**
+ * Render the Ibeam for chat.
+ *
+ * @designer Jordan Marling
+ *
+ * @author Mat Siwoski
+ * @date March 7, 2024
+ */
 void init_render_player_system() {
 	if ((ibeam = IMG_Load("assets/Graphics/screen/menu/ibeam.png")) == 0) {
 		printf("Error loading ibeam image.\n");

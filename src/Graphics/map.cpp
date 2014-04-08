@@ -33,6 +33,7 @@ int level;                /**< The current floor. */
  * Revisions:
  *     -# March 10th - Jordan Marling: Implemented reading in the file correctly for the Stairs, 
  *    able to now set the location of the stairs & where the stairs will push the player to.
+ * 	   - March  24th - Tim Kim: Corrected the code to free
  *loading
  * @param[out] world      The world struct in which to store the map.
  * @param[in]  file_map   The pathway for the map.
@@ -41,8 +42,10 @@ int level;                /**< The current floor. */
  * 
  * @designer Jordan Marling
  * @designer Mat Siwoski
+ * 
  * @author Mat Siwoski
- *
+ * @author Tim Kim
+ * 
  * @date February 26, 2014
  */
 
@@ -402,6 +405,7 @@ void cleanup_map() {
  *
  * @designer Mat Siwoski
  * @designer Jordan Marling
+ * @designer Robin Hsieh
  * @author Mat Siwoski
  * @author Jordan Marling
  *
