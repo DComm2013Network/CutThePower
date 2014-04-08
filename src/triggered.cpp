@@ -11,7 +11,7 @@
 #include "Network/Packets.h"
 #include "Graphics/map.h"
 
-#define DEBUG_SKINS     1 //1 = on, 0 = off
+#define DEBUG_SKINS     0 //1 = on, 0 = off
 #define ALT_SKIN_CHANCE 3 //chance to roll an alternate skin
 
 extern bool running;
