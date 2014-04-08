@@ -936,8 +936,8 @@ bool menu_click(World *world, unsigned int entity) {
 			}
 		}
 
-		printf("Username: %s\n", username);
-		printf("Server IP: %s\n", serverip);
+		//printf("Username: %s\n", username);
+		//printf("Server IP: %s\n", serverip);
 		
 		#if DISPLAY_CUTSCENES 
 		
