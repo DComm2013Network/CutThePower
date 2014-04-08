@@ -166,7 +166,7 @@ void rebuild_floor(World* world, int targl)
     int topfloor = 0;
     for (int i = 0; i < MAX_OBJECTIVES; i ++)
     {
-        if(objective_table[i].obj_state != OBJECTIVE_NONE)
+        if((objective_table[i].obj_state == OBJECTIVE_UNCAP) || (objective_table[i].obj_state == OBJECTIVE_CAP))
         {
             num_objectives++;
         }

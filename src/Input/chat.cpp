@@ -1,4 +1,13 @@
+/** @ingroup Input */
+/*@{*/
 
+/**
+ * @date 2014/02/18
+ *
+ * 
+ * @file chat.cpp
+ */
+/*@}*/
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -15,6 +24,14 @@ int start_text = 0;
 int end_text = 0;
 SDL_Surface *chat_surface;
 
+/**
+ * Initializes the chat surface that is drawn on.
+ *
+ *
+ * @designer Jordan Marling
+ * @author Jordan Marling
+ *
+ */
 void init_chat() {
 	//masking
 	Uint32 rmask, gmask, bmask, amask;
@@ -28,6 +45,17 @@ void init_chat() {
 	
 }
 
+/**
+ * Adds a line to the circular buffer of text to be drawn to the screen.
+ *
+ *
+ * @param[in]		text The text that is drawn to the screen
+ * @param[in] 		font_type The type of font that is drawn
+ *
+ * @designer Jordan Marling
+ * @author Jordan Marling
+ *
+ */
 void chat_add_line(const char *text, int font_type) {
 		
 	if(text == NULL) {
@@ -53,6 +81,15 @@ void chat_add_line(const char *text, int font_type) {
 	}
 }
 
+/**
+ * Updates the surface with the text currently in the circular buffer.
+ *
+ *
+ *
+ * @designer Jordan Marling
+ * @author Jordan Marling
+ *
+ */
 void chat_update() {
 	
 	int i, index;
@@ -132,6 +169,15 @@ void chat_update() {
 	}
 }
 
+/**
+ * Renders the chat to the main surface.
+ *
+ * @param[in, out]	surface The surface to draw the text to.
+ *
+ * @designer Jordan Marling
+ * @author Jordan Marling
+ *
+ */
 void chat_render(SDL_Surface *surface) {
 	
 	SDL_Rect rect;
@@ -147,7 +193,16 @@ void chat_render(SDL_Surface *surface) {
 	SDL_BlitSurface(chat_surface, NULL, surface, &rect);
 	
 }
-
+/**
+ * Creates the text field for the user to type text into the chat.
+ *
+ *
+ * @param[in, out]	world 	Pointer to WORLD (structure containing "world" information, entities/components)
+ *
+ * @designer Jordan Marling
+ * @author Jordan Marling
+ *
+ */
 unsigned int create_chat(World *world) {
 	
 	unsigned int entity = create_entity(world, COMPONENT_MENU_ITEM | COMPONENT_RENDER_PLAYER | COMPONENT_POSITION | COMPONENT_TEXTFIELD | COMPONENT_MOUSE);
