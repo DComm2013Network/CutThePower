@@ -100,6 +100,7 @@
 #define KONST_ALT1		34
 #define ABHISHEK_ALT1	35
 #define GERMAN_ALT1		36
+#define ALBERT  		37
 // Game Status Definitions
 
 // Game Status Definitions

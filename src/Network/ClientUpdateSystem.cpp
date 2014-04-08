@@ -510,6 +510,9 @@ void setup_character_animation(World * world, int character, int entity)
 		case GERMAN_ALT1:
 			 load_animation("assets/Graphics/player/german_fisherman/animation.txt", world, entity);
 		break;
+		case ALBERT:
+			 load_animation("assets/Graphics/player/albert/animation.txt", world, entity);
+		break;
 		default:
 		load_animation("assets/Graphics/player/p0/rob_animation.txt", world, entity);
 	}
