@@ -4,8 +4,6 @@
 /**
  * @date 2014/02/18
  *
- * @todo Implement keybindings
- * @todo Implement textfield editing and add more useable characters
  * 
  * @file keyinputsystem.cpp
  */

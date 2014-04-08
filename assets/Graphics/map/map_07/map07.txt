@@ -215,11 +215,11 @@ object 9.5 1 180 53 assets/Graphics/objects/png_object/object_animation.txt kitc
 object 19 0.5 50 40 assets/Graphics/objects/png_object/object_animation.txt picture_50x40
 object 27 0.5 60 23 assets/Graphics/objects/png_object/object_animation.txt pictures_60x23
 
-object 1 1.5 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 4 1.5 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 1 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 4 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 33 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 36 35 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 33 1.5 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
-object 48 1.5 20 45 assets/Graphics/objects/png_object/object_animation.txt plant_20x45
+object 1 1.5 25 50 assets/Graphics/objects/png_object/object_animation.txt plant_25x50
+object 4 1.5 25 50 assets/Graphics/objects/png_object/object_animation.txt plant_25x50
+object 1 35 25 50 assets/Graphics/objects/png_object/object_animation.txt plant_25x50
+object 4 35 25 50 assets/Graphics/objects/png_object/object_animation.txt plant_25x50
+object 33 35 25 50 assets/Graphics/objects/png_object/object_animation.txt plant_25x50
+object 36 35 25 50 assets/Graphics/objects/png_object/object_animation.txt plant_25x50
+object 33 1.5 25 50 assets/Graphics/objects/png_object/object_animation.txt plant_25x50
+object 48 1.5 25 50 assets/Graphics/objects/png_object/object_animation.txt plant_25x50

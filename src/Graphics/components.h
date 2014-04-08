@@ -13,6 +13,9 @@
 
 #include "../components.h"
 
+/**
+ * Stores each of the animation ID's. This is used for the triggering events
+ */
 typedef enum {
 	
 	ANIMATION_LOADING_SCREEN = 1,
@@ -20,6 +23,9 @@ typedef enum {
 	
 } AnimationID;
 
+/**
+ * Stores each of the cutscene ID's. This is used for the triggering events
+ */
 typedef enum {
 	
 	CUTSCENE_VAN_INTRO = 1,
@@ -40,6 +46,13 @@ typedef struct{
 	int height;                 /**< The player's width in pixels. */
 } RenderPlayerComponent;
 
+/**
+ * Contains an individual animation for an animation component.
+ *
+ * @enum Components Contains the information for a single animation.
+ *
+ * @struct Animation
+ */
 typedef struct {
 	
 	char *name; //name of animation
@@ -49,6 +62,7 @@ typedef struct {
 	unsigned int ms_to_skip; //milliseconds in between surface changes
 	unsigned int ms_last; //current amount of frames between surface change
 	unsigned int sound_effect; //sound effect to be played
+	bool sound_enabled; //if the sound effect is enabled or not.
 	int loop; //-1 is no loop, 1 is loop
 	
 } Animation;
@@ -77,6 +91,13 @@ typedef struct {
 } AnimationComponent;
 
 
+/**
+ * Contains an individual animation for a part in the sequence of a cutscene.
+ *
+ * @enum Components Contains the information for a single part of a cutscene.
+ *
+ * @struct CutsceneSection
+ */
 typedef struct {
 	
 	float x_end;
@@ -87,6 +108,13 @@ typedef struct {
 	
 } CutsceneSection;
 
+/**
+ * Contains cutscene information for a single entity.
+ *
+ * @enum Components Contains the information for a single entities cutscene.
+ *
+ * @struct CutsceneComponent
+ */
 typedef struct {
 	
 	CutsceneSection *sections;
