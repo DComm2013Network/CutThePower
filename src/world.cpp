@@ -161,6 +161,8 @@ unsigned int create_player(World* world, int x, int y, bool controllable, int co
 	player.character = status_update->characters[playerNo];
 	player.readyStatus = status_update->readystatus[playerNo];
 	memcpy(player.name, status_update->otherPlayers_name[playerNo], MAX_NAME);
+	player.tilez = 0;
+	player.onTile = 0;
 	
 	powerup.captureTime = 0;
 	powerup.duration = 0;

@@ -325,9 +325,3 @@ int KeyMapInitArray(const char *file, int **command_array)
 	
 	return SDL_GetScancodeFromName(character);
  }
-
-void wait(World* world, const unsigned int entity)
-{
-	sleep(5);
-	destroy_entity(world, entity);
-}

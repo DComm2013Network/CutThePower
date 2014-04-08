@@ -97,6 +97,9 @@
 #define SHANE_ALT1		31
 #define ROBIN_ALT1		32
 #define VINCENT_ALT1	33
+#define KONST_ALT1		34
+#define ABHISHEK_ALT1	35
+#define GERMAN_ALT1		36
 // Game Status Definitions
 
 // Game Status Definitions

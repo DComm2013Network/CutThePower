@@ -196,6 +196,18 @@ bool menu_click(World *world, unsigned int entity) {
 		
 		destroy_menu(world);
 		character = ABHISHEK;
+		alternateSkin = rand() % (ALT_SKIN_CHANCE + 1);
+		#if DEBUG_SKINS
+		printf("Roll: %u\n", alternateSkin);
+		#endif
+		if (alternateSkin == ALT_SKIN_CHANCE) {
+			character = ABHISHEK_ALT1;
+			stop_music();
+			altSong = load_music("assets/Sound/players/abhishek_ranger/rangerTrack.wav");
+			if (altSong != 0) {
+				play_music(altSong);
+			}
+		}
 		create_setup_menu(world);
 		
 	}
@@ -305,6 +317,18 @@ bool menu_click(World *world, unsigned int entity) {
 		
 		destroy_menu(world);
 		character = GERMAN;
+		alternateSkin = rand() % (ALT_SKIN_CHANCE + 1);
+		#if DEBUG_SKINS
+		printf("Roll: %u\n", alternateSkin);
+		#endif
+		if (alternateSkin == ALT_SKIN_CHANCE) {
+			character = GERMAN_ALT1;
+			stop_music();
+			altSong = load_music("assets/Sound/players/german_fisherman/fishermanTrack.wav");
+			if (altSong != 0) {
+				play_music(altSong);
+			}
+		}
 		create_setup_menu(world);
 		
 	}
@@ -369,6 +393,18 @@ bool menu_click(World *world, unsigned int entity) {
 		
 		destroy_menu(world);
 		character = KONST;
+		alternateSkin = rand() % (ALT_SKIN_CHANCE + 1);
+		#if DEBUG_SKINS
+		printf("Roll: %u\n", alternateSkin);
+		#endif
+		if (alternateSkin == ALT_SKIN_CHANCE) {
+			character = KONST_ALT1;
+			stop_music();
+			altSong = load_music("assets/Sound/players/konst_box/boxTrack.wav");
+			if (altSong != 0) {
+				play_music(altSong);
+			}
+		}
 		create_setup_menu(world);
 		
 	}
@@ -508,7 +544,7 @@ bool menu_click(World *world, unsigned int entity) {
 		
 		altSong = 0;
 		destroy_menu(world);
-		character = rand() % 34;
+		character = rand() % 37;
 		switch(character) {
 			case JOSH_ALT1:
 				stop_music();
@@ -611,6 +647,27 @@ bool menu_click(World *world, unsigned int entity) {
 			case VINCENT_ALT1:
 				stop_music();
 				altSong = load_music("assets/Sound/players/vincent_wizard/wizardTrack.wav");
+				if (altSong != 0) { 
+					play_music(altSong);
+				}
+			break;
+			case KONST_ALT1:
+				stop_music();
+				altSong = load_music("assets/Sound/players/konst_box/boxTrack.wav");
+				if (altSong != 0) { 
+					play_music(altSong);
+				}
+			break;
+			case ABHISHEK_ALT1:
+				stop_music();
+				altSong = load_music("assets/Sound/players/abhishek_ranger/rangerTrack.wav");
+				if (altSong != 0) { 
+					play_music(altSong);
+				}
+			break;
+			case GERMAN_ALT1:
+				stop_music();
+				altSong = load_music("assets/Sound/players/german_fisherman/fishermanTrack.wav");
 				if (altSong != 0) { 
 					play_music(altSong);
 				}

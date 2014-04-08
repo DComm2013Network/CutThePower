@@ -15,6 +15,7 @@
 #include "network_systems.h"
 #include "../Input/chat.h"
 
+extern int textField;
 extern FowComponent *fow;
 extern unsigned int player_entity;
 extern int game_net_signalfd;     /**< An eventfd allowing the gameplay thread to request data from network router. */
@@ -172,7 +173,6 @@ void client_update_floor(World *world, void *packet)
 	world->position[player_entity].x		= floor_move->xPos;
 	world->position[player_entity].y		= floor_move->yPos;
 	rebuild_floor(world, floor_move->new_floor);
-
 	if(floor_move->new_floor == 0)
 	{
 		reset_fog_of_war(fow);
@@ -501,6 +501,15 @@ void setup_character_animation(World * world, int character, int entity)
 		case VINCENT_ALT1:
 			 load_animation("assets/Graphics/player/vincent_wizard/animation.txt", world, entity);
 		break;
+		case KONST_ALT1:
+			 load_animation("assets/Graphics/player/konst_box/animation.txt", world, entity);
+		break;
+		case ABHISHEK_ALT1:
+			 load_animation("assets/Graphics/player/abhishek_ranger/animation.txt", world, entity);
+		break;
+		case GERMAN_ALT1:
+			 load_animation("assets/Graphics/player/german_fisherman/animation.txt", world, entity);
+		break;
 		default:
 		load_animation("assets/Graphics/player/p0/rob_animation.txt", world, entity);
 	}
@@ -534,7 +543,6 @@ int client_update_info(World *world, void *packet)
 			world->player[i].playerNo						= client_info->clients_player_number;
 			memcpy(world->player[i].name, client_info->name, MAX_NAME);
 			player_table[client_info->clients_player_number] = i;	
-			world->player[i].tilez 							 = 0;
 		}
 	}
 

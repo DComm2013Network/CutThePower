@@ -69,10 +69,6 @@ void apply_deceleration_x(World* world, unsigned int entity, FPS fps) {
 	world->movement[entity].movX *= 1 - world->movement[entity].friction * ((double)GAME_SPEED / fps.getFPS());
 }
 
-void apply_ice_deceleration_x(World* world, unsigned int entity, float deceleration, FPS fps) {
-	world->movement[entity].movX *= 1 - deceleration * ((double)GAME_SPEED / fps.getFPS());
-}
-
 void apply_force_y(World* world, unsigned int entity, PositionComponent* temp, FPS fps) {
 	temp->y += world->movement[entity].movY * ((double)GAME_SPEED / fps.getFPS());
 }
@@ -85,11 +81,11 @@ void apply_deceleration_y(World* world, unsigned int entity, FPS fps) {
 	world->movement[entity].movY *= 1 - world->movement[entity].friction * ((double)GAME_SPEED / fps.getFPS());
 }
 
-void apply_ice_deceleration_y(World* world, unsigned int entity, float deceleration, FPS fps) {
-	world->movement[entity].movY *= 1 - deceleration * ((double)GAME_SPEED / fps.getFPS());
-}
 /* SPECIAL TILES */
-void add_force_acceleration_x(MovementComponent& movement, float magnitude, float dir, float friction) {
+void add_force_acceleration_x(World * world, MovementComponent& movement, float magnitude, float dir, float friction) {
+
+	world->movement[player_entity].maxSpeed = world->movement[player_entity].defMaxSpeed * 5.0;
+	world->player[player_entity].onTile = 1;
 
 	movement.movX += cos(dir * PI / 180) * magnitude;
 	movement.movY += sin(dir * PI / 180) * magnitude;
@@ -99,19 +95,6 @@ void add_force_acceleration_x(MovementComponent& movement, float magnitude, floa
 		float ty = movement.movY;
 		movement.movX *= 1 - friction;
 		movement.movY *= movement.maxSpeed / sqrt(pow(tx, 2) + pow(ty, 2));
-	}
-}
-/* SPECIAL TILES */
-void add_force_acceleration_y(MovementComponent& movement, float magnitude, float dir, float friction) {
-
-	movement.movX += cos(dir * PI / 180) * magnitude;
-	movement.movY += sin(dir * PI / 180) * magnitude;
-
-	if (sqrt(pow(movement.movX, 2) + pow(movement.movY, 2)) > movement.maxSpeed) {
-		float tx = movement.movX;
-		float ty = movement.movY;
-		movement.movX *= movement.maxSpeed / sqrt(pow(tx, 2) + pow(ty, 2));
-		movement.movY *= 1 - friction;
 	}
 }
 
@@ -125,37 +108,15 @@ void handle_x_collision(World* world, unsigned int entity, PositionComponent* te
 			remove_force_x(world, entity, temp, fps);
 			world->movement[entity].movX = 0;
 			break;
-			/* SPECIAL TILES*/
-		case COLLISION_BELTLEFT:
-			//add_force(movement, 0.47, 180);
-			add_force_acceleration_x(world->movement[entity], 2.0, 180, -0.000000000000000000001);
-			break;
-		case COLLISION_BELTRIGHT:
-			add_force(world, entity, 2.0, 0);
-			//add_force_acceleration_x(movement, 0.47, 0, -0.000000000000000000001);
-			break;
 		default:
 			break;
 		}
-			/*SPECIAL TILES*/
+
 	switch(tile_number) {
 		case COLLISION_WALL:
 			remove_force_x(world, entity, temp, fps);
 			world->movement[entity].movX = 0;
 			break;
-			/* SPECIAL TILES*/
-		case COLLISION_BELTRIGHT:
-			add_force(world, entity, 2.0, 0);
-			//add_force_acceleration_x(movement, 0.47, 0, -0.000000000000000000001);
-			break;
-		case COLLISION_BELTLEFT:
-			//add_force(movement, 0.47, 180);
-			add_force_acceleration_x(world->movement[entity], 2.0, 180, -0.000000000000000000001);
-			break;
-		case COLLISION_ICE:
-			apply_ice_deceleration_x(world, entity, 0.005, fps);
-			break;
-			/* SPECIAL TILES*/
 		default:
 			if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_CONTROLLABLE)) {
 				apply_deceleration_x(world, entity, fps);
@@ -180,17 +141,6 @@ void handle_y_collision(World* world, unsigned int entity, PositionComponent* te
 			remove_force_y(world, entity, temp, fps);
 			world->movement[entity].movY = 0;
 			break;
-			/* SPECIAL TILES */
-		case COLLISION_BELTDOWN:
-			add_force(world, entity, 0.90, 90);
-			break;
-		case COLLISION_BELTUP:
-			add_force(world, entity, 0.90, -90);
-			break;
-		case COLLISION_ICE:
-			apply_ice_deceleration_y(world, entity, 0.005, fps);
-			break;
-			/* SPECIAL TILES */
 		default:
 			if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_CONTROLLABLE)) {
 				apply_deceleration_y(world, entity, fps);
@@ -346,6 +296,16 @@ void handle_entity_collision(World* world, unsigned int entity, unsigned int ent
 		case COLLISION_PU_SPEEDDOWN:
 			powerup_speeddown(world, entity);
 		break;
+		case COLLISION_BELTRIGHT:
+			world->movement[player_entity].maxSpeed = world->movement[player_entity].defMaxSpeed * 5.0;
+			world->player[player_entity].onTile = 1;
+			add_force(world, entity, 5.0, 0);
+			break;
+		case COLLISION_BELTLEFT:
+			world->movement[player_entity].maxSpeed = world->movement[player_entity].defMaxSpeed * 5.0;
+			world->player[player_entity].onTile = 1;
+			add_force(world, entity, 20.0, 180);
+			break;
 	}
 		
 	if (IN_THIS_COMPONENT(world->mask[entity], COMPONENT_CONTROLLABLE) && world->controllable[entity].active) {
@@ -370,6 +330,13 @@ int manage_special_tiles(World * world, unsigned int entity)
 	if(IN_THIS_COMPONENT(world->mask[entity], COMPONENT_STILE))
 	{
 		unsigned int current_time = SDL_GetTicks();
+		
+		if((world->position[player_entity].x != world->position[entity].x) && world->player[player_entity].onTile)
+		{
+			world->movement[player_entity].maxSpeed = 8;
+			world->player[player_entity].onTile = 0;
+		}
+
 		if((current_time - world->tile[entity].start_time) >= 5000)
 		{
 			destroy_entity(world, entity);
@@ -417,7 +384,6 @@ void movement_system(World* world, FPS fps, int sendpipe) {
 			position = &(world->position[entity]);
 			controllable = &(world->controllable[entity]);
 			movement = &(world->movement[entity]);
-			
 			//very simple movement. This needs to be synchronized with the
 			//game loop so there is no jittering on very slow systems.
 			if (controllable->active == true) {

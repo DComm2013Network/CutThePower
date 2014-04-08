@@ -81,6 +81,7 @@ typedef struct {
 	char name[MAX_NAME];
 	character_t character;
 	unsigned int tilez;
+	int onTile;
 } PlayerComponent;
 
 typedef struct {
