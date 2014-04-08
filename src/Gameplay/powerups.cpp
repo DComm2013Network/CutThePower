@@ -79,7 +79,7 @@ void powerup_beltright(World * world, unsigned int entityID) {
  * @param[in] entityID     The player entityID number.
  *
  * @designer Joshua Campbell
- * @author   Joshua Campbell
+ * @author   Joshua Campbell, Ramzi
  */
 void powerup_system(World * world, unsigned int entityID) {
 	if (IN_THIS_COMPONENT(world->mask[entityID], COMPONENT_POWERUP)) {

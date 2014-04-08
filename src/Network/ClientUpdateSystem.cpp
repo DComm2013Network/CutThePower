@@ -394,7 +394,7 @@ void change_player(World * world, int type, PKT_GAME_STATUS * pkt, int playerNo)
  * @param[in]   entity  The player entity to add the animation to.
  *
  * @designer Shane Spoor
- * @author   Shane Spoor
+ * @author   Shane Spoor, Joshua Campbell, Ian Davidson
  */
 void setup_character_animation(World * world, int character, int entity)
 {

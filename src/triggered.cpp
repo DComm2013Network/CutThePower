@@ -35,8 +35,8 @@ extern FowComponent *fow;
  * @param[in,out] world    A pointer to the world structure.
  * @param[in] entity       The current button entity.
  *
- * @designer Jordan Marling, Joshua Campbell, Ian Davidson
- * @author   Jordan Marling
+ * @designer Jordan Marling
+ * @author   Jordan Marling, Joshua Campbell, Ian Davidson
  */
 bool menu_click(World *world, unsigned int entity) {
 	//printf("Clicked: %s\n", world->button[entity].label);
