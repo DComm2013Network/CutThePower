@@ -501,6 +501,15 @@ void setup_character_animation(World * world, int character, int entity)
 		case VINCENT_ALT1:
 			 load_animation("assets/Graphics/player/vincent_wizard/animation.txt", world, entity);
 		break;
+		case KONST_ALT1:
+			 load_animation("assets/Graphics/player/konst_box/animation.txt", world, entity);
+		break;
+		case ABHISHEK_ALT1:
+			 load_animation("assets/Graphics/player/abhishek_ranger/animation.txt", world, entity);
+		break;
+		case GERMAN_ALT1:
+			 load_animation("assets/Graphics/player/german_fisherman/animation.txt", world, entity);
+		break;
 		default:
 		load_animation("assets/Graphics/player/p0/rob_animation.txt", world, entity);
 	}
