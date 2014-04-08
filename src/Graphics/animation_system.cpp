@@ -29,8 +29,11 @@
  *
  * @designer Jordan Marling
  * @designer Mat Siwoski
+ * @designer Robin Hsieh
  *
  * @author Jordan Marling
+ * @author Mat Siwoski
+ * @author Robin Hsieh
  */
 void animation_system(World *world) {
 
@@ -109,8 +112,11 @@ void animation_system(World *world) {
  * @param entity The entity to create the animation for
  *
  * @designer Jordan Marling
+ * @designer Mat Siwoski
+ * @designer Damien Sathanielle
  *
  * @author Jordan Marling
+ * @author Damien Sathanielle
  */
 int load_animation(const char *filename, World *world, unsigned int entity) {
 	AnimationComponent *animationComponent = &(world->animation[entity]);
@@ -234,8 +240,11 @@ int load_animation(const char *filename, World *world, unsigned int entity) {
  * @param entity The entity to cancel the animation for
  *
  * @designer Jordan Marling
+ * @designer Mat Siwoski
+ * @designer Tim Kim
  *
  * @author Jordan Marling
+ * @author Tim Kim
  */
 void cancel_animation(World *world, unsigned int entity) {
 	AnimationComponent *animation = &(world->animation[entity]);
@@ -263,8 +272,10 @@ void cancel_animation(World *world, unsigned int entity) {
  * @param animation_name The animation that gets played
  *
  * @designer Jordan Marling
+ * @designer Mat Siwoski
  *
  * @author Jordan Marling
+ * @author Mat Siwoski
  */
 void play_animation(World *world, unsigned int entity, const char *animation_name) {
 	

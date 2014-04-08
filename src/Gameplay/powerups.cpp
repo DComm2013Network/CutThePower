@@ -1,6 +1,15 @@
 #include "powerups.h"
 #include "poweruptypes.h"
 
+/**
+ * Sets the player powerup to the speed up powerup.
+ * 
+ * @param[in,out] world    A pointer to the world structure.
+ * @param[in] entityID     The player entityID number.
+ *
+ * @designer Joshua Campbell
+ * @author   Joshua Campbell
+ */
 void powerup_speedup(World * world, unsigned int entityID) {
 	world->powerup[entityID].captureTime = SDL_GetTicks();
 	world->powerup[entityID].duration = PU_SPEED_UP_DURATION;
@@ -11,6 +20,15 @@ void powerup_speedup(World * world, unsigned int entityID) {
 	}
 }
 
+/**
+ * Sets the player powerup to the speed down powerup.
+ * 
+ * @param[in,out] world    A pointer to the world structure.
+ * @param[in] entityID     The player entityID number.
+ *
+ * @designer Joshua Campbell
+ * @author   Joshua Campbell
+ */
 void powerup_speeddown(World * world, unsigned int entityID) {
 	world->powerup[entityID].captureTime = SDL_GetTicks();
 	world->powerup[entityID].duration = PU_SPEED_DOWN_DURATION;
@@ -21,6 +39,15 @@ void powerup_speeddown(World * world, unsigned int entityID) {
 	}
 }
 
+/**
+ * Sets the player powerup to the belt left power up.
+ * 
+ * @param[in,out] world    A pointer to the world structure.
+ * @param[in] entityID     The player entityID number.
+ *
+ * @designer Ramzi 
+ * @author   Ramzi 
+ */
 void powerup_beltleft(World * world, unsigned int entityID) {
 	world->powerup[entityID].captureTime = SDL_GetTicks();
 	world->powerup[entityID].duration = PU_BELT_DURATION;
@@ -28,6 +55,15 @@ void powerup_beltleft(World * world, unsigned int entityID) {
 	world->player[entityID].tilez = TILE_BELT_LEFT;
 }
 
+/**
+ * Sets the player powerup to the belt right power up.
+ * 
+ * @param[in,out] world    A pointer to the world structure.
+ * @param[in] entityID     The player entityID number.
+ *
+ * @designer Ramzi 
+ * @author   Ramzi 
+ */
 void powerup_beltright(World * world, unsigned int entityID) {
 	world->powerup[entityID].captureTime = SDL_GetTicks();
 	world->powerup[entityID].duration = PU_BELT_DURATION;
@@ -35,13 +71,21 @@ void powerup_beltright(World * world, unsigned int entityID) {
 	world->player[entityID].tilez = TILE_BELT_RIGHT;
 }
 
+/**
+ * Checks if the powerup has expired and if it has, it sets the current
+ * player powerup to no power up.
+ * 
+ * @param[in,out] world    A pointer to the world structure.
+ * @param[in] entityID     The player entityID number.
+ *
+ * @designer Joshua Campbell
+ * @author   Joshua Campbell, Ramzi
+ */
 void powerup_system(World * world, unsigned int entityID) {
 	if (IN_THIS_COMPONENT(world->mask[entityID], COMPONENT_POWERUP)) {
 		PowerUpComponent * powerup = &(world->powerup[entityID]);
 		if (powerup->type != PU_NONE) {
 			unsigned int current_time = SDL_GetTicks();
-			
-			//printf("Current: ");
 			
 			if (current_time >= (powerup->captureTime + powerup->duration)) {
 				switch(powerup->type) {

@@ -11,7 +11,7 @@
 #include "Network/Packets.h"
 #include "Graphics/map.h"
 
-#define DEBUG_SKINS     1 //1 = on, 0 = off
+#define DEBUG_SKINS     0 //1 = on, 0 = off
 #define ALT_SKIN_CHANCE 3 //chance to roll an alternate skin
 
 extern bool running;
@@ -28,6 +28,16 @@ extern SDL_Window *window;
 static unsigned int altSong = 0;
 extern FowComponent *fow;
 
+
+/**
+ * Processes button presses from the main menu.
+ * 
+ * @param[in,out] world    A pointer to the world structure.
+ * @param[in] entity       The current button entity.
+ *
+ * @designer Jordan Marling
+ * @author   Jordan Marling, Joshua Campbell, Ian Davidson
+ */
 bool menu_click(World *world, unsigned int entity) {
 	//printf("Clicked: %s\n", world->button[entity].label);
 	unsigned int alternateSkin = 0;
@@ -787,7 +797,7 @@ bool menu_click(World *world, unsigned int entity) {
 				}
 			break;
 			case ABHISHEK_ALT2:
-				character = MAT_ALT2;
+				character = ABHISHEK_ALT2;
 				stop_music();
 				altSong = load_music("assets/Sound/players/abhishek_ranger/rangerTrack.wav");
 				if (altSong != 0) {
@@ -795,7 +805,7 @@ bool menu_click(World *world, unsigned int entity) {
 				}
 			break;
 			case ABHISHEK_ALT3:
-				character = MAT_ALT2;
+				character = ABHISHEK_ALT2;
 				stop_music();
 				altSong = load_music("assets/Sound/players/abhishek_ranger/rangerTrack.wav");
 				if (altSong != 0) {
@@ -803,7 +813,7 @@ bool menu_click(World *world, unsigned int entity) {
 				}
 			break;
 			case ABHISHEK_ALT4:
-				character = MAT_ALT2;
+				character = ABHISHEK_ALT2;
 				stop_music();
 				altSong = load_music("assets/Sound/players/abhishek_ranger/rangerTrack.wav");
 				if (altSong != 0) {
@@ -811,7 +821,7 @@ bool menu_click(World *world, unsigned int entity) {
 				}
 			break;
 			case ABHISHEK_ALT5:
-				character = MAT_ALT2;
+				character = ABHISHEK_ALT2;
 				stop_music();
 				altSong = load_music("assets/Sound/players/abhishek_ranger/rangerTrack.wav");
 				if (altSong != 0) {
@@ -819,7 +829,7 @@ bool menu_click(World *world, unsigned int entity) {
 				}
 			break;
 			case CLARK_ALT1:
-				character = MAT_ALT2;
+				character = CLARK_ALT1;
 				stop_music();
 				altSong = load_music("assets/Sound/players/clark_halo/haloTrack.wav");
 				if (altSong != 0) {

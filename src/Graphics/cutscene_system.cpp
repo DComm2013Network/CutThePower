@@ -18,6 +18,27 @@
 
 void start_cutscene_section(int id, World *world, unsigned int entity);
 
+
+/**
+ * Creates the Cutscene Animation system
+ *
+ * Used to draw animations. This component determines which stage the animation
+ * is at and updates the render player component accordingly so no special system
+ * is needed for animations vs. static images. As well, it will place the animation in
+ * the correct position.
+ * 
+ * The animation can also be triggered at a random time, and can also trigger a sound effect.
+ *
+ * @param world Pointer to the world structure (contains "world" info, entities / components)
+ *
+ * @designer Jordan Marling
+ * @designer Mat Siwoski
+ * @designer Damien Sathanielle
+ *
+ * @author Jordan Marling
+ * @author Mat Siwoski
+ * @author Damien Sathanielle
+ */
 void cutscene_system(World *world) {
 	
 	unsigned int entity;
@@ -98,6 +119,25 @@ void cutscene_system(World *world) {
 }
 
 
+/**
+ * Loads cut scene animations
+ *
+ * Used to draw the cut scene animations. This component determines which stage the animation
+ * is at and updates the render player component accordingly so no special system
+ * is needed for animations vs. static images.
+ * 
+ * @param filename The name of the file
+ * @param id The id of the file
+ * @param world Pointer to the world structure (contains "world" info, entities / components)
+ *
+ * @designer Jordan Marling
+ * @designer Mat Siwoski
+ * @designer Robin Hsieh
+ *
+ * @author Jordan Marling
+ * @author Mat Siwoski
+ * @author Robin Hsieh
+ */
 unsigned int load_cutscene(const char *filename, World *world, int id) {
 	
 	unsigned int entity = create_entity(world, COMPONENT_POSITION | COMPONENT_RENDER_PLAYER | COMPONENT_ANIMATION | COMPONENT_CUTSCENE);

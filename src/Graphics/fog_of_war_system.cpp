@@ -709,10 +709,10 @@ PositionComponent set_newposition(PositionComponent *pos, int yDel, int xDel)
  *     None.
  *loading
  * @param newposition	A pointer to a PositionComponent struct which will hold the new position
- * @param fow   			A double pointer to a fogOfWarStruct which contains the player's current position
- * @param yDel				Offset along y axis
- * @param xDel				Offset along x axis
- *
+ * @param fow   	A double pointer to a fogOfWarStruct which contains the player's current position
+ * @param yDel		Offset along y axis
+ * @param xDel		Offset along x axis
+ * @param visType	Type of visibility to set tile to (e.g. TRANSP_VIS, CLEAR_VIS)
  * @return void.
  * 
  * @designer Sam Youssef
@@ -720,7 +720,7 @@ PositionComponent set_newposition(PositionComponent *pos, int yDel, int xDel)
  *
  * @date March 29, 2014
  */
-int get_visibility_ptr(PositionComponent *newposition, FowPlayerPosition *fowp, int yDel, int xDel, int visType)
+int set_visibility(PositionComponent *newposition, FowPlayerPosition *fowp, int yDel, int xDel, int visType)
 {
 	FowComponent *fow = fowp -> fow;
 	PositionComponent *pos = fowp -> pos;
@@ -790,11 +790,11 @@ int set_visibility_type(FowPlayerPosition *fowp, int y, int x)
 
 	if(visMap[y][x] == 0)
 	{
-		get_visibility_ptr(&newposition, fowp, yd, xd, CLEAR_VIS);
+		set_visibility(&newposition, fowp, yd, xd, CLEAR_VIS);
 	}
 	else if(visMap[y][x] == 2)
 	{
-		get_visibility_ptr(&newposition, fowp, yd, xd, TRANSP_VIS);
+		set_visibility(&newposition, fowp, yd, xd, TRANSP_VIS);
 	}
 	return 1;
 }

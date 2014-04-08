@@ -513,7 +513,18 @@ void create_bsod_menu(World *world) {
 }
 
 
-
+/**
+ * Creates the cutscene screen for the start of the game (night scene)
+ * 
+ * Cannot interact with this screen. 
+ *
+ * @param world The world struct
+ *
+ * @designer Jordan Marling
+ * @designer Mat Siwoski
+ *
+ * @author Jordan Marling
+ */
 void create_intro(World *world) {
 	
 	destroy_world(world);
@@ -522,6 +533,18 @@ void create_intro(World *world) {
 	load_cutscene("assets/Graphics/cutscene/game_intro/box_cutscene.txt", world, -1);
 }
 
+/**
+ * Creates the loading screen
+ * 
+ * Cannot interact with the game in this screen
+ *
+ * @param world The world struct
+ *
+ * @designer Jordan Marling
+ * @designer Mat Siwoski
+ *
+ * @author Jordan Marling
+ */
 void create_load_screen(World *world) {
 	
 	unsigned int entity;
@@ -543,6 +566,19 @@ void create_load_screen(World *world) {
 	play_animation(world, entity, "load");
 }
 
+/**
+ * Creates the screen for character selection with all members of the Cut the Power
+ * development team.
+ * 
+ * Clicking a character will bring up the Name/Server screen.
+ *
+ * @param world The world struct
+ *
+ * @designer Jordan Marling
+ * @designer Mat Siwoski
+ *
+ * @author Jordan Marling
+ */
 void create_select_screen(World *world) {
 	
 	unsigned int entity;
@@ -577,13 +613,25 @@ void create_select_screen(World *world) {
 	create_animated_button(world, "assets/Graphics/screen/menu/select/tim/tim_animation.txt", 550, 544, "menu_select_tim");	
 	create_animated_button(world, "assets/Graphics/screen/menu/select/vincent/vincent_animation.txt", 750, 544, "menu_select_vincent");	
 	create_animated_button(world, "assets/Graphics/screen/menu/select/random/random_animation.txt", 950, 544, "menu_select_random");	
-		create_animated_button(world, "assets/Graphics/screen/menu/select/ian/secret/sparkle_animation.txt", 1150, 0, "menu_select_albert");	
+	
 	
 	
 	world->renderPlayer[entity].width = WIDTH;
 	world->renderPlayer[entity].height = HEIGHT;
 }
 
+/**
+ * Draws a small menu on top of the game when in the game.
+ * 
+ * Has the same menu as the Options menu minus keybinding
+ *
+ * @param world The world struct
+ *
+ * @designer Jordan Marling
+ * @designer Mat Siwoski
+ *
+ * @author Jordan Marling
+ */
 void create_pause_screen(World *world) {
 	
 	unsigned int entity;
@@ -615,6 +663,19 @@ void create_pause_screen(World *world) {
 	create_button(world, "EXIT TO MENU", "ingame_exit", (WIDTH / 2), (HEIGHT / 2) + 200);
 }
 
+/**
+ * Creates the cutscene screen for the introduction to the game
+ * 
+ * Cannot interact with the game in this screen.
+ *
+ * @param world The world struct
+ * @param character The character selected by the user to render in this cutscene
+ *
+ * @designer Jordan Marling
+ * @designer Mat Siwoski
+ *
+ * @author Jordan Marling
+ */
 void create_van_intro(World *world, int character) {
 	
 	unsigned int entity = create_entity(world, COMPONENT_RENDER_PLAYER | COMPONENT_POSITION);

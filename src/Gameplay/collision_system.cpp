@@ -158,6 +158,17 @@ void entity_collision(World* world, unsigned int entity, PositionComponent temp,
 	*hit_entity = MAX_ENTITIES;
 }
 
+/**
+ * Checks if a player is stuck in another player and moves the other player
+ * out of the current player.
+ *
+ * @param[in,out] world      		A pointer to the world structure.
+ * @param[in]     curEntityID   	The entity being checked for collisions with. 
+ * @param[in]     otherEntityID     The temporary position to be applied later.
+ *
+ * @designer Joshua Campbell
+ * @author   Joshua campbell
+ */
 void anti_stuck_system(World *world, unsigned int curEntityID, int otherEntityID) {
 	int leftDist = 0;
 	int rightDist = 0;
@@ -184,6 +195,15 @@ void anti_stuck_system(World *world, unsigned int curEntityID, int otherEntityID
 	}
 }
 
+/**
+ * Checks if a hacker is in distance of a guard so that they can be tagged.
+ *
+ * @param[in,out] world      		A pointer to the world structure.
+ * @param[in]     currentEntityID   The entity being checked for collisions with. 
+ *
+ * @designer Joshua Campbell
+ * @author   Joshua campbell
+ */
 int check_tag_collision(World* world, unsigned int currentEntityID) {
 	PositionComponent entity;
 	int lastDirection = 0;
@@ -251,6 +271,16 @@ int check_tag_collision(World* world, unsigned int currentEntityID) {
 	return -1;
 }
 
+/**
+ * Checks if a the tag key was pressed and if the current player is a guard.
+ * If a player was tagged, the tag data is sent to the server.
+ *
+ * @param[in,out] world      		A pointer to the world structure.
+ * @param[in]     entity   			The player entity number. 
+ *
+ * @designer 
+ * @author   
+ */
 bool tag_player(World* world, unsigned int entity) {
 	if (world->collision[entity].type == COLLISION_GUARD && world->command[entity].commands[C_ACTION]) {
 		unsigned int* collision_list = NULL;
@@ -269,6 +299,16 @@ bool tag_player(World* world, unsigned int entity) {
 	return false;
 }
 
+/**
+ * Checks if a hacker is in the vicinity of an objective and if the action key is pressed.
+ * If so, the capture objective data is sent to the server.
+ *
+ * @param[in,out] world      		A pointer to the world structure.
+ * @param[in]     entity   			The player entity number.
+ *
+ * @designer  
+ * @author    
+ */
 bool capture_objective(World* world, unsigned int entity) {
 	if (world->collision[entity].type == COLLISION_HACKER && world->command[entity].commands[C_ACTION]) {
 		unsigned int* collision_list = NULL;
@@ -293,6 +333,18 @@ bool capture_objective(World* world, unsigned int entity) {
 	return false;
 }
 
+/**
+ * Checks if there is collidable object in the vicinity of the current player.
+ * Returns a list of all collidable objects and the number of collisions.
+ *
+ * @param[in,out] world      		A pointer to the world structure.
+ * @param[in,out] entity   			The player entity number.
+ * @param[in,out] collision_list    The list of all nearby collisions.
+ * @param[in,out] num_collisions    The number of nearby collisions.
+ *
+ * @designer 
+ * @author   
+ */
 bool spacebar_collision(World* world, unsigned int entity, unsigned int** collision_list, unsigned int* num_collisions) {
 	unsigned int i = 0;
 	PositionComponent position;
@@ -323,6 +375,14 @@ bool spacebar_collision(World* world, unsigned int entity, unsigned int** collis
 	return ((*num_collisions) > 0);
 }
 
+/**
+ * Frees up the memory taken up by the collision list.
+ * 
+ * @param[in,out] collision_list    The list of all nearby collisions.
+ *
+ * @designer 
+ * @author   
+ */
 void cleanup_spacebar_collision(unsigned int** collision_list) {
 	if (*collision_list != NULL) {
 		free(*collision_list);
@@ -330,6 +390,18 @@ void cleanup_spacebar_collision(unsigned int** collision_list) {
 	}
 }
 
+/**
+ * Creates a speed belt on the map.
+ * 
+ * @param[in,out] world    A pointer to the world structure.
+ * @param[in] type    	   The tile type.
+ * @param[in] xPos    	   The tile xpos.
+ * @param[in] yPos         The tile ypos.
+ * @param[in] level        The level that the tile is on.
+ *
+ * @designer 
+ * @author   
+ */
 unsigned int create_stile(World * world, int type, int xPos, int yPos, int level)
 {
 	if(type != 1 && type != 2)
